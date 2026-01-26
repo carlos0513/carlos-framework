@@ -1,0 +1,2 @@
+com.yunjin.oauth2.config.OAuth2AuthorizationServerConfig
+com.yunjin.oauth2.config.OAuth2ResourceServerConfig

@@ -1,0 +1,15 @@
+##############################  minio配置 start  ###########################
+---
+yunjin:
+    minio:
+        enabled: true
+        endpoint: http://yunjin.com:19000
+        access-key: yunjin
+        secret-key: hadoop543216
+        bucket: contest-manager-test
+        connect-timeout: 10s
+        write-timeout: 60s
+        read-timeout: 10s
+        check-bucket: true
+        create-bucket: true
+##############################  minio配置 end   ###########################

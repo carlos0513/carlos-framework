@@ -1,0 +1,85 @@
+JFDML JFormDesigner: "7.0.3.0.337" Java: "17.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {par t {seq t {space :p:71:p, comp label11:::p:84:p, space :6:6:p, comp textField8:::p:190:p, space s:::p, comp label4:::p::p, space :::p, comp textField3:::::x}, seq t {space ::105:x, comp label2:::p:49:p, space :p:86:p, comp button2:::p:96:p, space :p:127:p, comp button3:::p:90:p, space :p:101:p}, seq {space :p:84:p, comp label5:::p:70:p, space u:::p, comp textField5::::488:x}}, space :p:44:p}, seq {space :p:103:p, comp label10:::p::p, space :::p, par l {seq {comp textField2:::p:190:p, space u:::p, comp label3:::p:45:p, space :::p, comp textField4:::p:190:p}, comp comboBox2::l:p:211:p}, space ::95:x}}"
+			"$verticalGroup": "par l {seq l {space :p:20:p, par b {comp label11::l:p:35:p, comp textField8::l:p:35:p, comp label4::b:p:35:p, comp textField3::b:p:35:p}, space :::p, par l {seq {comp label10:::p:35:p, space :p:9:p}, seq t {comp comboBox2:::p:35:p, space :::p}}, par b {comp textField2::b:p:35:p, comp label2::b:p:35:p, comp label3::b:p:35:p, comp textField4::b:p:35:p}, space ::148:x, par b {comp label5::b:p:35:p, comp textField5::b:p:35:p}, space s:::p, par b {comp button2::b:p:35:p, comp button3::b:p:35:p}, space :p:22:p}}"
+		} ) {
+			name: "this"
+			"title": "数据库处理工具"
+			"resizable": false
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosed", "thisWindowClosed", true ) )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "thisWindowClosing", true ) )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowOpened", "thisWindowOpened", true ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "key："
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField2"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "iv："
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField3"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label4"
+				"text": "目标表名："
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField4"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button2"
+				"text": "开始执行"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "commitButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button3"
+				"text": "关   闭"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "closeButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label10"
+				"text": "工具类型:"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label11"
+				"text": "操作表名:"
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField8"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label5"
+				"text": "当前进度："
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField5"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "comboBox2"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "请选择工具类型"
+					addElement( "请选择工具类型" )
+				}
+				"selectedIndex": 0
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "comboBox2ItemStateChanged", true ) )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 5, 30 )
+			"size": new java.awt.Dimension( 700, 430 )
+		} )
+	}
+}

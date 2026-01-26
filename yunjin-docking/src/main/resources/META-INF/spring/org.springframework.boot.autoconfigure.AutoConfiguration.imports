@@ -1,0 +1,4 @@
+com.yunjin.docking.linkage.config.BigLinkAgeConfig
+com.yunjin.docking.rzt.config.RztConfig
+com.yunjin.docking.event.config.EventConfig
+com.yunjin.docking.dingtalk.config.DingtalkConfig
