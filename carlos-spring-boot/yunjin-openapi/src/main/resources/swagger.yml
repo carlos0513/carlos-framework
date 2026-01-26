@@ -1,0 +1,66 @@
+#################################### 接口文档 Swagger start #################################
+swagger: # 是否启用
+    enable: true
+    group-name: 分组名称
+    # 扫描的包，多个包使用逗号隔开
+    base-package: com.ulang.contest.mng.controller
+    description: 接口描述
+    title: 接口标题
+    version: 1.0.0
+    contact:
+        email: xx@yunjin.com
+        name: Chengdu
+        url: www.yunjin.com
+    # 自定义参数配置，可配置N个
+#    parameters:
+#        - name: ${jwt.manager.header}
+#          enable: true
+#          description: 管理人员token
+#          type: header
+#          data-type: String
+#          required: false
+#          default-value:
+# knife4j配置
+knife4j: # 是否开启Knife4j增强模式 默认 false
+    enable: true
+    # 是否是生产环境
+    production: false
+    # 是否开启默认跨域  默认 false
+    cors: false
+    # 个性化配置 详情配置参照源码
+    setting: # 是否开启Debug调试
+        enableDebug: true
+        language: zh-CN
+        enableSwaggerModels: true
+        enableDocumentManage: true
+        swaggerModelName: 实体类列表
+        # 借口更新蓝点显示
+        enableVersion: true
+        enableReloadCacheParameter: false
+        enableAfterScript: true
+        enableFilterMultipartApiMethodType: POST
+        enableFilterMultipartApis: false
+        enableRequestCache: true
+        enableHost: false
+        enableHostText: 192.168.12.200:8000
+        # 是否开启自定义主页内容
+        enableHomeCustom: false
+        # 主页内容Markdown文件路径
+        homeCustomLocation: classpath:markdown/home.md
+        # 开启搜索
+        enableSearch: true
+        # 显示页底信息
+        enableFooter: false
+        enableFooterCustom: true
+        footerCustomContent: 科技有限公司
+        # 动态参数调试
+        enableDynamicParameter: true
+        # 显示OpenAPI规范
+        enableOpenApi: true
+        enableGroup: true
+    # 是否开启BasicHttp验证
+    basic:
+        enable: false
+        username: yunjin
+        password: hadoop543216
+#################################### 接口文档 Swagger end ###################################

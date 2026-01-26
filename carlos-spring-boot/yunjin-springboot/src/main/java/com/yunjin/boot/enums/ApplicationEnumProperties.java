@@ -1,0 +1,31 @@
+package com.yunjin.boot.enums;
+
+
+import java.util.Set;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+/**
+ * <p>
+ * 枚举相关配置
+ * </p>
+ *
+ * @author yunjin
+ * @date 2021/10/9 11:45
+ */
+@Data
+@ConfigurationProperties(prefix = "yunjin.boot.enums")
+public class ApplicationEnumProperties {
+
+    /**
+     * 枚举功能是否开启 默认关闭
+     */
+    private boolean enabled = false;
+
+    /**
+     * 扫描的包
+     */
+    private Set<String> scanPackage;
+
+
+}

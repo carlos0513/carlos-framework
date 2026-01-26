@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.yunjin</groupId>
+        <artifactId>yunjin</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <version>${revision}</version>
+
+    <modules>
+        <module>yunjin-utils</module>
+        <module>yunjin-core</module>
+        <module>yunjin-mybatis</module>
+        <module>yunjin-mongodb</module>
+        <module>yunjin-openapi</module>
+        <module>yunjin-docking</module>
+        <module>yunjin-log</module>
+        <module>yunjin-springboot</module>
+        <module>yunjin-springcloud</module>
+        <module>yunjin-json</module>
+        <module>yunjin-minio</module>
+        <module>yunjin-redisson</module>
+        <module>yunjin-snowflake</module>
+        <module>yunjin-redis</module>
+        <module>yunjin-datascope</module>
+        <module>yunjin-excel</module>
+        <module>yunjin-encrypt</module>
+        <module>yunjin-mq</module>
+        <module>yunjin-oauth2</module>
+        <module>yunjin-test</module>
+        <module>yunjin-magicapi</module>
+        <module>yunjin-sms</module>
+        <module>yunjin-datacenter</module>
+        <module>yunjin-gateway</module>
+        <module>yunjin-tools</module>
+        <module>yunjin-apm</module>
+        <module>yunjin-license</module>
+    </modules>
+
+    <properties>
+        <revision>3.0.0-SNAPSHOT</revision>
+    </properties>
+
+    <artifactId>yunjin-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        yunjin通用组件，类似starter
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

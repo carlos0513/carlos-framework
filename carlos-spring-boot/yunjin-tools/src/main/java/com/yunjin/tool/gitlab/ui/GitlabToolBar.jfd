@@ -1,0 +1,22 @@
+JFDML JFormDesigner: "8.2.0.0.331" Java: "17.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {space :::p, comp tabbedPane1::::871:x, space :::p}}"
+			"$verticalGroup": "par l {seq l {comp tabbedPane1:::p:106:p, space :0:38:x}}"
+		} ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+				name: "tabbedPane1"
+				auxiliary() {
+					"JavaCodeGenerator.customCreate": true
+				}
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 885, 175 )
+		} )
+	}
+}

@@ -1,0 +1,3 @@
+com.yunjin.cloud.feign.FeignConfig
+com.yunjin.cloud.feign.FeignGlobalExceptionHandler
+com.yunjin.cloud.nacos.NacosConfig

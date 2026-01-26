@@ -1,0 +1,16 @@
+com.yunjin.boot.application.ApplicationController
+com.yunjin.boot.application.ApplicationWebMvcConfig
+com.yunjin.boot.application.ApplicationConfig
+com.yunjin.boot.converter.ApplicationConverterConfig
+com.yunjin.boot.cors.ApplicationCorsConfig
+com.yunjin.boot.error.GlobalErrorController
+com.yunjin.boot.error.CustomizeErrorAttributes
+com.yunjin.boot.filters.ApplicationFilterConfig
+com.yunjin.boot.interceptors.ApplicationInterceptorConfig
+com.yunjin.boot.request.RequestUtil
+com.yunjin.boot.enums.ApplicationEnumConfig
+com.yunjin.boot.resource.ApplicationResourceConfig
+com.yunjin.boot.runner.ApplicationRunnerConfig
+com.yunjin.boot.response.ResponseInfoAdvice
+com.yunjin.boot.util.ExtendInfoUtil
+com.yunjin.boot.GlobalExceptionHandler

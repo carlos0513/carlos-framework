@@ -1,0 +1,62 @@
+JFDML JFormDesigner: "8.2.0.0.331" Java: "17.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {space :::x, par l {comp label1::t:p:66:p, comp label3::t:p:84:p}, space :::p, par l {seq {comp textField4:::p:73:p, space :p:51:p, comp label2:::::x, space u:::p, comp textField2:::p:86:p}, seq {comp textField1:::p:243:p, space :::p, comp button1:::p::p, space :0:0:x}, seq t {space :p:39:p, comp button2:::p::p, space :p:37:p, comp button3:::p:90:p, space :::x}}, space ::35:x}}"
+			"$verticalGroup": "par l {seq l {space :p:20:p, par b {comp label1::b:p:35:p, comp textField1::b:p:35:p, comp button1::b:p:35:p}, space u:::p, par b {comp label3::b:p:35:p, comp textField4::b:p:35:p, comp textField2::b:p:35:p, comp label2::b:p:35:p}, space ::37:x, par b {comp button2::b:p:35:p, comp button3::b:p:35:p}, space :p:20:p}}"
+		} ) {
+			name: "this"
+			"title": "数据选择器"
+			"resizable": false
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosed", "thisWindowClosed", true ) )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "thisWindowClosing", true ) )
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowOpened", "thisWindowOpened", true ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "excel路径："
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField1"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button1"
+				"text": "打    开"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "openButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "选择数目："
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField2"
+				"text": "3"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button2"
+				"text": "开始选择"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "commitButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button3"
+				"text": "关   闭"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "closeButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "表头行数："
+				"horizontalAlignment": 4
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField4"
+				"text": "1"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 10, 5 )
+			"size": new java.awt.Dimension( 460, 225 )
+		} )
+	}
+}

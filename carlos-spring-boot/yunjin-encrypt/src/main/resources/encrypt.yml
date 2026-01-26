@@ -1,0 +1,14 @@
+##############################  encrypt配置 start  ###########################
+---
+yunjin:
+  encrypt:
+    sm4:
+      enabled: true
+      encrypt-mode: cbc
+      key: asdfghjklmnbvcx,
+      iv: mnbvcxzpoiuytre1
+    sm2:
+      enabled: true
+      public-key: 0403c7a7250306531238d49c2e0146e48217f2d65b28ed1d61565bd40472c7516bc78574de0a89f9067328558d656ecdc2504f49bb2bd843a9cfa9b404463ed453
+      private-key: 3134665e1e009bab370738fd5ff1dabc7f390b683885c321f1523f4f725e8aa1
+##############################  encrypt配置 end   ###########################
