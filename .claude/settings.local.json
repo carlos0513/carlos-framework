@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(for:*)",
+      "Bash(do if [ -f \"$dir/pom.xml\" ])",
+      "Bash(then echo \"Processing $dir/pom.xml\")",
+      "Bash(fi:*)",
+      "Bash(done)",
+      "Bash(do if [[ \"$dir\" != \"yunjin-core/\" ]])",
+      "Bash(then echo \"Processing $dir\")",
+      "Bash(find:*)",
+      "Bash(while:*)",
+      "Bash(do if [ -f \"$f\" ])",
+      "Bash(then sed -i 's/yunjin:/carlos:/g' \"$f\")",
+      "Bash(mvn compile:*)",
+      "Bash(do pom=\"$sub/pom.xml\")",
+      "Bash(if [ -f \"$pom\" ])",
+      "Bash(then sed -i 's|<groupId>com\\\\.yunjin\\\\.license</groupId>|<groupId>com.carlos.license</groupId>|g' \"$pom\")",
+      "Bash(git add:*)"
+    ]
+  }
+}

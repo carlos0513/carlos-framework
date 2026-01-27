@@ -2,52 +2,52 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.yunjin</groupId>
-        <artifactId>yunjin</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <groupId>com.carlos</groupId>
+        <artifactId>carlos-spring-boot-framework</artifactId>
+        <version>2.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <version>${revision}</version>
 
     <modules>
-        <module>yunjin-utils</module>
-        <module>yunjin-core</module>
-        <module>yunjin-mybatis</module>
-        <module>yunjin-mongodb</module>
-        <module>yunjin-openapi</module>
-        <module>yunjin-docking</module>
-        <module>yunjin-log</module>
-        <module>yunjin-springboot</module>
-        <module>yunjin-springcloud</module>
-        <module>yunjin-json</module>
-        <module>yunjin-minio</module>
-        <module>yunjin-redisson</module>
-        <module>yunjin-snowflake</module>
-        <module>yunjin-redis</module>
-        <module>yunjin-datascope</module>
-        <module>yunjin-excel</module>
-        <module>yunjin-encrypt</module>
-        <module>yunjin-mq</module>
-        <module>yunjin-oauth2</module>
-        <module>yunjin-test</module>
-        <module>yunjin-magicapi</module>
-        <module>yunjin-sms</module>
-        <module>yunjin-datacenter</module>
-        <module>yunjin-gateway</module>
-        <module>yunjin-tools</module>
-        <module>yunjin-apm</module>
-        <module>yunjin-license</module>
+        <module>carlos-utils</module>
+        <module>carlos-core</module>
+        <module>carlos-mybatis</module>
+        <module>carlos-mongodb</module>
+        <module>carlos-openapi</module>
+        <module>carlos-docking</module>
+        <module>carlos-log</module>
+        <module>carlos-springboot</module>
+        <module>carlos-springcloud</module>
+        <module>carlos-json</module>
+        <module>carlos-minio</module>
+        <module>carlos-redisson</module>
+        <module>carlos-snowflake</module>
+        <module>carlos-redis</module>
+        <module>carlos-datascope</module>
+        <module>carlos-excel</module>
+        <module>carlos-encrypt</module>
+        <module>carlos-mq</module>
+        <module>carlos-oauth2</module>
+        <module>carlos-test</module>
+        <module>carlos-magicapi</module>
+        <module>carlos-sms</module>
+        <module>carlos-datacenter</module>
+        <module>carlos-gateway</module>
+        <module>carlos-tools</module>
+        <module>carlos-apm</module>
+        <module>carlos-license</module>
     </modules>
 
     <properties>
         <revision>3.0.0-SNAPSHOT</revision>
     </properties>
 
-    <artifactId>yunjin-parent</artifactId>
+    <artifactId>carlos-parent</artifactId>
     <packaging>pom</packaging>
 
     <description>
-        yunjin通用组件，类似starter
+        carlos通用组件，类似starter
     </description>
 
     <dependencies>

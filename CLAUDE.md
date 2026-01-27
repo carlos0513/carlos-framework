@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Yunjin-frame3 is a Java-based microservices framework built on Spring Boot 3.5.8 (JDK 17) and Spring Cloud Alibaba. The project is organized as a multi-module Maven build with two main directories:
+Yunjin-frame3 (renamed to carlos-spring-boot) is a Java-based microservices framework built on Spring Boot 3.5.9 (JDK 17) and Spring Cloud Alibaba. The project is organized as a multi-module Maven build with two main directories:
 
-- **yunjin**: Reference documentation and legacy/example code (based on YunJin Cloud v3.6.0)
-- **yunjin-parent**: The actual framework implementation - a collection of 29 reusable component modules
+- **carlos-spring-boot**: The actual framework implementation - a collection of 30 reusable component modules
+- **carlos-spring-boot-dependencies**: Centralized dependency management with version definitions
 
 This is an internal framework/scaffold project designed to accelerate application development by providing pre-built integrations and utilities.
 
@@ -25,7 +25,7 @@ mvn clean install -P yunjin-private   # Private server: 192.168.1.50:10004
 mvn clean install -P yunjin-yanfa     # Dev server: 192.168.20.145:8081
 
 # Build a specific module
-cd yunjin-parent/yunjin-core
+cd carlos-spring-boot/yunjin-core
 mvn clean install
 
 # Deploy to Nexus
@@ -68,13 +68,13 @@ mvn help:effective-pom
 The framework follows a parent-child Maven structure with version inheritance:
 
 ```
-yunjin-frame3/
+carlos-spring-boot/
 ├── pom.xml                    # Root aggregator (v2.0.0)
-├── yunjin/                    # Reference documentation
-│   └── pom.xml               # (v3.0.0-SNAPSHOT)
-└── yunjin-parent/            # Framework implementation
-    ├── pom.xml               # Parent POM with dependency management
-    └── [29 component modules]
+├── carlos-spring-boot/        # Framework implementation (30 modules)
+│   ├── pom.xml               # Parent POM with dependency management
+│   └── [30 component modules]
+└── carlos-spring-boot-dependencies/  # Centralized dependency versions
+    └── pom.xml
 ```
 
 ### Key Component Modules
@@ -118,27 +118,28 @@ yunjin-frame3/
 - `yunjin-flowable`: Flowable workflow engine integration
 - `yunjin-magicapi`: Magic API integration
 - `yunjin-test`: Test utilities and examples
+- `yunjin-disruptor`: Disruptor high-performance queue component
 
-### Technology Stack (from yunjin/pom.xml)
+### Technology Stack (from carlos-spring-boot-dependencies/pom.xml)
 
 | Component | Version | Notes |
 |-----------|---------|-------|
-| Spring Boot | 3.5.8 | |
-| Spring Cloud | 2023.0.6 | |
-| Spring Cloud Alibaba | 2023.0.3.3 | Nacos, Sentinel, Seata |
+| Spring Boot | 3.5.9 | |
+| Spring Cloud | 2025.0.1 | |
+| Spring Cloud Alibaba | 2025.0.0.0 | Nacos, Sentinel, Seata |
 | JDK | 17 | Minimum required version |
 | Maven | 3.8+ | Minimum required version |
-| MyBatis-Plus | 3.5.12 | With Join extension 1.5.4 |
+| MyBatis-Plus | 3.5.15 | With Join extension 1.5.4 |
 | Seata | 2.0.0 | Distributed transactions |
 | Hutool | 5.8.40 | Utility library |
 | MapStruct | 1.6.3 | Bean mapping |
 | Guava | 33.4.8-jre | |
 | Druid | 1.2.27 | Database connection pool |
-| SkyWalking | 9.7.0 | APM tracing |
+| SkyWalking | 9.5.0 | APM tracing |
 
 ### Dependency Version Management
 
-The parent POM (`yunjin-parent/pom.xml`) uses the `${revision}` placeholder pattern (currently `3.0.0-SNAPSHOT`) with the `flatten-maven-plugin` to manage versions centrally. All child modules inherit this version.
+The parent POM (`carlos-spring-boot/pom.xml`) uses the `${revision}` placeholder pattern (currently `3.0.0-SNAPSHOT`) with the `flatten-maven-plugin` to manage versions centrally. All child modules inherit this version.
 
 ### Configuration Patterns
 
@@ -180,9 +181,9 @@ Uses TrueLicense to validate hardware fingerprints (IP, MAC, CPU serial, mainboa
 
 ### Adding New Modules
 
-1. Create module under `yunjin-parent/`
-2. Add `<module>` entry to `yunjin-parent/pom.xml`
-3. Set parent to `yunjin-parent` with version `${revision}`
+1. Create module under `carlos-spring-boot/`
+2. Add `<module>` entry to `carlos-spring-boot/pom.xml`
+3. Set parent to `carlos-spring-boot` with version `${revision}`
 4. Add dependency management entry in parent POM if the module will be consumed by others
 5. Follow naming convention: `yunjin-{function}`
 
@@ -225,6 +226,7 @@ Resource filtering is enabled for `application*.yml/yaml/properties` and `bootst
 - **Internal Use Only**: README states "严肃声明:当前脚手架代码仅限内部使用!" (Internal use only)
 - **Parent Version**: Use `${revision}` in child POMs, not hardcoded versions
 - **Security Note**: Never include `yunjin-license-generate` module in production artifacts
+- **Directory Renaming**: The framework was renamed from `yunjin-parent` to `carlos-spring-boot`
 
 ## Recent Updates
 
@@ -314,10 +316,25 @@ public void adminOnlyMethod() { }
 - Current implementation uses in-memory token storage (consider Redis for production)
 - JWT tokens include custom claims: user_id, user_name, tenant_id, dept_id, role_ids, authorities
 
-## File Locations
+## Current State and Recent Changes
 
-- Maven configurations: `yunjin-parent/pom.xml` (dependency versions), root `pom.xml` (module aggregation)
-- Documentation: `yunjin/README.md`, `yunjin-parent/README_YD.md`, module-specific READMEs
-- Code generation templates: `yunjin-parent/yunjin-tools/src/main/resources/codege/templates/`
-- License docs: `yunjin-parent/yunjin-license/README.md`
-- OAuth2 docs: `yunjin-parent/yunjin-oauth2/README.md`, `yunjin-parent/yunjin-oauth2/INTEGRATION_SUMMARY.md`
+### Repository Renaming (2026-01-27)
+The framework has been renamed from `yunjin-frame3` to `carlos-spring-boot`:
+- `yunjin-parent/` → `carlos-spring-boot/`
+- `carlos-boot-dependencies/` → `carlos-spring-boot-dependencies/`
+
+### Version Updates
+The dependency versions have been updated from those documented in README-REF.md:
+- Spring Boot: 3.5.8 → **3.5.9**
+- Spring Cloud: 2023.0.6 → **2025.0.1**
+- Spring Cloud Alibaba: 2023.0.3.3 → **2025.0.0.0**
+- MyBatis-Plus: 3.5.12 → **3.5.15**
+- SkyWalking: 9.7.0 → **9.5.0**
+
+### Module Count
+The framework now contains **30 modules** (previously 29), with the addition of `yunjin-disruptor` for high-performance queue operations.
+
+### Git Status
+- Root directory: Not a git repository (subdirectories have `.git`)
+- Main branch: `main` (4 commits ahead of origin)
+- Recent changes: Directory renaming and POM updates
