@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(EventProperties.class)
-@ConditionalOnProperty(prefix = "yunjin.docking.event", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "carlos.docking.event", name = "enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class EventConfig {
 

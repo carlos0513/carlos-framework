@@ -18,7 +18,7 @@ import java.time.Duration;
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.docking.dingtalk")
+@ConfigurationProperties(prefix = "carlos.docking.dingtalk")
 public class DingtalkProperties implements InitializingBean {
 
 

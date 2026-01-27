@@ -21,7 +21,7 @@ import java.time.Duration;
  */
 @Slf4j
 @Data
-@ConfigurationProperties("yunjin.snowflake")
+@ConfigurationProperties("carlos.snowflake")
 public class SnowflakeProperties implements InitializingBean {
 
     /**

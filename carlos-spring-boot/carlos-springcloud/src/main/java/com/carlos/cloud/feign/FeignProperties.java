@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2019-09-28
  **/
 @Data
-@ConfigurationProperties(prefix = "yunjin.feign")
+@ConfigurationProperties(prefix = "carlos.feign")
 public class FeignProperties {
 
 

@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
  * @date 2021/6/10 13:21
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.cache")
+@ConfigurationProperties(prefix = "carlos.cache")
 public class CacheProperties implements InitializingBean {
 
     /**

@@ -793,7 +793,7 @@
 
     <profiles>
         <profile>
-            <id>yunjin-public</id>
+            <id>carlos-public</id>
             <distributionManagement>
                 <repository>
                     <id>releases</id>
@@ -837,7 +837,7 @@
             </pluginRepositories>
         </profile>
         <profile>
-            <id>yunjin-private</id>
+            <id>carlos-private</id>
             <distributionManagement>
                 <repository>
                     <id>releases</id>
@@ -882,7 +882,7 @@
         </profile>
 
         <profile>
-            <id>yunjin-yanfa</id>
+            <id>carlos-yanfa</id>
             <distributionManagement>
                 <repository>
                     <id>yanfa</id>

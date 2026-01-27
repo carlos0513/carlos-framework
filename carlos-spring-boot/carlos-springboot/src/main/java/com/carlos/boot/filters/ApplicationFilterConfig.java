@@ -42,7 +42,7 @@ public class ApplicationFilterConfig implements WebMvcConfigurer {
 
     @Bean
     @Order(2)
-    @ConditionalOnProperty(value = {"yunjin.boot.filters.xss.enable"})
+    @ConditionalOnProperty(value = {"carlos.boot.filters.xss.enable"})
     public FilterRegistrationBean<XssFilter> xssFilter() {
         ApplicationFilterProperties.FilterProperties properties = filterProperties.getXss();
         FilterRegistrationBean<XssFilter> filter = new FilterRegistrationBean<>(new XssFilter());

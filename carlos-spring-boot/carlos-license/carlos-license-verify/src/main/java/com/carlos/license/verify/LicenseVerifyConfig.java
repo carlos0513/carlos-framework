@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
-@ConditionalOnProperty(prefix = "yunjin.license.verify", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "carlos.license.verify", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(LicenseVerifyProperties.class)
 public class LicenseVerifyConfig {
 

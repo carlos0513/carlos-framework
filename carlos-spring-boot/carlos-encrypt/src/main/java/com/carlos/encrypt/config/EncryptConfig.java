@@ -40,7 +40,7 @@ public class EncryptConfig {
      */
     @Bean
 
-    @ConditionalOnProperty(prefix = "yunjin.encrypt.sm4", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "carlos.encrypt.sm4", name = "enabled", havingValue = "true", matchIfMissing = true)
     public SM4 sm4(EncryptProperties properties) {
         EncryptProperties.SM4Properties sm4Config = properties.getSm4();
         String key = sm4Config.getKey();
@@ -73,7 +73,7 @@ public class EncryptConfig {
      * @date 2023/3/22 14:11
      */
     @Bean
-    @ConditionalOnProperty(prefix = "yunjin.encrypt.sm2", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "carlos.encrypt.sm2", name = "enabled", havingValue = "true", matchIfMissing = true)
     public SM2 sm2(EncryptProperties properties) {
         EncryptProperties.SM2Properties sm2 = properties.getSm2();
         if (StrUtil.isBlank(sm2.getPrivateKey())) {

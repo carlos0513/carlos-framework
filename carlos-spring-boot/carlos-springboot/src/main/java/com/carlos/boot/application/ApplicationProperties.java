@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @date 2019-08-04
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.boot")
+@ConfigurationProperties(prefix = "carlos.boot")
 public class ApplicationProperties {
 
     /**

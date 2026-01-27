@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(DingtalkProperties.class)
 @ConditionalOnClass(DingTalkClient.class)
-@ConditionalOnProperty(prefix = "yunjin.docking.dingtalk", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "carlos.docking.dingtalk", name = "enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class DingtalkConfig {
 

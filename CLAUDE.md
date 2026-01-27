@@ -20,16 +20,16 @@ This is an internal framework/scaffold project designed to accelerate applicatio
 mvn clean install
 
 # Build with specific profile (internal Nexus repository)
-mvn clean install -P yunjin-public    # Public server: 100.127.2.47:10004
-mvn clean install -P yunjin-private   # Private server: 192.168.1.50:10004
-mvn clean install -P yunjin-yanfa     # Dev server: 192.168.20.145:8081
+mvn clean install -P carlos-public    # Public server: 100.127.2.47:10004
+mvn clean install -P carlos-private   # Private server: 192.168.1.50:10004
+mvn clean install -P carlos-yanfa     # Dev server: 192.168.20.145:8081
 
 # Build a specific module
-cd carlos-spring-boot/yunjin-core
+cd carlos-spring-boot/carlos-core
 mvn clean install
 
 # Deploy to Nexus
-mvn clean deploy -P yunjin-public
+mvn clean deploy -P carlos-public
 ```
 
 ### Running Tests

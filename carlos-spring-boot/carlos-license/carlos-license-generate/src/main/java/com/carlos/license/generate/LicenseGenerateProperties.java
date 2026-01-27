@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.license.generate")
+@ConfigurationProperties(prefix = "carlos.license.generate")
 public class LicenseGenerateProperties implements InitializingBean {
 
     /**

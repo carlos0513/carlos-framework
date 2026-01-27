@@ -1,7 +1,7 @@
 # OAuth2配置示例
 
 # 启用OAuth2模块
-yunjin:
+carlos:
   oauth2:
     enabled: true
 

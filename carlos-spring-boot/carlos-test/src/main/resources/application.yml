@@ -27,7 +27,7 @@ RZT_ORG_HOST: 'https://10.1.214.31/'
 RZT_ORG_PATH: 'ebus/yhtx'
 
 
-yunjin:
+carlos:
   docking:
     datacenter:
       instances:
@@ -159,7 +159,7 @@ spring:
       datasource:
         # 主库数据源
         master:
-          url: jdbc:mysql://100.127.6.234:13306/yunjin_bbt?useUnicode=true&characterEncoding=UTF-8&userSSL=false&serverTimezone=GMT%2B8
+          url: jdbc:mysql://100.127.6.234:13306/carlos_bbt?useUnicode=true&characterEncoding=UTF-8&userSSL=false&serverTimezone=GMT%2B8
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
           password: yunjin@123456
@@ -204,13 +204,13 @@ mybatis-plus: # 启动时是否检查MyBatis XML文件是否存在
 ################################ mybatis-plus end ##################################
 
 
-yunjin:
+carlos:
   feign:
     log:
       enable: true
       level: full
   cache:
-    key-prefix: yunjin:single
+    key-prefix: carlos:single
     user-prefix: true
   boot:
     enums:
@@ -338,7 +338,7 @@ logging:
   config: classpath:config/logback.xml
   level:
     root: info
-    com.yunjin: debug
+    com.carlos: debug
   file:
     path: log/test
 ##############################  日志配置 end   ###########################

@@ -24,7 +24,7 @@ import java.util.Set;
  * @date 2020/4/14 11:15
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.boot.filters")
+@ConfigurationProperties(prefix = "carlos.boot.filters")
 public class ApplicationFilterProperties {
 
     /**

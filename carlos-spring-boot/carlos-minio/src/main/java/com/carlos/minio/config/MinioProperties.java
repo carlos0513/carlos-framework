@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
  * @date 2021/6/10 13:21
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.minio")
+@ConfigurationProperties(prefix = "carlos.minio")
 public class MinioProperties implements InitializingBean {
 
     private static final String DEFAULT_BUCKET = "default";

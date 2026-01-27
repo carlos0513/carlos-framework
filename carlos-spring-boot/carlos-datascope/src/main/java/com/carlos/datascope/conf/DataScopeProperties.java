@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2021/6/10 13:21
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.datascope")
+@ConfigurationProperties(prefix = "carlos.datascope")
 public class DataScopeProperties implements InitializingBean {
 
     /**

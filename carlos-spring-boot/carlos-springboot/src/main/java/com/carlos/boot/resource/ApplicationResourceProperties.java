@@ -14,7 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2021/10/9 11:45
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.boot.resource")
+@ConfigurationProperties(prefix = "carlos.boot.resource")
 public class ApplicationResourceProperties {
 
     /**

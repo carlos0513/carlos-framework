@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.encrypt")
+@ConfigurationProperties(prefix = "carlos.encrypt")
 public class EncryptProperties implements InitializingBean {
 
 

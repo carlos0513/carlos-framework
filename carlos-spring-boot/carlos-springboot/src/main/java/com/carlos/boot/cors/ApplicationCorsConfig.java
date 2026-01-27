@@ -23,7 +23,7 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @EnableConfigurationProperties(ApplicationCorsProperties.class)
-@ConditionalOnProperty(value = {"yunjin.boot.cors.enable"}, havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = {"carlos.boot.cors.enable"}, havingValue = "true", matchIfMissing = true)
 public class ApplicationCorsConfig {
 
     private final ApplicationCorsProperties corsProperties;

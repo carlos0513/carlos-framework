@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(BigLinkAgeProperties.class)
-@ConditionalOnProperty(prefix = "yunjin.docking.linkage", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "carlos.docking.linkage", name = "enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class BigLinkAgeConfig {
 

@@ -277,7 +277,7 @@ public class ProjectTool extends JFrame {
         label6.setHorizontalAlignment(SwingConstants.RIGHT);
 
         //---- textField6 ----
-        textField6.setText("yunjin");
+        textField6.setText("carlos");
 
         //---- textField7 ----
         textField7.setText("yunjin@gmail.com");

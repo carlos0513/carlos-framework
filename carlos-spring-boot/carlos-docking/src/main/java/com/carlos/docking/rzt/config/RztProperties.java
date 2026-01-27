@@ -20,7 +20,7 @@ import java.time.Duration;
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.docking.rzt")
+@ConfigurationProperties(prefix = "carlos.docking.rzt")
 public class RztProperties implements InitializingBean {
 
 

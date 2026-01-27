@@ -17,7 +17,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.docking.event")
+@ConfigurationProperties(prefix = "carlos.docking.event")
 public class EventProperties implements InitializingBean {
 
     /**

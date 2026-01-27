@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(MinioProperties.class)
-@ConditionalOnProperty(prefix = "yunjin.minio", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "carlos.minio", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MinioConfig {
 
     @Bean

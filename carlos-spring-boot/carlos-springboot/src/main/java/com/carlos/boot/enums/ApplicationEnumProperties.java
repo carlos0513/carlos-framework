@@ -14,7 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2021/10/9 11:45
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.boot.enums")
+@ConfigurationProperties(prefix = "carlos.boot.enums")
 public class ApplicationEnumProperties {
 
     /**

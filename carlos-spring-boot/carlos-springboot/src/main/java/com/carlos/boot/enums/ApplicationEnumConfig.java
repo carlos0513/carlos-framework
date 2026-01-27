@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020/9/23 23:39
  */
 @Configuration
-@ConditionalOnProperty(prefix = "yunjin.boot.enums", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "carlos.boot.enums", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(ApplicationEnumProperties.class)
 @AllArgsConstructor
 public class ApplicationEnumConfig {

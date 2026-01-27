@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @date 2019/8/5
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.boot.interceptors")
+@ConfigurationProperties(prefix = "carlos.boot.interceptors")
 public class ApplicationInterceptorProperties {
 
     /**

@@ -143,8 +143,8 @@ public class GitlabAPI {
                 "xiyan_bianj16",
                 "xiyan_hek7",
                 "xiyan_haoym22",
-                "yunjin_lijl7318",
-                "yunjin_fengcs15"
+                "carlos_lijl7318",
+                "carlos_fengcs15"
         );
         Set<Long> sets = new HashSet<>();
         for (String userName : users) {

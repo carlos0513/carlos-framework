@@ -42,7 +42,7 @@ public class FeignConfig {
      * 配置feign日志级别
      */
     @Bean
-    @ConditionalOnProperty(prefix = "yunjin.feign.log", name = "enable", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "carlos.feign.log", name = "enable", matchIfMissing = true)
     public Logger.Level feignLoggerLevel() {
         return feignProperties.getLog().getLevel();
     }

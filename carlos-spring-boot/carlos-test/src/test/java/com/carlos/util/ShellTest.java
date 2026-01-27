@@ -27,7 +27,7 @@ public class ShellTest {
 
         String sourceUrl = URL.replace("[ip]", "100.127.6.146");
         sourceUrl = sourceUrl.replace("[port]", "13306");
-        sourceUrl = sourceUrl.replace("[databaseName]", "yunjin_bbt_xj");
+        sourceUrl = sourceUrl.replace("[databaseName]", "carlos_bbt_xj");
         final String driver = "com.mysql.cj.jdbc.Driver";
         SimpleDataSource dataSource = new SimpleDataSource(sourceUrl, "root", "yunjin@123456", driver);
         // Db.use(dataSource)

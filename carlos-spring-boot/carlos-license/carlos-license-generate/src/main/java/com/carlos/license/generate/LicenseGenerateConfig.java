@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
-@ConditionalOnProperty(prefix = "yunjin.license.generate", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "carlos.license.generate", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(LicenseGenerateProperties.class)
 public class LicenseGenerateConfig {
 

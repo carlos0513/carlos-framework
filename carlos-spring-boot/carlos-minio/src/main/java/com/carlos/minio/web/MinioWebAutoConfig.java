@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author yunjin
  * @date 2021/6/10 14:39
  */
-@ConditionalOnProperty(prefix = "yunjin.minio", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "carlos.minio", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @AutoConfigureAfter(MinioConfig.class)
 public class MinioWebAutoConfig implements WebMvcConfigurer {

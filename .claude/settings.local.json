@@ -17,7 +17,10 @@
       "Bash(do pom=\"$sub/pom.xml\")",
       "Bash(if [ -f \"$pom\" ])",
       "Bash(then sed -i 's|<groupId>com\\\\.yunjin\\\\.license</groupId>|<groupId>com.carlos.license</groupId>|g' \"$pom\")",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(xargs sed:*)",
+      "Bash(mvn install:*)"
     ]
   }
 }

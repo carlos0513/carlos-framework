@@ -15,7 +15,7 @@ import java.util.List;
  * @date 2026-01-25
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.oauth2")
+@ConfigurationProperties(prefix = "carlos.oauth2")
 public class OAuth2Properties {
 
     /**

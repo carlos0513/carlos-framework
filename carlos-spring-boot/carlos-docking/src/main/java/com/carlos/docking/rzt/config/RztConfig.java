@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(RztProperties.class)
-@ConditionalOnProperty(prefix = "yunjin.docking.rzt", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "carlos.docking.rzt", name = "enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class RztConfig {
 

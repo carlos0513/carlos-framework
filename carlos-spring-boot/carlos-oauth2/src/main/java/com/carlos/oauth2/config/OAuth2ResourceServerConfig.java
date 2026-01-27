@@ -38,7 +38,7 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 @EnableConfigurationProperties(OAuth2Properties.class)
-@ConditionalOnProperty(prefix = "yunjin.oauth2.resource-server", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "carlos.oauth2.resource-server", name = "enabled", havingValue = "true")
 public class OAuth2ResourceServerConfig {
 
     private final OAuth2Properties oAuth2Properties;

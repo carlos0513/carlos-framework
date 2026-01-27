@@ -1,7 +1,7 @@
 ---
 
 # License 相关配置
-yunjin:
+carlos:
   license:
     generate:
       enabled: true

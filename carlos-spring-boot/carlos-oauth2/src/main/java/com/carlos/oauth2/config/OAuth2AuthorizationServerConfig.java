@@ -52,7 +52,7 @@ import java.util.UUID;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableConfigurationProperties(OAuth2Properties.class)
-@ConditionalOnProperty(prefix = "yunjin.oauth2.authorization-server", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "carlos.oauth2.authorization-server", name = "enabled", havingValue = "true")
 public class OAuth2AuthorizationServerConfig {
 
     private final OAuth2Properties oAuth2Properties;

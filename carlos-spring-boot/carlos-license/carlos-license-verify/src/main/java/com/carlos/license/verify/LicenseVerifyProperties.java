@@ -18,7 +18,7 @@ import java.util.Set;
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.license.verify")
+@ConfigurationProperties(prefix = "carlos.license.verify")
 public class LicenseVerifyProperties implements InitializingBean {
 
     /**

@@ -17,7 +17,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.docking.linkage")
+@ConfigurationProperties(prefix = "carlos.docking.linkage")
 public class BigLinkAgeProperties implements InitializingBean {
 
     /**

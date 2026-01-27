@@ -1,6 +1,6 @@
 ##############################  encrypt配置 start  ###########################
 ---
-yunjin:
+carlos:
   encrypt:
     sm4:
       enabled: true

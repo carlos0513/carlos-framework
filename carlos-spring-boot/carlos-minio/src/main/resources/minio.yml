@@ -1,6 +1,6 @@
 ##############################  minio配置 start  ###########################
 ---
-yunjin:
+carlos:
     minio:
         enabled: true
         endpoint: http://yunjin.com:19000

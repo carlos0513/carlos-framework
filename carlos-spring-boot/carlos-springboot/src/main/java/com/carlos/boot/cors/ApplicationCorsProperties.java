@@ -19,7 +19,7 @@ import java.util.List;
  * @date 2020/6/16 9:30
  */
 @Data
-@ConfigurationProperties(prefix = "yunjin.boot.cors")
+@ConfigurationProperties(prefix = "carlos.boot.cors")
 public class ApplicationCorsProperties {
 
 
