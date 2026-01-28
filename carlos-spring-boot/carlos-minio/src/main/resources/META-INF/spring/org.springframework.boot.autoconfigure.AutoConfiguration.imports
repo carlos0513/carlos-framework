@@ -1,5 +1,5 @@
-com.yunjin.minio.config.MinioConfig
-com.yunjin.minio.utils.BucketOptUtil
-com.yunjin.minio.utils.ObjectOptUtil
-com.yunjin.minio.utils.MinioUtil
-com.yunjin.minio.web.MinioWebAutoConfig
+com.carlos.minio.config.MinioConfig
+com.carlos.minio.utils.BucketOptUtil
+com.carlos.minio.utils.ObjectOptUtil
+com.carlos.minio.utils.MinioUtil
+com.carlos.minio.web.MinioWebAutoConfig

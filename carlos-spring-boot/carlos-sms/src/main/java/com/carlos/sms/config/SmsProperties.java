@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @Data
 @Slf4j
-@ConfigurationProperties(prefix = "sms")
+@ConfigurationProperties(prefix = "carlos.sms")
 public class SmsProperties implements InitializingBean {
 
 

@@ -1,2 +1,2 @@
-com.yunjin.oauth2.config.OAuth2AuthorizationServerConfig
-com.yunjin.oauth2.config.OAuth2ResourceServerConfig
+com.carlos.oauth2.config.OAuth2AuthorizationServerConfig
+com.carlos.oauth2.config.OAuth2ResourceServerConfig

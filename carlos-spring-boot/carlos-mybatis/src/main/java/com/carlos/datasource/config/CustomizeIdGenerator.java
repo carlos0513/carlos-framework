@@ -1,8 +1,8 @@
 package com.carlos.datasource.config;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.carlos.snowflake.SnowflakeUtil;
-import com.carlos.util.IdUtils;
 
 
 /**
@@ -23,7 +23,7 @@ public class CustomizeIdGenerator implements IdentifierGenerator {
 
     @Override
     public String nextUUID(Object entity) {
-        return IdUtils.date32Id();
+        return IdUtil.simpleUUID();
     }
 
 

@@ -1,8 +1,8 @@
-# yunjin-excel
+# carlos-excel
 
 ## 模块简介
 
-`yunjin-excel` 是 YunJin 框架的 Excel 导入导出模块，基于 EasyExcel 3.1.3 和 Apache POI 5.2.5 构建。该模块提供了高性能的 Excel 读写功能、批量导入处理、数据验证、LuckySheet 在线表格支持等功能。
+`carlos-excel` 是 Carlos 框架的 Excel 导入导出模块，基于 EasyExcel 3.1.3 和 Apache POI 5.2.5 构建。该模块提供了高性能的 Excel 读写功能、批量导入处理、数据验证、LuckySheet 在线表格支持等功能。
 
 ## 主要功能
 
@@ -441,9 +441,9 @@ EasyExcel.write(outputStream, DataWithSelect.class)
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-excel</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-excel</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -464,7 +464,7 @@ spring:
 - **Apache POI**: 5.2.5（Excel 格式支持）
 - **Jakarta Validation**: 参数验证
 - **Hutool**: 工具库
-- **yunjin-core**: 核心基础模块
+- **carlos-core**: 核心基础模块
 
 ## 使用示例
 
@@ -676,6 +676,6 @@ private BigDecimal amount;
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-utils`: 工具模块
-- `yunjin-mybatis`: 数据库操作
+- `carlos-core`: 核心基础模块
+- `carlos-utils`: 工具模块
+- `carlos-mybatis`: 数据库操作

@@ -5,26 +5,26 @@ server:
 # 钉钉配置
 DINGTALK_ENABLE: 'true'
 DINGTALK_API_HOST: 'https://oapi.dingtalk.com'
-DINGTALK_APPKEY: 'dingkxxwu9ktwmxmrsjj'
-DINGTALK_APPSECRET: 'dW5891wjS4-GV6wlsnVzJlDUmurJqyKzuxSZeJguIVowW6V0Mw3NBPP55_V4aOIT'
+DINGTALK_APPKEY: '${DINGTALK_APPKEY:your-appkey-here}'
+DINGTALK_APPSECRET: '${DINGTALK_APPSECRET:your-appsecret-here}'
 
 
 
 RZT_ENABLE: 'false'
-RZT_API_HOST: 'https://10.1.214.31'
-RZT_API_PATH: 'ebus/dzptcs'
-RZT_CORPID: 'ww9904fd98c1b0df9e'
-RZT_SECRET: 'C9v3zp_4zbQpL12WuFMfcjXWkgB1E66yWN0gk8LXw0A'
-RZT_AGENTID: '1000033'
-RZT_PAASID: 'dzptcs'
-RZT_PAASTOKEN: '69b986d3c2450454c22d99a9653c97d2'
+RZT_API_HOST: '${RZT_API_HOST:https://10.1.214.31}'
+RZT_API_PATH: '${RZT_API_PATH:ebus/dzptcs}'
+RZT_CORPID: '${RZT_CORPID:your-corpid-here}'
+RZT_SECRET: '${RZT_SECRET:your-secret-here}'
+RZT_AGENTID: '${RZT_AGENTID:1000033}'
+RZT_PAASID: '${RZT_PAASID:dzptcs}'
+RZT_PAASTOKEN: '${RZT_PAASTOKEN:your-paastoken-here}'
 RZT_ORG_ENABLE: 'true'
-RZT_ORG_PAASID: 'yhtx'
-RZT_ORG_PAASTOKEN: '935e7b41bb0021e86dd2a6c82ecfb5eb'
-RZT_ORG_APPID: 'be260063-dacf-4bf1-89f3-e3c355f5552d'
-RZT_ORG_APPSECRET: '630ccb62-1c50-49b7-ac47-ab0eaa8a4d25'
-RZT_ORG_HOST: 'https://10.1.214.31/'
-RZT_ORG_PATH: 'ebus/yhtx'
+RZT_ORG_PAASID: '${RZT_ORG_PAASID:yhtx}'
+RZT_ORG_PAASTOKEN: '${RZT_ORG_PAASTOKEN:your-org-paastoken-here}'
+RZT_ORG_APPID: '${RZT_ORG_APPID:your-org-appid-here}'
+RZT_ORG_APPSECRET: '${RZT_ORG_APPSECRET:your-org-appsecret-here}'
+RZT_ORG_HOST: '${RZT_ORG_HOST:https://10.1.214.31/}'
+RZT_ORG_PATH: '${RZT_ORG_PATH:ebus/yhtx}'
 
 
 carlos:
@@ -47,7 +47,8 @@ carlos:
         - 'http://localhost:8081'
 
 
-sms:
+carlos:
+  sms:
   # 标注从yml读取配置
   config-type: yaml
   #用于标定yml中的配置是否开启短信拦截，接口配置不受此限制
@@ -113,7 +114,7 @@ spring:
       database: 15
       host: 100.127.6.234
       port: 16379
-      password: yunjin@123456
+      password: ${REDIS_PASSWORD:your-redis-password}
       #      host: 127.0.0.1
       #      port: 26379
       #      password: 'HJbgx_7281&'
@@ -142,7 +143,7 @@ spring:
   ##############################  redis缓存配置 end   ###########################
 
   application:
-    name: yunjin-test
+    name: carlos-test
   servlet:
     multipart:
       enabled: true
@@ -161,8 +162,8 @@ spring:
         master:
           url: jdbc:mysql://100.127.6.234:13306/carlos_bbt?useUnicode=true&characterEncoding=UTF-8&userSSL=false&serverTimezone=GMT%2B8
           driver-class-name: com.mysql.cj.jdbc.Driver
-          username: root
-          password: yunjin@123456
+          username: ${DB_USERNAME:root}
+          password: ${DB_PASSWORD:your-db-password}
       druid:
         initial-size: 5
         min-idle: 5
@@ -214,7 +215,7 @@ carlos:
     user-prefix: true
   boot:
     enums:
-      scan-package: com.yunjin
+      scan-package: com.carlos
       enabled: true
   encrypt:
     sm4:
@@ -274,9 +275,10 @@ springdoc:
     -
       group: '测试'
       paths-to-match: '/**'
-      packages-to-scan: com.yunjin.test
+      packages-to-scan: com.carlos.test
 
-openapi:
+carlos:
+  openapi:
   # 是否启用
   enable: true
   group-name: 分组名称
@@ -286,9 +288,9 @@ openapi:
   title: 接口标题
   version: 1.0.0
   contact:
-    email: xx@yunjin.com
+    email: xx@carlos.com
     name: Chengdu
-    url: www.yunjin.com
+    url: www.carlos.com
 
 knife4j: # 是否开启Knife4j增强模式 默认 false
   enable: true

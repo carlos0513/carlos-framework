@@ -1,13 +1,13 @@
-# yunjin-oauth2 模块集成完成
+# carlos-oauth2 模块集成完成
 
 ## 概述
 
-已成功在yunjin-parent模块下创建并集成了yunjin-oauth2模块，实现了基于Spring Security OAuth2 Authorization Server的OAuth2认证授权功能。
+已成功在carlos-spring-boot模块下创建并集成了carlos-oauth2模块，实现了基于Spring Security OAuth2 Authorization Server的OAuth2认证授权功能。
 
 ## 模块结构
 
 ```
-yunjin-parent/yunjin-oauth2/
+carlos-spring-boot/carlos-oauth2/
 ├── src/main/java/com/yunjin/oauth2/
 │   ├── config/                          # 配置类
 │   │   ├── OAuth2Properties.java        # OAuth2配置属性
@@ -54,7 +54,7 @@ yunjin-parent/yunjin-oauth2/
 - ✅ 自动提取用户上下文信息
 - ✅ 可配置的公开路径
 
-### 3. 与yunjin-core集成
+### 3. 与carlos-core集成
 
 - ✅ 使用`LoginUserInfo`作为用户信息载体
 - ✅ 使用`UserContext`作为用户上下文
@@ -127,8 +127,8 @@ yunjin:
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-oauth2</artifactId>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-oauth2</artifactId>
 </dependency>
 ```
 
@@ -215,7 +215,7 @@ public class UserController {
 ✅ 模块已成功构建并安装到本地Maven仓库
 
 ```
-[INFO] yunjin-oauth2 ...................................... SUCCESS [  2.918 s]
+[INFO] carlos-oauth2 ...................................... SUCCESS [  2.918 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
@@ -224,9 +224,9 @@ public class UserController {
 ## 依赖关系
 
 ```
-yunjin-oauth2
-├── yunjin-core (用户信息、异常、响应)
-├── yunjin-redis (可选，用于Token存储)
+carlos-oauth2
+├── carlos-core (用户信息、异常、响应)
+├── carlos-redis (可选，用于Token存储)
 ├── spring-boot-starter-security
 ├── spring-security-oauth2-authorization-server
 ├── spring-boot-starter-oauth2-resource-server
@@ -263,14 +263,14 @@ yunjin-oauth2
 
 ## 文档
 
-详细文档请参考：`yunjin-parent/yunjin-oauth2/README.md`
+详细文档请参考：`carlos-spring-boot/carlos-oauth2/README.md`
 
 ## 示例代码
 
 示例代码位于：
 
-- `com.yunjin.oauth2.example.ExampleOAuth2UserDetailsService`
-- `com.yunjin.oauth2.example.ExampleOAuth2Controller`
+- `com.carlos.oauth2.example.ExampleOAuth2UserDetailsService`
+- `com.carlos.oauth2.example.ExampleOAuth2Controller`
 
 ## 技术栈
 

@@ -5,7 +5,7 @@ spring:
         type: redis
     redis:
         database: 0
-        host: yunjin.com
+        host: carlos.com
         port: 6379
         password: hadoop543216
         lettuce:

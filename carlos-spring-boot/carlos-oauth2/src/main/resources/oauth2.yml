@@ -8,7 +8,7 @@ carlos:
     # JWT配置
     jwt:
       algorithm: RS256
-      key-id: yunjin-key-id
+      key-id: carlos-key-id
       issuer: http://localhost:8080
       include-user-info: true
 
@@ -37,8 +37,8 @@ carlos:
     # 客户端配置
     clients:
       -
-        client-id: yunjin-client
-        client-secret: yunjin-secret
+        client-id: carlos-client
+        client-secret: carlos-secret
         client-name: Yunjin Client
         authorization-grant-types:
           - authorization_code

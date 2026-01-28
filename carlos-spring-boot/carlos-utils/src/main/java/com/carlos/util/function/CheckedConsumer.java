@@ -1,7 +1,8 @@
 package com.carlos.util.function;
 
-import java.io.Serializable;
 import org.springframework.lang.Nullable;
+
+import java.io.Serializable;
 
 /**
  * <p>

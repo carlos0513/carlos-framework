@@ -1,2 +1,2 @@
-com.yunjin.mq.config.MessageConfig
-com.yunjin.mq.utils.RocketMqUtil
+com.carlos.mq.config.MessageConfig
+com.carlos.mq.utils.RocketMqUtil

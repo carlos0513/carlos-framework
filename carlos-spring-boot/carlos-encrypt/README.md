@@ -1,8 +1,8 @@
-# yunjin-encrypt
+# carlos-encrypt
 
 ## 模块简介
 
-`yunjin-encrypt` 是 YunJin 框架的加密工具模块，提供了基于中国国密算法的加密解密功能。该模块支持 SM2（非对称加密）和 SM4（对称加密）两种国密算法，基于 BouncyCastle 1.70 和 Hutool 5.8.40 实现。
+`carlos-encrypt` 是 Carlos 框架的加密工具模块，提供了基于中国国密算法的加密解密功能。该模块支持 SM2（非对称加密）和 SM4（对称加密）两种国密算法，基于 BouncyCastle 1.70 和 Hutool 5.8.40 实现。
 
 ## 主要功能
 
@@ -202,7 +202,7 @@ public class ConfigLoader {
 @Component
 public class LogAspect {
 
-    @Around("@annotation(com.yunjin.core.annotation.Log)")
+    @Around("@annotation(com.carlos.core.annotation.Log)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
 
@@ -348,9 +348,9 @@ yunjin:
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-encrypt</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-encrypt</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -358,7 +358,7 @@ yunjin:
 
 - **BouncyCastle**: 1.70（密码学提供者）
 - **Hutool**: 5.8.40（SM2/SM4 工具封装）
-- **yunjin-core**: 核心基础模块
+- **carlos-core**: 核心基础模块
 - **Spring Boot**: 3.5.8+（自动配置）
 
 ## 算法特性
@@ -472,6 +472,6 @@ IllegalArgumentException: Invalid public key format
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-tools`: 加密工具 GUI
-- `yunjin-test`: 加密功能测试
+- `carlos-core`: 核心基础模块
+- `carlos-tools`: 加密工具 GUI
+- `carlos-test`: 加密功能测试

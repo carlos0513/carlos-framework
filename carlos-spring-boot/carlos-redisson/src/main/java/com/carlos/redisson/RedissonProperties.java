@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2020/10/25 23:45
  */
 @Data
-@ConfigurationProperties(prefix = "spring.redis.redisson")
+@ConfigurationProperties(prefix = "carlos.redisson")
 public class RedissonProperties {
 
     private static final String DEFAULT_LOCK_PREFIX = "redisson_lock:";

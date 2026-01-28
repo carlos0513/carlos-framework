@@ -1,8 +1,8 @@
-# yunjin-redisson
+# carlos-redisson
 
 ## 模块简介
 
-`yunjin-redisson` 是 YunJin 框架的 Redisson 分布式锁和缓存模块，基于 Redisson 3.51.0 构建。该模块提供了注解驱动的分布式锁、手动锁管理、Spring Data Redis 集成等功能，支持单机、哨兵、集群等多种 Redis 部署模式。
+`carlos-redisson` 是 Carlos 框架的 Redisson 分布式锁和缓存模块，基于 Redisson 3.51.0 构建。该模块提供了注解驱动的分布式锁、手动锁管理、Spring Data Redis 集成等功能，支持单机、哨兵、集群等多种 Redis 部署模式。
 
 ## 主要功能
 
@@ -376,16 +376,16 @@ transportMode: NIO
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-redisson</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-redisson</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
 ## 依赖项
 
 - **Redisson Spring Boot Starter**: 3.51.0
-- **yunjin-core**: 核心基础模块（SpEL 工具、异常）
+- **carlos-core**: 核心基础模块（SpEL 工具、异常）
 - **Hutool**: 工具库（字符串工具）
 - **AspectJ**: AOP 支持
 - **Spring Boot**: 自动配置
@@ -542,5 +542,5 @@ if (!locked) {
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-redis`: Redis 缓存模块
+- `carlos-core`: 核心基础模块
+- `carlos-redis`: Redis 缓存模块

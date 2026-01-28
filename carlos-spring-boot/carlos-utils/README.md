@@ -1,8 +1,8 @@
-# yunjin-utils
+# carlos-utils
 
 ## 模块简介
 
-`yunjin-utils` 是 YunJin 框架的基础工具模块，提供了框架所需的各种通用工具类和辅助函数。该模块包含 19 个工具类，涵盖树形结构、数据脱敏、文件操作、地理计算、邮件发送等多个领域。
+`carlos-utils` 是 Carlos 框架的基础工具模块，提供了框架所需的各种通用工具类和辅助函数。该模块包含 19 个工具类，涵盖树形结构、数据脱敏、文件操作、地理计算、邮件发送等多个领域。
 
 ## 主要功能
 
@@ -574,9 +574,9 @@ try {
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-utils</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-utils</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -630,6 +630,6 @@ try {
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-springboot`: Spring Boot 自动配置
-- `yunjin-encrypt`: 加密工具
+- `carlos-core`: 核心基础模块
+- `carlos-springboot`: Spring Boot 自动配置
+- `carlos-encrypt`: 加密工具

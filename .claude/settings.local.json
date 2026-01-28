@@ -20,7 +20,25 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(xargs sed:*)",
-      "Bash(mvn install:*)"
+      "Bash(mvn install:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(mvn clean compile:*)",
+      "Bash(mvn help:effective-pom:*)"
+    ],
+    "deny": [
+      "Read(**/test-classes/**)",
+      "Read(**/.idea/**)",
+      "Read(**/.git/**)",
+      "Read(**/target/**)",
+      "Read(**/node_modules/**)",
+      "Read(**/*.iml)",
+      "Read(**/rebel.xml)",
+      "Read(**/.flattened-pom.xml)",
+      "Read(**/.gitignore)",
+      "Read(**/*.log)"
     ]
-  }
+  },
+  "max_tokens": 8000,
+  "compact_threshold": 0.8
 }

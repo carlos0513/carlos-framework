@@ -1,8 +1,8 @@
-# yunjin-redis
+# carlos-redis
 
 ## 模块简介
 
-`yunjin-redis` 是 YunJin 框架的 Redis 缓存集成模块，提供了基于 Lettuce 客户端的 Redis 连接管理、Spring Cache 抽象支持、高级 Redis 操作工具、Lua 脚本执行、多数据源支持等功能。该模块支持主从读写分离、批量操作、管道优化等企业级特性。
+`carlos-redis` 是 Carlos 框架的 Redis 缓存集成模块，提供了基于 Lettuce 客户端的 Redis 连接管理、Spring Cache 抽象支持、高级 Redis 操作工具、Lua 脚本执行、多数据源支持等功能。该模块支持主从读写分离、批量操作、管道优化等企业级特性。
 
 ## 主要功能
 
@@ -495,7 +495,7 @@ spring:
         max-wait: 30s       # 最大等待时间
       shutdown-timeout: 100ms
 
-# YunJin 缓存配置
+# Carlos 缓存配置
 yunjin:
   cache:
     user-prefix: true           # 启用键前缀
@@ -549,9 +549,9 @@ spring:
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-redis</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-redis</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -563,8 +563,8 @@ spring:
 - **Fastjson**: JSON 序列化（2.0.60）
 - **Hutool**: 工具库
 - **Guava**: 缓存工具
-- **yunjin-core**: 核心基础模块
-- **yunjin-json**: JSON 工具
+- **carlos-core**: 核心基础模块
+- **carlos-json**: JSON 工具
 
 ## 使用场景
 
@@ -608,6 +608,6 @@ spring:
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-json`: JSON 工具
-- `yunjin-redisson`: Redisson 分布式锁和缓存
+- `carlos-core`: 核心基础模块
+- `carlos-json`: JSON 工具
+- `carlos-redisson`: Redisson 分布式锁和缓存

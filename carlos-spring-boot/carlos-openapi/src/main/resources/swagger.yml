@@ -8,9 +8,9 @@ swagger: # 是否启用
     title: 接口标题
     version: 1.0.0
     contact:
-        email: xx@yunjin.com
+      email: xx@carlos.com
         name: Chengdu
-        url: www.yunjin.com
+      url: www.carlos.com
     # 自定义参数配置，可配置N个
 #    parameters:
 #        - name: ${jwt.manager.header}

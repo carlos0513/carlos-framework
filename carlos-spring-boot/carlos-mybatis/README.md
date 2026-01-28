@@ -1,8 +1,8 @@
-# yunjin-mybatis
+# carlos-mybatis
 
 ## 模块简介
 
-`yunjin-mybatis` 是 YunJin 框架的数据访问层模块，提供了 MyBatis-Plus 集成、多数据源支持、分页查询、数据权限控制、自动填充等功能。该模块基于 MyBatis-Plus 3.5.15 和 Dynamic DataSource 4.3.1 构建，支持 MySQL 和达梦数据库。
+`carlos-mybatis` 是 Carlos 框架的数据访问层模块，提供了 MyBatis-Plus 集成、多数据源支持、分页查询、数据权限控制、自动填充等功能。该模块基于 MyBatis-Plus 3.5.15 和 Dynamic DataSource 4.3.1 构建，支持 MySQL 和达梦数据库。
 
 ## 主要功能
 
@@ -291,7 +291,7 @@ public class ReportServiceImpl extends BaseServiceImpl<ReportMapper, Report> {
 
 ### 6. 数据权限控制
 
-**集成 yunjin-datascope 模块**实现行级数据权限：
+**集成 carlos-datascope 模块**实现行级数据权限：
 
 ```java
 @Service
@@ -307,7 +307,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> {
 
 **工作原理**：
 
-1. `YunJinDataPermissionHandler` 拦截 SQL 执行
+1. `CarlosDataPermissionHandler` 拦截 SQL 执行
 2. 从 `DataScopeHandler` 获取当前用户的数据权限范围
 3. 自动修改 SQL 的 WHERE 子句，添加权限过滤条件
 4. 支持单值（=）和多值（IN）条件
@@ -457,7 +457,7 @@ mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
 
   # 实体类包路径
-  type-aliases-package: com.yunjin.*.entity
+  type-aliases-package: com.carlos.*.entity
 
   # 全局配置
   global-config:
@@ -531,9 +531,9 @@ spring:
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-mybatis</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-mybatis</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -545,9 +545,9 @@ spring:
 - **Druid**: 1.2.27 (连接池和监控)
 - **MySQL Driver**: 8.0.33
 - **Dameng Driver**: 8.1.3.62 (达梦数据库)
-- **yunjin-core**: 核心基础模块
-- **yunjin-datascope**: 数据权限模块（可选）
-- **yunjin-snowflake**: 雪花算法 ID 生成
+- **carlos-core**: 核心基础模块
+- **carlos-datascope**: 数据权限模块（可选）
+- **carlos-snowflake**: 雪花算法 ID 生成
 
 ## 使用示例
 
@@ -654,7 +654,7 @@ public class UserController {
 ## 注意事项
 
 1. **自动填充**: 需要实现 `ApplicationExtend` 接口提供用户 ID
-2. **数据权限**: 需要引入 `yunjin-datascope` 模块并配置数据权限规则
+2. **数据权限**: 需要引入 `carlos-datascope` 模块并配置数据权限规则
 3. **多数据源**: 使用 `@DS` 注解时，事务需要特别注意
 4. **乐观锁**: 更新时必须先查询获取最新版本号
 5. **逻辑删除**: 查询时会自动过滤已删除数据，如需查询所有数据需要特殊处理
@@ -671,7 +671,7 @@ public class UserController {
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-datascope`: 数据权限模块
-- `yunjin-snowflake`: 雪花算法 ID 生成
-- `yunjin-utils`: 工具模块
+- `carlos-core`: 核心基础模块
+- `carlos-datascope`: 数据权限模块
+- `carlos-snowflake`: 雪花算法 ID 生成
+- `carlos-utils`: 工具模块

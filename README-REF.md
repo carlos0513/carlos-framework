@@ -141,7 +141,7 @@ yunjin-frame3/
 mvn clean install
 
 # 指定 Nexus 仓库
-mvn clean install -P yunjin-public    # 公网: 100.127.2.47:10004
+mvn clean install -P yunjin-public    # 公网: zcarlos.com:18081
 mvn clean install -P yunjin-private   # 内网: 192.168.1.50:10004
 mvn clean install -P yunjin-yanfa     # 研发: 192.168.20.145:8081
 

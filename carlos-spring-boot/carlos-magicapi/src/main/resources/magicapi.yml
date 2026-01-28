@@ -63,8 +63,8 @@ magic-api:
     default-page: 1 # 未传页码时的默认首页
     default-size: 10 # 未传页大小时的默认页大小
   security: # 安全配置
-    username: yunjin
-    password: yunjin@123456
+    username: ${MAGIC_API_USERNAME:admin}
+    password: ${MAGIC_API_PASSWORD:change-me}
   swagger:
     version: 1.0
     description: 云津Magic-api

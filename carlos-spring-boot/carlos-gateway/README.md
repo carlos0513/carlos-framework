@@ -1,8 +1,8 @@
-# yunjin-gateway
+# carlos-gateway
 
 ## 模块简介
 
-`yunjin-gateway` 是 YunJin 框架的 API 网关模块，基于 Spring Cloud Gateway 构建，提供微服务架构中的网关服务。该模块集成了 Nacos 服务发现与配置、负载均衡、Knife4j API 文档等功能，为企业级微服务架构提供统一的网关入口。
+`carlos-gateway` 是 Carlos 框架的 API 网关模块，基于 Spring Cloud Gateway 构建，提供微服务架构中的网关服务。该模块集成了 Nacos 服务发现与配置、负载均衡、Knife4j API 文档等功能，为企业级微服务架构提供统一的网关入口。
 
 ## 模块状态
 
@@ -41,8 +41,8 @@
 ```xml
 <!-- 核心依赖 -->
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-core</artifactId>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-core</artifactId>
 </dependency>
 
 <!-- Spring Cloud Gateway -->
@@ -81,7 +81,7 @@
 ```yaml
 spring:
   application:
-    name: yunjin-gateway
+    name: carlos-gateway
   cloud:
     nacos:
       discovery:
@@ -295,7 +295,7 @@ public class RateLimitConfig {
 ```dockerfile
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY target/yunjin-gateway.jar app.jar
+COPY target/carlos-gateway.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
@@ -306,16 +306,16 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: yunjin-gateway
+  name: carlos-gateway
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: yunjin-gateway
+      app: carlos-gateway
   template:
     metadata:
       labels:
-        app: yunjin-gateway
+        app: carlos-gateway
     spec:
       containers:
       - name: gateway
@@ -331,10 +331,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: yunjin-gateway
+  name: carlos-gateway
 spec:
   selector:
-    app: yunjin-gateway
+    app: carlos-gateway
   ports:
   - port: 80
     targetPort: 8080
@@ -391,7 +391,7 @@ server:
     key-store: classpath:keystore.p12
     key-store-password: changeit
     key-store-type: PKCS12
-    key-alias: yunjin-gateway
+    key-alias: carlos-gateway
   port: 8443
 ```
 
@@ -490,13 +490,13 @@ public class CacheConfig {
 
 ```bash
 # 查看网关日志
-tail -f logs/yunjin-gateway.log
+tail -f logs/carlos-gateway.log
 
 # 查看错误日志
-tail -f logs/yunjin-gateway-error.log
+tail -f logs/carlos-gateway-error.log
 
 # 查看调试日志
-tail -f logs/yunjin-gateway-debug.log
+tail -f logs/carlos-gateway-debug.log
 ```
 
 ## 扩展开发
@@ -571,12 +571,12 @@ public class CustomFilterFactory extends AbstractGatewayFilterFactory<CustomFilt
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-springcloud`: Spring Cloud 集成模块
-- `yunjin-redis`: Redis 缓存模块（限流依赖）
-- `yunjin-apm`: APM 监控模块
-- `yunjin-oauth2`: OAuth2 认证模块
+- `carlos-core`: 核心基础模块
+- `carlos-springcloud`: Spring Cloud 集成模块
+- `carlos-redis`: Redis 缓存模块（限流依赖）
+- `carlos-apm`: APM 监控模块
+- `carlos-oauth2`: OAuth2 认证模块
 
 ---
 
-**注意**: 本模块当前提供的是基础框架和配置模板，实际网关业务逻辑需要根据具体需求进行开发实现。建议参考 Spring Cloud Gateway 官方文档和 YunJin 框架的其他模块进行开发。
+**注意**: 本模块当前提供的是基础框架和配置模板，实际网关业务逻辑需要根据具体需求进行开发实现。建议参考 Spring Cloud Gateway 官方文档和 Carlos 框架的其他模块进行开发。

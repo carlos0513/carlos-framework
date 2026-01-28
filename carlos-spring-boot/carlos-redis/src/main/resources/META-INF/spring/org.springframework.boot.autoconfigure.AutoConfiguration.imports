@@ -1,3 +1,3 @@
-com.yunjin.redis.config.RedisLettuceConnectionConfiguration
-com.yunjin.redis.config.RedisCacheConfig
-com.yunjin.redis.util.RedisUtil
+com.carlos.redis.config.RedisLettuceConnectionConfiguration
+com.carlos.redis.config.RedisCacheConfig
+com.carlos.redis.util.RedisUtil

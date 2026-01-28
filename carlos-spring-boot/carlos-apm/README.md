@@ -1,8 +1,8 @@
-# yunjin-apm
+# carlos-apm
 
 ## 模块简介
 
-`yunjin-apm` 是 YunJin 框架的应用性能监控（APM）集成模块，提供了对 SkyWalking 9.7.0 和 Spring Cloud Sleuth（基于 Brave）的集成支持。该模块实现了分布式追踪、链路监控、性能指标收集等功能，帮助开发者和运维人员监控微服务系统的运行状态。
+`carlos-apm` 是 Carlos 框架的应用性能监控（APM）集成模块，提供了对 SkyWalking 9.7.0 和 Spring Cloud Sleuth（基于 Brave）的集成支持。该模块实现了分布式追踪、链路监控、性能指标收集等功能，帮助开发者和运维人员监控微服务系统的运行状态。
 
 ## 主要功能
 
@@ -11,7 +11,7 @@
 集成 Spring Cloud Sleuth（基于 Brave）提供分布式追踪能力，自动为每个请求生成唯一的 Trace ID 和 Span ID：
 
 ```java
-import com.yunjin.apm.TraceUtil;
+import com.carlos.apm.TraceUtil;
 
 // 获取当前请求的 Trace ID
 String traceId = TraceUtil.getTraceId();
@@ -87,7 +87,7 @@ public static String getSpanId() {
 日志输出格式：
 
 ```
-2023-01-01 12:00:00.123 [TID:1234567890abcdef] [main] INFO  com.yunjin.controller.UserController - 用户查询成功
+2023-01-01 12:00:00.123 [TID:1234567890abcdef] [main] INFO  com.carlos.controller.UserController - 用户查询成功
 ```
 
 ### 5. 自定义追踪标签
@@ -121,9 +121,9 @@ public Result<User> createUser(@RequestBody User user) {
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-apm</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-apm</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -339,7 +339,7 @@ public class UserServiceImpl implements UserService {
     </appender>
 
     <!-- 日志级别配置 -->
-    <logger name="com.yunjin" level="DEBUG" />
+    <logger name="com.carlos" level="DEBUG" />
     <logger name="org.springframework" level="INFO" />
     <logger name="org.apache.skywalking" level="INFO" />
 
@@ -514,7 +514,7 @@ public class BusinessTracer {
 
 ## 依赖项
 
-- `yunjin-core`：基础工具类
+- `carlos-core`：基础工具类
 - `micrometer-tracing-bridge-brave`：Spring Cloud Sleuth（Brave 实现）
 - `apm-toolkit-trace`：SkyWalking 追踪工具包
 - `apm-toolkit-logback-1.x`：SkyWalking Logback 集成
@@ -606,7 +606,7 @@ public BravePropagation.Factory propagationFactory() {
 
 ## 相关模块
 
-- **yunjin-core**：基础工具类、工具类依赖
-- **yunjin-log**：日志记录，与追踪信息结合
-- **yunjin-springcloud**：微服务基础，分布式追踪依赖
-- **yunjin-gateway**：API 网关，网关层追踪支持
+- **carlos-core**：基础工具类、工具类依赖
+- **carlos-log**：日志记录，与追踪信息结合
+- **carlos-springcloud**：微服务基础，分布式追踪依赖
+- **carlos-gateway**：API 网关，网关层追踪支持

@@ -1,5 +1,6 @@
 ---
-sms:
+carlos:
+  sms:
     #核心线程池大小
     corePoolSize: 10
     #最大线程数

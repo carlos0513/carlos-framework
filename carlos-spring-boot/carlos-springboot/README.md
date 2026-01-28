@@ -1,8 +1,8 @@
-# yunjin-springboot
+# carlos-springboot
 
 ## 模块简介
 
-`yunjin-springboot` 是 YunJin 框架的 Spring Boot 集成模块，提供了企业级的 Web 应用开发所需的自动配置、请求处理、异常处理、类型转换、CORS、XSS 防护、枚举服务、资源扫描等功能。该模块通过 Spring Boot 自动配置机制，简化了应用开发配置。
+`carlos-springboot` 是 Carlos 框架的 Spring Boot 集成模块，提供了企业级的 Web 应用开发所需的自动配置、请求处理、异常处理、类型转换、CORS、XSS 防护、枚举服务、资源扫描等功能。该模块通过 Spring Boot 自动配置机制，简化了应用开发配置。
 
 ## 主要功能
 
@@ -286,7 +286,7 @@ yunjin:
     enums:
       enabled: true
       scan-package:
-        - com.yunjin
+        - com.carlos
         - com.example
 ```
 
@@ -348,7 +348,7 @@ yunjin:
       app-name: "用户管理系统"
       prefix: "user-service"
       scan-package:
-        - com.yunjin.controller
+        - com.carlos.controller
 ```
 
 **定义资源**：
@@ -577,7 +577,7 @@ yunjin:
     enums:
       enabled: true
       scan-package:
-        - com.yunjin
+        - com.carlos
         - com.example
 
     # 资源扫描
@@ -585,7 +585,7 @@ yunjin:
       app-name: "用户管理系统"
       prefix: "user-service"
       scan-package:
-        - com.yunjin.controller
+        - com.carlos.controller
 
     # 静态资源
     resource-handlers:
@@ -608,9 +608,9 @@ spring:
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-springboot</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-springboot</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -623,9 +623,9 @@ spring:
 - **Reflections**: 类路径扫描
 - **Apache Commons Text**: XSS 转义
 - **MapStruct**: Bean 映射
-- **yunjin-core**: 核心基础模块
-- **yunjin-json**: JSON 工具
-- **yunjin-apm**: APM 追踪工具
+- **carlos-core**: 核心基础模块
+- **carlos-json**: JSON 工具
+- **carlos-apm**: APM 追踪工具
 
 ## 设计模式
 
@@ -666,8 +666,8 @@ spring:
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-json`: JSON 工具
-- `yunjin-apm`: APM 追踪
-- `yunjin-gateway`: API 网关
-- `yunjin-oauth2`: OAuth2 认证授权
+- `carlos-core`: 核心基础模块
+- `carlos-json`: JSON 工具
+- `carlos-apm`: APM 追踪
+- `carlos-gateway`: API 网关
+- `carlos-oauth2`: OAuth2 认证授权

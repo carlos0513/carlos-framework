@@ -3,7 +3,7 @@
 carlos:
     minio:
         enabled: true
-        endpoint: http://yunjin.com:19000
+        endpoint: http://carlos.com:19000
         access-key: yunjin
         secret-key: hadoop543216
         bucket: contest-manager-test

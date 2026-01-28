@@ -1,8 +1,8 @@
-# yunjin-openapi
+# carlos-openapi
 
 ## 模块简介
 
-`yunjin-openapi` 是 YunJin 框架的 API 文档生成模块，基于 SpringDoc OpenAPI 3 和 Knife4j 提供强大的 REST API 文档生成和管理功能。该模块支持自动生成 OpenAPI 规范文档，并提供美观的交互式文档界面。
+`carlos-openapi` 是 Carlos 框架的 API 文档生成模块，基于 SpringDoc OpenAPI 3 和 Knife4j 提供强大的 REST API 文档生成和管理功能。该模块支持自动生成 OpenAPI 规范文档，并提供美观的交互式文档界面。
 
 ## 主要功能
 
@@ -46,7 +46,7 @@ public class UserController {
 ```yaml
 openapi:
   enable: true
-  title: "YunJin 框架 API 文档"
+  title: "Carlos 框架 API 文档"
   description: "基于 Spring Boot 3 的微服务框架"
   version: "3.0.0"
   terms-of-service-url: "https://example.com/terms"
@@ -119,9 +119,9 @@ public class OpenApiConfig {
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-openapi</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-openapi</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -135,12 +135,12 @@ openapi:
   enable: true
 
   # 基本信息
-  title: "YunJin 框架 API 文档"
+  title: "Carlos 框架 API 文档"
   description: "基于 Spring Boot 3 的微服务框架"
   version: "3.0.0"
 
   # 扫描配置
-  base-package: "com.yunjin.controller"
+  base-package: "com.carlos.controller"
   base-path: "/api/**"
 
   # 排除路径
@@ -366,7 +366,7 @@ public Result<User> getUser(@PathVariable Long id) {
 
 - `springdoc-openapi-starter-webmvc-ui` (3.x): SpringDoc OpenAPI 核心依赖
 - `knife4j-openapi3-spring-boot-starter`: Knife4j UI 界面
-- `yunjin-core`: 基础工具类、常量定义
+- `carlos-core`: 基础工具类、常量定义
 - `spring-boot-starter-web`: Web 应用基础依赖
 
 ## 注意事项
@@ -422,9 +422,9 @@ A: 使用 Knife4j 的导出功能：
 2. 点击右上角"导出"按钮
 3. 选择导出格式（Markdown、Word、PDF、OpenAPI JSON/YAML）
 
-### 5. 与 yunjin-core 集成
+### 5. 与 carlos-core 集成
 
-本模块使用 `yunjin-core` 模块的工具类获取应用地址和端口信息，确保文档链接的正确性。
+本模块使用 `carlos-core` 模块的工具类获取应用地址和端口信息，确保文档链接的正确性。
 
 ## 版本要求
 
@@ -435,6 +435,6 @@ A: 使用 Knife4j 的导出功能：
 
 ## 相关模块
 
-- **yunjin-core**：基础工具类、常量定义、响应格式
-- **yunjin-oauth2**：OAuth2 认证授权，为文档提供认证支持
-- **yunjin-gateway**：API 网关，文档可能需要网关相关配置
+- **carlos-core**：基础工具类、常量定义、响应格式
+- **carlos-oauth2**：OAuth2 认证授权，为文档提供认证支持
+- **carlos-gateway**：API 网关，文档可能需要网关相关配置

@@ -1,8 +1,8 @@
-# yunjin-log
+# carlos-log
 
 ## 模块简介
 
-`yunjin-log` 是 YunJin 框架的操作日志记录模块，提供了基于注解和AOP的自动化操作日志记录功能。该模块可以自动记录用户操作、系统事件、异常信息等，支持丰富的业务类型和操作者类型分类，便于系统审计和故障排查。
+`carlos-log` 是 Carlos 框架的操作日志记录模块，提供了基于注解和AOP的自动化操作日志记录功能。该模块可以自动记录用户操作、系统事件、异常信息等，支持丰富的业务类型和操作者类型分类，便于系统审计和故障排查。
 
 ## 主要功能
 
@@ -99,7 +99,7 @@ public class LogAspect {
 
     private final OperationLogService operationLogService;
 
-    @Pointcut("@annotation(com.yunjin.log.annotation.Log)")
+    @Pointcut("@annotation(com.carlos.log.annotation.Log)")
     public void webLog() {}
 
     @AfterReturning(pointcut = "@annotation(controllerLog)", returning = "jsonResult")
@@ -154,9 +154,9 @@ public interface OperationLogService {
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-log</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-log</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -419,8 +419,8 @@ public class CustomLogConfig {
 
 ## 依赖项
 
-- `yunjin-core`：用户上下文管理、工具类
-- `yunjin-springboot`：Spring Boot自动配置支持
+- `carlos-core`：用户上下文管理、工具类
+- `carlos-springboot`：Spring Boot自动配置支持
 - `spring-boot-starter-aop`：AOP支持
 - `spring-boot-starter-web`：Web请求处理
 
@@ -482,7 +482,7 @@ public class DatabaseLogServiceImpl implements OperationLogService {
 A: 在切面中添加时间记录：
 
 ```java
-@Around("@annotation(com.yunjin.log.annotation.Log)")
+@Around("@annotation(com.carlos.log.annotation.Log)")
 public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
     long startTime = System.currentTimeMillis();
     Object result = joinPoint.proceed();
@@ -521,7 +521,7 @@ private String filterSensitiveData(Object data) {
 
 ## 相关模块
 
-- **yunjin-core**：用户上下文管理、工具类、基础实体
-- **yunjin-mybatis**：数据库操作，用于日志持久化存储
-- **yunjin-oauth2**：用户认证授权，获取当前用户信息
-- **yunjin-apm**：应用性能监控，与日志记录结合
+- **carlos-core**：用户上下文管理、工具类、基础实体
+- **carlos-mybatis**：数据库操作，用于日志持久化存储
+- **carlos-oauth2**：用户认证授权，获取当前用户信息
+- **carlos-apm**：应用性能监控，与日志记录结合

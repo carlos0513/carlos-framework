@@ -1,6 +1,6 @@
 # 单节点设置
 singleServerConfig: # 节点地址
-    address: redis://yunjin.com:6379
+  address: redis://carlos.com:6379
     database: 0
     password: hadoop543216
     # 连接空闲超时，单位：毫秒

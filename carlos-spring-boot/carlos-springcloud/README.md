@@ -1,8 +1,8 @@
-# yunjin-springcloud
+# carlos-springcloud
 
 ## 模块简介
 
-`yunjin-springcloud` 是 YunJin 框架的 Spring Cloud Alibaba 集成模块，提供了微服务架构所需的核心组件集成，包括服务发现、配置管理、服务调用、负载均衡和容错保护等功能。基于 Spring Cloud Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.8+。
+`carlos-springcloud` 是 Carlos 框架的 Spring Cloud Alibaba 集成模块，提供了微服务架构所需的核心组件集成，包括服务发现、配置管理、服务调用、负载均衡和容错保护等功能。基于 Spring Cloud Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.8+。
 
 ## 主要功能
 
@@ -22,7 +22,7 @@ public class UserApplication {
 **注解包含**：
 
 - `@EnableDiscoveryClient`: 启用服务发现
-- `@EnableFeignClients("com.yunjin")`: 启用 Feign 客户端
+- `@EnableFeignClients("com.carlos")`: 启用 Feign 客户端
 - `@SpringBootApplication`: Spring Boot 应用
 
 ### 2. OpenFeign 服务调用
@@ -481,7 +481,7 @@ feign:
   httpclient:
     enabled: false
 
-# YunJin Feign 配置
+# Carlos Feign 配置
 yunjin:
   feign:
     log:
@@ -499,9 +499,9 @@ server:
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-springcloud</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-springcloud</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -514,8 +514,8 @@ server:
 - **Spring Cloud Alibaba Sentinel**: 熔断降级
 - **Feign OkHttp**: HTTP 客户端
 - **Caffeine**: 缓存库
-- **yunjin-core**: 核心基础模块
-- **yunjin-springboot**: Spring Boot 集成
+- **carlos-core**: 核心基础模块
+- **carlos-springboot**: Spring Boot 集成
 
 ## 使用指南
 
@@ -656,8 +656,8 @@ grep "refresh" logs/application.log
 
 ## 相关模块
 
-- `yunjin-core`: 核心基础模块
-- `yunjin-springboot`: Spring Boot 集成
-- `yunjin-gateway`: API 网关
-- `yunjin-apm`: APM 监控
-- `yunjin-redis`: Redis 缓存
+- `carlos-core`: 核心基础模块
+- `carlos-springboot`: Spring Boot 集成
+- `carlos-gateway`: API 网关
+- `carlos-apm`: APM 监控
+- `carlos-redis`: Redis 缓存

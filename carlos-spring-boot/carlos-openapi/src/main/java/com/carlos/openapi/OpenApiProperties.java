@@ -16,7 +16,7 @@ import java.util.Set;
  * @date 2020/3/21
  **/
 @Data
-@ConfigurationProperties(prefix = "openapi")
+@ConfigurationProperties(prefix = "carlos.openapi")
 public class OpenApiProperties {
 
     /**

@@ -1,8 +1,8 @@
-# yunjin-core
+# carlos-core
 
 ## 模块简介
 
-`yunjin-core` 是 YunJin 框架的核心基础模块，提供了框架所需的基础抽象、工具类和基类。该模块是整个框架的基石，被其他大部分模块所依赖。
+`carlos-core` 是 Carlos 框架的核心基础模块，提供了框架所需的基础抽象、工具类和基类。该模块是整个框架的基石，被其他大部分模块所依赖。
 
 ## 主要功能
 
@@ -377,16 +377,16 @@ public Result<Void> internalMethod() {
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-core</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-core</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
 ## 依赖项
 
 - `spring-boot-starter-aop`: AOP 支持
-- `yunjin-utils`: 工具模块
+- `carlos-utils`: 工具模块
 - `lombok`: 代码生成
 - `swagger-annotations-jakarta`: OpenAPI 文档
 - `jackson-annotations`: JSON 序列化
@@ -431,8 +431,8 @@ public Result<Void> internalMethod() {
 
 ## 相关模块
 
-- `yunjin-utils`: 通用工具类
-- `yunjin-springboot`: Spring Boot 自动配置
-- `yunjin-mybatis`: MyBatis-Plus 集成
-- `yunjin-redis`: Redis 缓存
-- `yunjin-oauth2`: OAuth2 认证授权
+- `carlos-utils`: 通用工具类
+- `carlos-springboot`: Spring Boot 自动配置
+- `carlos-mybatis`: MyBatis-Plus 集成
+- `carlos-redis`: Redis 缓存
+- `carlos-oauth2`: OAuth2 认证授权

@@ -1,8 +1,8 @@
-# yunjin-datascope
+# carlos-datascope
 
 ## 模块简介
 
-`yunjin-datascope` 是 YunJin 框架的数据权限控制模块，提供了基于注解和AOP的多维度数据权限控制解决方案。该模块支持多种数据权限类型，可用于多租户系统、部门数据隔离、个人数据权限等场景。
+`carlos-datascope` 是 Carlos 框架的数据权限控制模块，提供了基于注解和AOP的多维度数据权限控制解决方案。该模块支持多种数据权限类型，可用于多租户系统、部门数据隔离、个人数据权限等场景。
 
 ## 主要功能
 
@@ -102,9 +102,9 @@ public List<User> getComplexData() {
 
 ```xml
 <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-datascope</artifactId>
-    <version>${yunjin.version}</version>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-datascope</artifactId>
+    <version>${carlos.version}</version>
 </dependency>
 ```
 
@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
 
 ```xml
 <!-- UserMapper.xml -->
-<select id="selectPage" resultType="com.yunjin.entity.User">
+<select id="selectPage" resultType="com.carlos.entity.User">
     SELECT * FROM sys_user
     <where>
         ${dataScope}  <!-- 数据权限条件会自动注入到这里 -->
@@ -254,7 +254,7 @@ public List<User> getRoleData() {
 
 ### 4. 与MyBatis-Plus集成
 
-本模块与 `yunjin-mybatis` 模块深度集成，支持MyBatis-Plus的查询条件自动注入：
+本模块与 `carlos-mybatis` 模块深度集成，支持MyBatis-Plus的查询条件自动注入：
 
 ```java
 // 在MyBatis-Plus的Service中使用
@@ -273,11 +273,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> {
 
 | 配置项                        | 类型      | 默认值     | 说明         |
 |----------------------------|---------|---------|------------|
-| `yunjin.datascope.enabled` | boolean | `false` | 是否启用数据权限模块 |
+| `carlos.datascope.enabled` | boolean | `false` | 是否启用数据权限模块 |
 
 ## 依赖项
 
-- `yunjin-core`：用户上下文管理、基础工具类
+- `carlos-core`：用户上下文管理、基础工具类
 - `spring-boot-starter-aop`：AOP支持
 - `spring-boot-starter`：Spring Boot基础依赖
 
@@ -299,7 +299,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> {
 **Q: 数据权限不生效怎么办？**
 A: 检查以下事项：
 
-1. 确认 `yunjin.datascope.enabled=true`
+1. 确认 `carlos.datascope.enabled=true`
 2. 确认注解的 `caller` 属性正确指向Mapper类
 3. 确认Mapper XML中存在 `${dataScope}` 占位符
 4. 确认当前用户上下文已正确设置
@@ -324,9 +324,9 @@ CurrentUser.setUserContext(userContext);
 CurrentUser.remove();
 ```
 
-### 4. 与yunjin-core集成
+### 4. 与carlos-core集成
 
-本模块深度依赖 `yunjin-core` 模块的 `CurrentUser` 工具类获取用户上下文信息，确保在使用前正确设置用户登录信息。
+本模块深度依赖 `carlos-core` 模块的 `CurrentUser` 工具类获取用户上下文信息，确保在使用前正确设置用户登录信息。
 
 ## 版本要求
 
@@ -336,6 +336,6 @@ CurrentUser.remove();
 
 ## 相关模块
 
-- **yunjin-core**：用户上下文管理、基础工具类
-- **yunjin-mybatis**：MyBatis-Plus集成、数据访问层支持
-- **yunjin-oauth2**：OAuth2认证授权、用户信息管理
+- **carlos-core**：用户上下文管理、基础工具类
+- **carlos-mybatis**：MyBatis-Plus集成、数据访问层支持
+- **carlos-oauth2**：OAuth2认证授权、用户信息管理

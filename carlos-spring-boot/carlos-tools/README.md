@@ -10,7 +10,7 @@
 ## 模块结构
 
 ~~~
-yunjin-tools     
+carlos-tools     
 ├── codege              // 代码生成工具文件
 ├── encrypt             // 加解密工具文件
 ├── gitlab              // gitlab工具文件
@@ -35,8 +35,8 @@ yunjin-tools
 
    ```xml
    <dependency>
-    <groupId>com.yunjin</groupId>
-    <artifactId>yunjin-tools</artifactId>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-tools</artifactId>
     <version>最新版本</version>
    </dependency>
    ```
