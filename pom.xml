@@ -18,7 +18,7 @@
     </properties>
 
     <modules>
-        <module>carlos-spring-boot</module>
+        <module>carlos-spring-boot-starters</module>
         <module>carlos-spring-boot-dependencies</module>
     </modules>
 

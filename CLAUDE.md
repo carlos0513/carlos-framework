@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Yunjin-frame3 (renamed to carlos-spring-boot) is a Java-based microservices framework built on Spring Boot 3.5.9 (JDK 17) and Spring Cloud Alibaba. The project is organized as a multi-module Maven build with two main directories:
+carlos-frame3 (renamed to carlos-spring-boot) is a Java-based microservices framework built on Spring Boot 3.5.9 (JDK 17) and Spring Cloud Alibaba. The project is organized as a multi-module Maven build with two main directories:
 
 - **carlos-spring-boot**: The actual framework implementation - a collection of 30 reusable component modules
 - **carlos-spring-boot-dependencies**: Centralized dependency management with version definitions
@@ -80,45 +80,51 @@ carlos-spring-boot/
 ### Key Component Modules
 
 **Core Infrastructure:**
-- `yunjin-core`: Base abstractions, annotations, AOP, exceptions, pagination, response wrappers
-- `yunjin-utils`: Common utilities and helper functions
-- `yunjin-springboot`: Spring Boot autoconfiguration and starter support
-- `yunjin-springcloud`: Spring Cloud Alibaba integrations (Nacos, Sentinel, Gateway)
+
+- `carlos-core`: Base abstractions, annotations, AOP, exceptions, pagination, response wrappers
+- `carlos-utils`: Common utilities and helper functions
+- `carlos-springboot`: Spring Boot autoconfiguration and starter support
+- `carlos-springcloud`: Spring Cloud Alibaba integrations (Nacos, Sentinel, Gateway)
 
 **Data Access:**
-- `yunjin-mybatis`: MyBatis-Plus integration with multi-datasource support (Dynamic Datasource 3.6.0)
-- `yunjin-mongodb`: MongoDB integration
-- `yunjin-redis`: Redis caching with Lettuce
-- `yunjin-redisson`: Redisson distributed lock and cache support
-- `yunjin-datascope`: Data permission/scope control
+
+- `carlos-mybatis`: MyBatis-Plus integration with multi-datasource support (Dynamic Datasource 3.6.0)
+- `carlos-mongodb`: MongoDB integration
+- `carlos-redis`: Redis caching with Lettuce
+- `carlos-redisson`: Redisson distributed lock and cache support
+- `carlos-datascope`: Data permission/scope control
 
 **Integration & Communication:**
-- `yunjin-gateway`: API Gateway utilities for Spring Cloud Gateway
-- `yunjin-openapi`: OpenAPI/Swagger documentation support (Knife4j)
-- `yunjin-docking`: Third-party integration framework (DingTalk, RongZhengTong, etc.)
-- `yunjin-mq`: Message queue abstractions
-- `yunjin-datacenter`: Data center integration/synchronization
+
+- `carlos-gateway`: API Gateway utilities for Spring Cloud Gateway
+- `carlos-openapi`: OpenAPI/Swagger documentation support (Knife4j)
+- `carlos-docking`: Third-party integration framework (DingTalk, RongZhengTong, etc.)
+- `carlos-mq`: Message queue abstractions
+- `carlos-datacenter`: Data center integration/synchronization
 
 **Security & Authentication:**
-- `yunjin-encrypt`: Encryption utilities (SM2, SM4 national cryptography algorithms)
-- `yunjin-license`: TrueLicense-based software licensing system (3 sub-modules: core, generate, verify)
-- `yunjin-oauth2`: OAuth2 authentication and authorization (Spring Security OAuth2 Authorization Server)
+
+- `carlos-encrypt`: Encryption utilities (SM2, SM4 national cryptography algorithms)
+- `carlos-license`: TrueLicense-based software licensing system (3 sub-modules: core, generate, verify)
+- `carlos-oauth2`: OAuth2 authentication and authorization (Spring Security OAuth2 Authorization Server)
 
 **Observability:**
-- `yunjin-log`: Logging enhancements
-- `yunjin-apm`: APM integration (SkyWalking 9.7.0, Sleuth)
+
+- `carlos-log`: Logging enhancements
+- `carlos-apm`: APM integration (SkyWalking 9.7.0, Sleuth)
 
 **Utilities:**
-- `yunjin-excel`: Excel import/export using Apache POI 5.2.5
-- `yunjin-json`: JSON serialization (Fastjson 2.0.60)
-- `yunjin-minio`: MinIO object storage integration
-- `yunjin-sms`: SMS sending abstraction with multi-provider support
-- `yunjin-snowflake`: Distributed ID generation
-- `yunjin-tools`: GUI desktop tools (code generator, project scaffolding, Swing-based)
-- `yunjin-flowable`: Flowable workflow engine integration
-- `yunjin-magicapi`: Magic API integration
-- `yunjin-test`: Test utilities and examples
-- `yunjin-disruptor`: Disruptor high-performance queue component
+
+- `carlos-excel`: Excel import/export using Apache POI 5.2.5
+- `carlos-json`: JSON serialization (Fastjson 2.0.60)
+- `carlos-minio`: MinIO object storage integration
+- `carlos-sms`: SMS sending abstraction with multi-provider support
+- `carlos-snowflake`: Distributed ID generation
+- `carlos-tools`: GUI desktop tools (code generator, project scaffolding, Swing-based)
+- `carlos-flowable`: Flowable workflow engine integration
+- `carlos-magicapi`: Magic API integration
+- `carlos-test`: Test utilities and examples
+- `carlos-disruptor`: Disruptor high-performance queue component
 
 ### Technology Stack (from carlos-spring-boot-dependencies/pom.xml)
 
@@ -146,16 +152,16 @@ The parent POM (`carlos-spring-boot/pom.xml`) uses the `${revision}` placeholder
 The framework uses Spring Boot's autoconfiguration mechanism. Modules typically provide:
 - AutoConfiguration classes with `@Configuration` and `@ConditionalOnProperty`
 - `spring.factories` or `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` files
-- `@ConfigurationProperties` classes with `yunjin.*` prefix namespace
+- `@ConfigurationProperties` classes with `carlos.*` prefix namespace
 
-Example configuration structure (from yunjin-test):
+Example configuration structure (from carlos-test):
 ```yaml
-yunjin:
+carlos:
   boot:
     cors:
       allowed-origins: [...]
     enums:
-      scan-package: com.yunjin
+      scan-package: com.carlos
       enabled: true
   encrypt:
     sm4:
@@ -170,10 +176,11 @@ yunjin:
 
 ### Licensing Module Architecture
 
-The `yunjin-license` module is structured for security:
-- `yunjin-license-core`: Shared models and abstractions
-- `yunjin-license-generate`: Certificate generation (should NOT be included in production deployments)
-- `yunjin-license-verify`: Certificate verification (include this in applications)
+The `carlos-license` module is structured for security:
+
+- `carlos-license-core`: Shared models and abstractions
+- `carlos-license-generate`: Certificate generation (should NOT be included in production deployments)
+- `carlos-license-verify`: Certificate verification (include this in applications)
 
 Uses TrueLicense to validate hardware fingerprints (IP, MAC, CPU serial, mainboard serial) and time constraints.
 
@@ -185,18 +192,18 @@ Uses TrueLicense to validate hardware fingerprints (IP, MAC, CPU serial, mainboa
 2. Add `<module>` entry to `carlos-spring-boot/pom.xml`
 3. Set parent to `carlos-spring-boot` with version `${revision}`
 4. Add dependency management entry in parent POM if the module will be consumed by others
-5. Follow naming convention: `yunjin-{function}`
+5. Follow naming convention: `carlos-{function}`
 
 ### Module Dependencies
 
-- Core modules (`yunjin-core`, `yunjin-utils`) are foundational and can be used everywhere
-- Spring Boot modules should depend on `yunjin-springboot`
-- Spring Cloud modules should depend on `yunjin-springcloud`
+- Core modules (`carlos-core`, `carlos-utils`) are foundational and can be used everywhere
+- Spring Boot modules should depend on `carlos-springboot`
+- Spring Cloud modules should depend on `carlos-springcloud`
 - Avoid circular dependencies between modules
 
 ### Code Generation Tools
 
-The `yunjin-tools` module provides a Swing-based GUI for:
+The `carlos-tools` module provides a Swing-based GUI for:
 - Database code generation (MyBatis/MongoDB/Elasticsearch from MySQL schema)
 - Project scaffolding
 - Encryption utilities
@@ -216,7 +223,7 @@ Resource filtering is enabled for `application*.yml/yaml/properties` and `bootst
 
 - Unit tests: `*Test.java` in `src/test/java` (currently skipped in build)
 - Integration tests: `*IT.java` (use maven-failsafe-plugin)
-- Test configuration in `yunjin-test` module demonstrates framework usage
+- Test configuration in `carlos-test` module demonstrates framework usage
 
 ## Important Notes
 
@@ -225,12 +232,12 @@ Resource filtering is enabled for `application*.yml/yaml/properties` and `bootst
 - **JDK 17 Required**: This is a Spring Boot 3 project requiring JDK 17+
 - **Internal Use Only**: README states "严肃声明:当前脚手架代码仅限内部使用!" (Internal use only)
 - **Parent Version**: Use `${revision}` in child POMs, not hardcoded versions
-- **Security Note**: Never include `yunjin-license-generate` module in production artifacts
-- **Directory Renaming**: The framework was renamed from `yunjin-parent` to `carlos-spring-boot`
+- **Security Note**: Never include `carlos-license-generate` module in production artifacts
+- **Directory Renaming**: The framework was renamed from `carlos-parent` to `carlos-spring-boot`
 
 ## Recent Updates
 
-### yunjin-oauth2 Module (Added 2026-01-25)
+### carlos-oauth2 Module (Added 2026-01-25)
 
 A comprehensive OAuth2 authentication and authorization module based on Spring Security OAuth2 Authorization Server.
 
@@ -238,13 +245,13 @@ A comprehensive OAuth2 authentication and authorization module based on Spring S
 - OAuth2 Authorization Server with multiple grant types (authorization_code, password, client_credentials, refresh_token)
 - OAuth2 Resource Server with JWT validation
 - Custom JWT token enhancement with user context (user_id, tenant_id, dept_id, role_ids, authorities)
-- Integration with yunjin-core authentication system (LoginUserInfo, UserContext)
+- Integration with carlos-core authentication system (LoginUserInfo, UserContext)
 - Method-level security with @PreAuthorize annotations
 - Utility class OAuth2Util for easy access to current user information
 
 **Module Structure:**
 ```
-yunjin-oauth2/
+carlos-oauth2/
 ├── config/                    # OAuth2 configuration classes
 │   ├── OAuth2Properties.java
 │   ├── OAuth2AuthorizationServerConfig.java
@@ -259,7 +266,7 @@ yunjin-oauth2/
 
 **Configuration Example:**
 ```yaml
-yunjin:
+carlos:
   oauth2:
     enabled: true
     authorization-server:
@@ -297,13 +304,15 @@ public void adminOnlyMethod() { }
 - `GET /oauth2/authorize` - Authorization endpoint
 
 **Documentation:**
-- Full documentation: `yunjin-parent/yunjin-oauth2/README.md`
-- Integration summary: `yunjin-parent/yunjin-oauth2/INTEGRATION_SUMMARY.md`
-- Example code: `com.yunjin.oauth2.example.*`
+
+- Full documentation: `carlos-parent/carlos-oauth2/README.md`
+- Integration summary: `carlos-parent/carlos-oauth2/INTEGRATION_SUMMARY.md`
+- Example code: `com.carlos.oauth2.example.*`
 
 **Dependencies:**
-- yunjin-core (user info, exceptions)
-- yunjin-redis (optional, for token storage)
+
+- carlos-core (user info, exceptions)
+- carlos-redis (optional, for token storage)
 - spring-boot-starter-security
 - spring-security-oauth2-authorization-server
 - spring-boot-starter-oauth2-resource-server
@@ -319,8 +328,10 @@ public void adminOnlyMethod() { }
 ## Current State and Recent Changes
 
 ### Repository Renaming (2026-01-27)
-The framework has been renamed from `yunjin-frame3` to `carlos-spring-boot`:
-- `yunjin-parent/` → `carlos-spring-boot/`
+
+The framework has been renamed from `carlos-frame3` to `carlos-spring-boot`:
+
+- `carlos-parent/` → `carlos-spring-boot/`
 - `carlos-boot-dependencies/` → `carlos-spring-boot-dependencies/`
 
 ### Version Updates
@@ -332,7 +343,8 @@ The dependency versions have been updated from those documented in README-REF.md
 - SkyWalking: 9.7.0 → **9.5.0**
 
 ### Module Count
-The framework now contains **30 modules** (previously 29), with the addition of `yunjin-disruptor` for high-performance queue operations.
+
+The framework now contains **30 modules** (previously 29), with the addition of `carlos-disruptor` for high-performance queue operations.
 
 ### Git Status
 - Root directory: Not a git repository (subdirectories have `.git`)

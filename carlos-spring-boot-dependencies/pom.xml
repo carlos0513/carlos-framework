@@ -294,30 +294,30 @@
             <!-- 核心模块 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-encrypt</artifactId>
+                <artifactId>carlos-spring-boot-starter-encrypt</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-flowable</artifactId>
+                <artifactId>carlos-spring-boot-starter-flowable</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 核心模块 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-docking</artifactId>
+                <artifactId>carlos-spring-boot-starter-docking</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 数据权限 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-datascope</artifactId>
+                <artifactId>carlos-spring-boot-starter-datascope</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- springboot模块 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-springboot</artifactId>
+                <artifactId>carlos-spring-boot-starter-springboot</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -328,7 +328,7 @@
             <!-- springcloud模块 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-springcloud</artifactId>
+                <artifactId>carlos-spring-boot-starter-springcloud</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -341,19 +341,19 @@
             <!-- 接口模块 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-json</artifactId>
+                <artifactId>carlos-spring-boot-starter-json</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-minio</artifactId>
+                <artifactId>carlos-spring-boot-starter-minio</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-redisson</artifactId>
+                <artifactId>carlos-spring-boot-starter-redisson</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -366,55 +366,55 @@
             <!-- 多数据源 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-mybatis</artifactId>
+                <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 日志记录 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-log</artifactId>
+                <artifactId>carlos-spring-boot-starter-log</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 缓存服务 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-redis</artifactId>
+                <artifactId>carlos-spring-boot-starter-redis</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- mongodb -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-mongodb</artifactId>
+                <artifactId>carlos-spring-boot-starter-mongodb</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 雪花算法组件 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-snowflake</artifactId>
+                <artifactId>carlos-spring-boot-starter-snowflake</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 短信组件 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-sms</artifactId>
+                <artifactId>carlos-spring-boot-starter-sms</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 网关基础组件 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-gateway</artifactId>
+                <artifactId>carlos-spring-boot-starter-gateway</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 监控组件 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-apm</artifactId>
+                <artifactId>carlos-spring-boot-starter-apm</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 数据对接组件 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-datacenter</artifactId>
+                <artifactId>carlos-spring-boot-starter-datacenter</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- GUI工具组件 -->
@@ -436,24 +436,36 @@
             </dependency>
             <dependency>
                 <groupId>com.carlos.license</groupId>
-                <artifactId>carlos-license-generate</artifactId>
+                <artifactId>carlos-spring-boot-starter-license-generate</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.carlos.license</groupId>
-                <artifactId>carlos-license-verify</artifactId>
+                <artifactId>carlos-spring-boot-starter-license-verify</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <!-- Disruptor高性能队列组件 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-disruptor</artifactId>
+                <artifactId>carlos-spring-boot-starter-disruptor</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-openapi</artifactId>
+                <artifactId>carlos-spring-boot-starter-openapi</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <!-- OAuth2组件 -->
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-spring-boot-starter-oauth2</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <!-- 消息队列组件 -->
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-spring-boot-starter-mq</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>
@@ -738,7 +750,7 @@
                         <testFailureIgnore>true</testFailureIgnore>
                         <includes>
                             <include>**/*Tests.java</include>
-                            <include>**/*com.yunjin.bbt.test.Test.java</include>
+                            <include>**/*com.carlos.bbt.test.Test.java</include>
                         </includes>
                         <excludes>
                             <exclude>**/Abstract*.java</exclude>

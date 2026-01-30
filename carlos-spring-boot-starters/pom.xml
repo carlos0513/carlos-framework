@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.carlos</groupId>
+        <artifactId>carlos-spring-boot-framework</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <version>${revision}</version>
+
+    <modules>
+        <module>carlos-utils</module>
+        <module>carlos-core</module>
+        <module>carlos-spring-boot-starter-mybatis</module>
+        <module>carlos-spring-boot-starter-mongodb</module>
+        <module>carlos-spring-boot-starter-openapi</module>
+        <module>carlos-spring-boot-starter-docking</module>
+        <module>carlos-spring-boot-starter-log</module>
+        <module>carlos-spring-boot-starter-springboot</module>
+        <module>carlos-spring-boot-starter-springcloud</module>
+        <module>carlos-spring-boot-starter-json</module>
+        <module>carlos-spring-boot-starter-minio</module>
+        <module>carlos-spring-boot-starter-redisson</module>
+        <module>carlos-spring-boot-starter-snowflake</module>
+        <module>carlos-spring-boot-starter-redis</module>
+        <module>carlos-spring-boot-starter-datascope</module>
+        <module>carlos-excel</module>
+        <module>carlos-spring-boot-starter-encrypt</module>
+        <module>carlos-spring-boot-starter-mq</module>
+        <module>carlos-spring-boot-starter-oauth2</module>
+        <module>carlos-test</module>
+        <module>carlos-magicapi</module>
+        <module>carlos-spring-boot-starter-sms</module>
+        <module>carlos-spring-boot-starter-datacenter</module>
+        <module>carlos-spring-boot-starter-gateway</module>
+        <module>carlos-tools</module>
+        <module>carlos-spring-boot-starter-apm</module>
+        <module>carlos-license</module>
+        <module>carlos-spring-boot-starter-disruptor</module>
+        <module>carlos-spring-boot-starter-flowable</module>
+    </modules>
+
+    <properties>
+        <revision>3.0.0-SNAPSHOT</revision>
+    </properties>
+
+    <artifactId>carlos-spring-boot-starters</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        carlos通用组件，类似starter
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-spring-boot-dependencies</artifactId>
+                <version>${revision}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

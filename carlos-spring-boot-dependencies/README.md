@@ -1,48 +1,48 @@
 <p align="center">
 	<img alt="logo" src="https://oscimg.oschina.net/oscnet/up-b99b286755aef70355a7084753f89cdb7c9.png">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">yunjin v3.6.0</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">carlos v3.6.0</h1>
 <h4 align="center">基于 Vue/Element UI 和 Spring Boot/Spring Cloud & Alibaba 前后端分离的分布式微服务架构</h4>
 <p align="center">
-	<a href="https://gitee.com/y_project/yunjin-Cloud/stargazers"><img src="https://gitee.com/y_project/yunjin-Cloud/badge/star.svg?theme=dark"></a>
-	<a href="https://gitee.com/y_project/yunjin-Cloud"><img src="https://img.shields.io/badge/yunjin-v3.6.0-brightgreen.svg"></a>
-	<a href="https://gitee.com/y_project/yunjin-Cloud/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
+	<a href="https://gitee.com/y_project/carlos-Cloud/stargazers"><img src="https://gitee.com/y_project/carlos-Cloud/badge/star.svg?theme=dark"></a>
+	<a href="https://gitee.com/y_project/carlos-Cloud"><img src="https://img.shields.io/badge/carlos-v3.6.0-brightgreen.svg"></a>
+	<a href="https://gitee.com/y_project/carlos-Cloud/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
 </p>
 
 ## 平台简介
 
 云津智慧是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
 
-* 采用前后端分离的模式，微服务版本前端(基于 [yunjin-Vue](https://gitee.com/y_project/yunjin-Vue))。
+* 采用前后端分离的模式，微服务版本前端(基于 [carlos-Vue](https://gitee.com/y_project/carlos-Vue))。
 * 后端采用Spring Boot、Spring Cloud & Alibaba。
 * 注册中心、配置中心选型Nacos，权限认证使用Redis。
 * 流量控制框架选型Sentinel，分布式事务选型Seata。
 
-#### 友情链接 [云津智慧/yunjin-Cloud](https://gitee.com/zhangmrit/yunjin-cloud) Ant Design版本。
+#### 友情链接 [云津智慧/carlos-Cloud](https://gitee.com/zhangmrit/carlos-cloud) Ant Design版本。
 
 ## 系统模块
 
 ~~~
-com.yunjin     
-├── yunjin-ui              // 前端框架 [80]
-├── yunjin-gateway         // 网关模块 [8080]
-├── yunjin-auth            // 认证中心 [9200]
-├── yunjin-api             // 接口模块
-│       └── yunjin-api-system                          // 系统接口
-├── yunjin-common          // 通用模块
-│       └── yunjin-core                         // 核心模块
-│       └── yunjin-mybatis                   // 多数据源
-│       └── yunjin-log                          // 日志记录
-│       └── yunjin-redis                        // 缓存服务
-│       └── yunjin-security                     // 安全模块
-│       └── yunjin-swagger                      // 系统接口
-├── yunjin-modules         // 业务模块
-│       └── yunjin-system                              // 系统模块 [9201]
-│       └── yunjin-gen                                 // 代码生成 [9202]
-│       └── yunjin-job                                 // 定时任务 [9203]
-│       └── yunjin-file                                // 文件服务 [9300]
-├── yunjin-visual          // 图形化管理模块
-│       └── yunjin-visual-monitor                      // 监控中心 [9100]
+com.carlos     
+├── carlos-ui              // 前端框架 [80]
+├── carlos-gateway         // 网关模块 [8080]
+├── carlos-auth            // 认证中心 [9200]
+├── carlos-api             // 接口模块
+│       └── carlos-api-system                          // 系统接口
+├── carlos-common          // 通用模块
+│       └── carlos-core                         // 核心模块
+│       └── carlos-mybatis                   // 多数据源
+│       └── carlos-log                          // 日志记录
+│       └── carlos-redis                        // 缓存服务
+│       └── carlos-security                     // 安全模块
+│       └── carlos-swagger                      // 系统接口
+├── carlos-modules         // 业务模块
+│       └── carlos-system                              // 系统模块 [9201]
+│       └── carlos-gen                                 // 代码生成 [9202]
+│       └── carlos-job                                 // 定时任务 [9203]
+│       └── carlos-file                                // 文件服务 [9300]
+├── carlos-visual          // 图形化管理模块
+│       └── carlos-visual-monitor                      // 监控中心 [9100]
 ├──pom.xml                // 公共依赖
 ~~~
 
