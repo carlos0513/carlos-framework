@@ -1,256 +1,666 @@
-<!-- TOC -->
+# Carlos License 许可证管理组件
 
-- [前言](#%E5%89%8D%E8%A8%80)
-- [SpringBoot 整合 TrueLicense](#springboot-%E6%95%B4%E5%90%88-truelicense)
-    - [添加依赖](#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96)
-    - [License 服务器校验参数](#license-%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%A0%A1%E9%AA%8C%E5%8F%82%E6%95%B0)
-    - [License 创建参数](#license-%E5%88%9B%E5%BB%BA%E5%8F%82%E6%95%B0)
-    - [获取服务器硬件信息抽象类](#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E4%BB%B6%E4%BF%A1%E6%81%AF%E6%8A%BD%E8%B1%A1%E7%B1%BB)
-    - [获取客户 Linux 服务器的基本信息](#%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7-linux-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF)
-    - [获取客户 Windows 服务器的基本信息](#%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7-windows-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF)
-    - [自定义 License 管理，创建、安装、校验等](#%E8%87%AA%E5%AE%9A%E4%B9%89-license-%E7%AE%A1%E7%90%86%E5%88%9B%E5%BB%BA%E5%AE%89%E8%A3%85%E6%A0%A1%E9%AA%8C%E7%AD%89)
-    - [自定义密钥存储](#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AF%86%E9%92%A5%E5%AD%98%E5%82%A8)
-    - [License 创建](#license-%E5%88%9B%E5%BB%BA)
-    - [证书配置](#%E8%AF%81%E4%B9%A6%E9%85%8D%E7%BD%AE)
-    - [License 校验、安装、卸载](#license-%E6%A0%A1%E9%AA%8C%E5%AE%89%E8%A3%85%E5%8D%B8%E8%BD%BD)
-    - [License 生成证书 Service](#license-%E7%94%9F%E6%88%90%E8%AF%81%E4%B9%A6-service)
-        - [LicenseCreatorService](#licensecreatorservice)
-        - [LicenseCreatorServiceImpl](#licensecreatorserviceimpl)
-    - [License 生成证书 Controller](#license-%E7%94%9F%E6%88%90%E8%AF%81%E4%B9%A6-controller)
-- [TrueLicense 创建、安装证书](#truelicense-%E5%88%9B%E5%BB%BA%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6)
-    - [使用 keytool 生成公私钥证书库](#%E4%BD%BF%E7%94%A8-keytool-%E7%94%9F%E6%88%90%E5%85%AC%E7%A7%81%E9%92%A5%E8%AF%81%E4%B9%A6%E5%BA%93)
-    - [项目配置](#%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE)
-    - [为客户生成 license 文件](#%E4%B8%BA%E5%AE%A2%E6%88%B7%E7%94%9F%E6%88%90-license-%E6%96%87%E4%BB%B6)
-- [证书有效性校验](#%E8%AF%81%E4%B9%A6%E6%9C%89%E6%95%88%E6%80%A7%E6%A0%A1%E9%AA%8C)
+基于 TrueLicense 的软件许可证管理解决方案，支持硬件指纹验证和时间约束，适用于内网部署的商业软件授权管理。
 
-<!-- /TOC -->
+## 目录
 
-# 前言
+- [概述](#概述)
+- [模块结构](#模块结构)
+- [快速开始](#快速开始)
+- [证书生成](#证书生成)
+- [证书验证](#证书验证)
+- [API 接口](#api-接口)
+- [配置说明](#配置说明)
+- [安全注意事项](#安全注意事项)
+- [常见问题](#常见问题)
 
-License，即版权许可证，一般用于收费软件给付费用户提供的访问许可证明。当应用部署在客户的内网环境，因为这种情况开发者无法控制客户的网络环境，也不能保证应用所在服务器可以访问外网，因此通常的做法是使用服务器许可文件，在应用启动的时候加载证书，并验证证书的有效性，如果无效则限制应用启动。
+## 概述
 
-本文只考虑代码层面的许可限制，暂不考虑逆向破解问题。
+License（版权许可证）用于收费软件给付费用户提供的访问许可证明。当应用部署在客户的内网环境时，由于无法保证服务器可以访问外网，通常使用服务器许可文件的方式，在应用启动时加载证书并验证其有效性。
 
-## 项目结构
+**核心特性：**
 
-~~~
-com.carlos.license     
-├── carlos-license                            // pom父工程
-│       └── carlos-license-core               // 核心模块 
-│       └── carlos-license-verify             // 证书验证模块 
-│       └── carlos-license-generate           // 证书生成模块 
-├──pom.xml    // 版本控制
-~~~
+- 基于 TrueLicense 1.33 实现
+- 支持硬件指纹验证（IP 地址、MAC 地址、CPU 序列号、主板序列号）
+- 支持时间约束（生效时间、过期时间）
+- 支持 Linux 和 Windows 操作系统
+- 自动证书安装和卸载
+- 提供 REST API 接口用于证书生成和服务器信息获取
 
-为保证安全，原则上交付的jar包中不应该存在证书生成模块，防止客户自行签发证书。证书生成服务应妥善管理，严格控制证书管理和签发。
+**适用场景：**
 
-所交付的应用中，只需要集成证书验证模块即可。
+- 内网部署的商业软件授权管理
+- 需要硬件绑定的软件许可控制
+- 基于时间的软件试用期管理
 
-# SpringBoot 整合 License组件
-
-## 添加依赖
+## 模块结构
 
 ```
-    <dependency>
-        <groupId>com.carlos</groupId>
-        <artifactId>carlos-license</artifactId>
-        <version>最新版本</version>
-    </dependency>
+carlos-integration/carlos-license/
+├── carlos-license-core                              # 核心模块
+│   ├── CustomLicenseManager.java                   # 自定义 License 管理器
+│   ├── CustomKeyStoreParam.java                    # 自定义密钥存储参数
+│   ├── LicenseCheckModel.java                      # 服务器硬件信息模型
+│   └── service/
+│       ├── AbstractSystemInfoDao.java              # 系统信息获取抽象类
+│       ├── LinuxSystemInfoDao.java                 # Linux 系统信息获取
+│       └── WindowsSystemInfoDao.java               # Windows 系统信息获取
+├── carlos-spring-boot-starter-license-generate     # 证书生成模块（仅开发环境）
+│   ├── LicenseCreatorService.java                  # 证书生成服务
+│   ├── LicenseCreatorController.java               # 证书生成 API
+│   └── LicenseGenerateProperties.java              # 生成模块配置
+└── carlos-spring-boot-starter-license-verify       # 证书验证模块（生产环境）
+    ├── LicenseVerify.java                          # 证书验证服务
+    ├── LicenseVerifyConfig.java                    # 验证模块配置
+    └── LicenseVerifyProperties.java                # 验证模块配置属性
 ```
 
-TrueLicense 的 ```de.schlichtherle.license.LicenseManager``` 类自带的 verify
-方法只校验了我们后面颁发的许可文件的生效和过期时间，然而在实际项目中我们可能需要额外校验应用部署的服务器的 IP 地址、MAC
-地址、CPU 序列号、主板序列号等信息，因此我们复写了框架的部分方法以实现校验自定义参数的目的。
+**模块说明：**
 
-# 使用步骤
+- **carlos-license-core**: 核心功能模块，包含 TrueLicense 的自定义实现和硬件信息获取逻辑
+- **carlos-spring-boot-starter-license-generate**: 证书生成模块，提供证书创建和服务器信息获取功能，**仅用于开发环境，不应包含在生产部署中**
+- **carlos-spring-boot-starter-license-verify**: 证书验证模块，提供证书安装、验证和卸载功能，**应包含在生产部署中**
 
-## License 服务器校验参数
+## 快速开始
 
-# 证书创建原理
+### 1. 生成环境（证书生成服务）
 
-## 使用 keytool 生成公私钥证书库
+用于生成和管理客户许可证，应部署在安全的内部环境。
 
-例如：私钥库密码为 priwd123456，公钥库密码为 pubwd123456，生成步骤如下：
+**添加依赖：**
 
+```xml
+<dependency>
+    <groupId>com.carlos.license</groupId>
+    <artifactId>carlos-spring-boot-starter-license-generate</artifactId>
+    <version>${carlos.version}</version>
+</dependency>
 ```
+
+**配置文件（application.yml）：**
+
+```yaml
+carlos:
+  license:
+    generate:
+      enabled: true
+      file-path: /data/license  # 证书文件存储路径
+```
+
+### 2. 验证环境（客户部署）
+
+用于验证许可证的有效性，应包含在交付给客户的应用中。
+
+**添加依赖：**
+
+```xml
+<dependency>
+    <groupId>com.carlos.license</groupId>
+    <artifactId>carlos-spring-boot-starter-license-verify</artifactId>
+    <version>${carlos.version}</version>
+</dependency>
+```
+
+**配置文件（application.yml）：**
+
+```yaml
+carlos:
+  license:
+    verify:
+      enabled: true
+      subject: your-app-name                          # 证书主题（应用名称）
+      public-alias: publicCert                        # 公钥别名
+      store-pass: pubwd123456                         # 公钥库密码
+      license-path: /data/license/license.lic         # 证书文件路径
+      public-keys-store-path: /data/license/publicCerts.keystore  # 公钥库路径
+      validate-contents:                              # 验证内容（可选）
+        - IP                                          # 验证 IP 地址
+        - MAC                                         # 验证 MAC 地址
+        - CPU                                         # 验证 CPU 序列号
+        - MAIN_BOARD                                  # 验证主板序列号
+```
+
+## 证书生成
+
+### 步骤 1: 生成公私钥证书库
+
+使用 JDK 自带的 `keytool` 工具生成公私钥对。
+
+```bash
 # 1. 生成私钥库
-# validity：私钥的有效期（天）
-# alias：私钥别称
-# keystore：私钥库文件名称（生成在当前目录）
-# storepass：私钥库密码（获取 keystore 信息所需的密码，密钥库口令）
-# keypass：别名条目的密码(密钥口令)
-keytool -genkeypair -keysize 1024 -validity 3650 -alias "privateKey" -keystore "privateKeys.keystore" -storepass "pubwd123456" -keypass "priwd123456" -dname "CN=localhost, OU=localhost, O=localhost, L=SH, ST=SH, C=CN"
+# validity: 私钥的有效期（天）
+# alias: 私钥别称
+# keystore: 私钥库文件名称
+# storepass: 私钥库密码（密钥库口令）
+# keypass: 别名条目的密码（密钥口令）
+keytool -genkeypair \
+  -keysize 1024 \
+  -validity 3650 \
+  -alias "privateKey" \
+  -keystore "privateKeys.keystore" \
+  -storepass "pubwd123456" \
+  -keypass "priwd123456" \
+  -dname "CN=localhost, OU=localhost, O=localhost, L=SH, ST=SH, C=CN"
 
-# 2. 把私钥库内的公钥导出到一个文件当中
-# alias：私钥别称
-# keystore：私钥库的名称（在当前目录查找）
-# storepass：私钥库的密码
-# file：证书名称
-keytool -exportcert -alias "privateKey" -keystore "privateKeys.keystore" -storepass "pubwd123456" -file "certfile.cer"
+# 2. 导出公钥证书
+keytool -exportcert \
+  -alias "privateKey" \
+  -keystore "privateKeys.keystore" \
+  -storepass "pubwd123456" \
+  -file "certfile.cer"
 
-# 3.再把这个证书文件导入到公钥库，certfile.cer 没用了可以删掉了
-# alias：公钥名称
-# file：证书名称
-# keystore：公钥文件名称
-# storepass：公钥库密码
-keytool -import -alias "publicCert" -file "certfile.cer" -keystore "publicCerts.keystore" -storepass "pubwd123456"
+# 3. 导入公钥到公钥库
+keytool -import \
+  -alias "publicCert" \
+  -file "certfile.cer" \
+  -keystore "publicCerts.keystore" \
+  -storepass "pubwd123456"
+
+# 4. 删除临时证书文件
+rm certfile.cer
 ```
 
-## 项目配置
+**生成的文件：**
 
-```
-server:
-  port: 8080
-# License 相关配置
-license:
-  # 主题
-  subject: license_demo
-  # 公钥别称
-  publicAlias: publicCert
-  # 访问公钥的密码
-  storePass: pubwd123456
-  # license 位置
-  licensePath: E:/licenseTest/license.lic
-  # licensePath: /root/license-test/license.lic
-  # 公钥位置
-  publicKeysStorePath: E:/licenseTest/publicCerts.keystore
-  # publicKeysStorePath: /root/license-test/publicCerts.keystore
+- `privateKeys.keystore`: 私钥库（用于证书生成，需妥善保管）
+- `publicCerts.keystore`: 公钥库（用于证书验证，交付给客户）
+
+### 步骤 2: 获取客户服务器硬件信息
+
+调用 API 获取客户服务器的硬件指纹信息。
+
+**请求示例：**
+
+```bash
+curl -X GET "http://localhost:8080/license/getServerInfos?osType=LINUX"
 ```
 
-## 为客户生成 license 文件
+**响应示例：**
 
-1. 将项目打包，然后部署到客户服务器（这里以一台 linux 服务器为例演示）,项目配置文件如下：
-
-```
-server:
-  port: 8080
-# License 相关配置
-license:
-  # 主题
-  subject: license_demo
-  # 公钥别称
-  publicAlias: publicCert
-  # 访问公钥的密码
-  storePass: pubwd123456
-  # license 位置
-  # licensePath: E:/licenseTest/license.lic
-  licensePath: /root/license-test/license.lic
-  # 公钥位置
-  # publicKeysStorePath: E:/licenseTest/publicCerts.keystore
-  publicKeysStorePath: /root/license-test/publicCerts.keystore
-```
-
-![image](./md/1.png)
-
-2. 可以看到第一次启动找不到证书文件，证书安装失败
-3. 通过调用前面所写的接口 ```/license/getServerInfos```，获取服务器硬件信息
-
-```
+```json
 {
-    "ipAddress": [
-        "10.42.1.0",
-        "10.101.1.4",
-        "10.42.1.1",
-        "172.17.0.1"
-    ],
-    "macAddress": [
-        "DE-9B-A2-3D-34-C0",
-        "7C-C3-85-5F-A7-E1",
-        "0A-58-0A-2A-01-01",
-        "02-42-3A-E2-79-21"
-    ],
-    "cpuSerial": "54 06 05 00 FF FB EB BF",
-    "mainBoardSerial": "2102311TUVCNJC000055"
+  "ipAddress": [
+    "10.42.1.0",
+    "10.101.1.4",
+    "10.42.1.1",
+    "172.17.0.1"
+  ],
+  "macAddress": [
+    "DE-9B-A2-3D-34-C0",
+    "7C-C3-85-5F-A7-E1",
+    "0A-58-0A-2A-01-01",
+    "02-42-3A-E2-79-21"
+  ],
+  "cpuSerial": "54 06 05 00 FF FB EB BF",
+  "mainBoardSerial": "2102311TUVCNJC000055"
 }
 ```
 
-![image](./md/2.png)
+### 步骤 3: 生成许可证文件
 
-3. 调用前面所写的接口 ```/license/generateLicense```，生成 license 文件
+使用获取的硬件信息生成许可证文件。
 
-```
-{
-    "subject":"license_demo",
-    "privateAlias":"privateKey",
-    "keyPass":"priwd123456",
-    "storePass":"pubwd123456",
-    "licensePath":"/root/license-test/license.lic",
-    "privateKeysStorePath":"/root/license-test/privateKeys.keystore",
-    "issuedTime":"2020-10-10 00:00:01",
-    "expiryTime":"2021-10-09 23:59:59",
-    "consumerType":"User",
-    "consumerAmount":1,
-    "description":"license demo",
-    "licenseCheckModel":{
-        "ipAddress":[
-            "10.42.1.0",
-            "10.101.1.4",
-            "10.42.1.1",
-            "172.17.0.1"
-        ],
-        "macAddress":[
-            "DE-9B-A2-3D-34-C0",
-            "7C-C3-85-5F-A7-E1",
-            "0A-58-0A-2A-01-01",
-            "02-42-3A-E2-79-21"
-        ],
-        "cpuSerial":"54 06 05 00 FF FB EB BF",
-        "mainBoardSerial":"2102311TUVCNJC000055"
+**请求示例：**
+
+```bash
+curl -X POST "http://localhost:8080/license/generate" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subject": "your-app-name",
+    "privateAlias": "privateKey",
+    "publicAlias": "publicCert",
+    "keyPass": "priwd123456",
+    "storePass": "pubwd123456",
+    "validity": "3650",
+    "issuedTime": "2024-01-01 00:00:00",
+    "expiryTime": "2025-12-31 23:59:59",
+    "consumerType": "User",
+    "consumerAmount": 1,
+    "description": "License for Customer A",
+    "identifier": {
+      "appName": "YourApp",
+      "orgUnit": "IT Department",
+      "org": "Your Company",
+      "city": "Shanghai",
+      "province": "Shanghai",
+      "country": "CN"
+    },
+    "licenseCheckModel": {
+      "ipAddress": ["10.42.1.0", "10.101.1.4"],
+      "macAddress": ["DE-9B-A2-3D-34-C0", "7C-C3-85-5F-A7-E1"],
+      "cpuSerial": "54 06 05 00 FF FB EB BF",
+      "mainBoardSerial": "2102311TUVCNJC000055"
     }
-}
+  }'
 ```
 
-![image](./md/3.png)
+**响应示例：**
 
-请求成功后会在设置的 licensePath 目录下生成一个 license.lic 文件
+```json
+"a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+```
 
-![image](./md/4.png)
+### 步骤 4: 下载许可证文件
 
-4. 重新启动服务，证书安装成功
+使用返回的 ID 下载生成的许可证压缩包。
 
-![image](./md/5.png)
+```bash
+curl -X GET "http://localhost:8080/license/download?id=a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
+  -o license.zip
+```
 
-# 证书有效性校验
+**压缩包内容：**
 
-为了方便调试，直接在本地运行了，验证证书有效性代码如下（实际生产中，需要在项目代码多处关键位置埋点，校验证书的有效性）：
+- `license.lic`: 许可证文件
+- `publicCerts.keystore`: 公钥库文件
+
+### 步骤 5: 部署到客户环境
+
+1. 将 `license.lic` 和 `publicCerts.keystore` 复制到客户服务器
+2. 配置应用的 `license-path` 和 `public-keys-store-path`
+3. 启动应用，证书将自动安装和验证
+
+## 证书验证
+
+### 自动验证
+
+证书验证模块会在应用启动时自动安装和验证证书。
+
+**验证流程：**
+
+1. 应用启动时，`LicenseVerify` Bean 初始化
+2. 调用 `installLicense()` 方法安装证书
+3. 验证证书的时间有效性
+4. 验证服务器硬件信息（IP、MAC、CPU、主板序列号）
+5. 验证通过则应用正常启动，否则抛出异常
+
+**日志示例：**
 
 ```
-package com.example.demo;
+INFO  c.c.l.v.LicenseVerify - 证书安装成功
+INFO  c.c.l.v.LicenseVerify - 证书验证通过
+```
 
-import license.com.carlos.LicenseVerify;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+### 手动验证
 
-@SpringBootTest
-class TrueLicenseApplicationTests {
-    private LicenseVerify licenseVerify;
+在代码中手动验证证书有效性。
+
+```java
+@Service
+public class YourService {
 
     @Autowired
-    public void setLicenseVerify(LicenseVerify licenseVerify) {
-        this.licenseVerify = licenseVerify;
-    }
+    private LicenseVerify licenseVerify;
 
-    @Test
-    void contextLoads() {
-        System.out.println("licese是否有效：" + licenseVerify.verify());
+    public void criticalOperation() {
+        // 在关键操作前验证证书
+        if (!licenseVerify.verify()) {
+            throw new ServiceException("许可证无效，操作被拒绝");
+        }
+
+        // 执行业务逻辑
+        // ...
     }
 }
 ```
 
-1. 在创建证书的情况下，运行证书校验单元测试，打印证书无效的信息
+### 验证失败场景
 
-![image](./md/6.png)
+证书验证会在以下情况失败：
 
-2. 直接将前文在服务器上生成的证书下载到本地，启动项目，打印证书无效的信息（安装证书前会校验，IP地址、MAC 地址、CPU
-   序列号等前文设置的校验参数，防止证书复制翻版）
+1. **证书文件不存在**: 未找到 `license.lic` 文件
+2. **公钥库不存在**: 未找到 `publicCerts.keystore` 文件
+3. **证书已过期**: 当前时间超过 `expiryTime`
+4. **证书未生效**: 当前时间早于 `issuedTime`
+5. **硬件信息不匹配**: 服务器的 IP、MAC、CPU 或主板序列号与证书中的不一致
+6. **证书被篡改**: 证书签名验证失败
 
-![image](./md/7.png)
+## API 接口
 
-3. 重复上述证书创建安装过程后，再次运行证书校验单元测试，证书有效，测试通过
+### 1. 获取服务器硬件信息
 
-![image](./md/8.png)
+**接口：** `GET /license/getServerInfos`
 
-# [参考源码](https://github.com/JCXTB/TrueLicense)
+**参数：**
 
-https://github.com/JCXTB/TrueLicense
+| 参数名    | 类型     | 必填 | 说明                            |
+|--------|--------|----|-------------------------------|
+| osType | String | 否  | 操作系统类型（LINUX/WINDOWS），不传则自动检测 |
+
+**响应：**
+
+```json
+{
+  "ipAddress": ["10.42.1.0", "10.101.1.4"],
+  "macAddress": ["DE-9B-A2-3D-34-C0", "7C-C3-85-5F-A7-E1"],
+  "cpuSerial": "54 06 05 00 FF FB EB BF",
+  "mainBoardSerial": "2102311TUVCNJC000055"
+}
+```
+
+### 2. 生成许可证
+
+**接口：** `POST /license/generate`
+
+**请求体：**
+
+```json
+{
+  "subject": "your-app-name",
+  "privateAlias": "privateKey",
+  "publicAlias": "publicCert",
+  "keyPass": "priwd123456",
+  "storePass": "pubwd123456",
+  "validity": "3650",
+  "issuedTime": "2024-01-01 00:00:00",
+  "expiryTime": "2025-12-31 23:59:59",
+  "consumerType": "User",
+  "consumerAmount": 1,
+  "description": "License description",
+  "identifier": {
+    "appName": "YourApp",
+    "orgUnit": "IT",
+    "org": "Company",
+    "city": "Shanghai",
+    "province": "Shanghai",
+    "country": "CN"
+  },
+  "licenseCheckModel": {
+    "ipAddress": ["10.42.1.0"],
+    "macAddress": ["DE-9B-A2-3D-34-C0"],
+    "cpuSerial": "54 06 05 00 FF FB EB BF",
+    "mainBoardSerial": "2102311TUVCNJC000055"
+  }
+}
+```
+
+**响应：** 返回文件 ID（用于下载）
+
+```json
+"a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+```
+
+### 3. 下载许可证文件
+
+**接口：** `GET /license/download`
+
+**参数：**
+
+| 参数名 | 类型     | 必填 | 说明            |
+|-----|--------|----|---------------|
+| id  | String | 是  | 生成证书时返回的文件 ID |
+
+**响应：** ZIP 压缩文件（包含 `license.lic` 和 `publicCerts.keystore`）
+
+## 配置说明
+
+### 证书生成模块配置
+
+```yaml
+carlos:
+  license:
+    generate:
+      enabled: true                    # 是否启用证书生成功能，默认 false
+      file-path: /data/license         # 证书文件存储路径（必填）
+```
+
+### 证书验证模块配置
+
+```yaml
+carlos:
+  license:
+    verify:
+      enabled: true                    # 是否启用证书验证，默认 true
+      subject: your-app-name           # 证书主题（应用名称，必填）
+      public-alias: publicCert         # 公钥别名（必填）
+      store-pass: pubwd123456          # 公钥库密码（必填）
+      license-path: /data/license/license.lic                    # 证书文件路径（必填）
+      public-keys-store-path: /data/license/publicCerts.keystore # 公钥库路径（必填）
+      validate-contents:               # 验证内容（可选，默认全部验证）
+        - IP                           # 验证 IP 地址
+        - MAC                          # 验证 MAC 地址
+        - CPU                          # 验证 CPU 序列号
+        - MAIN_BOARD                   # 验证主板序列号
+```
+
+**验证内容说明：**
+
+- `IP`: 验证服务器 IP 地址是否在许可证允许的列表中
+- `MAC`: 验证服务器 MAC 地址是否在许可证允许的列表中
+- `CPU`: 验证服务器 CPU 序列号是否匹配
+- `MAIN_BOARD`: 验证服务器主板序列号是否匹配
+
+如果不配置 `validate-contents`，默认验证所有硬件信息。
+
+## 安全注意事项
+
+### 1. 模块隔离
+
+**严格遵守以下原则：**
+
+- ✅ **生产环境**: 只包含 `carlos-spring-boot-starter-license-verify` 模块
+- ❌ **生产环境**: 绝不包含 `carlos-spring-boot-starter-license-generate` 模块
+- ✅ **开发环境**: 可以包含证书生成模块用于测试
+
+**原因：** 如果客户获得证书生成模块，可能自行签发证书，导致授权失效。
+
+### 2. 私钥保护
+
+- 私钥库文件（`privateKeys.keystore`）应妥善保管，不得泄露
+- 建议使用硬件安全模块（HSM）或密钥管理服务（KMS）存储私钥
+- 定期更换私钥和公钥对
+- 限制证书生成服务的访问权限
+
+### 3. 证书管理
+
+- 为每个客户生成独立的许可证文件
+- 记录每个许可证的生成时间、客户信息和硬件指纹
+- 定期审计许可证使用情况
+- 建立许可证撤销机制
+
+### 4. 硬件指纹验证
+
+- 根据实际需求选择验证内容（IP、MAC、CPU、主板）
+- IP 地址可能变化，建议配置多个允许的 IP
+- MAC 地址在虚拟化环境中可能不稳定
+- CPU 和主板序列号相对稳定，推荐使用
+
+### 5. 时间约束
+
+- 合理设置证书的生效时间和过期时间
+- 考虑时区差异，建议使用 UTC 时间
+- 提前通知客户证书即将过期
+
+### 6. 代码混淆
+
+- 建议对生产环境的 JAR 包进行代码混淆
+- 使用 ProGuard 或其他混淆工具保护验证逻辑
+- 在关键业务逻辑中多处埋点验证证书有效性
+
+## 常见问题
+
+### Q1: 证书安装失败，提示找不到文件
+
+**原因：** 配置的 `license-path` 或 `public-keys-store-path` 路径不正确。
+
+**解决方案：**
+
+1. 检查文件路径是否存在
+2. 检查应用是否有读取权限
+3. 使用绝对路径而非相对路径
+4. Linux 环境注意路径大小写
+
+### Q2: 证书验证失败，提示硬件信息不匹配
+
+**原因：** 服务器的硬件信息与证书中的不一致。
+
+**解决方案：**
+
+1. 重新获取服务器硬件信息
+2. 使用最新的硬件信息重新生成证书
+3. 如果 IP 地址经常变化，配置多个允许的 IP
+4. 考虑减少验证内容（如只验证 CPU 和主板）
+
+### Q3: 虚拟机环境下 MAC 地址不稳定
+
+**原因：** 虚拟机重启后 MAC 地址可能变化。
+
+**解决方案：**
+
+1. 配置虚拟机使用固定 MAC 地址
+2. 或者不验证 MAC 地址，只验证 CPU 和主板序列号
+3. 在配置中移除 `MAC` 验证项
+
+### Q4: 如何支持多台服务器使用同一个证书
+
+**方案 1：** 在证书中配置多台服务器的硬件信息（推荐）
+
+```json
+{
+  "licenseCheckModel": {
+    "ipAddress": ["192.168.1.10", "192.168.1.11", "192.168.1.12"],
+    "macAddress": ["AA-BB-CC-DD-EE-01", "AA-BB-CC-DD-EE-02"],
+    "cpuSerial": "CPU1|CPU2|CPU3",
+    "mainBoardSerial": "MB1|MB2|MB3"
+  }
+}
+```
+
+**方案 2：** 为每台服务器生成独立证书
+
+### Q5: 证书过期后如何续期
+
+**解决方案：**
+
+1. 使用相同的硬件信息生成新证书
+2. 更新 `expiryTime` 为新的过期时间
+3. 将新证书文件替换旧证书文件
+4. 重启应用使新证书生效
+
+### Q6: 如何在代码中多处验证证书
+
+**建议：** 在关键业务逻辑中埋点验证
+
+```java
+@Aspect
+@Component
+public class LicenseAspect {
+
+    @Autowired
+    private LicenseVerify licenseVerify;
+
+    @Around("@annotation(com.carlos.license.RequireLicense)")
+    public Object checkLicense(ProceedingJoinPoint joinPoint) throws Throwable {
+        if (!licenseVerify.verify()) {
+            throw new ServiceException("许可证无效");
+        }
+        return joinPoint.proceed();
+    }
+}
+```
+
+### Q7: 如何获取 Windows 服务器的硬件信息
+
+**方法 1：** 使用提供的 API 接口
+
+```bash
+curl -X GET "http://localhost:8080/license/getServerInfos?osType=WINDOWS"
+```
+
+**方法 2：** 使用 Windows 命令
+
+```cmd
+# 获取 IP 地址
+ipconfig
+
+# 获取 MAC 地址
+getmac
+
+# 获取 CPU 序列号
+wmic cpu get processorid
+
+# 获取主板序列号
+wmic baseboard get serialnumber
+```
+
+### Q8: 如何获取 Linux 服务器的硬件信息
+
+**方法 1：** 使用提供的 API 接口
+
+```bash
+curl -X GET "http://localhost:8080/license/getServerInfos?osType=LINUX"
+```
+
+**方法 2：** 使用 Linux 命令
+
+```bash
+# 获取 IP 地址
+ip addr show
+
+# 获取 MAC 地址
+ip link show
+
+# 获取 CPU 序列号
+dmidecode -t processor | grep ID
+
+# 获取主板序列号
+dmidecode -t baseboard | grep Serial
+```
+
+## 技术架构
+
+### 核心依赖
+
+- **TrueLicense 1.33**: 开源的 Java 许可证管理框架
+- **Spring Boot 3.5.9**: 自动配置和依赖注入
+- **Hutool**: 系统信息获取和工具类
+
+### 工作原理
+
+1. **证书生成**:
+    - 使用 RSA 非对称加密算法生成公私钥对
+    - 使用私钥对许可证内容进行签名
+    - 将硬件信息和时间约束封装到许可证中
+
+2. **证书验证**:
+    - 使用公钥验证许可证签名
+    - 检查证书的时间有效性
+    - 获取当前服务器的硬件信息并与证书中的进行比对
+    - 所有验证通过则返回 true
+
+### 扩展性
+
+如果需要自定义验证逻辑，可以继承 `CustomLicenseManager` 类并重写验证方法：
+
+```java
+public class MyLicenseManager extends CustomLicenseManager {
+
+    public MyLicenseManager(LicenseParam param) {
+        super(param);
+    }
+
+    @Override
+    protected synchronized void validate(LicenseContent content)
+            throws LicenseContentException {
+        super.validate(content);
+
+        // 添加自定义验证逻辑
+        // ...
+    }
+}
+```
+
+## 参考资料
+
+- [TrueLicense 官方文档](http://truelicense.java.net/)
+- [JDK Keytool 文档](https://docs.oracle.com/en/java/javase/17/docs/specs/man/keytool.html)
+- [Carlos Framework 文档](../../../CLAUDE.md)
+
+## 许可证
+
+本组件遵循 Carlos Framework 的许可协议，仅供内部使用。
+
+---
+
+**维护者**: Carlos Team
+**最后更新**: 2026-02-01
