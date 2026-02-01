@@ -1,0 +1,112 @@
+package com.carlos.oss.core;
+
+import cn.hutool.core.util.StrUtil;
+import com.carlos.oss.config.OssProperties;
+import com.carlos.oss.exception.OssException;
+import com.carlos.oss.model.OssFile;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+import java.util.List;
+
+/**
+ * OSS 模板抽象类
+ * 提供通用方法实现和默认行为
+ *
+ * @author carlos
+ * @date 2026-02-01
+ */
+@Slf4j
+public abstract class AbstractOssTemplate implements OssTemplate {
+
+    protected final OssProperties properties;
+
+    protected AbstractOssTemplate(OssProperties properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * 获取默认桶名称
+     */
+    protected String getDefaultBucket() {
+        String bucketName = properties.getBucketName();
+        if (StrUtil.isBlank(bucketName)) {
+            throw new OssException("Default bucket name is not configured");
+        }
+        return bucketName;
+    }
+
+    /**
+     * 确保桶存在
+     */
+    protected void ensureBucketExists(String bucketName) {
+        if (properties.isAutoCreateBucket() && !bucketExists(bucketName)) {
+            log.info("Bucket [{}] does not exist, creating...", bucketName);
+            createBucket(bucketName);
+        }
+    }
+
+    @Override
+    public OssFile putObject(String objectName, InputStream inputStream, String contentType) {
+        return putObject(getDefaultBucket(), objectName, inputStream, contentType);
+    }
+
+    @Override
+    public InputStream getObject(String objectName) {
+        return getObject(getDefaultBucket(), objectName);
+    }
+
+    @Override
+    public void deleteObject(String objectName) {
+        deleteObject(getDefaultBucket(), objectName);
+    }
+
+    @Override
+    public List<OssFile> listObjects(String prefix) {
+        return listObjects(getDefaultBucket(), prefix);
+    }
+
+    @Override
+    public String getObjectUrl(String objectName) {
+        return getObjectUrl(getDefaultBucket(), objectName);
+    }
+
+    /**
+     * 构建完整的访问URL
+     */
+    protected String buildUrl(String bucketName, String objectName) {
+        String endpoint = StrUtil.isNotBlank(properties.getPublicEndpoint())
+                ? properties.getPublicEndpoint()
+                : properties.getEndpoint();
+
+        if (StrUtil.isBlank(endpoint)) {
+            throw new OssException("Endpoint is not configured");
+        }
+
+        // 确保endpoint以/结尾
+        if (!endpoint.endsWith("/")) {
+            endpoint += "/";
+        }
+
+        // 确保objectName不以/开头
+        if (objectName.startsWith("/")) {
+            objectName = objectName.substring(1);
+        }
+
+        return endpoint + bucketName + "/" + objectName;
+    }
+
+    /**
+     * 规范化对象名称
+     */
+    protected String normalizeObjectName(String objectName) {
+        if (StrUtil.isBlank(objectName)) {
+            throw new OssException("Object name cannot be blank");
+        }
+        // 移除开头的斜杠
+        while (objectName.startsWith("/")) {
+            objectName = objectName.substring(1);
+        }
+        return objectName;
+    }
+}
