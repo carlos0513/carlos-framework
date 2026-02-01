@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <artifactId>carlos-spring-boot-starters</artifactId>
+        <artifactId>carlos-spring-boot-parent</artifactId>
         <groupId>com.carlos</groupId>
         <version>${revision}</version>
+        <relativePath>../carlos-spring-boot-parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>

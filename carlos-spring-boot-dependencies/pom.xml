@@ -353,12 +353,6 @@
 
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-spring-boot-starter-redisson</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.carlos</groupId>
                 <artifactId>carlos-excel</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -810,19 +804,19 @@
                 <repository>
                     <id>releases</id>
                     <name>Nexus Release Repository</name>
-                    <url>http://zcarlos.com:18081/nexus/repository/maven-releases/</url>
+                    <url>http://zcarlos.com:8081/nexus/repository/maven-releases/</url>
                 </repository>
                 <snapshotRepository>
                     <id>snapshots</id>
                     <name>Nexus Snapshot Repository</name>
-                    <url>http://zcarlos.com:18081/nexus/repository/maven-snapshots/</url>
+                    <url>http://zcarlos.com:8081/nexus/repository/maven-snapshots/</url>
                 </snapshotRepository>
             </distributionManagement>
 
             <repositories>
                 <repository>
                     <id>nexus</id>
-                    <url>http://zcarlos.com:18081/nexus/repository/maven-public/</url>
+                    <url>http://zcarlos.com:8081/nexus/repository/maven-public/</url>
                     <releases>
                         <enabled>true</enabled>
                         <updatePolicy>always</updatePolicy>
@@ -836,7 +830,7 @@
             <pluginRepositories>
                 <pluginRepository>
                     <id>nexus</id>
-                    <url>http://zcarlos.com:18081/nexus/repository/maven-public/</url>
+                    <url>http://zcarlos.com:8081/nexus/repository/maven-public/</url>
                     <releases>
                         <enabled>true</enabled>
                         <updatePolicy>always</updatePolicy>

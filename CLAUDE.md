@@ -20,7 +20,7 @@ This is an internal framework/scaffold project designed to accelerate applicatio
 mvn clean install
 
 # Build with specific profile (internal Nexus repository)
-mvn clean install -P carlos-public    # Public server: zcarlos.com:18081
+mvn clean install -P carlos-public    # Public server: zcarlos.com:8081
 mvn clean install -P carlos-private   # Private server: 192.168.1.50:10004
 mvn clean install -P carlos-yanfa     # Dev server: 192.168.20.145:8081
 

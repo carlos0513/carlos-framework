@@ -148,7 +148,7 @@ carlos-frame3/
 mvn clean install
 
 # 指定 Nexus 仓库
-mvn clean install -P carlos-public    # 公网: zcarlos.com:18081
+mvn clean install -P carlos-public    # 公网: zcarlos.com:8081
 mvn clean install -P carlos-private   # 内网: 192.168.1.50:10004
 mvn clean install -P carlos-yanfa     # 研发: 192.168.20.145:8081
 

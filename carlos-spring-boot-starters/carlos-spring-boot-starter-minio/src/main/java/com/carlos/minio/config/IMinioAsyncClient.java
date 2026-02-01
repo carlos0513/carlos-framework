@@ -44,8 +44,8 @@ public class IMinioAsyncClient extends MinioAsyncClient {
      */
     public String getPresignedObjectUrl(GetPresignedObjectUrlArgs args, String endpoint)
             throws InsufficientDataException, InternalException,
-                   InvalidKeyException, IOException, NoSuchAlgorithmException,
-                   XmlParserException, ExecutionException, InterruptedException {
+            InvalidKeyException, IOException, NoSuchAlgorithmException,
+            XmlParserException, ExecutionException, InterruptedException {
 
         checkArgs(args);
 

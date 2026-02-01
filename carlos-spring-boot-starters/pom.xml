@@ -3,54 +3,44 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.carlos</groupId>
-        <artifactId>carlos-spring-boot-framework</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <artifactId>carlos-spring-boot-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../carlos-spring-boot-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>${revision}</version>
-
-    <modules>
-        <module>carlos-utils</module>
-        <module>carlos-core</module>
-        <module>carlos-spring-boot-starter-mybatis</module>
-        <module>carlos-spring-boot-starter-mongodb</module>
-        <module>carlos-spring-boot-starter-openapi</module>
-        <module>carlos-spring-boot-starter-docking</module>
-        <module>carlos-spring-boot-starter-log</module>
-        <module>carlos-spring-boot-starter-springboot</module>
-        <module>carlos-spring-boot-starter-springcloud</module>
-        <module>carlos-spring-boot-starter-json</module>
-        <module>carlos-spring-boot-starter-minio</module>
-        <module>carlos-spring-boot-starter-redisson</module>
-        <module>carlos-spring-boot-starter-snowflake</module>
-        <module>carlos-spring-boot-starter-redis</module>
-        <module>carlos-spring-boot-starter-datascope</module>
-        <module>carlos-excel</module>
-        <module>carlos-spring-boot-starter-encrypt</module>
-        <module>carlos-spring-boot-starter-mq</module>
-        <module>carlos-spring-boot-starter-oauth2</module>
-        <module>carlos-test</module>
-        <module>carlos-magicapi</module>
-        <module>carlos-spring-boot-starter-sms</module>
-        <module>carlos-spring-boot-starter-datacenter</module>
-        <module>carlos-spring-boot-starter-gateway</module>
-        <module>carlos-tools</module>
-        <module>carlos-spring-boot-starter-apm</module>
-        <module>carlos-license</module>
-        <module>carlos-spring-boot-starter-disruptor</module>
-        <module>carlos-spring-boot-starter-flowable</module>
-    </modules>
-
-    <properties>
-        <revision>3.0.0-SNAPSHOT</revision>
-    </properties>
 
     <artifactId>carlos-spring-boot-starters</artifactId>
     <packaging>pom</packaging>
 
+    <name>carlos-spring-boot-starters</name>
     <description>
-        carlos通用组件，类似starter
+        carlos Spring Boot Starters集合 - 作为starters子模块的父POM
     </description>
+
+    <modules>
+        <module>carlos-spring-boot-starter-apm</module>
+        <module>carlos-spring-boot-starter-datacenter</module>
+        <module>carlos-spring-boot-starter-datascope</module>
+        <module>carlos-spring-boot-starter-disruptor</module>
+        <module>carlos-spring-boot-starter-docking</module>
+        <module>carlos-spring-boot-starter-encrypt</module>
+        <module>carlos-spring-boot-starter-flowable</module>
+        <module>carlos-spring-boot-starter-gateway</module>
+        <module>carlos-spring-boot-starter-json</module>
+        <module>carlos-spring-boot-starter-log</module>
+        <module>carlos-spring-boot-starter-minio</module>
+        <module>carlos-spring-boot-starter-mongodb</module>
+        <module>carlos-spring-boot-starter-mq</module>
+        <module>carlos-spring-boot-starter-mybatis</module>
+        <module>carlos-spring-boot-starter-oauth2</module>
+        <module>carlos-spring-boot-starter-openapi</module>
+        <module>carlos-spring-boot-starter-oss</module>
+        <module>carlos-spring-boot-starter-redis</module>
+        <module>carlos-spring-boot-starter-sms</module>
+        <module>carlos-spring-boot-starter-snowflake</module>
+        <module>carlos-spring-boot-starter-springboot</module>
+        <module>carlos-spring-boot-starter-springcloud</module>
+    </modules>
 
     <dependencies>
         <dependency>
@@ -59,15 +49,4 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.carlos</groupId>
-                <artifactId>carlos-spring-boot-dependencies</artifactId>
-                <version>${revision}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

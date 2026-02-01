@@ -7,6 +7,7 @@
         <groupId>com.carlos</groupId>
         <artifactId>carlos-spring-boot-starters</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>carlos-spring-boot-starter-mongodb</artifactId>
