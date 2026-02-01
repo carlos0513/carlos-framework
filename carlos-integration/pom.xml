@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.carlos</groupId>
+        <artifactId>carlos-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../carlos-parent/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>carlos-integration</artifactId>
+    <packaging>pom</packaging>
+
+    <name>carlos-integration</name>
+    <description>
+        Carlos 第三方集成模块 - 包含许可证、工具等独立功能
+    </description>
+
+    <modules>
+        <module>carlos-license</module>
+        <module>carlos-tools</module>
+    </modules>
+</project>

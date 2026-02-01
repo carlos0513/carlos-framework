@@ -4,10 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-carlos-frame3 (renamed to carlos-spring-boot) is a Java-based microservices framework built on Spring Boot 3.5.9 (JDK 17) and Spring Cloud Alibaba. The project is organized as a multi-module Maven build with two main directories:
+**Carlos Framework** is a Java-based microservices framework built on Spring Boot 3.5.9 (JDK 17) and Spring Cloud Alibaba. The project is organized as a multi-module Maven build with a clear layered architecture:
 
-- **carlos-spring-boot**: The actual framework implementation - a collection of 30 reusable component modules
-- **carlos-spring-boot-dependencies**: Centralized dependency management with version definitions
+- **carlos-dependencies**: Centralized dependency version management (BOM)
+- **carlos-parent**: Unified parent POM with build configuration and plugin management
+- **carlos-commons**: Framework-agnostic common utilities (core, utils, excel)
+- **carlos-spring-boot**: Spring Boot integration layer with 22 starter modules
+- **carlos-integration**: Third-party integrations (license, tools)
+- **carlos-samples**: Example applications and test modules
 
 This is an internal framework/scaffold project designed to accelerate application development by providing pre-built integrations and utilities.
 
@@ -21,11 +25,14 @@ mvn clean install
 
 # Build with specific profile (internal Nexus repository)
 mvn clean install -P carlos-public    # Public server: zcarlos.com:8081
-mvn clean install -P carlos-private   # Private server: 192.168.1.50:10004
-mvn clean install -P carlos-yanfa     # Dev server: 192.168.20.145:8081
+mvn clean install -P carlos-private   # Private server: 192.168.3.30:8081
 
 # Build a specific module
-cd carlos-spring-boot/carlos-core
+cd carlos-commons/carlos-core
+mvn clean install
+
+# Build Spring Boot starters
+cd carlos-spring-boot
 mvn clean install
 
 # Deploy to Nexus
@@ -65,68 +72,106 @@ mvn help:effective-pom
 
 ### Module Structure
 
-The framework follows a parent-child Maven structure with version inheritance:
+The framework follows a layered architecture with clear separation of concerns:
 
 ```
-carlos-spring-boot/
-├── pom.xml                    # Root aggregator (v2.0.0)
-├── carlos-spring-boot/        # Framework implementation (30 modules)
-│   ├── pom.xml               # Parent POM with dependency management
-│   └── [30 component modules]
-└── carlos-spring-boot-dependencies/  # Centralized dependency versions
-    └── pom.xml
+carlos-framework/                          # Root aggregator POM
+├── carlos-dependencies/                   # Dependency version management (BOM)
+├── carlos-parent/                         # Parent POM (build config, plugins)
+├── carlos-commons/                        # Framework-agnostic utilities
+│   ├── carlos-core/                      # Core abstractions, exceptions, pagination
+│   ├── carlos-utils/                     # Common utility functions
+│   └── carlos-excel/                     # Excel processing utilities
+├── carlos-spring-boot/                    # Spring Boot integration layer
+│   ├── carlos-spring-boot-starter-apm/
+│   ├── carlos-spring-boot-starter-redis/
+│   ├── carlos-spring-boot-starter-mybatis/
+│   └── ... (22 starters total)
+├── carlos-integration/                    # Third-party integrations
+│   ├── carlos-license/                   # Software licensing (TrueLicense)
+│   │   ├── carlos-license-core/
+│   │   ├── carlos-spring-boot-starter-license-generate/
+│   │   └── carlos-spring-boot-starter-license-verify/
+│   └── carlos-tools/                     # GUI tools (code generator)
+└── carlos-samples/                        # Examples and tests
+    └── carlos-test/                      # Test application
 ```
+
+**Build Order:**
+
+1. carlos-dependencies (BOM)
+2. carlos-parent (parent POM)
+3. carlos-commons (3 modules)
+4. carlos-spring-boot (22 modules)
+5. carlos-integration (5 modules)
+6. carlos-samples (1 module)
 
 ### Key Component Modules
 
-**Core Infrastructure:**
+**Commons Layer (Framework-agnostic):**
 
 - `carlos-core`: Base abstractions, annotations, AOP, exceptions, pagination, response wrappers
-- `carlos-utils`: Common utilities and helper functions
-- `carlos-springboot`: Spring Boot autoconfiguration and starter support
-- `carlos-springcloud`: Spring Cloud Alibaba integrations (Nacos, Sentinel, Gateway)
+- `carlos-utils`: Common utilities and helper functions (tree utils, HTTP client)
+- `carlos-excel`: Excel import/export using Apache POI 5.2.5 and EasyExcel
 
-**Data Access:**
+**Spring Boot Integration Layer:**
 
-- `carlos-mybatis`: MyBatis-Plus integration with multi-datasource support (Dynamic Datasource 3.6.0)
-- `carlos-mongodb`: MongoDB integration
-- `carlos-redis`: Redis caching with Lettuce
-- `carlos-redisson`: Redisson distributed lock and cache support
-- `carlos-datascope`: Data permission/scope control
+*Core Infrastructure:*
 
-**Integration & Communication:**
+- `carlos-spring-boot-starter-springboot`: Spring Boot autoconfiguration and starter support
+- `carlos-spring-boot-starter-springcloud`: Spring Cloud Alibaba integrations (Nacos, Sentinel)
+- `carlos-spring-boot-starter-gateway`: API Gateway utilities for Spring Cloud Gateway
+- `carlos-spring-boot-starter-json`: JSON serialization (Fastjson 2.0.60)
 
-- `carlos-gateway`: API Gateway utilities for Spring Cloud Gateway
-- `carlos-openapi`: OpenAPI/Swagger documentation support (Knife4j)
-- `carlos-docking`: Third-party integration framework (DingTalk, RongZhengTong, etc.)
-- `carlos-mq`: Message queue abstractions
-- `carlos-datacenter`: Data center integration/synchronization
+*Data Access:*
 
-**Security & Authentication:**
+- `carlos-spring-boot-starter-mybatis`: MyBatis-Plus integration with multi-datasource support
+- `carlos-spring-boot-starter-mongodb`: MongoDB integration
+- `carlos-spring-boot-starter-redis`: Redis + Redisson + Caffeine (unified caching solution)
+- `carlos-spring-boot-starter-datascope`: Data permission/scope control
 
-- `carlos-encrypt`: Encryption utilities (SM2, SM4 national cryptography algorithms)
-- `carlos-license`: TrueLicense-based software licensing system (3 sub-modules: core, generate, verify)
-- `carlos-oauth2`: OAuth2 authentication and authorization (Spring Security OAuth2 Authorization Server)
+*Storage & Messaging:*
 
-**Observability:**
+- `carlos-spring-boot-starter-minio`: MinIO object storage integration
+- `carlos-spring-boot-starter-oss`: OSS (Object Storage Service) abstraction
+- `carlos-spring-boot-starter-mq`: Message queue abstractions
 
-- `carlos-log`: Logging enhancements
-- `carlos-apm`: APM integration (SkyWalking 9.7.0, Sleuth)
+*Security & Authentication:*
 
-**Utilities:**
+- `carlos-spring-boot-starter-encrypt`: Encryption utilities (SM2, SM4 national cryptography)
+- `carlos-spring-boot-starter-oauth2`: OAuth2 authentication and authorization
 
-- `carlos-excel`: Excel import/export using Apache POI 5.2.5
-- `carlos-json`: JSON serialization (Fastjson 2.0.60)
-- `carlos-minio`: MinIO object storage integration
-- `carlos-sms`: SMS sending abstraction with multi-provider support
-- `carlos-snowflake`: Distributed ID generation
+*Integration:*
+
+- `carlos-spring-boot-starter-docking`: Third-party integration framework (DingTalk, RongZhengTong)
+- `carlos-spring-boot-starter-datacenter`: Data center integration/synchronization
+- `carlos-spring-boot-starter-sms`: SMS sending abstraction with multi-provider support
+
+*Observability:*
+
+- `carlos-spring-boot-starter-log`: Logging enhancements
+- `carlos-spring-boot-starter-apm`: APM integration (SkyWalking 9.5.0)
+
+*Utilities:*
+
+- `carlos-spring-boot-starter-openapi`: OpenAPI/Swagger documentation support (Knife4j)
+- `carlos-spring-boot-starter-snowflake`: Distributed ID generation
+- `carlos-spring-boot-starter-flowable`: Flowable workflow engine integration
+- `carlos-spring-boot-starter-disruptor`: Disruptor high-performance queue component
+
+**Integration Layer:**
+
+- `carlos-license`: TrueLicense-based software licensing system (3 sub-modules)
+    - `carlos-license-core`: Core licensing functionality
+    - `carlos-spring-boot-starter-license-generate`: License generation (dev only)
+    - `carlos-spring-boot-starter-license-verify`: License verification (production)
 - `carlos-tools`: GUI desktop tools (code generator, project scaffolding, Swing-based)
-- `carlos-flowable`: Flowable workflow engine integration
-- `carlos-magicapi`: Magic API integration
-- `carlos-test`: Test utilities and examples
-- `carlos-disruptor`: Disruptor high-performance queue component
 
-### Technology Stack (from carlos-spring-boot-dependencies/pom.xml)
+**Samples:**
+
+- `carlos-test`: Test application demonstrating framework usage
+
+### Technology Stack (from carlos-dependencies/pom.xml)
 
 | Component | Version | Notes |
 |-----------|---------|-------|
@@ -145,7 +190,13 @@ carlos-spring-boot/
 
 ### Dependency Version Management
 
-The parent POM (`carlos-spring-boot/pom.xml`) uses the `${revision}` placeholder pattern (currently `3.0.0-SNAPSHOT`) with the `flatten-maven-plugin` to manage versions centrally. All child modules inherit this version.
+The framework uses a centralized dependency management approach:
+
+1. **carlos-dependencies**: Defines all dependency versions using `<dependencyManagement>`
+2. **carlos-parent**: Imports carlos-dependencies BOM and provides build configuration
+3. **All modules**: Inherit from carlos-parent and reference dependencies without versions
+
+The `${revision}` placeholder pattern (currently `3.0.0-SNAPSHOT`) with the `flatten-maven-plugin` manages versions centrally. All child modules inherit this version.
 
 ### Configuration Patterns
 
@@ -176,11 +227,11 @@ carlos:
 
 ### Licensing Module Architecture
 
-The `carlos-license` module is structured for security:
+The `carlos-license` module (located in `carlos-integration/`) is structured for security:
 
 - `carlos-license-core`: Shared models and abstractions
-- `carlos-license-generate`: Certificate generation (should NOT be included in production deployments)
-- `carlos-license-verify`: Certificate verification (include this in applications)
+- `carlos-spring-boot-starter-license-generate`: Certificate generation (should NOT be included in production deployments)
+- `carlos-spring-boot-starter-license-verify`: Certificate verification (include this in applications)
 
 Uses TrueLicense to validate hardware fingerprints (IP, MAC, CPU serial, mainboard serial) and time constraints.
 
@@ -188,28 +239,63 @@ Uses TrueLicense to validate hardware fingerprints (IP, MAC, CPU serial, mainboa
 
 ### Adding New Modules
 
+**For Spring Boot Starters:**
 1. Create module under `carlos-spring-boot/`
 2. Add `<module>` entry to `carlos-spring-boot/pom.xml`
 3. Set parent to `carlos-spring-boot` with version `${revision}`
-4. Add dependency management entry in parent POM if the module will be consumed by others
-5. Follow naming convention: `carlos-{function}`
+4. Follow naming convention: `carlos-spring-boot-starter-{function}`
+5. Add dependency management entry in `carlos-dependencies/pom.xml`
+
+**For Common Utilities:**
+
+1. Create module under `carlos-commons/`
+2. Add `<module>` entry to `carlos-commons/pom.xml`
+3. Set parent to `carlos-commons` with version `${revision}`
+4. Follow naming convention: `carlos-{function}`
+5. Ensure no Spring Boot dependencies (keep it framework-agnostic)
+
+**For Third-party Integrations:**
+
+1. Create module under `carlos-integration/`
+2. Add `<module>` entry to `carlos-integration/pom.xml`
+3. Set parent to `carlos-parent` with version `${revision}`
 
 ### Module Dependencies
 
-- Core modules (`carlos-core`, `carlos-utils`) are foundational and can be used everywhere
-- Spring Boot modules should depend on `carlos-springboot`
-- Spring Cloud modules should depend on `carlos-springcloud`
+**Dependency Rules:**
+
+- Commons modules (`carlos-core`, `carlos-utils`, `carlos-excel`) are foundational and framework-agnostic
+- Spring Boot starters can depend on commons modules
+- Spring Boot starters should depend on `carlos-spring-boot-starter-springboot` for base configuration
+- Spring Cloud starters should depend on `carlos-spring-boot-starter-springcloud`
+- Integration modules can depend on both commons and Spring Boot starters
 - Avoid circular dependencies between modules
+
+**Layering:**
+
+```
+carlos-samples (test apps)
+    ↓
+carlos-integration (license, tools)
+    ↓
+carlos-spring-boot (22 starters)
+    ↓
+carlos-commons (core, utils, excel)
+    ↓
+carlos-parent (build config)
+    ↓
+carlos-dependencies (BOM)
+```
 
 ### Code Generation Tools
 
-The `carlos-tools` module provides a Swing-based GUI for:
+The `carlos-tools` module (located in `carlos-integration/`) provides a Swing-based GUI for:
 - Database code generation (MyBatis/MongoDB/Elasticsearch from MySQL schema)
 - Project scaffolding
 - Encryption utilities
 - GitLab integration
 
-Run with: `ToolsApplication.start()` method
+Run with: `com.carlos.tool.ToolsApplication.main()` method
 
 ### Encryption Standards
 
@@ -223,17 +309,20 @@ Resource filtering is enabled for `application*.yml/yaml/properties` and `bootst
 
 - Unit tests: `*Test.java` in `src/test/java` (currently skipped in build)
 - Integration tests: `*IT.java` (use maven-failsafe-plugin)
-- Test configuration in `carlos-test` module demonstrates framework usage
+- Test configuration in `carlos-samples/carlos-test` module demonstrates framework usage
 
 ## Important Notes
 
-- **Not a Git Repository**: The root directory is not a git repository (only subdirectories have `.git`)
-- **Multi-Profile Support**: Three Nexus repository profiles exist for different deployment environments
+- **Git Repository**: The root directory is a git repository
+- **Multi-Profile Support**: Two Nexus repository profiles exist for different deployment environments
+    - `carlos-public`: Public server at zcarlos.com:8081
+    - `carlos-private`: Private server at 192.168.3.30:8081
 - **JDK 17 Required**: This is a Spring Boot 3 project requiring JDK 17+
-- **Internal Use Only**: README states "严肃声明:当前脚手架代码仅限内部使用!" (Internal use only)
+- **Maven 3.8+ Required**: Minimum Maven version is 3.8
+- **Internal Use Only**: This framework is for internal use only
 - **Parent Version**: Use `${revision}` in child POMs, not hardcoded versions
-- **Security Note**: Never include `carlos-license-generate` module in production artifacts
-- **Directory Renaming**: The framework was renamed from `carlos-parent` to `carlos-spring-boot`
+- **Security Note**: Never include `carlos-spring-boot-starter-license-generate` module in production artifacts
+- **Layered Architecture**: The framework follows a clear layered architecture (commons → spring-boot → integration → samples)
 
 ## Recent Updates
 
@@ -305,8 +394,8 @@ public void adminOnlyMethod() { }
 
 **Documentation:**
 
-- Full documentation: `carlos-parent/carlos-oauth2/README.md`
-- Integration summary: `carlos-parent/carlos-oauth2/INTEGRATION_SUMMARY.md`
+- Full documentation: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/README.md`
+- Integration summary: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/INTEGRATION_SUMMARY.md`
 - Example code: `com.carlos.oauth2.example.*`
 
 **Dependencies:**
@@ -327,26 +416,68 @@ public void adminOnlyMethod() { }
 
 ## Current State and Recent Changes
 
-### Repository Renaming (2026-01-27)
+### Architecture Refactoring (2026-02-01)
 
-The framework has been renamed from `carlos-frame3` to `carlos-spring-boot`:
+The framework underwent a major architecture refactoring to improve clarity and maintainability:
 
-- `carlos-parent/` → `carlos-spring-boot/`
-- `carlos-boot-dependencies/` → `carlos-spring-boot-dependencies/`
+**Directory Structure Changes:**
+
+- `carlos-spring-boot-framework` → `carlos-framework` (root aggregator)
+- `carlos-spring-boot-dependencies` → `carlos-dependencies` (BOM)
+- `carlos-spring-boot-parent` → `carlos-parent` (parent POM)
+- `carlos-spring-boot-commons` → `carlos-commons` (framework-agnostic utilities)
+- `carlos-spring-boot-starters` → `carlos-spring-boot` (Spring Boot integration)
+- Created `carlos-integration/` for third-party integrations (license, tools)
+- Created `carlos-samples/` for examples and tests
+
+**Benefits:**
+
+- Clear separation between framework-agnostic utilities and Spring Boot integrations
+- Better naming that doesn't imply everything is Spring Boot-specific
+- Improved extensibility for future framework integrations (e.g., Spring Cloud, Quarkus)
+- Follows industry best practices (similar to Spring Framework, Apache Commons)
+
+### Module Consolidation (2026-02-01)
+
+**Redis Module Enhancement:**
+
+- Merged `carlos-spring-boot-starter-redisson` into `carlos-spring-boot-starter-redis`
+- Added Caffeine local cache integration
+- Added multi-level cache support (Caffeine L1 + Redis L2)
+- Unified caching solution: Redis + Redisson + Caffeine in one module
+
+**Removed Modules:**
+
+- `carlos-magicapi`: Removed (no longer needed)
 
 ### Version Updates
-The dependency versions have been updated from those documented in README-REF.md:
-- Spring Boot: 3.5.8 → **3.5.9**
-- Spring Cloud: 2023.0.6 → **2025.0.1**
-- Spring Cloud Alibaba: 2023.0.3.3 → **2025.0.0.0**
-- MyBatis-Plus: 3.5.12 → **3.5.15**
-- SkyWalking: 9.7.0 → **9.5.0**
+
+Current versions:
+
+- Spring Boot: **3.5.9**
+- Spring Cloud: **2025.0.1**
+- Spring Cloud Alibaba: **2025.0.0.0**
+- MyBatis-Plus: **3.5.15**
+- SkyWalking: **9.5.0**
+- Hutool: **5.8.40**
+- MapStruct: **1.6.3**
+- Guava: **33.4.8-jre**
+- Redisson: **3.51.0**
 
 ### Module Count
 
-The framework now contains **30 modules** (previously 29), with the addition of `carlos-disruptor` for high-performance queue operations.
+The framework now contains **38 modules** organized in a layered architecture:
+
+- 1 root aggregator (carlos-framework)
+- 1 BOM (carlos-dependencies)
+- 1 parent POM (carlos-parent)
+- 4 commons modules (carlos-commons + 3 sub-modules)
+- 23 Spring Boot modules (carlos-spring-boot + 22 starters)
+- 6 integration modules (carlos-integration + 5 sub-modules)
+- 2 sample modules (carlos-samples + 1 test app)
 
 ### Git Status
-- Root directory: Not a git repository (subdirectories have `.git`)
-- Main branch: `main` (4 commits ahead of origin)
-- Recent changes: Directory renaming and POM updates
+
+- Root directory: Git repository
+- Current branch: `refactor-yunjin-to-carlos`
+- Recent changes: Architecture refactoring, module consolidation, directory reorganization

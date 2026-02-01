@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-spring-boot-framework</artifactId>
+    <artifactId>carlos-framework</artifactId>
     <version>3.0.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
@@ -20,35 +20,29 @@
 
     <modules>
         <!-- 1. 依赖管理（必须第一个） -->
-        <module>carlos-spring-boot-dependencies</module>
+        <module>carlos-dependencies</module>
 
         <!-- 2. 父POM（必须第二个） -->
-        <module>carlos-spring-boot-parent</module>
+        <module>carlos-parent</module>
 
-        <!-- 3. 基础套件 -->
-        <module>carlos-spring-boot-commons</module>
+        <!-- 3. 通用基础库 -->
+        <module>carlos-commons</module>
 
-        <!-- 4. Spring Boot Starters -->
-        <module>carlos-spring-boot-starters</module>
+        <!-- 4. Spring Boot 集成 -->
+        <module>carlos-spring-boot</module>
 
-        <!-- 5. 许可证模块 -->
-        <module>carlos-license</module>
+        <!-- 5. 第三方集成 -->
+        <module>carlos-integration</module>
 
-        <!-- 6. 工具 -->
-        <module>carlos-tools</module>
-
-        <!-- 7. 特殊集成 -->
-        <module>carlos-magicapi</module>
-
-        <!-- 8. 示例和测试 -->
-        <module>carlos-test</module>
+        <!-- 6. 示例和测试 -->
+        <module>carlos-samples</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-spring-boot-dependencies</artifactId>
+                <artifactId>carlos-dependencies</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>
