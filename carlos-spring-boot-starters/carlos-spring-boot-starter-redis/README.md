@@ -4,6 +4,12 @@
 
 `carlos-redis` 是 Carlos 框架的 Redis 缓存集成模块，提供了基于 Lettuce 客户端的 Redis 连接管理、Spring Cache 抽象支持、高级 Redis 操作工具、Lua 脚本执行、多数据源支持等功能。该模块支持主从读写分离、批量操作、管道优化等企业级特性。
 
+**本模块已集成以下功能：**
+
+- **Redisson 分布式锁**：基于 Redisson 3.51.0 实现的分布式锁，支持注解式和编程式两种使用方式
+- **Caffeine 本地缓存**：高性能本地缓存，支持多种缓存策略和过期策略
+- **多级缓存**：Redis + Caffeine 两级缓存，提升缓存命中率和性能
+
 ## 主要功能
 
 ### 1. Redis 基础操作
@@ -560,6 +566,9 @@ spring:
 - **Spring Boot Data Redis**: Redis 集成
 - **Lettuce**: Redis 客户端
 - **Apache Commons Pool2**: 连接池
+- **Redisson**: 分布式锁和缓存（3.51.0）
+- **Caffeine**: 高性能本地缓存
+- **Spring Boot Cache**: Spring Cache 抽象
 - **Fastjson**: JSON 序列化（2.0.60）
 - **Hutool**: 工具库
 - **Guava**: 缓存工具
@@ -570,12 +579,14 @@ spring:
 
 1. **数据缓存**: 热点数据缓存，减轻数据库压力
 2. **会话管理**: 分布式会话存储
-3. **分布式锁**: 使用 SETNX 实现分布式锁
-4. **计数器**: 点赞数、浏览量等实时计数
-5. **排行榜**: 使用 ZSet 实现排行榜
-6. **消息队列**: 使用 List 实现简单队列
-7. **限流**: 使用 Lua 脚本实现限流
-8. **去重**: 使用 Set 实现去重
+3. **分布式锁**: 使用 Redisson 实现分布式锁
+4. **本地缓存**: 使用 Caffeine 实现高性能本地缓存
+5. **多级缓存**: Caffeine + Redis 两级缓存，提升性能
+6. **计数器**: 点赞数、浏览量等实时计数
+7. **排行榜**: 使用 ZSet 实现排行榜
+8. **消息队列**: 使用 List 实现简单队列
+9. **限流**: 使用 Lua 脚本实现限流
+10. **去重**: 使用 Set 实现去重
 
 ## 注意事项
 
@@ -589,6 +600,9 @@ spring:
 8. **序列化**: Long 类型会序列化为 String，注意类型转换
 9. **清理操作**: `flushAll` 和 `flushDb` 谨慎使用
 10. **扫描操作**: 使用 `scanKeys` 而非 `keys` 避免阻塞
+11. **分布式锁**: 使用 @RedisLock 注解时注意锁的粒度和过期时间
+12. **本地缓存**: Caffeine 缓存仅在单个 JVM 内有效，不跨节点
+13. **多级缓存**: 使用多级缓存时注意缓存一致性问题
 
 ## 性能优化
 
@@ -598,6 +612,9 @@ spring:
 4. **读写分离**: 从库优先读取，减轻主库压力
 5. **批量限制**: 自动分批处理，避免单次操作过大
 6. **Lua 脚本**: 复杂操作使用 Lua 减少网络往返
+7. **本地缓存**: 使用 Caffeine 缓存热点数据，减少 Redis 访问
+8. **多级缓存**: L1（Caffeine）+ L2（Redis）提供纳秒级和微秒级访问速度
+9. **分布式锁**: Redisson 提供高性能的分布式锁实现
 
 ## 版本要求
 
@@ -606,8 +623,173 @@ spring:
 - Redis 5.0+
 - Maven 3.8+
 
+## Redisson 分布式锁
+
+本模块已集成 Redisson 3.51.0，提供分布式锁功能。
+
+### 1. 编程式使用
+
+**RedissonLockUtil 工具类**：
+
+```java
+import com.carlos.redis.lock.RedissonLockUtil;
+import java.util.concurrent.TimeUnit;
+
+// 加锁
+boolean locked = RedissonLockUtil.lock("order:123", 30, TimeUnit.SECONDS);
+
+// 尝试加锁
+boolean acquired = RedissonLockUtil.tryLock("order:123", 5, 30, TimeUnit.SECONDS);
+
+// 释放锁
+boolean released = RedissonLockUtil.unlock("order:123");
+
+// 检查锁状态
+boolean isLocked = RedissonLockUtil.isLocked("order:123");
+```
+
+### 2. 注解式使用
+
+**@RedisLock 注解**：
+
+```java
+import com.carlos.redis.lock.RedisLock;
+import java.util.concurrent.TimeUnit;
+
+@Service
+public class OrderService {
+
+    // 基本使用
+    @RedisLock(name = "order", key = "#orderId")
+    public void processOrder(Long orderId) {
+        // 业务逻辑
+    }
+
+    // 自定义过期时间
+    @RedisLock(
+        name = "payment",
+        key = "#paymentId",
+        expire = 10000,
+        timeUnit = TimeUnit.MILLISECONDS
+    )
+    public void processPayment(String paymentId) {
+        // 业务逻辑
+    }
+
+    // 使用SpEL表达式
+    @RedisLock(name = "user", key = "#user.id")
+    public void updateUser(User user) {
+        // 业务逻辑
+    }
+}
+```
+
+### 3. 配置说明
+
+```yaml
+carlos:
+  redis:
+    lock:
+      enabled: true                # 是否启用分布式锁，默认true
+      prefix: "redis:lock:"        # 锁前缀，默认 redis:lock:
+```
+
+## Caffeine 本地缓存
+
+本模块已集成 Caffeine 高性能本地缓存。
+
+### 1. 基本使用
+
+**CaffeineUtil 工具类**：
+
+```java
+import com.carlos.redis.caffeine.CaffeineUtil;
+
+// 设置缓存
+CaffeineUtil.put("user:1", userObject);
+
+// 获取缓存
+User user = (User) CaffeineUtil.get("user:1");
+
+// 删除缓存
+CaffeineUtil.evict("user:1");
+
+// 清空所有缓存
+CaffeineUtil.clear();
+
+// 获取缓存统计信息
+CacheStats stats = CaffeineUtil.stats();
+System.out.println("命中率: " + stats.hitRate());
+System.out.println("命中次数: " + stats.hitCount());
+System.out.println("未命中次数: " + stats.missCount());
+```
+
+### 2. 配置说明
+
+```yaml
+carlos:
+  redis:
+    caffeine:
+      enabled: true                # 是否启用Caffeine，默认true
+      initial-capacity: 100        # 初始容量，默认100
+      maximum-size: 10000          # 最大容量，默认10000
+      expire-after-write: 300      # 写入后过期时间（秒），默认300秒
+      expire-after-access: 600     # 访问后过期时间（秒），默认不启用
+      refresh-after-write: 60      # 刷新时间（秒），默认不启用
+      record-stats: true           # 是否记录统计信息，默认false
+```
+
+## 多级缓存
+
+本模块提供 Caffeine（L1）+ Redis（L2）两级缓存支持。
+
+### 使用示例
+
+```java
+import com.carlos.redis.multilevel.MultiLevelCacheUtil;
+import java.util.concurrent.TimeUnit;
+
+// 获取缓存（先从L1获取，再从L2获取）
+User user = (User) MultiLevelCacheUtil.get("user:1");
+
+// 获取缓存，如果不存在则加载
+User user = (User) MultiLevelCacheUtil.get("user:1", () -> {
+    return userService.getById(1L);
+});
+
+// 获取缓存并设置过期时间
+User user = (User) MultiLevelCacheUtil.get("user:1",
+    () -> userService.getById(1L),
+    3600, TimeUnit.SECONDS
+);
+
+// 设置缓存到两级缓存
+MultiLevelCacheUtil.put("user:1", user);
+
+// 设置缓存并指定过期时间
+MultiLevelCacheUtil.put("user:1", user, 3600, TimeUnit.SECONDS);
+
+// 删除两级缓存
+MultiLevelCacheUtil.evict("user:1");
+
+// 仅删除L1缓存
+MultiLevelCacheUtil.evictL1("user:1");
+
+// 仅删除L2缓存
+MultiLevelCacheUtil.evictL2("user:1");
+
+// 清空L1缓存
+MultiLevelCacheUtil.clear();
+```
+
+### 多级缓存特性
+
+- **自动回写**：从L2缓存命中时自动回写到L1缓存
+- **缓存穿透保护**：L1和L2都未命中时才加载数据
+- **性能优化**：L1缓存提供纳秒级访问速度
+- **容量管理**：L1缓存自动淘汰，L2缓存持久化
+
 ## 相关模块
 
 - `carlos-core`: 核心基础模块
 - `carlos-json`: JSON 工具
-- `carlos-redisson`: Redisson 分布式锁和缓存
