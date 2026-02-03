@@ -128,7 +128,7 @@
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.13</version>
+                <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.carlos.fx.ToolsApplication</mainClass>
                     <!-- 显式声明你要用的模块，插件会自动拼 module-path -->

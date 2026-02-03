@@ -15,7 +15,6 @@ import com.carlos.fx.codege.utils.CodeGeneratorUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
@@ -210,6 +209,7 @@ public class CodeGeneratorTool extends JFrame {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner Evaluation license - carlos
         comboBox1 = new JComboBox<>();
         comboBox2 = new JComboBox<>();
         button1 = new JButton();
@@ -246,7 +246,7 @@ public class CodeGeneratorTool extends JFrame {
                 thisWindowOpened(e);
             }
         });
-        Container contentPane = getContentPane();
+        var contentPane = getContentPane();
 
         //---- comboBox1 ----
         comboBox1.setModel(new DefaultComboBoxModel<>(new String[]{
@@ -396,6 +396,7 @@ public class CodeGeneratorTool extends JFrame {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner Evaluation license - carlos
     private JComboBox<String> comboBox1;
     private JComboBox<String> comboBox2;
     private JButton button1;

@@ -11,12 +11,15 @@
 <ScrollPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fitToWidth="true"
-            fitToHeight="true"
+            vbarPolicy="AS_NEEDED"
+            hbarPolicy="NEVER"
+            pannable="true"
             style="-fx-background-color: transparent;">
 
     <!-- 主容器：垂直布局 (VBox) -->
     <VBox fx:controller="com.carlos.fx.gitlab.controller.MergeRequestController"
-          spacing="15" style="-fx-padding: 15;">
+          spacing="15" style="-fx-padding: 15;"
+          minHeight="USE_COMPUTED_SIZE">
 
         <!-- 过滤栏：水平布局 (HBox) -->
         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card">
@@ -38,7 +41,7 @@
         </HBox>
 
         <!-- 合并请求表格：显示所有合并请求信息 -->
-        <TableView fx:id="mrTable" VBox.vgrow="ALWAYS">
+        <TableView fx:id="mrTable" prefHeight="400">
             <columns>
                 <!-- 合并请求 ID 列 -->
                 <TableColumn fx:id="iidColumn" text="ID" prefWidth="60"/>

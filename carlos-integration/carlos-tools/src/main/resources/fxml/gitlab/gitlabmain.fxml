@@ -11,12 +11,15 @@
 <ScrollPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fitToWidth="true"
-            fitToHeight="true"
+            vbarPolicy="AS_NEEDED"
+            hbarPolicy="NEVER"
+            pannable="true"
             style="-fx-background-color: transparent;">
 
     <!-- 主容器：垂直布局 (VBox) -->
     <VBox fx:controller="com.carlos.fx.gitlab.controller.GitlabMainController"
-          spacing="20" style="-fx-padding: 20;">
+          spacing="20" style="-fx-padding: 20;"
+          minHeight="USE_COMPUTED_SIZE">
 
         <!-- 标题标签 -->
         <Label text="GitLab 工具" styleClass="title-large"/>
@@ -32,7 +35,7 @@
         </HBox>
 
         <!-- 标签页容器：包含多个功能标签页 -->
-        <TabPane fx:id="tabPane" VBox.vgrow="ALWAYS">
+        <TabPane fx:id="tabPane" prefHeight="500">
             <!-- 合并请求标签页 -->
             <Tab fx:id="mergeRequestTab" text="合并请求" closable="false"/>
             <!-- 分支管理标签页 -->

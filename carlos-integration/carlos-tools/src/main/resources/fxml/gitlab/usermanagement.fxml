@@ -11,12 +11,15 @@
 <ScrollPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fitToWidth="true"
-            fitToHeight="true"
+            vbarPolicy="AS_NEEDED"
+            hbarPolicy="NEVER"
+            pannable="true"
             style="-fx-background-color: transparent;">
 
     <!-- 主容器：垂直布局 (VBox) -->
     <VBox fx:controller="com.carlos.fx.gitlab.controller.UserManagementController"
-          spacing="15" style="-fx-padding: 15;">
+          spacing="15" style="-fx-padding: 15;"
+          minHeight="USE_COMPUTED_SIZE">
 
         <!-- 过滤栏：水平布局 (HBox) -->
         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card">
@@ -30,7 +33,7 @@
         </HBox>
 
         <!-- 用户表格：显示所有用户信息 -->
-        <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
+        <TableView fx:id="userTable" prefHeight="400">
             <columns>
                 <!-- 选择列：复选框，用于批量操作 -->
                 <TableColumn fx:id="selectColumn" text="选择" prefWidth="60"/>
