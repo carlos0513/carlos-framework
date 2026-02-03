@@ -1,5 +1,6 @@
 package com.carlos.datascope.conf;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.caller.CallerUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,7 +11,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -53,7 +53,7 @@ public class DefaultDataScopeHandler implements DataScopeHandler {
     public DataScopeInfo getScopeInfo(String methodPoint) {
         List<DataScope> scopes = THREAD_LOCAL.get();
 
-        if (CollectionUtils.isEmpty(scopes)) {
+        if (CollUtil.isEmpty(scopes)) {
             return null;
         }
 
@@ -140,8 +140,8 @@ public class DefaultDataScopeHandler implements DataScopeHandler {
                 Class<? extends CustomScope> handler = scope.handler();
                 CustomScope customScope;
                 try {
-                    customScope = handler.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
+                    customScope = handler.getDeclaredConstructor().newInstance();
+                } catch (Throwable e) {
                     throw new ComponentException("自定义权限处理器实例创建失败", e);
                 }
                 sets = customScope.accept(PARAM_THREAD_LOCAL.get());

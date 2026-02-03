@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.util.constants.BaseConstants;
-import com.carlos.util.exception.YJBaseException;
+import com.carlos.util.exception.BaseUtilException;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -169,7 +169,7 @@ public class TreeUtils {
             }
             clazz = clazz.getSuperclass();
         }
-        throw new YJBaseException(StrUtil.format("对象不存在属性{}", fieldName));
+        throw new BaseUtilException(StrUtil.format("对象不存在属性{}", fieldName));
     }
 
     /**

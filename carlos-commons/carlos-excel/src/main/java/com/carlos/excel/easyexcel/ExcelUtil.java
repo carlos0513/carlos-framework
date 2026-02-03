@@ -2,9 +2,9 @@ package com.carlos.excel.easyexcel;
 
 import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelReader;
-import com.alibaba.excel.event.AnalysisEventListener;
+import cn.idev.excel.EasyExcel;
+import cn.idev.excel.ExcelReader;
+import cn.idev.excel.event.AnalysisEventListener;
 import com.carlos.excel.exception.ExcelException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.util.StringUtils;
@@ -135,10 +135,10 @@ public class ExcelUtil {
         if (obj == null || StringUtils.hasText(fieldName)) {
             return null;
         }
-        //获取这个类的所有属性
+        // 获取这个类的所有属性
         Field[] fields = obj.getClass().getDeclaredFields();
         boolean flag = false;
-        //循环遍历所有的fields
+        // 循环遍历所有的fields
         for (int i = 0; i < fields.length; i++) {
             if (fields[i].getName().equals(fieldName)) {
                 flag = true;

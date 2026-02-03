@@ -8,7 +8,7 @@ package com.carlos.util.exception;
  * @author Carlos
  * @date 2022/11/14 0:51
  */
-public class YJBaseException extends RuntimeException {
+public class BaseUtilException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,34 +32,34 @@ public class YJBaseException extends RuntimeException {
      */
     private String defaultMessage;
 
-    public YJBaseException(String module, String code, Object[] args, String defaultMessage) {
+    public BaseUtilException(String module, String code, Object[] args, String defaultMessage) {
         this.module = module;
         this.code = code;
         this.args = args;
         this.defaultMessage = defaultMessage;
     }
 
-    public YJBaseException(String module, String code, Object[] args) {
+    public BaseUtilException(String module, String code, Object[] args) {
         this(module, code, args, null);
     }
 
-    public YJBaseException(String module, String defaultMessage) {
+    public BaseUtilException(String module, String defaultMessage) {
         this(module, null, null, defaultMessage);
     }
 
-    public YJBaseException(String code, Object[] args) {
+    public BaseUtilException(String code, Object[] args) {
         this(null, code, args, null);
     }
 
-    public YJBaseException(String defaultMessage) {
+    public BaseUtilException(String defaultMessage) {
         this(null, null, null, defaultMessage);
     }
 
-    public YJBaseException(Object[] args) {
+    public BaseUtilException(Object[] args) {
         this(null, args);
     }
 
-    public YJBaseException(Throwable e) {
+    public BaseUtilException(Throwable e) {
         super(e.getMessage(), e);
     }
 

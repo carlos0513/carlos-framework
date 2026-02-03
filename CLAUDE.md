@@ -295,7 +295,7 @@ The `carlos-tools` module (located in `carlos-integration/`) provides a Swing-ba
 - Encryption utilities
 - GitLab integration
 
-Run with: `com.carlos.tool.ToolsApplication.main()` method
+Run with: `com.carlos.fx.ToolsApplication.main()` method
 
 ### Encryption Standards
 

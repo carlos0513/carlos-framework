@@ -1,5 +1,6 @@
 package com.carlos.json.jackson.annotation;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.carlos.core.base.RegionInfo;
 import com.carlos.core.interfaces.ApplicationExtend;
@@ -7,7 +8,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -54,7 +54,7 @@ public class RegionIdSerializer extends JsonSerializer<Serializable> implements 
                     break;
                 case FULLNAME:
                     List<String> fullName = regionInfo.getFullName();
-                    if (CollectionUtils.isEmpty(fullName)) {
+                    if (CollUtil.isEmpty(fullName)) {
                         gen.writeObject(value);
                     }
                     gen.writeString(String.join(separator, fullName));
