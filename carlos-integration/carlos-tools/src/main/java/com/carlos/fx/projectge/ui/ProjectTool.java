@@ -9,7 +9,6 @@ import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.fx.projectge.config.ProjectInfo;
 import com.carlos.fx.projectge.entity.SelectTemplate;
-import com.carlos.fx.projectge.service.Generator;
 import com.carlos.fx.projectge.utils.TemplateUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -133,7 +132,6 @@ public class ProjectTool extends JFrame {
         projectInfo.setArtifactId(artifactId);
         projectInfo.setPath(path);
         projectInfo.setAuthor(textField6.getText());
-        projectInfo.setEmail(textField7.getText());
         // 获取当前选择的模板
         SelectTemplate selectTemplate = templateInfos.get(comboBox2.getSelectedIndex() - 1);
         TemplateUtils.loadTemplateConfig(selectTemplate);
@@ -143,8 +141,8 @@ public class ProjectTool extends JFrame {
         String finalPath = path;
         try {
             // 代码生成方法
-            Generator generator = new Generator(projectInfo);
-            generator.createObject();
+            // ProjectGeneratorService projectGeneratorService = new ProjectGeneratorService(projectInfo);
+            // projectGeneratorService.createObject();
             int flag = JOptionPane.showConfirmDialog(null, "创建成功, 是否打开目录？", "提示",
                     JOptionPane.YES_NO_OPTION);
             if (flag == 0) {

@@ -499,7 +499,7 @@ java --module-path /path/to/javafx-sdk/lib \
 3. ⚠️ **Excel Import/Export**: User import/export needs full implementation
 4. ⚠️ **MR Details Dialog**: Needs implementation with tabs
 5. ⚠️ **Compare Branches Dialog**: Needs implementation with diff viewer
-6. ⚠️ **Template Path**: Project generator template path needs configuration
+6. ⚠️ **Template Path**: Project projectGeneratorService template path needs configuration
 
 ### Short-term (Nice to Have)
 
@@ -514,7 +514,7 @@ java --module-path /path/to/javafx-sdk/lib \
 
 1. Add code template customization
 2. Add database migration tools
-3. Add API documentation generator
+3. Add API documentation projectGeneratorService
 4. Add project dependency analyzer
 5. Add performance profiling tools
 

@@ -49,10 +49,6 @@ public class ProjectInfo {
      */
     private String author;
     /**
-     * 生成代码保存路径
-     */
-    private String email;
-    /**
      * 是否自动打开
      */
     private boolean autoOpen;

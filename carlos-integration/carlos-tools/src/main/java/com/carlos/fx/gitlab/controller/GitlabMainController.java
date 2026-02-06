@@ -308,22 +308,22 @@ public class GitlabMainController extends BaseController {
         try {
             // ==================== 加载合并请求标签页 ====================
             // FXMLLoader 用于加载 FXML 文件并创建对应的 UI 组件
-            FXMLLoader mrLoader = new FXMLLoader(getClass().getResource("/fxml/mergerequest.fxml"));
+            FXMLLoader mrLoader = new FXMLLoader(getClass().getResource("/fxml/gitlab/mergerequest.fxml"));
             // load() 方法解析 FXML 文件并返回根节点
             mergeRequestTab.setContent(mrLoader.load());
             // 可以通过 getController() 获取控制器实例，用于后续的数据传递
             // MergeRequestController mrController = mrLoader.getController();
 
             // ==================== 加载分支管理标签页 ====================
-            FXMLLoader branchLoader = new FXMLLoader(getClass().getResource("/fxml/branchmanagement.fxml"));
+            FXMLLoader branchLoader = new FXMLLoader(getClass().getResource("/fxml/gitlab/branchmanagement.fxml"));
             branchTab.setContent(branchLoader.load());
 
             // ==================== 加载问题管理标签页 ====================
-            FXMLLoader issueLoader = new FXMLLoader(getClass().getResource("/fxml/issuemanagement.fxml"));
+            FXMLLoader issueLoader = new FXMLLoader(getClass().getResource("/fxml/gitlab/issuemanagement.fxml"));
             issueTab.setContent(issueLoader.load());
 
             // ==================== 加载用户管理标签页 ====================
-            FXMLLoader userLoader = new FXMLLoader(getClass().getResource("/fxml/usermanagement.fxml"));
+            FXMLLoader userLoader = new FXMLLoader(getClass().getResource("/fxml/gitlab/usermanagement.fxml"));
             userTab.setContent(userLoader.load());
 
             // ==================== 导出标签页 ====================

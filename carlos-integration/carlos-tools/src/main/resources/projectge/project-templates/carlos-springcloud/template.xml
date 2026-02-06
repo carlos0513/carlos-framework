@@ -5,6 +5,6 @@
 
 -->
 <templates>
-    <name>Maven工程模板</name>
-    <describe>完整版</describe>
+    <name>carlos-springcloud</name>
+    <describe>SpringCloud</describe>
 </templates>

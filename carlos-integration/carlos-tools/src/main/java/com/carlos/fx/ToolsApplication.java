@@ -78,6 +78,10 @@ public class ToolsApplication extends Application {
         stage.setMinHeight(600);
         // 显示窗口
         stage.show();
+        stage.setOnCloseRequest(event -> {
+            // TODO: Carlos 2026-02-06 页面关闭事件
+            System.exit(0);
+        });
     }
 
     /**

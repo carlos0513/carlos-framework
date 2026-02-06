@@ -14,6 +14,7 @@ import com.carlos.fx.projectge.entity.SelectTemplate;
 import com.carlos.fx.projectge.entity.TemplateInfo;
 import com.carlos.fx.projectge.enums.DirectEnum;
 import com.carlos.fx.projectge.utils.NameUtil;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -30,31 +31,17 @@ import java.util.Map;
  * @date 2019/10/19 23:45 ---------     -------------   --------------------------------------
  */
 @Slf4j
-public class Generator {
+public class ProjectGeneratorService {
 
-
-    /**
-     * 项目相关信息
-     */
-    private final ProjectInfo projectInfo;
-
-    private final Map<String, Object> params = new HashMap<>();
-
-
-    public Generator(ProjectInfo projectInfo) {
-        this.projectInfo = projectInfo;
+    public void createObject(ProjectInfo projectInfo) throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("0.生成中.................................................................................");
+        }
         String artifactId = projectInfo.getArtifactId();
         String name = StrUtil.replace(artifactId, StrUtil.DASHED, StrUtil.UNDERLINE);
         String camelName = NameUtil.getCamelName(name, false);
         projectInfo.setCamelName(camelName);
         projectInfo.setUnderlineName(name);
-        params.put(Constant.FTL_PARAM_KEY_PROJECT, projectInfo);
-    }
-
-    public void createObject() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("0.生成中.................................................................................");
-        }
         try {
             SelectTemplate selectTemplate = projectInfo.getSelectTemplate();
 
@@ -69,7 +56,7 @@ public class Generator {
             DirectEnum[] values = DirectEnum.values();
 
             // 遍历目录及目录名
-            generateDir(templatePath, templatePathAbsolutePath, groupDir, projectPathAbsolutePath, values);
+            generateDir(projectInfo, templatePath, templatePathAbsolutePath, groupDir, projectPathAbsolutePath, values);
         } catch (Exception e) {
             log.error("生成失败！", e);
             throw new Exception(e);
@@ -88,7 +75,7 @@ public class Generator {
      * @author Carlos
      * @date 2023/7/2 21:07
      */
-    private void generateDir(File templateDir, String templateRootPath, String groupDir, String targetRootPath, DirectEnum[] values) {
+    private void generateDir(ProjectInfo projectInfo, File templateDir, String templateRootPath, String groupDir, String targetRootPath, DirectEnum[] values) {
 
         File[] files = templateDir.listFiles();
         if (files == null) {
@@ -103,22 +90,13 @@ public class Generator {
             String absolutePath = file.getAbsolutePath();
             String path = absolutePath.replace(templateRootPath, targetRootPath);
             for (DirectEnum value : values) {
-                switch (value) {
-                    case ArtifactId:
-                        path = path.replace(value.getValue(), projectInfo.getArtifactId());
-                        break;
-                    case GroupId:
-                        path = path.replace(value.getValue(), groupDir);
-                        break;
-                    case CAMEL_NAME:
-                        path = path.replace(value.getValue(), projectInfo.getCamelName());
-                        break;
-                    case UNDERLINE_NAME:
-                        path = path.replace(value.getValue(), projectInfo.getUnderlineName());
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + value);
-                }
+                path = switch (value) {
+                    case ArtifactId -> path.replace(value.getValue(), projectInfo.getArtifactId());
+                    case GroupId -> path.replace(value.getValue(), groupDir);
+                    case CAMEL_NAME -> path.replace(value.getValue(), projectInfo.getCamelName());
+                    case UNDERLINE_NAME -> path.replace(value.getValue(), projectInfo.getUnderlineName());
+                    default -> throw new IllegalStateException("Unexpected value: " + value);
+                };
             }
 
 
@@ -129,7 +107,7 @@ public class Generator {
                         log.debug("进入目录:" + file.getPath());
                     }
                     // 递归目录
-                    generateDir(file, templateRootPath, groupDir, targetRootPath, values);
+                    generateDir(projectInfo, file, templateRootPath, groupDir, targetRootPath, values);
                 }
                 log.info("创建目录：" + path);
                 continue;
@@ -148,9 +126,12 @@ public class Generator {
                         TemplateConfig templateConfig = new TemplateConfig(templateInfo.getPath(), ResourceMode.FILE);
                         TemplateEngine engine = TemplateUtil.createEngine(templateConfig);
                         Template template = engine.getTemplate(templateInfo.getName());
-                        template.render(params, new File(path));
+
+                        Map<String, Object> params = new HashMap<>();
+                        params.put(Constant.FTL_PARAM_KEY_PROJECT, projectInfo);
+                        template.render(Maps.newHashMap(), new File(path));
                     } catch (Exception e) {
-                        log.error("文件生成失败: 路径:" + templateInfo.getFile(), e);
+                        log.error("文件生成失败: 路径:{}", templateInfo.getFile(), e);
                     }
                 }
             }

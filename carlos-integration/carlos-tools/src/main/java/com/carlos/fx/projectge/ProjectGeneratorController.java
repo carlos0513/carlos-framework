@@ -3,13 +3,17 @@ package com.carlos.fx.projectge;
 import com.carlos.fx.common.controller.BaseController;
 import com.carlos.fx.common.util.AsyncTaskUtil;
 import com.carlos.fx.common.util.DialogUtil;
-import com.carlos.fx.projectge.service.Generator;
+import com.carlos.fx.projectge.entity.SelectTemplate;
+import com.carlos.fx.projectge.service.ProjectGeneratorService;
+import com.carlos.fx.projectge.utils.TemplateUtils;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 项目脚手架生成器控制器
@@ -98,6 +102,8 @@ public class ProjectGeneratorController extends BaseController {
     @FXML
     private Label statusLabel;
 
+    private List<SelectTemplate> templatesBaseInfo;
+
     /**
      * 初始化界面组件
      * <p>
@@ -112,16 +118,16 @@ public class ProjectGeneratorController extends BaseController {
         authorField.setText("Carlos");
 
         // 初始化项目模板下拉框
+        templatesBaseInfo = TemplateUtils.getTemplatesBaseInfo();
         // 提供5种常用的Spring Boot项目模板
         templateCombo.getItems().addAll(
-                "Spring Boot 基础项目",
-                "Spring Boot + MyBatis-Plus",
-                "Spring Boot + Redis",
-                "Spring Boot 微服务",
-                "Spring Boot 完整项目"
+                templatesBaseInfo.stream().map(SelectTemplate::getName).collect(Collectors.toSet())
         );
         // 默认选中第一个模板（基础项目）
         templateCombo.getSelectionModel().select(0);
+
+        // 当前路径作为默认路径
+        outputPathField.setText(new File("").getAbsolutePath());
 
         // 初始隐藏进度条
         progressBar.setVisible(false);
@@ -218,55 +224,12 @@ public class ProjectGeneratorController extends BaseController {
         }
 
         // 根据模板类型返回对应的描述信息
-        String description = switch (template) {
-            case "Spring Boot 基础项目" -> "包含基础的 Spring Boot 项目结构，适合快速开发简单应用。\n\n" +
-                    "包含模块:\n" +
-                    "- Spring Boot Starter Web\n" +
-                    "- Spring Boot Starter Test\n" +
-                    "- Lombok\n" +
-                    "- 基础配置文件";
-
-            case "Spring Boot + MyBatis-Plus" -> "包含 MyBatis-Plus 数据库访问层，适合开发数据库应用。\n\n" +
-                    "包含模块:\n" +
-                    "- Spring Boot Starter Web\n" +
-                    "- MyBatis-Plus\n" +
-                    "- MySQL Driver\n" +
-                    "- Druid 连接池\n" +
-                    "- 代码生成器配置";
-
-            case "Spring Boot + Redis" -> "包含 Redis 缓存支持，适合需要缓存的应用。\n\n" +
-                    "包含模块:\n" +
-                    "- Spring Boot Starter Web\n" +
-                    "- Spring Boot Starter Data Redis\n" +
-                    "- Redisson\n" +
-                    "- 缓存配置";
-
-            case "Spring Boot 微服务" -> "包含 Spring Cloud Alibaba 微服务组件。\n\n" +
-                    "包含模块:\n" +
-                    "- Spring Cloud Gateway\n" +
-                    "- Nacos Discovery\n" +
-                    "- Nacos Config\n" +
-                    "- Sentinel\n" +
-                    "- Feign\n" +
-                    "- 微服务配置";
-
-            case "Spring Boot 完整项目" -> "包含完整的企业级项目结构和常用组件。\n\n" +
-                    "包含模块:\n" +
-                    "- Spring Boot Starter Web\n" +
-                    "- MyBatis-Plus\n" +
-                    "- Redis + Redisson\n" +
-                    "- Spring Security\n" +
-                    "- JWT 认证\n" +
-                    "- Swagger 文档\n" +
-                    "- 统一异常处理\n" +
-                    "- 统一响应格式\n" +
-                    "- 日志配置";
-
-            default -> "请选择项目模板";
-        };
-
-        // 将描述信息显示在文本区域
-        templateDescArea.setText(description);
+        for (SelectTemplate selectTemplate : templatesBaseInfo) {
+            if (selectTemplate.getName().equals(template)) {
+                // 将描述信息显示在文本区域
+                templateDescArea.setText(selectTemplate.getDescribe());
+            }
+        }
     }
 
     /**
@@ -360,8 +323,8 @@ public class ProjectGeneratorController extends BaseController {
                 updateMessage("正在创建项目结构...");
 
                 // 创建生成器并执行生成操作
-                Generator generator = new Generator(projectInfo);
-                generator.createObject();
+                ProjectGeneratorService projectGeneratorService = new ProjectGeneratorService();
+                projectGeneratorService.createObject(projectInfo);
 
                 updateMessage("项目生成完成！");
                 return null;

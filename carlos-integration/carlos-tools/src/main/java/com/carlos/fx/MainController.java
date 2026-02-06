@@ -8,6 +8,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -47,6 +51,7 @@ import java.io.IOException;
  * @author Carlos
  * @since 3.0.0
  */
+@Slf4j
 public class MainController extends BaseController {
 
     /**
@@ -87,10 +92,10 @@ public class MainController extends BaseController {
         // 设置工具列表，添加所有可用的工具项
         // 每个工具项包含：中文名称、英文描述、图标、FXML文件路径
         toolListView.getItems().addAll(
-                new ToolItem("代码生成器", "Code Generator", FontAwesomeSolid.CODE, "/fxml/codegenerator.fxml"),
-                new ToolItem("项目脚手架", "Project Scaffold", FontAwesomeSolid.PROJECT_DIAGRAM, "/fxml/projectgenerator.fxml"),
-                new ToolItem("加密工具", "Encrypt Tool", FontAwesomeSolid.LOCK, "/fxml/encrypttool.fxml"),
-                new ToolItem("GitLab工具", "GitLab Tools", FontAwesomeSolid.CODE_BRANCH, "/fxml/gitlabmain.fxml"),
+                new ToolItem("代码生成器", "Code Generator", FontAwesomeSolid.CODE, "/fxml/codege/codegenerator.fxml"),
+                new ToolItem("项目脚手架", "Project Scaffold", FontAwesomeSolid.PROJECT_DIAGRAM, "/fxml/projectge/projectgenerator.fxml"),
+                new ToolItem("加密工具", "Encrypt Tool", FontAwesomeSolid.LOCK, "/fxml/encrypt/encrypttool.fxml"),
+                new ToolItem("GitLab工具", "GitLab Tools", FontAwesomeSolid.CODE_BRANCH, "/fxml/gitlab/gitlabmain.fxml"),
                 new ToolItem("设置", "Settings", FontAwesomeSolid.COG, null)
         );
 
@@ -194,8 +199,9 @@ public class MainController extends BaseController {
             contentPane.getChildren().add(loader.load());
         } catch (IOException e) {
             // 加载失败时显示错误信息
-            e.printStackTrace();
+            log.info("加载工具失败: {}", e.getMessage());
             Label errorLabel = new Label("加载失败: " + e.getMessage());
+            errorLabel.setWrapText(true);
             errorLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #f44336;");
             contentPane.getChildren().clear();
             contentPane.getChildren().add(errorLabel);
@@ -209,68 +215,20 @@ public class MainController extends BaseController {
      * 这是一个不可变的数据类，用于在工具列表中显示工具信息。
      * </p>
      */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ToolItem {
         /** 工具的中文名称 */
-        private final String name;
+        private String name;
 
         /** 工具的英文描述 */
-        private final String description;
+        private String description;
 
         /** 工具的图标（FontAwesome图标） */
-        private final FontAwesomeSolid icon;
+        private FontAwesomeSolid icon;
 
         /** 工具对应的FXML文件路径，如果为null表示该工具尚未实现 */
-        private final String fxmlPath;
-
-        /**
-         * 构造工具项
-         *
-         * @param name        工具的中文名称
-         * @param description 工具的英文描述
-         * @param icon        工具的图标
-         * @param fxmlPath    工具对应的FXML文件路径，可以为null
-         */
-        public ToolItem(String name, String description, FontAwesomeSolid icon, String fxmlPath) {
-            this.name = name;
-            this.description = description;
-            this.icon = icon;
-            this.fxmlPath = fxmlPath;
-        }
-
-        /**
-         * 获取工具名称
-         *
-         * @return 工具的中文名称
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * 获取工具描述
-         *
-         * @return 工具的英文描述
-         */
-        public String getDescription() {
-            return description;
-        }
-
-        /**
-         * 获取工具图标
-         *
-         * @return FontAwesome图标枚举值
-         */
-        public FontAwesomeSolid getIcon() {
-            return icon;
-        }
-
-        /**
-         * 获取FXML文件路径
-         *
-         * @return FXML文件的资源路径，如果为null表示该工具尚未实现
-         */
-        public String getFxmlPath() {
-            return fxmlPath;
-        }
+        private String fxmlPath;
     }
 }

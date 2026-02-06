@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -175,11 +174,7 @@ public class CodeGeneratorTool extends JFrame {
         initFieldNameTypeSelect();
 
         // 将模板等文件加载至临时目录
-        try {
-            CodeGeneratorUtil.copyFile2Temp("codege", CodeGeneratorUtil.TEMP_DIR);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        CodeGeneratorUtil.copyFile2Temp("codege", CodeGeneratorUtil.TEMP_DIR);
     }
 
     private void initFieldNameTypeSelect() {

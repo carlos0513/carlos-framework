@@ -41,8 +41,4 @@ public class DingtalkController {
         OapiMessageCorpconversationAsyncsendV2Response send = DingtalkUtil.send(request);
         log.info("send:{}", send);
     }
-
-    public static void main(String[] args) {
-        ToolsApplication.start();
-    }
 }

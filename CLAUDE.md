@@ -92,7 +92,7 @@ carlos-framework/                          # Root aggregator POM
 │   │   ├── carlos-license-core/
 │   │   ├── carlos-spring-boot-starter-license-generate/
 │   │   └── carlos-spring-boot-starter-license-verify/
-│   └── carlos-tools/                     # GUI tools (code generator)
+│   └── carlos-tools/                     # GUI tools (code projectGeneratorService)
 └── carlos-samples/                        # Examples and tests
     └── carlos-test/                      # Test application
 ```
@@ -165,7 +165,7 @@ carlos-framework/                          # Root aggregator POM
     - `carlos-license-core`: Core licensing functionality
     - `carlos-spring-boot-starter-license-generate`: License generation (dev only)
     - `carlos-spring-boot-starter-license-verify`: License verification (production)
-- `carlos-tools`: GUI desktop tools (code generator, project scaffolding, Swing-based)
+- `carlos-tools`: GUI desktop tools (code projectGeneratorService, project scaffolding, Swing-based)
 
 **Samples:**
 

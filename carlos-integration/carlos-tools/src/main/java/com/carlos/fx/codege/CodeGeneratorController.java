@@ -7,6 +7,7 @@ import com.carlos.fx.codege.entity.TemplateConfig;
 import com.carlos.fx.codege.enums.DbTypeEnum;
 import com.carlos.fx.codege.service.DatabaseService;
 import com.carlos.fx.codege.service.Generator;
+import com.carlos.fx.codege.utils.CodeGeneratorUtil;
 import com.carlos.fx.common.controller.BaseController;
 import com.carlos.fx.common.util.AsyncTaskUtil;
 import com.carlos.fx.common.util.DialogUtil;
@@ -152,6 +153,8 @@ public class CodeGeneratorController extends BaseController {
     protected void initializeComponents() {
         // 初始化表列表
         allTables = new ArrayList<>();
+
+        CodeGeneratorUtil.copyFile2Temp("codege", CodeGeneratorUtil.TEMP_DIR);
 
         // 初始化数据库类型下拉框，添加所有支持的数据库类型
         databaseTypeCombo.setItems(FXCollections.observableArrayList(DbTypeEnum.values()));

@@ -3,6 +3,7 @@ package com.carlos.fx.codege.utils;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
+import lombok.SneakyThrows;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,7 +27,8 @@ import java.util.jar.JarFile;
 public class CodeGeneratorUtil {
     public static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/codege_temp";
 
-    public static void copyFile2Temp(String dirPath, String localTempDir) throws IOException {
+    @SneakyThrows
+    public static void copyFile2Temp(String dirPath, String localTempDir) {
         // 清空临时目录
         FileUtil.del(localTempDir);
         // 获取JAR包资源路径（示例：jar:file:/path/to.jar!/templates ）
