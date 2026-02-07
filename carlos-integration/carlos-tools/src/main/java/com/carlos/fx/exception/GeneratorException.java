@@ -1,4 +1,4 @@
-package com.carlos.fx.encrypt.exception;
+package com.carlos.fx.exception;
 
 /**
  * <p>

@@ -1,11 +1,11 @@
-package com.carlos.fx.codege.utils;
+package com.carlos.fx.utils;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.fx.codege.config.Constant;
-import com.carlos.fx.codege.entity.TemplateConfig;
+import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.entity.TemplateInfo;
 import com.carlos.fx.codege.enums.DirectEnum;
 import freemarker.template.Configuration;
@@ -44,10 +44,10 @@ public class TemplateUtil {
      * @author Carlos
      * @date 2020/9/5 10:19
      */
-    public static List<TemplateConfig> getTemplatesBaseInfo() {
+    public static List<TemplateBaseInfo> getTemplatesBaseInfo() {
         File templateRootPath = FileUtil.file(CodeGeneratorUtil.TEMP_DIR + File.separator + Constant.TEMPLATE_ROOT_PATH);
         File[] templates = templateRootPath.listFiles();
-        List<TemplateConfig> list = new LinkedList<>();
+        List<TemplateBaseInfo> list = new LinkedList<>();
         if (ArrayUtil.isEmpty(templates)) {
             log.warn("模板为空");
             return list;
@@ -60,7 +60,9 @@ public class TemplateUtil {
                 log.error("目录[" + templatePath.getPath() + "]不存在描述文件[" + Constant.TEMPLATE_DESCRIBE_FILE_NAME + "]");
                 continue;
             }
-            list.add(XmlUtils.readTemplateBaseInfo(templateDescFile));
+            TemplateBaseInfo templateBaseInfo = XmlUtils.readTemplateBaseInfo(templateDescFile, TemplateBaseInfo.class);
+            templateBaseInfo.setPath(templateDescFile.getParent());
+            list.add(templateBaseInfo);
         }
 
         if (log.isDebugEnabled()) {
@@ -141,12 +143,12 @@ public class TemplateUtil {
     /**
      * 加载模板配置信息
      *
-     * @param templateConfig 参数0
+     * @param templateBaseInfo 参数0
      * @author Carlos
      * @date 2021/11/22 23:33
      */
-    public static void loadTemplateConfig(TemplateConfig templateConfig) {
-        String path = templateConfig.getPath();
+    public static void loadTemplateConfig(TemplateBaseInfo templateBaseInfo) {
+        String path = templateBaseInfo.getPath();
         File templateDescFile = FileUtil.file(path, Constant.TEMPLATE_DESCRIBE_FILE_NAME);
     }
 }

@@ -11,9 +11,9 @@ import com.carlos.fx.codege.config.DatabaseInfo;
 import com.carlos.fx.codege.entity.ColumnBean;
 import com.carlos.fx.codege.entity.TableBean;
 import com.carlos.fx.codege.entity.TableInfo;
-import com.carlos.fx.codege.entity.TemplateConfig;
-import com.carlos.fx.codege.utils.NameUtil;
-import com.carlos.fx.codege.utils.XmlUtils;
+import com.carlos.fx.codege.entity.TemplateBaseInfo;
+import com.carlos.fx.utils.NameUtil;
+import com.carlos.fx.utils.XmlUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
@@ -32,7 +32,7 @@ import java.util.*;
 public class DatabaseService {
 
     private final DatabaseInfo databaseInfo;
-    private TemplateConfig templateConfig;
+    private TemplateBaseInfo templateBaseInfo;
 
     /**
      * 数据库字段类型和Java数据类型映射
@@ -43,9 +43,9 @@ public class DatabaseService {
         this.databaseInfo = databaseInfo;
     }
 
-    public DatabaseService(DatabaseInfo databaseInfo, TemplateConfig templateConfig) {
+    public DatabaseService(DatabaseInfo databaseInfo, TemplateBaseInfo templateBaseInfo) {
         this.databaseInfo = databaseInfo;
-        this.templateConfig = templateConfig;
+        this.templateBaseInfo = templateBaseInfo;
     }
 
     /**
@@ -331,7 +331,7 @@ public class DatabaseService {
      * @date 2021/11/22 16:22
      */
     private boolean checkLogicDeleteField(String columnName) {
-        TemplateConfig.Field fields = templateConfig.getLogicDeleteFields();
+        TemplateBaseInfo.Field fields = templateBaseInfo.getLogicDeleteFields();
         if (fields == null) {
             return false;
         }
@@ -363,7 +363,7 @@ public class DatabaseService {
      * @date 2021/11/22 15:20
      */
     private boolean checkCommonField(String columnName) {
-        TemplateConfig.Field fields = templateConfig.getCommonFields();
+        TemplateBaseInfo.Field fields = templateBaseInfo.getCommonFields();
         if (fields == null) {
             return false;
         }
@@ -383,7 +383,7 @@ public class DatabaseService {
      * @date 2021/11/22 15:20
      */
     private boolean checkVersionField(String columnName) {
-        TemplateConfig.Field fields = templateConfig.getVersionFields();
+        TemplateBaseInfo.Field fields = templateBaseInfo.getVersionFields();
         if (fields == null) {
             return false;
         }

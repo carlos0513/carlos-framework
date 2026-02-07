@@ -1,6 +1,6 @@
-package com.carlos.fx.projectge.config;
+package com.carlos.fx.projectge.entity;
 
-import com.carlos.fx.projectge.entity.SelectTemplate;
+import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -38,7 +38,13 @@ public class ProjectInfo {
      * artifactId   test-abc
      */
     private String artifactId;
+    /**
+     * 驼峰命名
+     */
     private String camelName;
+    /**
+     * 下划线命名
+     */
     private String underlineName;
     /**
      * 生成代码保存路径
@@ -57,5 +63,5 @@ public class ProjectInfo {
      *
      * @since 3.0
      */
-    private SelectTemplate selectTemplate;
+    private TemplateBaseInfo selectTemplate;
 }

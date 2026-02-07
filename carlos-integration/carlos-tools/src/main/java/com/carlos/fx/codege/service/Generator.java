@@ -7,10 +7,10 @@ import com.carlos.fx.codege.config.Constant;
 import com.carlos.fx.codege.config.DatabaseInfo;
 import com.carlos.fx.codege.config.ProjectInfo;
 import com.carlos.fx.codege.entity.TableBean;
-import com.carlos.fx.codege.entity.TemplateConfig;
+import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.entity.TemplateInfo;
 import com.carlos.fx.codege.enums.DirectEnum;
-import com.carlos.fx.codege.utils.TemplateUtil;
+import com.carlos.fx.utils.TemplateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -78,8 +78,8 @@ public class Generator {
             log.debug("0.代码生成中.................................................................................");
         }
         try {
-            TemplateConfig templateConfig = projectInfo.getTemplateConfig();
-            File templatePath = new File(templateConfig.getPath() + File.separator + Constant.TEMPLATE_MAIN);
+            TemplateBaseInfo templateBaseInfo = projectInfo.getTemplateBaseInfo();
+            File templatePath = new File(templateBaseInfo.getPath() + File.separator + Constant.TEMPLATE_MAIN);
             File projectPath = new File(projectInfo.getPath());
             // 复制模板文件到项目目录
             if (log.isDebugEnabled()) {
@@ -102,7 +102,7 @@ public class Generator {
 
             // 获取需要生成代码的表的详情
             // 使用注入的DatabaseService，传入databaseInfo和templateConfig
-            DatabaseService tempDatabaseService = new DatabaseService(databaseInfo, projectInfo.getTemplateConfig());
+            DatabaseService tempDatabaseService = new DatabaseService(databaseInfo, projectInfo.getTemplateBaseInfo());
             tables = tempDatabaseService.getTablesDetailInfo();
 
             if (log.isDebugEnabled()) {

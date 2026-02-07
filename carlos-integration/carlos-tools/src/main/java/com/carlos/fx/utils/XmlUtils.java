@@ -1,11 +1,10 @@
-package com.carlos.fx.codege.utils;
+package com.carlos.fx.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.exceptions.UtilException;
 import cn.hutool.core.util.XmlUtil;
-import com.carlos.fx.codege.entity.TemplateConfig;
-import com.carlos.fx.codege.exception.ReadXmlException;
+import com.carlos.fx.exception.ReadXmlException;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -66,7 +65,7 @@ public class XmlUtils {
      * @author Carlos
      * @date 2019/6/10 13:35
      */
-    public static TemplateConfig readTemplateBaseInfo(File templateFile) {
+    public static <T> T readTemplateBaseInfo(File templateFile, Class<T> clazz) {
         Document document;
         try {
             document = XmlUtil.readXML(templateFile);
@@ -76,8 +75,7 @@ public class XmlUtils {
         }
         Element rootElement = XmlUtil.getRootElement(document);
         Map<String, Object> stringObjectMap = XmlUtil.xmlToMap(rootElement);
-        TemplateConfig templateInfo = BeanUtil.toBean(stringObjectMap, TemplateConfig.class, CopyOptions.create().setAutoTransCamelCase(true));
-        templateInfo.setPath(templateFile.getParent());
+        T templateInfo = BeanUtil.toBean(stringObjectMap, clazz, CopyOptions.create().setAutoTransCamelCase(true));
         return templateInfo;
     }
 }

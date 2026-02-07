@@ -8,12 +8,12 @@ import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateConfig.ResourceMode;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
+import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.projectge.config.Constant;
-import com.carlos.fx.projectge.config.ProjectInfo;
-import com.carlos.fx.projectge.entity.SelectTemplate;
+import com.carlos.fx.projectge.entity.ProjectInfo;
 import com.carlos.fx.projectge.entity.TemplateInfo;
 import com.carlos.fx.projectge.enums.DirectEnum;
-import com.carlos.fx.projectge.utils.NameUtil;
+import com.carlos.fx.utils.NameUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
@@ -47,7 +47,7 @@ public class ProjectGeneratorService {
         projectInfo.setCamelName(camelName);
         projectInfo.setUnderlineName(name);
         try {
-            SelectTemplate selectTemplate = projectInfo.getSelectTemplate();
+            TemplateBaseInfo selectTemplate = projectInfo.getSelectTemplate();
 
             File templatePath = new File(selectTemplate.getPath() + File.separator + Constant.TEMPLATE_MAIN);
             File projectPath = new File(projectInfo.getPath());

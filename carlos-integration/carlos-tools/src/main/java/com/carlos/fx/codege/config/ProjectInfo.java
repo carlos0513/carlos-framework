@@ -1,6 +1,6 @@
 package com.carlos.fx.codege.config;
 
-import com.carlos.fx.codege.entity.TemplateConfig;
+import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.enums.StructureTypeEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -64,5 +64,5 @@ public class ProjectInfo {
      *
      * @since 3.0
      */
-    private TemplateConfig templateConfig;
+    private TemplateBaseInfo templateBaseInfo;
 }

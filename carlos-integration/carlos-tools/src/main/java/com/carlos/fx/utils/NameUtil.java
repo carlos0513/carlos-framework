@@ -1,4 +1,4 @@
-package com.carlos.fx.codege.utils;
+package com.carlos.fx.utils;
 
 import cn.hutool.core.util.StrUtil;
 

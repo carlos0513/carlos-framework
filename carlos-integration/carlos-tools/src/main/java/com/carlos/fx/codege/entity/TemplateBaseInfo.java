@@ -16,7 +16,7 @@ import java.util.Set;
  */
 @Accessors(chain = true)
 @Data
-public class TemplateConfig implements Serializable {
+public class TemplateBaseInfo implements Serializable {
 
 
     /**

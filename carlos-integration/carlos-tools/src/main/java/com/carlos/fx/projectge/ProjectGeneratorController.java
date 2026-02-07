@@ -1,11 +1,12 @@
 package com.carlos.fx.projectge;
 
+import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.common.controller.BaseController;
 import com.carlos.fx.common.util.AsyncTaskUtil;
 import com.carlos.fx.common.util.DialogUtil;
-import com.carlos.fx.projectge.entity.SelectTemplate;
+import com.carlos.fx.projectge.entity.ProjectInfo;
 import com.carlos.fx.projectge.service.ProjectGeneratorService;
-import com.carlos.fx.projectge.utils.TemplateUtils;
+import com.carlos.fx.utils.TemplateUtil;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -110,7 +111,7 @@ public class ProjectGeneratorController extends BaseController {
     @FXML
     private Label statusLabel;
 
-    private List<SelectTemplate> templatesBaseInfo;
+    private List<TemplateBaseInfo> templatesBaseInfo;
 
     /**
      * 构造函数，注入Spring应用上下文
@@ -136,10 +137,10 @@ public class ProjectGeneratorController extends BaseController {
         authorField.setText("Carlos");
 
         // 初始化项目模板下拉框
-        templatesBaseInfo = TemplateUtils.getTemplatesBaseInfo();
+        templatesBaseInfo = TemplateUtil.getTemplatesBaseInfo();
         // 提供5种常用的Spring Boot项目模板
         templateCombo.getItems().addAll(
-                templatesBaseInfo.stream().map(SelectTemplate::getName).collect(Collectors.toSet())
+                templatesBaseInfo.stream().map(TemplateBaseInfo::getName).collect(Collectors.toSet())
         );
         // 默认选中第一个模板（基础项目）
         templateCombo.getSelectionModel().select(0);
@@ -242,7 +243,7 @@ public class ProjectGeneratorController extends BaseController {
         }
 
         // 根据模板类型返回对应的描述信息
-        for (SelectTemplate selectTemplate : templatesBaseInfo) {
+        for (TemplateBaseInfo selectTemplate : templatesBaseInfo) {
             if (selectTemplate.getName().equals(template)) {
                 // 将描述信息显示在文本区域
                 templateDescArea.setText(selectTemplate.getDescribe());
@@ -318,7 +319,7 @@ public class ProjectGeneratorController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 // 创建项目配置对象
-                com.carlos.fx.projectge.config.ProjectInfo projectInfo = new com.carlos.fx.projectge.config.ProjectInfo();
+                ProjectInfo projectInfo = new ProjectInfo();
                 projectInfo.setProjectName(projectName);
                 projectInfo.setGroupId(groupId);
                 projectInfo.setArtifactId(artifactId);
@@ -331,7 +332,7 @@ public class ProjectGeneratorController extends BaseController {
                 projectInfo.setGroupItems(java.util.Arrays.asList(groupId.split("\\.")));
 
                 // 创建模板配置对象
-                com.carlos.fx.projectge.entity.SelectTemplate selectTemplate = new com.carlos.fx.projectge.entity.SelectTemplate();
+                TemplateBaseInfo selectTemplate = new TemplateBaseInfo();
                 selectTemplate.setName(template);
                 // 设置模板路径（指向模板文件所在目录）
                 selectTemplate.setPath(System.getProperty("user.dir") + "/templates");

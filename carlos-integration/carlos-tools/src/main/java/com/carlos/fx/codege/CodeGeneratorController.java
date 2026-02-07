@@ -3,14 +3,14 @@ package com.carlos.fx.codege;
 import com.carlos.fx.codege.config.DatabaseInfo;
 import com.carlos.fx.codege.config.ProjectInfo;
 import com.carlos.fx.codege.entity.TableBean;
-import com.carlos.fx.codege.entity.TemplateConfig;
+import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.enums.DbTypeEnum;
 import com.carlos.fx.codege.service.DatabaseService;
 import com.carlos.fx.codege.service.Generator;
-import com.carlos.fx.codege.utils.CodeGeneratorUtil;
 import com.carlos.fx.common.controller.BaseController;
 import com.carlos.fx.common.util.AsyncTaskUtil;
 import com.carlos.fx.common.util.DialogUtil;
+import com.carlos.fx.utils.CodeGeneratorUtil;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -250,7 +250,7 @@ public class CodeGeneratorController extends BaseController {
         Task<Boolean> task = new Task<>() {
             @Override
             protected Boolean call() throws Exception {
-                DatabaseService service = new DatabaseService(dbInfo, new TemplateConfig());
+                DatabaseService service = new DatabaseService(dbInfo, new TemplateBaseInfo());
                 // 尝试获取表详细信息来测试连接
                 service.getTablesDetailInfo();
                 return true;
@@ -285,7 +285,7 @@ public class CodeGeneratorController extends BaseController {
         Task<List<TableBean>> task = new Task<>() {
             @Override
             protected List<TableBean> call() throws Exception {
-                DatabaseService service = new DatabaseService(dbInfo, new TemplateConfig());
+                DatabaseService service = new DatabaseService(dbInfo, new TemplateBaseInfo());
                 return service.getTablesDetailInfo();
             }
         };
@@ -421,8 +421,8 @@ public class CodeGeneratorController extends BaseController {
                 projectInfo.setAuthor(author);
 
                 // 创建模板配置对象
-                TemplateConfig templateConfig = new TemplateConfig();
-                projectInfo.setTemplateConfig(templateConfig);
+                TemplateBaseInfo templateBaseInfo = new TemplateBaseInfo();
+                projectInfo.setTemplateBaseInfo(templateBaseInfo);
 
                 // 使用Spring获取prototype scope的Generator bean
                 Generator generator = applicationContext.getBean(Generator.class);
