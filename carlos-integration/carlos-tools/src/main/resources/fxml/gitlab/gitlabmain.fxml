@@ -10,6 +10,7 @@
 -->
 <ScrollPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.carlos.fx.gitlab.controller.GitlabMainController"
             fitToWidth="true"
             vbarPolicy="AS_NEEDED"
             hbarPolicy="NEVER"
@@ -17,9 +18,7 @@
             style="-fx-background-color: transparent;">
 
     <!-- 主容器：垂直布局 (VBox) -->
-    <VBox fx:controller="com.carlos.fx.gitlab.controller.GitlabMainController"
-          spacing="20" style="-fx-padding: 20;"
-          minHeight="USE_COMPUTED_SIZE">
+    <VBox spacing="20" style="-fx-padding: 20;">
 
         <!-- 标题标签 -->
         <Label text="GitLab 工具" styleClass="title-large"/>
@@ -47,7 +46,6 @@
             <!-- 导出功能标签页 -->
             <Tab fx:id="exportTab" text="导出" closable="false"/>
         </TabPane>
-
     </VBox>
 
 </ScrollPane>

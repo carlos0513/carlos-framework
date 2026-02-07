@@ -18,8 +18,7 @@
 
     <!-- 主容器：垂直布局 (VBox) -->
     <VBox fx:controller="com.carlos.fx.gitlab.controller.UserManagementController"
-          spacing="15" style="-fx-padding: 15;"
-          minHeight="USE_COMPUTED_SIZE">
+          spacing="15" style="-fx-padding: 15;">
 
         <!-- 过滤栏：水平布局 (HBox) -->
         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card">
