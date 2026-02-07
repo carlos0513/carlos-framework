@@ -348,9 +348,20 @@ public class DialogUtil {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == openButton) {
             try {
-                Desktop.getDesktop().open(outputPath.toFile());
+                if (!Desktop.isDesktopSupported()) {
+                    showWarning("警告", "当前系统不支持桌面操作，无法打开目录");
+                    return;
+                }
+                Desktop desktop = Desktop.getDesktop();
+                if (!desktop.isSupported(Desktop.Action.OPEN)) {
+                    showWarning("警告", "当前系统不支持打开文件操作");
+                    return;
+                }
+                desktop.open(outputPath.toFile());
             } catch (IOException e) {
                 showError("错误", "无法打开目录", e);
+            } catch (Exception e) {
+                showError("错误", "打开目录时发生异常", e);
             }
         }
     }
@@ -419,12 +430,23 @@ public class DialogUtil {
                 Path logFile = Paths.get(System.getProperty("user.home"),
                         ".carlos-tools", "logs", "application.log");
                 if (Files.exists(logFile)) {
-                    Desktop.getDesktop().open(logFile.toFile());
+                    if (!Desktop.isDesktopSupported()) {
+                        showWarning("警告", "当前系统不支持桌面操作，无法打开日志文件\n日志位置: " + logFile);
+                        return;
+                    }
+                    Desktop desktop = Desktop.getDesktop();
+                    if (!desktop.isSupported(Desktop.Action.OPEN)) {
+                        showWarning("警告", "当前系统不支持打开文件操作\n日志位置: " + logFile);
+                        return;
+                    }
+                    desktop.open(logFile.toFile());
                 } else {
                     showWarning("警告", "日志文件不存在: " + logFile);
                 }
             } catch (IOException e) {
                 showError("错误", "无法打开日志文件", e);
+            } catch (Exception e) {
+                showError("错误", "打开日志文件时发生异常", e);
             }
         }
     }
