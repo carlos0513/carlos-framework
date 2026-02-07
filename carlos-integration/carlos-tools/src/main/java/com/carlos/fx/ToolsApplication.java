@@ -59,6 +59,14 @@ public class ToolsApplication extends Application {
     private static Stage primaryStage;
 
     /**
+     * HostServices实例
+     * <p>
+     * 用于打开文件、目录和URL，这是JavaFX推荐的方式
+     * </p>
+     */
+    private static Application applicationInstance;
+
+    /**
      * JavaFX初始化方法
      * <p>
      * 在start()方法之前调用，用于初始化Spring容器。
@@ -88,6 +96,8 @@ public class ToolsApplication extends Application {
     public void start(Stage stage) throws IOException {
         // 保存主舞台引用，供全局使用
         primaryStage = stage;
+        // 保存Application实例，用于获取HostServices
+        applicationInstance = this;
 
         // 设置应用程序主题为AtlantaFX的PrimerLight主题
         // PrimerLight是一个现代化的浅色主题，提供清爽的视觉效果
@@ -165,6 +175,19 @@ public class ToolsApplication extends Application {
      */
     public static ConfigurableApplicationContext getSpringContext() {
         return springContext;
+    }
+
+    /**
+     * 获取HostServices实例
+     * <p>
+     * 用于打开文件、目录和URL，这是JavaFX推荐的方式。
+     * 相比AWT的Desktop API，HostServices更适合JavaFX应用。
+     * </p>
+     *
+     * @return HostServices实例，如果应用未初始化则返回null
+     */
+    public static javafx.application.HostServices getApplicationHostServices() {
+        return applicationInstance != null ? applicationInstance.getHostServices() : null;
     }
 
     /**

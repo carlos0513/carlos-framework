@@ -1,5 +1,7 @@
 package com.carlos.fx.utils;
 
+import com.carlos.fx.ToolsApplication;
+import javafx.application.HostServices;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -7,8 +9,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import org.controlsfx.control.Notifications;
 
-import java.awt.*;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -348,18 +348,13 @@ public class DialogUtil {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == openButton) {
             try {
-                if (!Desktop.isDesktopSupported()) {
-                    showWarning("警告", "当前系统不支持桌面操作，无法打开目录");
+                HostServices hostServices = ToolsApplication.getApplicationHostServices();
+                if (hostServices == null) {
+                    showWarning("警告", "无法获取HostServices，无法打开目录\n目录位置: " + outputPath);
                     return;
                 }
-                Desktop desktop = Desktop.getDesktop();
-                if (!desktop.isSupported(Desktop.Action.OPEN)) {
-                    showWarning("警告", "当前系统不支持打开文件操作");
-                    return;
-                }
-                desktop.open(outputPath.toFile());
-            } catch (IOException e) {
-                showError("错误", "无法打开目录", e);
+                // 使用JavaFX的HostServices打开目录
+                hostServices.showDocument(outputPath.toUri().toString());
             } catch (Exception e) {
                 showError("错误", "打开目录时发生异常", e);
             }
@@ -430,21 +425,16 @@ public class DialogUtil {
                 Path logFile = Paths.get(System.getProperty("user.home"),
                         ".carlos-tools", "logs", "application.log");
                 if (Files.exists(logFile)) {
-                    if (!Desktop.isDesktopSupported()) {
-                        showWarning("警告", "当前系统不支持桌面操作，无法打开日志文件\n日志位置: " + logFile);
+                    HostServices hostServices = ToolsApplication.getApplicationHostServices();
+                    if (hostServices == null) {
+                        showWarning("警告", "无法获取HostServices，无法打开日志文件\n日志位置: " + logFile);
                         return;
                     }
-                    Desktop desktop = Desktop.getDesktop();
-                    if (!desktop.isSupported(Desktop.Action.OPEN)) {
-                        showWarning("警告", "当前系统不支持打开文件操作\n日志位置: " + logFile);
-                        return;
-                    }
-                    desktop.open(logFile.toFile());
+                    // 使用JavaFX的HostServices打开日志文件
+                    hostServices.showDocument(logFile.toUri().toString());
                 } else {
                     showWarning("警告", "日志文件不存在: " + logFile);
                 }
-            } catch (IOException e) {
-                showError("错误", "无法打开日志文件", e);
             } catch (Exception e) {
                 showError("错误", "打开日志文件时发生异常", e);
             }
