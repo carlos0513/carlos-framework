@@ -15,7 +15,6 @@ import com.carlos.fx.codege.entity.TemplateConfig;
 import com.carlos.fx.codege.utils.NameUtil;
 import com.carlos.fx.codege.utils.XmlUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.*;
@@ -30,7 +29,6 @@ import java.util.*;
  * @ModificationHistory Who  When  What ---------     -------------   --------------------------------------
  */
 @Slf4j
-@Service
 public class DatabaseService {
 
     private final DatabaseInfo databaseInfo;

@@ -11,7 +11,6 @@ import com.carlos.fx.encrypt.config.DatabaseInfo;
 import com.carlos.fx.encrypt.config.ToolInfo;
 import com.carlos.fx.encrypt.config.ToolInfo.Encrypt;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.Optional;
  * @date 2023/9/5 23:14
  */
 @Slf4j
-@Service
 public class EncryptHandler implements DataHandler {
 
     private final DatabaseService databaseService;

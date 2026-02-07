@@ -6,7 +6,6 @@ import com.carlos.fx.codege.config.Constant;
 import com.carlos.fx.codege.config.ProjectInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.io.IOException;
  * @date 2020/9/9 16:56
  */
 @Slf4j
-@Service
 public class ProjectService {
 
     /**

@@ -18,7 +18,6 @@ import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Group;
 import org.gitlab4j.api.models.Project;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-@Service
+
 public class GitlabService {
 
     private GitLabServerInfo serverInfo;

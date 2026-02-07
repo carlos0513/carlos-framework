@@ -4,6 +4,9 @@ spring:
   main:
     web-application-type: none  # 关键：禁用 Web 服务器
     banner-mode: off
+  autoconfigure:
+    exclude:
+      - com.carlos.encrypt.config.EncryptConfig
 
 carlos:
   tools:
