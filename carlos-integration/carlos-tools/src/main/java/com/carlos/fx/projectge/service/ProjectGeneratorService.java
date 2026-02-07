@@ -16,6 +16,8 @@ import com.carlos.fx.projectge.enums.DirectEnum;
 import com.carlos.fx.projectge.utils.NameUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.HashMap;
@@ -31,6 +33,8 @@ import java.util.Map;
  * @date 2019/10/19 23:45 ---------     -------------   --------------------------------------
  */
 @Slf4j
+@Service
+@Scope("prototype")
 public class ProjectGeneratorService {
 
     public void createObject(ProjectInfo projectInfo) throws Exception {

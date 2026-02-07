@@ -25,6 +25,9 @@ import java.util.stream.Collectors;
  * @author Carlos
  * @since 3.0.0
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class BranchManagementController extends BaseController {
 
     // ==================== FXML 注入的 UI 组件 ====================

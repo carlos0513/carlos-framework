@@ -16,8 +16,12 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +62,11 @@ import java.util.List;
  * @author Carlos
  * @since 3.0.0
  */
+@Component
 public class CodeGeneratorController extends BaseController {
+
+    /** Spring应用上下文，用于获取prototype scope的Bean */
+    private final ApplicationContext applicationContext;
 
     /** 数据库类型下拉框（MySQL、PostgreSQL等） */
     @FXML
@@ -142,6 +150,16 @@ public class CodeGeneratorController extends BaseController {
 
     /** 所有表的列表（用于保存从数据库加载的表信息） */
     private List<TableBean> allTables;
+
+    /**
+     * 构造函数，注入Spring应用上下文
+     *
+     * @param applicationContext Spring应用上下文
+     */
+    @Autowired
+    public CodeGeneratorController(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     /**
      * 初始化界面组件
@@ -406,8 +424,10 @@ public class CodeGeneratorController extends BaseController {
                 TemplateConfig templateConfig = new TemplateConfig();
                 projectInfo.setTemplateConfig(templateConfig);
 
-                // 创建代码生成器
-                Generator generator = new Generator(dbInfo, projectInfo);
+                // 使用Spring获取prototype scope的Generator bean
+                Generator generator = applicationContext.getBean(Generator.class);
+                // 初始化生成器
+                generator.init(dbInfo, projectInfo);
 
                 // 更新状态信息
                 updateMessage("正在生成代码...");
@@ -433,7 +453,12 @@ public class CodeGeneratorController extends BaseController {
                     progressBar.setManaged(false);
                     statusLabel.setText("代码生成完成！");
                     generateButton.setDisable(false);
-                    DialogUtil.showSuccessNotification("生成成功", "代码已生成到: " + outputPath);
+                    // 使用新的对话框方法，询问是否打开输出目录
+                    DialogUtil.showSuccessWithOpenDirectory(
+                            "生成成功",
+                            "代码已成功生成！",
+                            Paths.get(outputPath)
+                    );
                 },
                 // 失败回调
                 error -> {
@@ -441,7 +466,12 @@ public class CodeGeneratorController extends BaseController {
                     progressBar.setManaged(false);
                     statusLabel.setText("代码生成失败");
                     generateButton.setDisable(false);
-                    DialogUtil.showError("生成错误", "代码生成失败", error);
+                    // 使用新的对话框方法，询问是否打开日志
+                    DialogUtil.showErrorWithOpenLog(
+                            "生成失败",
+                            "代码生成过程中发生错误",
+                            error
+                    );
                 }
         );
     }

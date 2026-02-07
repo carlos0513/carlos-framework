@@ -10,8 +10,12 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +48,11 @@ import java.util.stream.Collectors;
  * @author Carlos
  * @since 3.0.0
  */
+@Component
 public class ProjectGeneratorController extends BaseController {
+
+    /** Spring应用上下文，用于获取prototype scope的Bean */
+    private final ApplicationContext applicationContext;
 
     /** 项目名称输入框 */
     @FXML
@@ -103,6 +111,16 @@ public class ProjectGeneratorController extends BaseController {
     private Label statusLabel;
 
     private List<SelectTemplate> templatesBaseInfo;
+
+    /**
+     * 构造函数，注入Spring应用上下文
+     *
+     * @param applicationContext Spring应用上下文
+     */
+    @Autowired
+    public ProjectGeneratorController(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     /**
      * 初始化界面组件
@@ -322,8 +340,8 @@ public class ProjectGeneratorController extends BaseController {
                 // 更新状态消息
                 updateMessage("正在创建项目结构...");
 
-                // 创建生成器并执行生成操作
-                ProjectGeneratorService projectGeneratorService = new ProjectGeneratorService();
+                // 使用Spring获取prototype scope的ProjectGeneratorService bean
+                ProjectGeneratorService projectGeneratorService = applicationContext.getBean(ProjectGeneratorService.class);
                 projectGeneratorService.createObject(projectInfo);
 
                 updateMessage("项目生成完成！");
@@ -346,23 +364,13 @@ public class ProjectGeneratorController extends BaseController {
 
                     // 构建项目完整路径
                     String projectPath = outputPath + File.separator + projectName;
-                    // 显示成功通知
-                    DialogUtil.showSuccessNotification("生成成功", "项目已生成到: " + projectPath);
 
-                    // 询问用户是否打开项目目录
-                    boolean openDir = DialogUtil.showConfirm(
-                            "打开目录",
-                            "是否打开项目目录？"
+                    // 使用新的对话框方法，询问是否打开输出目录
+                    DialogUtil.showSuccessWithOpenDirectory(
+                            "生成成功",
+                            "项目已成功生成！",
+                            Paths.get(projectPath)
                     );
-
-                    if (openDir) {
-                        try {
-                            // 使用系统默认文件管理器打开项目目录
-                            java.awt.Desktop.getDesktop().open(new File(projectPath));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
                 },
                 // 失败回调：任务执行失败时执行
                 error -> {
@@ -371,8 +379,13 @@ public class ProjectGeneratorController extends BaseController {
                     progressBar.setManaged(false);
                     statusLabel.setText("项目生成失败");
                     generateButton.setDisable(false);
-                    // 显示错误对话框
-                    DialogUtil.showError("生成错误", "项目生成失败", error);
+
+                    // 使用新的对话框方法，询问是否打开日志
+                    DialogUtil.showErrorWithOpenLog(
+                            "生成失败",
+                            "项目生成过程中发生错误",
+                            error
+                    );
                 }
         );
     }

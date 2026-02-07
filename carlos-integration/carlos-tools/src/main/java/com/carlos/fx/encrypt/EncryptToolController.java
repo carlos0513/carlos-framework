@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,7 @@ import java.util.List;
  * @author Carlos
  * @since 3.0.0
  */
+@Component
 public class EncryptToolController extends BaseController {
 
     /** 数据库类型下拉框（MySQL、PostgreSQL等） */

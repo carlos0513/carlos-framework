@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import org.gitlab4j.api.GitLabApi;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -20,6 +21,7 @@ import java.io.IOException;
  * @author Carlos
  * @since 3.0.0
  */
+@Component
 public class GitlabMainController extends BaseController {
 
     // ==================== FXML 注入的 UI 组件 ====================

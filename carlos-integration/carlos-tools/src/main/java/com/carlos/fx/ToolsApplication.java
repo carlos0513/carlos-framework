@@ -2,10 +2,14 @@ package com.carlos.fx;
 
 import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
 
@@ -19,6 +23,7 @@ import java.io.IOException;
  * <p>主要功能：</p>
  * <ul>
  *   <li>初始化JavaFX应用程序环境</li>
+ *   <li>集成Spring Boot容器管理Bean</li>
  *   <li>设置应用程序主题（使用AtlantaFX的PrimerLight主题）</li>
  *   <li>加载主窗口FXML布局文件</li>
  *   <li>配置窗口大小和样式</li>
@@ -28,7 +33,21 @@ import java.io.IOException;
  * @author Carlos
  * @since 3.0.0
  */
+@SpringBootApplication
 public class ToolsApplication extends Application {
+
+    /**
+     * Spring应用上下文
+     * <p>
+     * 保存Spring容器引用，用于管理所有Bean的生命周期
+     * </p>
+     */
+    private static ConfigurableApplicationContext springContext;
+
+    /**
+     * 命令行参数
+     */
+    private static String[] savedArgs;
 
     /**
      * 主舞台（主窗口）的静态引用
@@ -40,10 +59,26 @@ public class ToolsApplication extends Application {
     private static Stage primaryStage;
 
     /**
+     * JavaFX初始化方法
+     * <p>
+     * 在start()方法之前调用，用于初始化Spring容器。
+     * 这是Spring Boot与JavaFX集成的关键步骤。
+     * </p>
+     *
+     * @throws Exception 如果Spring容器初始化失败
+     */
+    @Override
+    public void init() throws Exception {
+        // 初始化Spring容器
+        springContext = SpringApplication.run(ToolsApplication.class, savedArgs);
+    }
+
+    /**
      * JavaFX应用程序启动方法
      * <p>
      * 这是JavaFX应用程序的入口方法，在调用launch()后会自动被调用。
      * 该方法负责初始化应用程序的UI界面和相关配置。
+     * 此时Spring容器已经就绪，可以使用依赖注入。
      * </p>
      *
      * @param stage JavaFX提供的主舞台对象
@@ -61,6 +96,8 @@ public class ToolsApplication extends Application {
         // 加载主窗口的FXML布局文件
         // FXML文件定义了主界面的结构和布局
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        // 关键：使用Spring作为控制器工厂，实现依赖注入
+        loader.setControllerFactory(springContext::getBean);
         Parent root = loader.load();
 
         // 创建场景，设置初始窗口大小为1200x800像素
@@ -78,10 +115,27 @@ public class ToolsApplication extends Application {
         stage.setMinHeight(600);
         // 显示窗口
         stage.show();
+
+        // 窗口关闭事件处理
         stage.setOnCloseRequest(event -> {
-            // TODO: Carlos 2026-02-06 页面关闭事件
-            System.exit(0);
+            springContext.close();
+            Platform.exit();
         });
+    }
+
+    /**
+     * JavaFX应用程序停止方法
+     * <p>
+     * 在应用程序关闭时调用，用于清理资源。
+     * 关闭Spring容器，释放所有Bean。
+     * </p>
+     *
+     * @throws Exception 如果清理资源失败
+     */
+    @Override
+    public void stop() throws Exception {
+        springContext.close();
+        Platform.exit();
     }
 
     /**
@@ -102,16 +156,29 @@ public class ToolsApplication extends Application {
     }
 
     /**
+     * 获取Spring应用上下文
+     * <p>
+     * 提供全局访问Spring容器的方式，用于获取Bean实例。
+     * </p>
+     *
+     * @return Spring应用上下文
+     */
+    public static ConfigurableApplicationContext getSpringContext() {
+        return springContext;
+    }
+
+    /**
      * 应用程序主方法
      * <p>
      * Java应用程序的标准入口方法。
-     * 调用JavaFX的launch()方法启动JavaFX应用程序，
-     * 该方法会自动调用start()方法来初始化界面。
+     * 保存命令行参数，然后调用JavaFX的launch()方法启动JavaFX应用程序，
+     * 该方法会自动调用init()和start()方法来初始化Spring容器和界面。
      * </p>
      *
      * @param args 命令行参数
      */
     public static void main(String[] args) {
+        savedArgs = args;
         launch(args);
     }
 }

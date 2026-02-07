@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
  * @author Carlos
  * @since 3.0.0
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class UserManagementController extends BaseController {
 
     @FXML

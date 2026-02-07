@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -52,6 +53,7 @@ import java.io.IOException;
  * @since 3.0.0
  */
 @Slf4j
+@Component
 public class MainController extends BaseController {
 
     /**
@@ -193,6 +195,8 @@ public class MainController extends BaseController {
         try {
             // 加载工具的FXML文件
             FXMLLoader loader = new FXMLLoader(getClass().getResource(toolItem.getFxmlPath()));
+            // 使用Spring作为控制器工厂
+            loader.setControllerFactory(ToolsApplication.getSpringContext()::getBean);
             // 清空内容区域
             contentPane.getChildren().clear();
             // 将加载的工具界面添加到内容区域

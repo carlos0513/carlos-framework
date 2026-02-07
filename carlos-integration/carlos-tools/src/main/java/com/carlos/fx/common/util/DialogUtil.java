@@ -1,10 +1,16 @@
 package com.carlos.fx.common.util;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
+import javafx.scene.control.ButtonBar.ButtonData;
 import org.controlsfx.control.Notifications;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
@@ -293,5 +299,130 @@ public class DialogUtil {
                 .title(title)
                 .text(message)
                 .showInformation();  // 显示信息类型的通知（蓝色）
+    }
+
+    /**
+     * 显示成功对话框，询问是否打开输出目录
+     * <p>
+     * 用于代码生成或项目生成成功后，询问用户是否打开输出目录。
+     * 如果用户点击"打开目录"，则使用系统默认文件管理器打开该目录。
+     * </p>
+     *
+     * <p>对话框类型：INFORMATION（蓝色图标）</p>
+     * <p>按钮：打开目录、关闭</p>
+     *
+     * <p>使用场景：</p>
+     * <ul>
+     *   <li>代码生成完成后</li>
+     *   <li>项目生成完成后</li>
+     *   <li>文件导出完成后</li>
+     * </ul>
+     *
+     * <p>使用示例：</p>
+     * <pre>{@code
+     * Path outputPath = Paths.get("D:/projects/generated");
+     * DialogUtil.showSuccessWithOpenDirectory(
+     *     "生成成功",
+     *     "代码已成功生成！",
+     *     outputPath
+     * );
+     * }</pre>
+     *
+     * @param title      对话框标题
+     * @param message    成功消息内容
+     * @param outputPath 输出目录路径
+     */
+    public static void showSuccessWithOpenDirectory(String title, String message, Path outputPath) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(message);
+        alert.setContentText("输出位置: " + outputPath);
+
+        ButtonType openButton = new ButtonType("打开目录");
+        ButtonType closeButton = new ButtonType("关闭", ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(openButton, closeButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == openButton) {
+            try {
+                Desktop.getDesktop().open(outputPath.toFile());
+            } catch (IOException e) {
+                showError("错误", "无法打开目录", e);
+            }
+        }
+    }
+
+    /**
+     * 显示错误对话框，询问是否打开日志文件
+     * <p>
+     * 用于操作失败后，显示错误信息并询问用户是否打开日志文件查看详细错误。
+     * 对话框包含可展开的异常堆栈信息，方便用户查看详细错误。
+     * </p>
+     *
+     * <p>对话框类型：ERROR（红色图标）</p>
+     * <p>按钮：打开日志、关闭</p>
+     * <p>可展开内容：完整的异常堆栈信息</p>
+     *
+     * <p>使用场景：</p>
+     * <ul>
+     *   <li>代码生成失败</li>
+     *   <li>项目生成失败</li>
+     *   <li>数据库连接失败</li>
+     *   <li>文件操作失败</li>
+     * </ul>
+     *
+     * <p>使用示例：</p>
+     * <pre>{@code
+     * try {
+     *     generateCode();
+     * } catch (Exception e) {
+     *     DialogUtil.showErrorWithOpenLog(
+     *         "生成失败",
+     *         "代码生成过程中发生错误",
+     *         e
+     *     );
+     * }
+     * }</pre>
+     *
+     * @param title   对话框标题
+     * @param message 错误消息内容
+     * @param error   异常对象
+     */
+    public static void showErrorWithOpenLog(String title, String message, Throwable error) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(message);
+        alert.setContentText(error.getMessage());
+
+        // 添加可展开的异常堆栈
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        error.printStackTrace(pw);
+
+        TextArea textArea = new TextArea(sw.toString());
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        alert.getDialogPane().setExpandableContent(textArea);
+
+        ButtonType openLogButton = new ButtonType("打开日志");
+        ButtonType closeButton = new ButtonType("关闭", ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(openLogButton, closeButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == openLogButton) {
+            try {
+                Path logFile = Paths.get(System.getProperty("user.home"),
+                        ".carlos-tools", "logs", "application.log");
+                if (Files.exists(logFile)) {
+                    Desktop.getDesktop().open(logFile.toFile());
+                } else {
+                    showWarning("警告", "日志文件不存在: " + logFile);
+                }
+            } catch (IOException e) {
+                showError("错误", "无法打开日志文件", e);
+            }
+        }
     }
 }

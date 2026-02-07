@@ -23,6 +23,9 @@ import java.util.List;
  * @author Carlos
  * @since 3.0.0
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class MergeRequestController extends BaseController {
 
     // ==================== FXML 注入的 UI 组件 ====================

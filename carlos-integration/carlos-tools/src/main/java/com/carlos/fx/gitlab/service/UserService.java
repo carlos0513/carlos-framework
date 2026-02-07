@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
  * @author Carlos
  * @since 3.0.0
  */
+import org.springframework.stereotype.Service;
+
+@Service
 public class UserService {
 
     private final GitLabApi gitLabApi;

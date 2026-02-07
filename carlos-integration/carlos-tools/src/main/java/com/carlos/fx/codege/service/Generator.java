@@ -12,6 +12,9 @@ import com.carlos.fx.codege.entity.TemplateInfo;
 import com.carlos.fx.codege.enums.DirectEnum;
 import com.carlos.fx.codege.utils.TemplateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.HashMap;
@@ -27,6 +30,8 @@ import java.util.Map;
  * @date 2019/10/19 23:45 ---------     -------------   --------------------------------------
  */
 @Slf4j
+@Service
+@Scope("prototype")
 public class Generator {
 
 
@@ -37,7 +42,9 @@ public class Generator {
     /**
      * 项目相关信息
      */
-    private final ProjectInfo projectInfo;
+    private ProjectInfo projectInfo;
+
+    private DatabaseInfo databaseInfo;
 
     private final Map<String, Object> params = new HashMap<>();
 
@@ -47,14 +54,23 @@ public class Generator {
      */
     private List<TableBean> tables;
 
-    public Generator(DatabaseInfo databaseInfo, ProjectInfo projectInfo) {
+    @Autowired
+    public Generator(DatabaseService databaseService, ProjectService projectService) {
+        this.databaseService = databaseService;
+        this.projectService = projectService;
+    }
+
+    /**
+     * 初始化生成器配置
+     *
+     * @param databaseInfo 数据库信息
+     * @param projectInfo 项目信息
+     */
+    public void init(DatabaseInfo databaseInfo, ProjectInfo projectInfo) {
+        this.databaseInfo = databaseInfo;
         this.projectInfo = projectInfo;
         params.put(Constant.FTL_PARAM_KEY_PROJECT, projectInfo);
         params.put(Constant.FTL_PARAM_KEY_DATABASDE, databaseInfo);
-        projectService = new ProjectService(projectInfo);
-
-
-        databaseService = new DatabaseService(databaseInfo, projectInfo.getTemplateConfig());
     }
 
     public void createObject() throws Exception {
@@ -80,10 +96,14 @@ public class Generator {
             if (log.isDebugEnabled()) {
                 log.debug("3.将模板文件移动至指定的包名路径：" + projectInfo.getGroupId() + StrUtil.DOT + projectInfo.getArtifactId());
             }
-            projectService.moveTemplate2PackagePath(projectRoot);
+            // 使用注入的ProjectService，传入projectInfo
+            ProjectService tempProjectService = new ProjectService(projectInfo);
+            tempProjectService.moveTemplate2PackagePath(projectRoot);
 
             // 获取需要生成代码的表的详情
-            tables = databaseService.getTablesDetailInfo();
+            // 使用注入的DatabaseService，传入databaseInfo和templateConfig
+            DatabaseService tempDatabaseService = new DatabaseService(databaseInfo, projectInfo.getTemplateConfig());
+            tables = tempDatabaseService.getTablesDetailInfo();
 
             if (log.isDebugEnabled()) {
                 log.debug("4.根据模板文件生成对应的项目文件");

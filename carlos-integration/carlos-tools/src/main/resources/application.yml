@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: carlos-tools
+  main:
+    web-application-type: none  # 关键：禁用 Web 服务器
+    banner-mode: off
+
+carlos:
+  tools:
+    code-generator:
+      default-author: Carlos
+      default-package: com.carlos.demo
+    project-generator:
+      default-group-id: com.carlos
+      default-version: 1.0.0-SNAPSHOT
+
+logging:
+  level:
+    com.carlos: DEBUG
+    org.springframework: WARN
+  file:
+    name: ${user.home}/.carlos-tools/logs/application.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
