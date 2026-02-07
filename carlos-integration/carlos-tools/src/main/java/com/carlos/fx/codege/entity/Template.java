@@ -1,6 +1,6 @@
 package com.carlos.fx.codege.entity;
 
-import com.carlos.fx.codege.config.Constant;
+import com.carlos.fx.codege.config.CodegeConstant;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,5 +27,5 @@ public class Template implements Serializable {
     /**
      * 目标文件扩展名
      */
-    private String extName = Constant.JAVA_FILE_EXT;
+    private String extName = CodegeConstant.JAVA_FILE_EXT;
 }

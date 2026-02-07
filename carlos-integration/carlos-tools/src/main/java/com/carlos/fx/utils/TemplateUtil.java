@@ -4,7 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.fx.codege.config.Constant;
+import com.carlos.fx.codege.config.CodegeConstant;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.entity.TemplateInfo;
 import com.carlos.fx.codege.enums.DirectEnum;
@@ -44,8 +44,7 @@ public class TemplateUtil {
      * @author Carlos
      * @date 2020/9/5 10:19
      */
-    public static List<TemplateBaseInfo> getTemplatesBaseInfo() {
-        File templateRootPath = FileUtil.file(CodeGeneratorUtil.TEMP_DIR + File.separator + Constant.TEMPLATE_ROOT_PATH);
+    public static List<TemplateBaseInfo> getTemplatesBaseInfo(File templateRootPath) {
         File[] templates = templateRootPath.listFiles();
         List<TemplateBaseInfo> list = new LinkedList<>();
         if (ArrayUtil.isEmpty(templates)) {
@@ -55,9 +54,9 @@ public class TemplateUtil {
 
         // 便利所有的模板
         for (File templatePath : templates) {
-            File templateDescFile = FileUtil.file(templatePath, Constant.TEMPLATE_DESCRIBE_FILE_NAME);
+            File templateDescFile = FileUtil.file(templatePath, CodegeConstant.TEMPLATE_DESCRIBE_FILE_NAME);
             if (!FileUtil.exist(templateDescFile)) {
-                log.error("目录[" + templatePath.getPath() + "]不存在描述文件[" + Constant.TEMPLATE_DESCRIBE_FILE_NAME + "]");
+                log.error("目录[" + templatePath.getPath() + "]不存在描述文件[" + CodegeConstant.TEMPLATE_DESCRIBE_FILE_NAME + "]");
                 continue;
             }
             TemplateBaseInfo templateBaseInfo = XmlUtils.readTemplateBaseInfo(templateDescFile, TemplateBaseInfo.class);
@@ -81,7 +80,7 @@ public class TemplateUtil {
      */
     public static TemplateInfo dealTemplateFile(File file) {
         // 处理非模板文件 非模板文件不用处理
-        if (!FileUtil.pathEndsWith(file, Constant.TEMPLATE_FILE_EXT)) {
+        if (!FileUtil.pathEndsWith(file, CodegeConstant.TEMPLATE_FILE_EXT)) {
             if (log.isDebugEnabled()) {
                 log.debug("非模板文件, 忽略处理:" + file.getPath());
             }
@@ -128,10 +127,8 @@ public class TemplateUtil {
             template.process(params, out);
             log.info(targetFile + "创建成功");
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("文件生成失败: 路径:" + filePath + "||" + templateName + "->" + targetName);
-            }
-            e.printStackTrace();
+            log.error("文件生成失败: 路径:{}||{}->{}", filePath, templateName, targetName, e);
+
         }
 
     }
@@ -140,15 +137,4 @@ public class TemplateUtil {
         createClassFile(params, templateInfo.getName(), templateInfo.getPath(), templateInfo.getTargetName());
     }
 
-    /**
-     * 加载模板配置信息
-     *
-     * @param templateBaseInfo 参数0
-     * @author Carlos
-     * @date 2021/11/22 23:33
-     */
-    public static void loadTemplateConfig(TemplateBaseInfo templateBaseInfo) {
-        String path = templateBaseInfo.getPath();
-        File templateDescFile = FileUtil.file(path, Constant.TEMPLATE_DESCRIBE_FILE_NAME);
-    }
 }

@@ -1,10 +1,10 @@
 package com.carlos.fx.gitlab.controller;
 
 import com.carlos.fx.common.controller.BaseController;
-import com.carlos.fx.common.util.AsyncTaskUtil;
-import com.carlos.fx.common.util.DialogUtil;
 import com.carlos.fx.gitlab.entity.GitlabUser;
 import com.carlos.fx.gitlab.service.UserService;
+import com.carlos.fx.utils.AsyncTaskUtil;
+import com.carlos.fx.utils.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -13,20 +13,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-/**
- * User Management Controller
- *
- * @author Carlos
- * @since 3.0.0
- */
-import org.springframework.stereotype.Component;
 
 @Component
 public class UserManagementController extends BaseController {

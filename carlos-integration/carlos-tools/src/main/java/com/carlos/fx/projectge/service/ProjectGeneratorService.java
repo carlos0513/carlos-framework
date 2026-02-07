@@ -9,7 +9,7 @@ import cn.hutool.extra.template.TemplateConfig.ResourceMode;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
-import com.carlos.fx.projectge.config.Constant;
+import com.carlos.fx.projectge.config.ProjectGeConstant;
 import com.carlos.fx.projectge.entity.ProjectInfo;
 import com.carlos.fx.projectge.entity.TemplateInfo;
 import com.carlos.fx.projectge.enums.DirectEnum;
@@ -49,7 +49,7 @@ public class ProjectGeneratorService {
         try {
             TemplateBaseInfo selectTemplate = projectInfo.getSelectTemplate();
 
-            File templatePath = new File(selectTemplate.getPath() + File.separator + Constant.TEMPLATE_MAIN);
+            File templatePath = new File(selectTemplate.getPath() + File.separator + ProjectGeConstant.TEMPLATE_MAIN);
             File projectPath = new File(projectInfo.getPath());
             String projectPathAbsolutePath = projectPath.getAbsolutePath();
             String templatePathAbsolutePath = templatePath.getAbsolutePath();
@@ -132,7 +132,7 @@ public class ProjectGeneratorService {
                         Template template = engine.getTemplate(templateInfo.getName());
 
                         Map<String, Object> params = new HashMap<>();
-                        params.put(Constant.FTL_PARAM_KEY_PROJECT, projectInfo);
+                        params.put(ProjectGeConstant.FTL_PARAM_KEY_PROJECT, projectInfo);
                         template.render(Maps.newHashMap(), new File(path));
                     } catch (Exception e) {
                         log.error("文件生成失败: 路径:{}", templateInfo.getFile(), e);
@@ -145,7 +145,7 @@ public class ProjectGeneratorService {
     private TemplateInfo handleFile(File file) {
         // 处理非模板文件 非模板文件不用处理
         String extName = FileUtil.extName(file);
-        if (!extName.equals(Constant.TEMPLATE_FILE_EXT)) {
+        if (!extName.equals(ProjectGeConstant.TEMPLATE_FILE_EXT)) {
             log.warn("非模板文件, 忽略处理:" + file.getPath());
             return null;
         }

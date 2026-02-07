@@ -1,6 +1,6 @@
-package com.carlos.fx;
+package com.carlos.fx.common.controller;
 
-import com.carlos.fx.common.controller.BaseController;
+import com.carlos.fx.ToolsApplication;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -203,7 +203,7 @@ public class MainController extends BaseController {
             contentPane.getChildren().add(loader.load());
         } catch (IOException e) {
             // 加载失败时显示错误信息
-            log.info("加载工具失败: {}", e.getMessage());
+            log.error("加载工具失败: ", e);
             Label errorLabel = new Label("加载失败: " + e.getMessage());
             errorLabel.setWrapText(true);
             errorLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #f44336;");

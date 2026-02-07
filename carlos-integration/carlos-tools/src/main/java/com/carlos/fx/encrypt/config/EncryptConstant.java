@@ -10,7 +10,7 @@ import java.io.File;
  * @author Carlos
  * @date 2021/11/22 16:31
  */
-public interface Constant {
+public interface EncryptConstant {
 
     /**
      * 删除字段名称

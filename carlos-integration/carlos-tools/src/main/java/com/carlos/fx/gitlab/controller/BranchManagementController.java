@@ -1,10 +1,10 @@
 package com.carlos.fx.gitlab.controller;
 
 import com.carlos.fx.common.controller.BaseController;
-import com.carlos.fx.common.util.AsyncTaskUtil;
-import com.carlos.fx.common.util.DialogUtil;
 import com.carlos.fx.gitlab.entity.GitlabBranch;
 import com.carlos.fx.gitlab.service.BranchService;
+import com.carlos.fx.utils.AsyncTaskUtil;
+import com.carlos.fx.utils.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -12,20 +12,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-/**
- * 分支管理控制器
- * 负责管理 GitLab 项目的分支，包括创建、删除、保护、比较等操作
- *
- * @author Carlos
- * @since 3.0.0
- */
-import org.springframework.stereotype.Component;
 
 @Component
 public class BranchManagementController extends BaseController {

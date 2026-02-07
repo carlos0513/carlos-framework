@@ -1,14 +1,14 @@
 package com.carlos.fx.encrypt;
 
 import com.carlos.fx.common.controller.BaseController;
-import com.carlos.fx.common.util.AsyncTaskUtil;
-import com.carlos.fx.common.util.DialogUtil;
 import com.carlos.fx.encrypt.config.DatabaseInfo;
 import com.carlos.fx.encrypt.entity.TableBean;
 import com.carlos.fx.encrypt.enums.DbTypeEnum;
 import com.carlos.fx.encrypt.enums.ToolType;
 import com.carlos.fx.encrypt.service.DatabaseService;
 import com.carlos.fx.encrypt.service.Executor;
+import com.carlos.fx.utils.AsyncTaskUtil;
+import com.carlos.fx.utils.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;

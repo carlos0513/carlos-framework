@@ -1,11 +1,14 @@
 package com.carlos.fx.projectge;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.resource.ResourceUtil;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.common.controller.BaseController;
-import com.carlos.fx.common.util.AsyncTaskUtil;
-import com.carlos.fx.common.util.DialogUtil;
+import com.carlos.fx.projectge.config.ProjectGeConstant;
 import com.carlos.fx.projectge.entity.ProjectInfo;
 import com.carlos.fx.projectge.service.ProjectGeneratorService;
+import com.carlos.fx.utils.AsyncTaskUtil;
+import com.carlos.fx.utils.DialogUtil;
 import com.carlos.fx.utils.TemplateUtil;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -16,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -137,7 +141,9 @@ public class ProjectGeneratorController extends BaseController {
         authorField.setText("Carlos");
 
         // 初始化项目模板下拉框
-        templatesBaseInfo = TemplateUtil.getTemplatesBaseInfo();
+        URL templateUrl = ResourceUtil.getResource(ProjectGeConstant.TEMPLATE_ROOT_PATH);
+        File templateRootPath = FileUtil.file(templateUrl);
+        templatesBaseInfo = TemplateUtil.getTemplatesBaseInfo(templateRootPath);
         // 提供5种常用的Spring Boot项目模板
         templateCombo.getItems().addAll(
                 templatesBaseInfo.stream().map(TemplateBaseInfo::getName).collect(Collectors.toSet())

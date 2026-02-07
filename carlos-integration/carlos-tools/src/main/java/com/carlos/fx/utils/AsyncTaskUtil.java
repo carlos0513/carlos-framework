@@ -1,4 +1,4 @@
-package com.carlos.fx.common.util;
+package com.carlos.fx.utils;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;

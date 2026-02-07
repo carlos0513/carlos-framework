@@ -2,7 +2,7 @@ package com.carlos.fx.codege.service;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.fx.codege.config.Constant;
+import com.carlos.fx.codege.config.CodegeConstant;
 import com.carlos.fx.codege.config.ProjectInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -39,8 +39,8 @@ public class ProjectService {
      */
     public void moveTemplate2PackagePath(File projectRootPath) {
         // TODO: Carlos 2020/9/9 如果是多模块模板  这个目录下会有多个src/main/java目录
-        File source = new File(projectRootPath.getPath() + Constant.SRC_MAIN_JAVA);
-        File target = new File(projectRootPath.getPath() + Constant.SRC_MAIN_TEMP + projectInfo.getGroupId().replace(StrUtil.DOT, File.separator));
+        File source = new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_JAVA);
+        File target = new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_TEMP + projectInfo.getGroupId().replace(StrUtil.DOT, File.separator));
         try {
             if (log.isDebugEnabled()) {
                 log.debug("3.1.将模板文件移动到临时目录：" + target.getAbsolutePath());
@@ -54,7 +54,7 @@ public class ProjectService {
         if (log.isDebugEnabled()) {
             log.debug("3.2.修改临时目录为正式的Java文件目录");
         }
-        FileUtil.rename(new File(projectRootPath.getPath() + Constant.SRC_MAIN_TEMP), "java", true);
+        FileUtil.rename(new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_TEMP), "java", true);
     }
 
 }

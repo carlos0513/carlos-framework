@@ -1,10 +1,13 @@
-package com.carlos.fx.common.util;
+package com.carlos.fx.utils;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import org.controlsfx.control.Notifications;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;

@@ -8,6 +8,6 @@ package com.carlos.fx.gitlab.config;
  * @author Carlos
  * @date 2021/11/22 16:31
  */
-public interface Constant {
+public interface GitlabConstant {
 
 }

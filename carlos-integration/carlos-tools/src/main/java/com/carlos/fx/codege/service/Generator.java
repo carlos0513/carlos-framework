@@ -3,7 +3,7 @@ package com.carlos.fx.codege.service;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.fx.codege.config.Constant;
+import com.carlos.fx.codege.config.CodegeConstant;
 import com.carlos.fx.codege.config.DatabaseInfo;
 import com.carlos.fx.codege.config.ProjectInfo;
 import com.carlos.fx.codege.entity.TableBean;
@@ -69,8 +69,8 @@ public class Generator {
     public void init(DatabaseInfo databaseInfo, ProjectInfo projectInfo) {
         this.databaseInfo = databaseInfo;
         this.projectInfo = projectInfo;
-        params.put(Constant.FTL_PARAM_KEY_PROJECT, projectInfo);
-        params.put(Constant.FTL_PARAM_KEY_DATABASDE, databaseInfo);
+        params.put(CodegeConstant.FTL_PARAM_KEY_PROJECT, projectInfo);
+        params.put(CodegeConstant.FTL_PARAM_KEY_DATABASDE, databaseInfo);
     }
 
     public void createObject() throws Exception {
@@ -79,7 +79,7 @@ public class Generator {
         }
         try {
             TemplateBaseInfo templateBaseInfo = projectInfo.getTemplateBaseInfo();
-            File templatePath = new File(templateBaseInfo.getPath() + File.separator + Constant.TEMPLATE_MAIN);
+            File templatePath = new File(templateBaseInfo.getPath() + File.separator + CodegeConstant.TEMPLATE_MAIN);
             File projectPath = new File(projectInfo.getPath());
             // 复制模板文件到项目目录
             if (log.isDebugEnabled()) {
@@ -90,7 +90,7 @@ public class Generator {
             if (log.isDebugEnabled()) {
                 log.debug("2.更改模板的目录名为项目名");
             }
-            File projectRoot = FileUtil.rename(new File(projectInfo.getPath() + File.separator + Constant.TEMPLATE_MAIN),
+            File projectRoot = FileUtil.rename(new File(projectInfo.getPath() + File.separator + CodegeConstant.TEMPLATE_MAIN),
                     projectInfo.getProjectName(), true);
             // 创建基础包 并且把模板文件放入包中
             if (log.isDebugEnabled()) {
@@ -153,7 +153,7 @@ public class Generator {
             if (templateInfo.isLoop()) {
                 // 如果文件需要循环处理
                 for (TableBean table : tables) {
-                    params.put(Constant.FTL_PARAM_KEY_TABLE, table);
+                    params.put(CodegeConstant.FTL_PARAM_KEY_TABLE, table);
                     templateInfo.setTargetName(StrUtil.replace(templateInfo.getPreName(),
                             DirectEnum.BASE.getValue(), table.getClassPrefix()));
                     TemplateUtil.createClassFile(params, templateInfo);

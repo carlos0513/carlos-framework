@@ -6,7 +6,7 @@ import cn.hutool.core.text.NamingCase;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.fx.codege.config.Constant;
+import com.carlos.fx.codege.config.CodegeConstant;
 import com.carlos.fx.codege.config.DatabaseInfo;
 import com.carlos.fx.codege.entity.ColumnBean;
 import com.carlos.fx.codege.entity.TableBean;
@@ -273,7 +273,7 @@ public class DatabaseService {
             if (logicDelete || checkBooleanField(columnName)) {
                 fullJavaType = "java.long.Boolean";
                 // 去除数据库字段中的is_前缀， is前缀在Java类型为boolean时有时候会出错
-                columnName = StrUtil.removePrefixIgnoreCase(columnName, Constant.BOOLEAN_PREFIX);
+                columnName = StrUtil.removePrefixIgnoreCase(columnName, CodegeConstant.BOOLEAN_PREFIX);
             }
 
             column.setJavaType(StrUtil.subAfter(fullJavaType, CharUtil.DOT, true));
@@ -351,7 +351,7 @@ public class DatabaseService {
      * @date 2021/12/28 15:42
      */
     private boolean checkBooleanField(String columnName) {
-        return columnName.startsWith(Constant.BOOLEAN_PREFIX);
+        return columnName.startsWith(CodegeConstant.BOOLEAN_PREFIX);
     }
 
     /**

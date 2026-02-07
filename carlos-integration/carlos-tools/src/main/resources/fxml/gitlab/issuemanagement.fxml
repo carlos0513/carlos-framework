@@ -10,6 +10,7 @@
 -->
 <ScrollPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.carlos.fx.gitlab.controller.IssueManagementController"
             fitToWidth="true"
             vbarPolicy="AS_NEEDED"
             hbarPolicy="NEVER"
@@ -17,8 +18,7 @@
             style="-fx-background-color: transparent;">
 
     <!-- 主容器：垂直布局 (VBox) -->
-    <VBox fx:controller="com.carlos.fx.gitlab.controller.IssueManagementController"
-          spacing="15" style="-fx-padding: 15;">
+    <VBox spacing="15" style="-fx-padding: 15;">
 
         <!-- 过滤栏：水平布局 (HBox) -->
         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card">

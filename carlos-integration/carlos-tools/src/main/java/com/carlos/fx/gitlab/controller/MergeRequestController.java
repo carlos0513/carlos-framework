@@ -1,29 +1,21 @@
 package com.carlos.fx.gitlab.controller;
 
 import com.carlos.fx.common.controller.BaseController;
-import com.carlos.fx.common.util.AsyncTaskUtil;
-import com.carlos.fx.common.util.DialogUtil;
 import com.carlos.fx.gitlab.entity.GitlabMergeRequest;
 import com.carlos.fx.gitlab.service.MergeRequestService;
+import com.carlos.fx.utils.AsyncTaskUtil;
+import com.carlos.fx.utils.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-/**
- * 合并请求控制器
- * 负责管理 GitLab 项目的合并请求（Merge Request），包括查看、创建、批准、合并、关闭等操作
- *
- * @author Carlos
- * @since 3.0.0
- */
-import org.springframework.stereotype.Component;
 
 @Component
 public class MergeRequestController extends BaseController {
