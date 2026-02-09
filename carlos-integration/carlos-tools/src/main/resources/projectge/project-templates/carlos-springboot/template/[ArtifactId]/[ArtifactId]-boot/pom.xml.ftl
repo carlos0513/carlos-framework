@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>com.carlos</groupId>
-            <artifactId>carlos-springboot</artifactId>
+            <artifactId>carlos-spring-boot-starter-springboot</artifactId>
         </dependency>
     </dependencies>
 

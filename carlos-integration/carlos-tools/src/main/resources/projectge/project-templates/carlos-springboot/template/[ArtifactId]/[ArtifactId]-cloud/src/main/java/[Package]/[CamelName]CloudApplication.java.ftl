@@ -1,4 +1,4 @@
-package ${project.groupId};
+package ${project.packageName};
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,9 +6,12 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
-* 启动程序
+* <p>
+    * 微服务启动类
+    * </p>
 *
-* @author carlos
+* @author  ${project.author}
+* @date    ${.now}
 */
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})

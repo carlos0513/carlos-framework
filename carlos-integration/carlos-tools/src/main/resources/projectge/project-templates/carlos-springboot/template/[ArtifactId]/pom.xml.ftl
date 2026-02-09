@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.carlos</groupId>
-        <artifactId>carlos</artifactId>
-        <version>2.2.3.RELEASE</version>
+        <artifactId>carlos-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
     <packaging>pom</packaging>
 
@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <revision>1.0.0-SNAPSHOT</revision>
+        <revision>${project.artifactId}</revision>
     </properties>
 
 

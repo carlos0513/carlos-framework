@@ -1,20 +1,27 @@
 server:
-port: 9510
+port: 8080
+compression:
+enabled: true
+mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+min-response-size: 128KB
+undertow:
+threads:
+io: 8
+worker: 32
+buffer-size: 1024
+direct-buffers: true
 servlet:
-context-path: /system
+context-path: /
 spring:
 profiles:
-active: env,boot
+active: dm,bootdm
 servlet:
 multipart:
 enabled: true
 max-file-size: 200MB # 单文件最大限制
 max-request-size: 200MB # 一次上传所有文件的最大限制. 如果接口只支持单文件,则该值与上面相同即可
-mvc:
-pathmatch:
-matching-strategy: ant_path_matcher
 application:
-name: carlos-bbt-single
+name: ${project.projectName}
 # spring配置
 datasource:
 druid:
@@ -25,47 +32,59 @@ loginPassword: 123456
 dynamic:
 primary: master
 druid:
+break-after-acquire-failure: false
+fail-fast: true
+connection-error-retry-attempts: 10
 initial-size: 5
 min-idle: 5
-maxActive: 20
-maxWait: 60000
-timeBetweenEvictionRunsMillis: 60000
-minEvictableIdleTimeMillis: 300000
-validationQuery: SELECT 1 FROM DUAL
-testWhileIdle: true
-testOnBorrow: false
-testOnReturn: false
-poolPreparedStatements: true
-breakAfterAcquireFailure: true
-ConnectionErrorRetryAttempts: 2
-maxPoolPreparedStatementPerConnectionSize: 20
-filters: stat,slf4j
+max-active: 600
+max-wait: 60000
+time-between-eviction-runs-millis: 60000
+min-evictable-idle-time-millis: 300000
+validation-query: SELECT 1
+test-while-idle: true
+test-on-borrow: false
+test-on-return: false
+pool-prepared-statements: true
+max-pool-prepared-statement-per-connection-size: 20
+#                filters: stat,slf4j
 connection-properties:
-druid.stat.mergeSql: true
+druid.stat.mergeSql: false
 druid.stat.slowSqlMillis: 5000
+filter:
+stat:
+merge-sql: false
+wall:
+enabled: false
+
 ############################## application start ##############################
 carlos:
 boot:
 cors:
 enable: true
 enums:
-scan-package: com.carlos
+scan-package: ${project.packageName}
 enabled: true
 # 自定义项目信息
 info:
-project-name: 系统服务
-groupId: com.carlos
-#            boot-name: @boot.artifact.name@
-author: carlos
-description: 系统服务
+project-name: ${project.projectName}
+groupId: ${project.groupId}
+author: ${project.author}
+description: ${project.describe}
 sourceEncoding: utf-8
-version: 1.0.0
-domain: www.carlos.com
+version: ${project.version}
+domain: www.zcarlos.com
 cache:
-key-prefix: carlos:single
+key-prefix: yunjin:single
 user-prefix: true
 
-############################### application end ###############################
+############################ application end ###############################
+
+management:
+endpoints:
+web:
+exposure:
+include: "*"
 
 
 ##############################  日志配置 start  ###########################
@@ -75,45 +94,9 @@ level:
 root: info
 com.carlos: debug
 file:
-path: log/system/
+path: log/${project.artifactId}/
 ##############################  日志配置 end   ###########################
 
-
-############################### mybatis-plus start #################################
-mybatis-plus: # 启动时是否检查MyBatis XML文件是否存在
-check-config-location: true
-# 支持统配符 * 或者 ; 分割
-# MyBatis原生配置
-configuration: # 字段名称下划线转驼峰命名
-map-underscore-to-camel-case: true
-log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
-call-setters-on-nulls: true
-global-config:
-db-config: # 全局默认主键类型
-id-type: assign_id
-# 逻辑已删除值(默认为 1)
-logic-delete-value: 1
-# 逻辑未删除值(默认为 0)
-logic-not-delete-value: 0
-# mapper xml映射路径
-mapper-locations: classpath*:mapper/**/*Mapper.xml
-################################ mybatis-plus end ##################################
-
-
-#################################### 接口文档 Swagger start #################################
-swagger:
-enable: true
-# 扫描的包，多个包使用逗号隔开
-base-package: com.carlos.system
-description: 系统服务
-title: 系统服务
-version: 2.0.0
-terms-of-service-url: https://www.carlos.com
-contact:
-email: 13032820513@163.com
-name: carlos
-url: www.carlos.com
-group-name: 表单管理
 
 knife4j: # 是否开启Knife4j增强模式 默认 false
 enable: true
@@ -157,3 +140,4 @@ enable: false
 username: carlos
 password: hadoop543216
 #################################### 接口文档 Swagger end ###################################
+

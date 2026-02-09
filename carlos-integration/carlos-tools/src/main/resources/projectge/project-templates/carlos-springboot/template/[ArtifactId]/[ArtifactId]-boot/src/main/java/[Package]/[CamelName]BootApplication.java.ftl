@@ -1,9 +1,16 @@
-package ${project.groupId};
+package ${project.packageName};
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-
+/**
+* <p>
+    * 启动类
+    * </p>
+*
+* @author  ${project.author}
+* @date    ${.now}
+*/
 @SpringBootApplication
 public class ${project.camelName}BootApplication {
 

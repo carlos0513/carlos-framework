@@ -1,10 +1,10 @@
 server:
-  port: 9519
+port: 8080
 spring:
   profiles:
     active: ${r'${PROFILE:local}'}
   application:
-name: carlos-szt-docking
+name: ${project.artifactId}
   cloud:
     nacos:
       discovery:
