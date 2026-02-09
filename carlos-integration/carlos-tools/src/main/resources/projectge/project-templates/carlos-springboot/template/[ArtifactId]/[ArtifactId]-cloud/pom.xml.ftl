@@ -4,17 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>${maven.groupId}</groupId>
-        <artifactId>${maven.artifactId}</artifactId>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
         <version>${r'${revision}'}</version>
     </parent>
 
-    <artifactId>${maven.artifactId}-cloud</artifactId>
+    <artifactId>${project.artifactId}-cloud</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>${maven.groupId}</groupId>
-            <artifactId>${maven.artifactId}-bus</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}-bus</artifactId>
         </dependency>
         <dependency>
             <groupId>com.carlos</groupId>

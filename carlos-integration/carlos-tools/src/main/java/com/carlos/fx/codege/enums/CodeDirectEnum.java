@@ -9,7 +9,7 @@ package com.carlos.fx.codege.enums;
  * @date 2020/8/18 12:09
  * @since 3.0
  */
-public enum DirectEnum {
+public enum CodeDirectEnum {
     /**
      * 表示需要循环生成文件
      */
@@ -28,7 +28,7 @@ public enum DirectEnum {
      */
     private final String describe;
 
-    DirectEnum(String value, String describe) {
+    CodeDirectEnum(String value, String describe) {
         this.value = value;
         this.describe = describe;
     }

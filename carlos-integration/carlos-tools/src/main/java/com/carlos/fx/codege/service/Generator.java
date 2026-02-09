@@ -9,7 +9,7 @@ import com.carlos.fx.codege.config.ProjectInfo;
 import com.carlos.fx.codege.entity.TableBean;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.entity.TemplateInfo;
-import com.carlos.fx.codege.enums.DirectEnum;
+import com.carlos.fx.codege.enums.CodeDirectEnum;
 import com.carlos.fx.utils.TemplateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,7 +144,7 @@ public class Generator {
             }
             // 将模板文件处理成对应的文件
             if (log.isDebugEnabled()) {
-                log.debug("开始处理模板文件：" + file.getPath());
+                log.debug("开始处理模板文件：{}", file.getPath());
             }
             templateInfo = TemplateUtil.dealTemplateFile(file);
             if (templateInfo == null) {
@@ -155,7 +155,7 @@ public class Generator {
                 for (TableBean table : tables) {
                     params.put(CodegeConstant.FTL_PARAM_KEY_TABLE, table);
                     templateInfo.setTargetName(StrUtil.replace(templateInfo.getPreName(),
-                            DirectEnum.BASE.getValue(), table.getClassPrefix()));
+                            CodeDirectEnum.BASE.getValue(), table.getClassPrefix()));
                     TemplateUtil.createClassFile(params, templateInfo);
 
                 }

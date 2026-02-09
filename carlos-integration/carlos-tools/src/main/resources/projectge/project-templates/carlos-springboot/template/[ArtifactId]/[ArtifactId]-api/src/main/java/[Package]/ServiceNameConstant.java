@@ -11,6 +11,6 @@ public interface ServiceNameConstant {
     /**
      * 系统
      */
-    String SYSTEM = "${maven.artifactId}";
+    String SYSTEM = "${project.artifactId}";
 
 }

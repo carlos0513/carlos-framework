@@ -1,5 +1,8 @@
 package com.carlos.fx.projectge.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * <p>
  * 指令枚举
@@ -9,12 +12,14 @@ package com.carlos.fx.projectge.enums;
  * @date 2020/8/18 12:09
  * @since 3.0
  */
-public enum DirectEnum {
+@AllArgsConstructor
+@Getter
+public enum ProjectDirectEnum {
     /**
-     * 表示需要循环生成文件
+     *
      */
-    ArtifactId("[ArtifactId]", "ArtifactId"),
-    GroupId("[GroupId]", "GroupId"),
+    ARTIFACT_ID("[ArtifactId]", "ArtifactId"),
+    PACKAGE("[Package]", "packages"),
     CAMEL_NAME("[CamelName]", "项目名驼峰"),
     UNDERLINE_NAME("[UnderLineName]", "项目名下划线"),
 
@@ -30,16 +35,5 @@ public enum DirectEnum {
      */
     private final String describe;
 
-    DirectEnum(String value, String describe) {
-        this.value = value;
-        this.describe = describe;
-    }
 
-    public String getDescribe() {
-        return describe;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

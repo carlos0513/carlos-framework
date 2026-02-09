@@ -8,17 +8,17 @@
     <packaging>pom</packaging>
 
     <version>${r'${revision}'}</version>
-    <groupId>${maven.groupId}</groupId>
-    <artifactId>${maven.artifactId}</artifactId>
-    <name>${maven.artifactId}</name>
-    <description>${maven.describe}</description>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <name>${project.artifactId}</name>
+    <description>${project.describe}</description>
 
 
     <modules>
-        <module>${maven.artifactId}-bus</module>
-        <module>${maven.artifactId}-api</module>
-        <module>${maven.artifactId}-cloud</module>
-        <module>${maven.artifactId}-boot</module>
+        <module>${project.artifactId}-bus</module>
+        <module>${project.artifactId}-api</module>
+        <module>${project.artifactId}-cloud</module>
+        <module>${project.artifactId}-boot</module>
     </modules>
     <modelVersion>4.0.0</modelVersion>
 
@@ -30,13 +30,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>${maven.groupId}</groupId>
-                <artifactId>${maven.artifactId}-bus</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}-bus</artifactId>
                 <version>${r'${revision}'}</version>
             </dependency>
             <dependency>
-                <groupId>${maven.groupId}</groupId>
-                <artifactId>${maven.artifactId}-api</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}-api</artifactId>
                 <version>${r'${revision}'}</version>
             </dependency>
         </dependencies>

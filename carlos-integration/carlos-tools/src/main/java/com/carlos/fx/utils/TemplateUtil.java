@@ -7,7 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.carlos.fx.codege.config.CodegeConstant;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.entity.TemplateInfo;
-import com.carlos.fx.codege.enums.DirectEnum;
+import com.carlos.fx.codege.enums.CodeDirectEnum;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class TemplateUtil {
         for (File templatePath : templates) {
             File templateDescFile = FileUtil.file(templatePath, CodegeConstant.TEMPLATE_DESCRIBE_FILE_NAME);
             if (!FileUtil.exist(templateDescFile)) {
-                log.error("目录[" + templatePath.getPath() + "]不存在描述文件[" + CodegeConstant.TEMPLATE_DESCRIBE_FILE_NAME + "]");
+                log.error("目录[{}]不存在描述文件[" + CodegeConstant.TEMPLATE_DESCRIBE_FILE_NAME + "]", templatePath.getPath());
                 continue;
             }
             TemplateBaseInfo templateBaseInfo = XmlUtils.readTemplateBaseInfo(templateDescFile, TemplateBaseInfo.class);
@@ -94,9 +94,9 @@ public class TemplateUtil {
         // 文件处理前的名字
         String preName = FileNameUtil.mainName(file);
         // 判断文件名中是否还有循环生成指令
-        if (StrUtil.contains(preName, DirectEnum.FOR.getValue())) {
+        if (StrUtil.contains(preName, CodeDirectEnum.FOR.getValue())) {
             templateInfo.setLoop(true);
-            preName = StrUtil.removeAll(preName, DirectEnum.FOR.getValue());
+            preName = StrUtil.removeAll(preName, CodeDirectEnum.FOR.getValue());
         }
         templateInfo.setPreName(preName);
         return templateInfo;
@@ -125,7 +125,7 @@ public class TemplateUtil {
             String targetFile = filePath + File.separator + targetName;
             Writer out = new FileWriter(targetFile);
             template.process(params, out);
-            log.info(targetFile + "创建成功");
+            log.info("{}创建成功", targetFile);
         } catch (Exception e) {
             log.error("文件生成失败: 路径:{}||{}->{}", filePath, templateName, targetName, e);
 

@@ -33,11 +33,19 @@ public class ProjectInfo {
     /**
      * groupId 拆分 com.xxxx
      */
-    private List<String> groupItems;
+    private List<String> packageNameItems;
     /**
      * artifactId   test-abc
      */
     private String artifactId;
+    /**
+     * version   项目版本
+     */
+    private String version;
+    /**
+     * packageName   包名
+     */
+    private String packageName;
     /**
      * 驼峰命名
      */
@@ -47,17 +55,13 @@ public class ProjectInfo {
      */
     private String underlineName;
     /**
-     * 生成代码保存路径
-     */
-    private String path;
-    /**
-     * 生成代码保存路径
+     * 项目负责人
      */
     private String author;
     /**
-     * 是否自动打开
+     * 生成代码保存路径
      */
-    private boolean autoOpen;
+    private String outputPath;
     /**
      * 模板信息
      *

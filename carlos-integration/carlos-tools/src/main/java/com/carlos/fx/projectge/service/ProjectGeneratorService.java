@@ -8,13 +8,13 @@ import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateConfig.ResourceMode;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
+import cn.hutool.json.JSONUtil;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
+import com.carlos.fx.exception.GeneratorException;
 import com.carlos.fx.projectge.config.ProjectGeConstant;
 import com.carlos.fx.projectge.entity.ProjectInfo;
-import com.carlos.fx.projectge.entity.TemplateInfo;
-import com.carlos.fx.projectge.enums.DirectEnum;
+import com.carlos.fx.projectge.enums.ProjectDirectEnum;
 import com.carlos.fx.utils.NameUtil;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.Map;
 
 /**
  * <p>
- * 代码生成类
+ * 项目生成主业务
  * </p>
  *
  * @author Carlos
@@ -37,10 +37,8 @@ import java.util.Map;
 @Scope("prototype")
 public class ProjectGeneratorService {
 
-    public void createObject(ProjectInfo projectInfo) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("0.生成中.................................................................................");
-        }
+    public void createObject(ProjectInfo projectInfo) {
+        log.info("项目生成中,项目信息JSON:{}", JSONUtil.toJsonPrettyStr(projectInfo));
         String artifactId = projectInfo.getArtifactId();
         String name = StrUtil.replace(artifactId, StrUtil.DASHED, StrUtil.UNDERLINE);
         String camelName = NameUtil.getCamelName(name, false);
@@ -48,58 +46,47 @@ public class ProjectGeneratorService {
         projectInfo.setUnderlineName(name);
         try {
             TemplateBaseInfo selectTemplate = projectInfo.getSelectTemplate();
-
             File templatePath = new File(selectTemplate.getPath() + File.separator + ProjectGeConstant.TEMPLATE_MAIN);
-            File projectPath = new File(projectInfo.getPath());
-            String projectPathAbsolutePath = projectPath.getAbsolutePath();
-            String templatePathAbsolutePath = templatePath.getAbsolutePath();
-
-            List<String> groupItems = projectInfo.getGroupItems();
-            String groupDir = StrUtil.join(File.separator, groupItems);
-
-            DirectEnum[] values = DirectEnum.values();
-
+            List<String> packageNameItems = projectInfo.getPackageNameItems();
+            String packageNames = StrUtil.join(File.separator, packageNameItems);
             // 遍历目录及目录名
-            generateDir(projectInfo, templatePath, templatePathAbsolutePath, groupDir, projectPathAbsolutePath, values);
+            generateDir(projectInfo, templatePath, packageNames);
         } catch (Exception e) {
             log.error("生成失败！", e);
-            throw new Exception(e);
+            throw new GeneratorException(e);
         }
-
+        log.info("项目生成完成.........");
     }
 
     /**
      * createFile
      *
      * @param templateDir      模板中的文件目录
-     * @param templateRootPath 模板根路径
-     * @param groupDir         groupId所组成的目录
-     * @param targetRootPath   目标位置根目录
-     * @param values           参数4
+     * @param packageNames         groupId所组成的目录
      * @author Carlos
      * @date 2023/7/2 21:07
      */
-    private void generateDir(ProjectInfo projectInfo, File templateDir, String templateRootPath, String groupDir, String targetRootPath, DirectEnum[] values) {
-
-        File[] files = templateDir.listFiles();
+    private void generateDir(ProjectInfo projectInfo, File templateDir, String packageNames) {
+        String templatePath = templateDir.getAbsolutePath();
+        File[] files = FileUtil.ls(templatePath);
         if (files == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("目录为空:" + templateDir.getPath());
-            }
+            log.warn("目录为空:{}", templateDir.getPath());
             return;
         }
 
+        String templateRootPath = projectInfo.getSelectTemplate().getPath() + File.separator + ProjectGeConstant.TEMPLATE_MAIN;
+        ProjectDirectEnum[] directEnums = ProjectDirectEnum.values();
         for (File file : files) {
             // 在对应的目标文件夹下创建目录
             String absolutePath = file.getAbsolutePath();
-            String path = absolutePath.replace(templateRootPath, targetRootPath);
-            for (DirectEnum value : values) {
-                path = switch (value) {
-                    case ArtifactId -> path.replace(value.getValue(), projectInfo.getArtifactId());
-                    case GroupId -> path.replace(value.getValue(), groupDir);
-                    case CAMEL_NAME -> path.replace(value.getValue(), projectInfo.getCamelName());
-                    case UNDERLINE_NAME -> path.replace(value.getValue(), projectInfo.getUnderlineName());
-                    default -> throw new IllegalStateException("Unexpected value: " + value);
+            String path = absolutePath.replace(templateRootPath, projectInfo.getOutputPath());
+            for (ProjectDirectEnum directEnum : directEnums) {
+                path = switch (directEnum) {
+                    case ARTIFACT_ID -> path.replace(directEnum.getValue(), projectInfo.getArtifactId());
+                    case PACKAGE -> path.replace(directEnum.getValue(), packageNames);
+                    case CAMEL_NAME -> path.replace(directEnum.getValue(), projectInfo.getCamelName());
+                    case UNDERLINE_NAME -> path.replace(directEnum.getValue(), projectInfo.getUnderlineName());
+                    default -> throw new IllegalStateException("Unexpected value: " + directEnum);
                 };
             }
 
@@ -107,57 +94,38 @@ public class ProjectGeneratorService {
             if (FileUtil.isDirectory(file)) {
                 FileUtil.mkdir(path);
                 if (file.isDirectory()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("进入目录:" + file.getPath());
-                    }
+                    log.info("进入目录:{}", file.getPath());
                     // 递归目录
-                    generateDir(projectInfo, file, templateRootPath, groupDir, targetRootPath, values);
+                    generateDir(projectInfo, file, packageNames);
                 }
-                log.info("创建目录：" + path);
+                log.info("创建目录：{}", path);
                 continue;
             }
             if (FileUtil.isFile(file)) {
-                log.info("开始处理文件:" + file.getPath());
-                TemplateInfo templateInfo = handleFile(file);
-                if (templateInfo == null) {
+                log.info("开始处理文件:{}", file.getPath());
+                String extName = FileUtil.extName(file);
+                if (!extName.equals(ProjectGeConstant.TEMPLATE_FILE_EXT)) {
                     FileUtil.copyFile(file, new File(path));
-                    log.info("复制文件：" + file.getPath() + "  ->  " + path);
+                    log.info("复制文件：{}  ->  {}", file.getPath(), path);
                 } else {
-                    path = path.replace(".ftl", "");
+                    path = path.replace(".ftl", StrUtil.EMPTY);
                     try {
-                        templateInfo.setTargetPath(FileUtil.getParent(path, 1));
-                        templateInfo.setTargetName(templateInfo.getPreName());
-                        TemplateConfig templateConfig = new TemplateConfig(templateInfo.getPath(), ResourceMode.FILE);
+                        // 加载目录下的模板文件
+                        TemplateConfig templateConfig = new TemplateConfig(file.getParent(), ResourceMode.FILE);
                         TemplateEngine engine = TemplateUtil.createEngine(templateConfig);
-                        Template template = engine.getTemplate(templateInfo.getName());
+                        Template template = engine.getTemplate(FileUtil.getName(file));
 
                         Map<String, Object> params = new HashMap<>();
                         params.put(ProjectGeConstant.FTL_PARAM_KEY_PROJECT, projectInfo);
-                        template.render(Maps.newHashMap(), new File(path));
+                        template.render(params, new File(path));
+                        log.info("生成文件：{}  ->  {}", file.getPath(), path);
                     } catch (Exception e) {
-                        log.error("文件生成失败: 路径:{}", templateInfo.getFile(), e);
+                        log.error("文件生成失败: 路径:{}", file.getPath(), e);
                     }
                 }
             }
         }
     }
 
-    private TemplateInfo handleFile(File file) {
-        // 处理非模板文件 非模板文件不用处理
-        String extName = FileUtil.extName(file);
-        if (!extName.equals(ProjectGeConstant.TEMPLATE_FILE_EXT)) {
-            log.warn("非模板文件, 忽略处理:" + file.getPath());
-            return null;
-        }
-
-        TemplateInfo templateInfo = new TemplateInfo();
-        templateInfo.setFile(file);
-        templateInfo.setName(FileUtil.getName(file));
-        templateInfo.setPath(file.getParent());
-        // 文件处理前的名字
-        String preName = FileUtil.mainName(file);
-        templateInfo.setPreName(preName);
-        return templateInfo;
-    }
 
 }

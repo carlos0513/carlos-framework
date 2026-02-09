@@ -22,11 +22,11 @@ WORKDIR /jar
 # 默认端口8080
 ENV PORT=8080
 
-EXPOSE ${PORT}
+EXPOSE ${r'${PORT}'}
 
 ENV JAVA_OPTS "-Xmx1024m -Xms256m"
 
-ENV PROJECT_NAME="${r'${maven.artifactId}'}"
+ENV PROJECT_NAME="${r'${project.artifactId}'}"
 
 ADD ./${r'${PROJECT_NAME}'}-cloud/target/${r'${PROJECT_NAME}'}.jar ./${r'${PROJECT_NAME}'}.jar
 

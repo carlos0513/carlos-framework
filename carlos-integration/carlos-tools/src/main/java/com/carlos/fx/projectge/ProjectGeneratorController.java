@@ -2,6 +2,7 @@ package com.carlos.fx.projectge;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.util.StrUtil;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.common.controller.BaseController;
 import com.carlos.fx.projectge.config.ProjectGeConstant;
@@ -14,7 +15,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -54,6 +56,7 @@ import java.util.stream.Collectors;
  * @since 3.0.0
  */
 @Component
+@RequiredArgsConstructor
 public class ProjectGeneratorController extends BaseController {
 
     /** Spring应用上下文，用于获取prototype scope的Bean */
@@ -117,15 +120,6 @@ public class ProjectGeneratorController extends BaseController {
 
     private List<TemplateBaseInfo> templatesBaseInfo;
 
-    /**
-     * 构造函数，注入Spring应用上下文
-     *
-     * @param applicationContext Spring应用上下文
-     */
-    @Autowired
-    public ProjectGeneratorController(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     /**
      * 初始化界面组件
@@ -247,7 +241,6 @@ public class ProjectGeneratorController extends BaseController {
         if (template == null) {
             return;
         }
-
         // 根据模板类型返回对应的描述信息
         for (TemplateBaseInfo selectTemplate : templatesBaseInfo) {
             if (selectTemplate.getName().equals(template)) {
@@ -318,6 +311,7 @@ public class ProjectGeneratorController extends BaseController {
         progressBar.setManaged(true);
         progressBar.setProgress(-1); // 不确定进度（无限循环动画）
         statusLabel.setText("正在生成项目...");
+        generateButton.disableProperty().unbind();
         generateButton.setDisable(true);
 
         // 创建异步任务，在后台线程中生成项目
@@ -329,19 +323,22 @@ public class ProjectGeneratorController extends BaseController {
                 projectInfo.setProjectName(projectName);
                 projectInfo.setGroupId(groupId);
                 projectInfo.setArtifactId(artifactId);
-                projectInfo.setPath(outputPath);
+                projectInfo.setOutputPath(outputPath);
                 projectInfo.setAuthor(author);
                 projectInfo.setDescribe(description);
+                projectInfo.setPackageName(packageName);
+                projectInfo.setVersion(version);
 
                 // 设置GroupId的各个部分（按"."分割）
                 // 例如：com.carlos -> ["com", "carlos"]
-                projectInfo.setGroupItems(java.util.Arrays.asList(groupId.split("\\.")));
+                projectInfo.setPackageNameItems(StrUtil.split(packageName, "."));
 
                 // 创建模板配置对象
                 TemplateBaseInfo selectTemplate = new TemplateBaseInfo();
                 selectTemplate.setName(template);
                 // 设置模板路径（指向模板文件所在目录）
-                selectTemplate.setPath(System.getProperty("user.dir") + "/templates");
+                Optional<TemplateBaseInfo> first = templatesBaseInfo.stream().filter(templateBaseInfo -> templateBaseInfo.getName().equals(template)).findFirst();
+                selectTemplate.setPath(first.get().getPath());
                 projectInfo.setSelectTemplate(selectTemplate);
 
                 // 更新状态消息

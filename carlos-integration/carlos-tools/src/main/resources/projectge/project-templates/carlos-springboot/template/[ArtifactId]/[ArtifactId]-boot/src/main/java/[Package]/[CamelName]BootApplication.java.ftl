@@ -1,13 +1,13 @@
-package ${maven.groupId};
+package ${project.groupId};
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class ${maven.camelName}BootApplication {
+public class ${project.camelName}BootApplication {
 
 public static void main(String[] args) {
-SpringApplication.run(${maven.camelName}BootApplication.class, args);
+SpringApplication.run(${project.camelName}BootApplication.class, args);
 }
 }
