@@ -7,39 +7,45 @@
     </parent>
     <packaging>pom</packaging>
 
-    <version>${r'${revision}'}</version>
+    <version>${project.version}</version>
     <groupId>${project.groupId}</groupId>
     <artifactId>${project.artifactId}</artifactId>
-    <name>${project.artifactId}</name>
+    <name>${project.projectName}</name>
     <description>${project.describe}</description>
 
-
-    <modules>
-        <module>${project.artifactId}-bus</module>
-        <module>${project.artifactId}-api</module>
-        <module>${project.artifactId}-cloud</module>
-        <module>${project.artifactId}-boot</module>
-    </modules>
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <revision>${project.artifactId}</revision>
+
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.carlos</groupId>
+            <artifactId>carlos-spring-boot-starter-springboot</artifactId>
+        </dependency>
+    </dependencies>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>${project.artifactId}-bus</artifactId>
-                <version>${r'${revision}'}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>${project.artifactId}-api</artifactId>
-                <version>${r'${revision}'}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+
+    <build>
+        <finalName>${r'${project.parent.artifactId}'}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -21,7 +21,7 @@ enabled: true
 max-file-size: 200MB # 单文件最大限制
 max-request-size: 200MB # 一次上传所有文件的最大限制. 如果接口只支持单文件,则该值与上面相同即可
 application:
-name: ${project.projectName}
+name: carlos-test
 # spring配置
 datasource:
 druid:
@@ -63,16 +63,16 @@ boot:
 cors:
 enable: true
 enums:
-scan-package: ${project.packageName}
+scan-package: com.carlos.test
 enabled: true
 # 自定义项目信息
 info:
-project-name: ${project.projectName}
-groupId: ${project.groupId}
-author: ${project.author}
-description: ${project.describe}
+project-name: carlos-test
+groupId: com.carlos
+author: Carlos
+description:
 sourceEncoding: utf-8
-version: ${project.version}
+version: 1.0.0-SNAPSHOT
 domain: www.zcarlos.com
 cache:
 key-prefix: yunjin:single
@@ -94,7 +94,7 @@ level:
 root: info
 com.carlos: debug
 file:
-path: log/${project.artifactId}/
+path: log/carlos-test/
 ##############################  日志配置 end   ###########################
 
 
