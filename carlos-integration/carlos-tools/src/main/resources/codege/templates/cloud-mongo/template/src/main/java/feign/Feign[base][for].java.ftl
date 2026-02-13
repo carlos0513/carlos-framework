@@ -1,4 +1,4 @@
-package ${project.groupId}.feign;
+package ${project.packageName}.feign;
 
 /**
  * <p>

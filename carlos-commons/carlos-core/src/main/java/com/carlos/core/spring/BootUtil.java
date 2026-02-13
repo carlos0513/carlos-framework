@@ -3,7 +3,6 @@ package com.carlos.core.spring;
 import cn.hutool.core.net.NetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.carlos.core.constant.CoreConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -103,7 +102,7 @@ public class BootUtil {
      * @date 2021/12/7 17:28
      */
     public static String getAddress() {
-        String baseUrl = CoreConstant.PREFIX_HTTP + getServerIp() + StrUtil.COLON + getServerPort() + getContextPath();
+        String baseUrl = "http://" + getServerIp() + StrUtil.COLON + getServerPort() + getContextPath();
         if (!StrUtil.endWith(baseUrl, StrUtil.SLASH)) {
             baseUrl = baseUrl + StrUtil.SLASH;
         }

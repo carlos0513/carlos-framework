@@ -1,4 +1,4 @@
-package ${project.groupId}.pojo.param;
+package ${project.packageName}.pojo.param;
 
 
 import io.swagger.annotations.ApiModel;

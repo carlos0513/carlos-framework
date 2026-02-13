@@ -1,7 +1,7 @@
-package ${project.groupId}.service;
+package ${project.packageName}.service;
 
-import ${project.groupId}.pojo.entity.${table.classPrefix};
-import ${project.groupId}.pojo.dto.${table.classPrefix}DTO;
+import ${project.packageName}.pojo.entity.${table.classPrefix};
+import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
 import java.util.Set;
 
 /**

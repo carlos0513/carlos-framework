@@ -54,12 +54,10 @@ public interface CodegeConstant {
     /**
      * 源码相对工程根目录的路径
      */
-    String SRC_MAIN_JAVA = File.separator + "src" + File.separator + "main" + File.separator +
-            "java" + File.separator;
+    String SRC_MAIN_JAVA = File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator;
 
     /**
      * 模板零时存储文件夹
      */
-    String SRC_MAIN_TEMP = File.separator + "src" + File.separator + "main" + File.separator +
-            "temp" + File.separator;
+    String SRC_MAIN_TEMP = File.separator + "src" + File.separator + "main" + File.separator + "temp" + File.separator;
 }

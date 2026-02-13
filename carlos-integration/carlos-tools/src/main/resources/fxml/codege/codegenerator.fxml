@@ -61,6 +61,17 @@
             <TreeView fx:id="tableTreeView" VBox.vgrow="ALWAYS" minHeight="200"/>
 
             <Label text="提示: 勾选需要生成代码的表" style="-fx-text-fill: #757575; -fx-font-size: 12px;"/>
+
+            <GridPane styleClass="form-grid" hgap="5" vgap="0">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="100" prefWidth="100"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <Label text="表字段命名方式:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="fieldNameTypeCombo" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            </GridPane>
+
         </VBox>
 
         <!-- Step 3: Generation Configuration -->
@@ -69,28 +80,33 @@
 
             <GridPane styleClass="form-grid" hgap="15" vgap="12">
                 <columnConstraints>
-                    <ColumnConstraints minWidth="120" prefWidth="120"/>
+                    <ColumnConstraints minWidth="60" prefWidth="60"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                    <ColumnConstraints minWidth="70" prefWidth="70"/>
                     <ColumnConstraints hgrow="ALWAYS"/>
                 </columnConstraints>
 
-                <Label text="包名:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label text="项目名称:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                 <TextField fx:id="packageField" promptText="com.carlos.demo" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                <Label text="作者:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <TextField fx:id="authorField" promptText="Carlos" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="代码模板:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="templateCombo" prefWidth="250" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                <Label text="包名:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="packageField" promptText="com.carlos.demo" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="作者:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <TextField fx:id="authorField" promptText="Carlos" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 
                 <Label text="输出路径:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3">
                     <TextField fx:id="outputPathField" promptText="选择输出目录" HBox.hgrow="ALWAYS"/>
                     <Button fx:id="browseButton" text="浏览..." styleClass="secondary-button"/>
                 </HBox>
 
-                <Label text="生成选项:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <HBox spacing="20" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                    <CheckBox fx:id="generateEntityCheck" text="Entity"/>
-                    <CheckBox fx:id="generateMapperCheck" text="Mapper"/>
-                    <CheckBox fx:id="generateServiceCheck" text="Service"/>
-                    <CheckBox fx:id="generateControllerCheck" text="Controller"/>
+                <Label text="表名前缀:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.columnSpan="2">
+                    <CheckBox fx:id="tablePrefixCheck" prefWidth="250" text="使用表名前缀"/>
                 </HBox>
             </GridPane>
 

@@ -18,11 +18,11 @@
     <type key="DECIMAL" value="java.math.BigDecimal"/>
 
     <!-- MYSQL 日期和时间类型-->
-    <type key="DATE" value="java.util.Date"/>
-    <type key="TIME" value="java.sql.Time"/>
-    <type key="YEAR" value="java.util.Date"/>
-    <type key="DATETIME" value="java.util.Date"/>
-    <type key="TIMESTAMP" value="java.util.Date"/>
+    <type key="DATE" value="java.time.LocalDate"/>
+    <type key="TIME" value="java.time.LocalTime"/>
+    <type key="YEAR" value="java.time.Year"/>
+    <type key="DATETIME" value="java.time.LocalDateTime"/>
+    <type key="TIMESTAMP" value="java.time.LocalDateTime"/>
 
     <!-- MYSQL 字符串类型-->
     <type key="CHAR" value="java.lang.String"/>

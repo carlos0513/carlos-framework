@@ -32,7 +32,9 @@
       "Bash(then if [ ! -f \"$dir/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports\" ])",
       "Bash(then echo \"$dir\")",
       "Bash(git mv:*)",
-      "Bash(mvn clean install:*)"
+      "Bash(mvn clean install:*)",
+      "Bash(do sed -i 's/^public class/import org.springframework.stereotype.Component;\\\\n\\\\n@Component\\\\npublic class/' \"$file\")",
+      "Bash(do sed -i 's/^public class/import org.springframework.stereotype.Service;\\\\n\\\\n@Service\\\\npublic class/' \"$file\")"
     ],
     "deny": [
       "Read(**/test-classes/**)",

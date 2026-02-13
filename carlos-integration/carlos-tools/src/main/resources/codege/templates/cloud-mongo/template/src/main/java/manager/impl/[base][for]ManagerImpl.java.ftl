@@ -1,14 +1,14 @@
-package ${project.groupId}.manager.impl;
+package ${project.packageName}.manager.impl;
 
 import com.carlos.core.pagination.Paging;
 import com.carlos.mongodb.page.MongoPage;
-import ${project.groupId}.convert.${table.classPrefix}Convert;
-import ${project.groupId}.manager.${table.classPrefix}Manager;
-import ${project.groupId}.pojo.dto.${table.classPrefix}DTO;
-import ${project.groupId}.pojo.entity.${table.classPrefix};
-import ${project.groupId}.pojo.param.${table.classPrefix}PageParam;
-import ${project.groupId}.pojo.vo.${table.classPrefix}VO;
-import ${project.groupId}.repository.${table.classPrefix}Repository;
+import ${project.packageName}.convert.${table.classPrefix}Convert;
+import ${project.packageName}.manager.${table.classPrefix}Manager;
+import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
+import ${project.packageName}.pojo.entity.${table.classPrefix};
+import ${project.packageName}.pojo.param.${table.classPrefix}PageParam;
+import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
+import ${project.packageName}.repository.${table.classPrefix}Repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;

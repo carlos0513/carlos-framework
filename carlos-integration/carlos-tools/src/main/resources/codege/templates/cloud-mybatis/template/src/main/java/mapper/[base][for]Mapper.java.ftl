@@ -1,7 +1,7 @@
-package ${project.groupId}.mapper;
+package ${project.packageName}.mapper;
 
 import com.github.yulichang.base.MPJBaseMapper;
-import ${project.groupId}.pojo.entity.${table.classPrefix};
+import ${project.packageName}.pojo.entity.${table.classPrefix};
 import org.apache.ibatis.annotations.Mapper;
 
 

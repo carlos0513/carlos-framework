@@ -36,6 +36,14 @@ public class DatabaseInfo {
      */
     private String port = "3306";
     /**
+     * 数据库名
+     */
+    private String dbName;
+    /**
+     * url
+     */
+    private String url;
+    /**
      * 数据库用户名
      */
     private String user = "root";
@@ -48,29 +56,16 @@ public class DatabaseInfo {
      */
     private DatabaseMetaData metaData;
     /**
-     * 数据库名
-     */
-    private String dbName;
-    /**
      * 表名列表
      *
      * @since 3.0
      */
     private List<TableInfo> tables;
-    /**
-     * url
-     */
-    private String url;
 
     /**
      * 是否使用表名前缀作为模块名
      */
     private boolean useTablePrefix = true;
-
-    /**
-     * 是否使用jdk8时间版本
-     */
-    private boolean useJdk8Date = false;
 
     /**
      * 数据库字段命名方式

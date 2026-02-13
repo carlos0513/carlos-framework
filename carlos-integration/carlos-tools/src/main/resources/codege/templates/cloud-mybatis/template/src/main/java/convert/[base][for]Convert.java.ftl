@@ -1,11 +1,11 @@
-package ${project.groupId}.convert;
+package ${project.packageName}.convert;
 
-import ${project.groupId}.pojo.param.${table.classPrefix}CreateParam;
-import ${project.groupId}.pojo.param.${table.classPrefix}UpdateParam;
-import ${project.groupId}.pojo.entity.${table.classPrefix};
-import ${project.groupId}.pojo.vo.${table.classPrefix}VO;
-import ${project.groupId}.pojo.dto.${table.classPrefix}DTO;
-import ${project.groupId}.convert.CommonConvert;
+import ${project.packageName}.pojo.param.${table.classPrefix}CreateParam;
+import ${project.packageName}.pojo.param.${table.classPrefix}UpdateParam;
+import ${project.packageName}.pojo.entity.${table.classPrefix};
+import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
+import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
+import ${project.packageName}.convert.CommonConvert;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import java.util.List;

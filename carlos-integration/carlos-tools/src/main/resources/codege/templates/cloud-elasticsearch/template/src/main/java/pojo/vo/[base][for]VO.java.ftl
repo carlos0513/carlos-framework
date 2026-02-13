@@ -1,4 +1,4 @@
-package ${project.groupId}.pojo.vo;
+package ${project.packageName}.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;

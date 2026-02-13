@@ -1,10 +1,10 @@
-package ${project.groupId}.service.impl;
+package ${project.packageName}.service.impl;
 
-import ${project.groupId}.convert.${table.classPrefix}Convert;
-import ${project.groupId}.repository.${table.classPrefix}Repository;
-import ${project.groupId}.pojo.dto.${table.classPrefix}DTO;
-import ${project.groupId}.pojo.entity.${table.classPrefix};
-import ${project.groupId}.service.${table.classPrefix}Service;
+import ${project.packageName}.convert.${table.classPrefix}Convert;
+import ${project.packageName}.repository.${table.classPrefix}Repository;
+import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
+import ${project.packageName}.pojo.entity.${table.classPrefix};
+import ${project.packageName}.service.${table.classPrefix}Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

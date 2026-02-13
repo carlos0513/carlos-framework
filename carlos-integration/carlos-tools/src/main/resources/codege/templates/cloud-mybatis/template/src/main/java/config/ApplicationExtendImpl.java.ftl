@@ -1,4 +1,4 @@
-package ${project.groupId}.config;
+package ${project.packageName}.config;
 
 import com.carlos.core.interfaces.ApplicationExtend;
 import lombok.AllArgsConstructor;

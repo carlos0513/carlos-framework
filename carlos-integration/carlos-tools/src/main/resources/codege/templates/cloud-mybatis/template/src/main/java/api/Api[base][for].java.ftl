@@ -1,4 +1,4 @@
-package ${project.groupId}.api;
+package ${project.packageName}.api;
 
 /**
  * <p>

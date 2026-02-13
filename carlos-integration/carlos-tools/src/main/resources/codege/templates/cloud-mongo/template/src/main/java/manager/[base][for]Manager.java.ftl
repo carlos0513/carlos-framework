@@ -1,9 +1,9 @@
-package ${project.groupId}.manager;
+package ${project.packageName}.manager;
 
 import com.carlos.core.pagination.Paging;
-import ${project.groupId}.pojo.dto.${table.classPrefix}DTO;
-import ${project.groupId}.pojo.param.${table.classPrefix}PageParam;
-import ${project.groupId}.pojo.vo.${table.classPrefix}VO;
+import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
+import ${project.packageName}.pojo.param.${table.classPrefix}PageParam;
+import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
 
 import java.io.Serializable;
 
@@ -51,7 +51,7 @@ public interface ${table.classPrefix}Manager {
      * 获取数据详情
      *
      * @param id 主键id
-     * @return ${project.groupId}.pojo.dto.${table.classPrefix}DTO
+* @return ${project.packageName}.pojo.dto.${table.classPrefix}DTO
      * @author ${project.author}
      * @date   ${.now}
      */

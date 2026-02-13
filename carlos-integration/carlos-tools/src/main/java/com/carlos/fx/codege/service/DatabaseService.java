@@ -55,7 +55,7 @@ public class DatabaseService {
      * @author Carlos
      * @date 2019/4/14 0:05
      */
-    public List<String> getSchemas() throws SQLException, ClassNotFoundException {
+    public List<String> getSchemas() throws SQLException {
         ResultSet rs;
         List<String> list;
 
@@ -143,7 +143,7 @@ public class DatabaseService {
             table = new TableBean();
             String tableName = tableInfo.getName();
             table.setComment(StrUtil.removeAll(tableInfo.getComment(), CharPool.CR, CharPool.LF, CharPool.TAB));
-            log.info("表信息：" + catalog + "   " + tableName);
+            log.info("表信息：{}   {}", catalog, tableName);
             // 获取主键描述
             ResultSet primaryKeys = metaData.getPrimaryKeys(catalog, schema, tableName);
             // 排除部分表
@@ -402,20 +402,6 @@ public class DatabaseService {
      * @date 2019/12/31 13:45
      */
     private String getColumnFullJavaType(String columnDbType) {
-        if (databaseInfo.isUseJdk8Date()) {
-            switch (columnDbType) {
-                case "DATE":
-                    return "java.time.LocalDate";
-                case "TIME":
-                    return "java.time.LocalTime ";
-                case "YEAR":
-                    return "java.time.Year";
-                case "DATETIME":
-                case "TIMESTAMP":
-                    return "java.time.LocalDateTime";
-                default:
-            }
-        }
         String s = CONVERT_MAP.get(columnDbType);
         if (StrUtil.isBlank(s)) {
             s = "java.lang.String";

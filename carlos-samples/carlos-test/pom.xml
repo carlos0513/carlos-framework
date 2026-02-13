@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-springboot</artifactId>
+            <artifactId>carlos-spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>com.carlos</groupId>
@@ -53,11 +53,14 @@
             <artifactId>alibaba-dingtalk-service-sdk</artifactId>
             <version>2.0.0</version>
         </dependency>
+        <!-- 内网依赖，无法访问时注释掉 -->
+        <!--
         <dependency>
             <groupId>com.epoint.smentry</groupId>
             <artifactId>par-sm2</artifactId>
             <version>1.0</version>
         </dependency>
+        -->
         <dependency>
             <groupId>com.carlos</groupId>
             <artifactId>carlos-spring-boot-starter-datacenter</artifactId>

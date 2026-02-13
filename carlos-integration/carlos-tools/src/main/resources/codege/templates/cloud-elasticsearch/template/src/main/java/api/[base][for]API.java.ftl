@@ -1,4 +1,4 @@
-package ${project.groupId}.api;
+package ${project.packageName}.api;
 
 import com.carlos.core.annotation.ClientApi;
 import lombok.RequiredArgsConstructor;

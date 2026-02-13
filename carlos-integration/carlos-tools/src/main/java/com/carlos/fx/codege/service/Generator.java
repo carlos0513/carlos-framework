@@ -3,20 +3,21 @@ package com.carlos.fx.codege.service;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import com.carlos.fx.codege.config.CodeGenerateInfo;
 import com.carlos.fx.codege.config.CodegeConstant;
 import com.carlos.fx.codege.config.DatabaseInfo;
-import com.carlos.fx.codege.config.ProjectInfo;
 import com.carlos.fx.codege.entity.TableBean;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.entity.TemplateInfo;
 import com.carlos.fx.codege.enums.CodeDirectEnum;
 import com.carlos.fx.utils.TemplateUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.io.FileUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,41 +36,32 @@ import java.util.Map;
 public class Generator {
 
 
-    private final DatabaseService databaseService;
-
-    private final ProjectService projectService;
-
     /**
      * 项目相关信息
      */
-    private ProjectInfo projectInfo;
+    private CodeGenerateInfo codeGenerateInfo;
 
     private DatabaseInfo databaseInfo;
 
     private final Map<String, Object> params = new HashMap<>();
-
 
     /**
      * 数据库信息
      */
     private List<TableBean> tables;
 
-    @Autowired
-    public Generator(DatabaseService databaseService, ProjectService projectService) {
-        this.databaseService = databaseService;
-        this.projectService = projectService;
-    }
+
 
     /**
      * 初始化生成器配置
      *
      * @param databaseInfo 数据库信息
-     * @param projectInfo 项目信息
+     * @param codeGenerateInfo 项目信息
      */
-    public void init(DatabaseInfo databaseInfo, ProjectInfo projectInfo) {
+    public void init(DatabaseInfo databaseInfo, CodeGenerateInfo codeGenerateInfo) {
         this.databaseInfo = databaseInfo;
-        this.projectInfo = projectInfo;
-        params.put(CodegeConstant.FTL_PARAM_KEY_PROJECT, projectInfo);
+        this.codeGenerateInfo = codeGenerateInfo;
+        params.put(CodegeConstant.FTL_PARAM_KEY_PROJECT, codeGenerateInfo);
         params.put(CodegeConstant.FTL_PARAM_KEY_DATABASDE, databaseInfo);
     }
 
@@ -78,9 +70,9 @@ public class Generator {
             log.debug("0.代码生成中.................................................................................");
         }
         try {
-            TemplateBaseInfo templateBaseInfo = projectInfo.getTemplateBaseInfo();
+            TemplateBaseInfo templateBaseInfo = codeGenerateInfo.getTemplateBaseInfo();
             File templatePath = new File(templateBaseInfo.getPath() + File.separator + CodegeConstant.TEMPLATE_MAIN);
-            File projectPath = new File(projectInfo.getPath());
+            File projectPath = new File(codeGenerateInfo.getOutputPath());
             // 复制模板文件到项目目录
             if (log.isDebugEnabled()) {
                 log.debug("1.复制项目模板到指定的项目目录中");
@@ -90,19 +82,18 @@ public class Generator {
             if (log.isDebugEnabled()) {
                 log.debug("2.更改模板的目录名为项目名");
             }
-            File projectRoot = FileUtil.rename(new File(projectInfo.getPath() + File.separator + CodegeConstant.TEMPLATE_MAIN),
-                    projectInfo.getProjectName(), true);
+            File projectRoot = FileUtil.rename(new File(codeGenerateInfo.getOutputPath() + File.separator + CodegeConstant.TEMPLATE_MAIN),
+                    codeGenerateInfo.getProjectName(), true);
             // 创建基础包 并且把模板文件放入包中
             if (log.isDebugEnabled()) {
-                log.debug("3.将模板文件移动至指定的包名路径：" + projectInfo.getGroupId() + StrUtil.DOT + projectInfo.getArtifactId());
+                log.debug("3.将模板文件移动至指定的包名路径：{}" + StrUtil.DOT + "{}", codeGenerateInfo.getPackageName(), codeGenerateInfo.getPackageName());
             }
-            // 使用注入的ProjectService，传入projectInfo
-            ProjectService tempProjectService = new ProjectService(projectInfo);
-            tempProjectService.moveTemplate2PackagePath(projectRoot);
+
+            moveTemplate2PackagePath(projectRoot);
 
             // 获取需要生成代码的表的详情
             // 使用注入的DatabaseService，传入databaseInfo和templateConfig
-            DatabaseService tempDatabaseService = new DatabaseService(databaseInfo, projectInfo.getTemplateBaseInfo());
+            DatabaseService tempDatabaseService = new DatabaseService(databaseInfo, codeGenerateInfo.getTemplateBaseInfo());
             tables = tempDatabaseService.getTablesDetailInfo();
 
             if (log.isDebugEnabled()) {
@@ -117,6 +108,33 @@ public class Generator {
 
     }
 
+
+    /**
+     * 将模板中源码 Java文件夹下的所有文件放入到指定的目录下，比如 java/com/carlos/test 目录下
+     *
+     * @param projectRootPath 项目的根目录
+     * @author Carlos
+     * @date 2020/9/9 17:31
+     */
+    public void moveTemplate2PackagePath(File projectRootPath) {
+        // TODO: Carlos 2020/9/9 如果是多模块模板  这个目录下会有多个src/main/java目录
+        File source = new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_JAVA);
+        File target = new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_TEMP + codeGenerateInfo.getPackageName().replace(StrUtil.DOT, File.separator));
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("3.1.将模板文件移动到临时目录：{}", target.getAbsolutePath());
+            }
+            FileUtils.moveDirectory(source, target);
+        } catch (IOException e) {
+            log.error("文件移动失败！ {}->{}", source.getPath(), target.getPath());
+        }
+        // 修改临时目录为正式的项目目录
+        if (log.isDebugEnabled()) {
+            log.debug("3.2.修改临时目录为正式的Java文件目录");
+        }
+        FileUtil.rename(new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_TEMP), "java", true);
+    }
+
     /**
      * 递归遍历父目录下的模板文件
      *
@@ -128,7 +146,7 @@ public class Generator {
         File[] files = projectRoot.listFiles();
         if (files == null) {
             if (log.isDebugEnabled()) {
-                log.debug("目录为空:" + projectRoot.getPath());
+                log.debug("目录为空:{}", projectRoot.getPath());
             }
             return;
         }
@@ -137,7 +155,7 @@ public class Generator {
         for (File file : files) {
             if (file.isDirectory()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("进入目录:" + file.getPath());
+                    log.debug("进入目录:{}", file.getPath());
                 }
                 // 递归目录
                 createFile(file);
@@ -164,7 +182,7 @@ public class Generator {
                 TemplateUtil.createClassFile(params, templateInfo);
             }
             if (templateInfo.getFile().delete()) {
-                log.info("删除模板文件:" + templateInfo.getFile().getPath());
+                log.info("删除模板文件:{}", templateInfo.getFile().getPath());
             }
         }
     }

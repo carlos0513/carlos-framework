@@ -1,16 +1,16 @@
-package ${project.groupId}.controller;
+package ${project.packageName}.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
-import ${project.groupId}.convert.${table.classPrefix}Convert;
-import ${project.groupId}.pojo.param.${table.classPrefix}CreateParam;
-import ${project.groupId}.pojo.param.${table.classPrefix}UpdateParam;
-import ${project.groupId}.pojo.param.${table.classPrefix}PageParam;
-import ${project.groupId}.pojo.dto.${table.classPrefix}DTO;
-import ${project.groupId}.pojo.vo.${table.classPrefix}VO;
-import ${project.groupId}.service.${table.classPrefix}Service;
-import ${project.groupId}.manager.${table.classPrefix}Manager;
+import ${project.packageName}.convert.${table.classPrefix}Convert;
+import ${project.packageName}.pojo.param.${table.classPrefix}CreateParam;
+import ${project.packageName}.pojo.param.${table.classPrefix}UpdateParam;
+import ${project.packageName}.pojo.param.${table.classPrefix}PageParam;
+import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
+import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
+import ${project.packageName}.service.${table.classPrefix}Service;
+import ${project.packageName}.manager.${table.classPrefix}Manager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

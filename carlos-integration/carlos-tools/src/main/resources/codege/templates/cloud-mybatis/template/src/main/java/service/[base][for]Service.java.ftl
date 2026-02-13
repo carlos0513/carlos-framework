@@ -1,8 +1,8 @@
-package ${project.groupId}.service;
+package ${project.packageName}.service;
 
-import ${project.groupId}.manager.${table.classPrefix}Manager;
-import ${project.groupId}.pojo.dto.${table.classPrefix}DTO;
-import ${project.groupId}.service.${table.classPrefix}Service;
+import ${project.packageName}.manager.${table.classPrefix}Manager;
+import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
+import ${project.packageName}.service.${table.classPrefix}Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

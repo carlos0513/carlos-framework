@@ -1,4 +1,4 @@
-package ${project.groupId}.convert;
+package ${project.packageName}.convert;
 
 import cn.hutool.extra.spring.SpringUtil;
 import org.mapstruct.Named;

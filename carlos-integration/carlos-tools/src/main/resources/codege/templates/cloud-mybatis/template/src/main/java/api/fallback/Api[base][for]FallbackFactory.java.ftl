@@ -1,6 +1,6 @@
-package ${project.groupId}.api.fallback;
+package ${project.packageName}.api.fallback;
 
-import ${project.groupId}.api.Api${table.classPrefix};
+import ${project.packageName}.api.Api${table.classPrefix};
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 

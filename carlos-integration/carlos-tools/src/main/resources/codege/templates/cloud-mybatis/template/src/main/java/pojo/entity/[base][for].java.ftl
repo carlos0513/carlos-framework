@@ -1,4 +1,4 @@
-package ${project.groupId}.pojo.entity;
+package ${project.packageName}.pojo.entity;
 
 
 import com.baomidou.mybatisplus.annotation.*;

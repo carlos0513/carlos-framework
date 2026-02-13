@@ -1,4 +1,4 @@
-package ${project.groupId}.pojo.dto;
+package ${project.packageName}.pojo.dto;
 
 
 import lombok.Data;

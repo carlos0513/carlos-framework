@@ -1,4 +1,4 @@
-package ${project.groupId}.config;
+package ${project.packageName}.config;
 
 import com.carlos.boot.request.RequestUtil;
 import com.carlos.core.auth.UserContext;

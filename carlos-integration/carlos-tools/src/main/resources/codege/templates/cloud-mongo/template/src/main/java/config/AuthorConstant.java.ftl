@@ -1,4 +1,4 @@
-package ${project.groupId}.config;
+package ${project.packageName}.config;
 
 /**
 * 开发人员常量

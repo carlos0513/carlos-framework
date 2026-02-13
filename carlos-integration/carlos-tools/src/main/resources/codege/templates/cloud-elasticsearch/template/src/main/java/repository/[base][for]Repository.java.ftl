@@ -1,7 +1,7 @@
-package ${project.groupId}.repository;
+package ${project.packageName}.repository;
 
 
-import ${project.groupId}.pojo.entity.${table.classPrefix};
+import ${project.packageName}.pojo.entity.${table.classPrefix};
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 

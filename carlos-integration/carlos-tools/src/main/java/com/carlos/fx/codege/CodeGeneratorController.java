@@ -1,10 +1,11 @@
 package com.carlos.fx.codege;
 
+import com.carlos.fx.codege.config.CodeGenerateInfo;
 import com.carlos.fx.codege.config.DatabaseInfo;
-import com.carlos.fx.codege.config.ProjectInfo;
 import com.carlos.fx.codege.entity.TableBean;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
 import com.carlos.fx.codege.enums.DbTypeEnum;
+import com.carlos.fx.codege.enums.FieldNameTypeEnum;
 import com.carlos.fx.codege.service.DatabaseService;
 import com.carlos.fx.codege.service.Generator;
 import com.carlos.fx.common.controller.BaseController;
@@ -23,7 +24,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 代码生成器控制器
@@ -104,6 +107,15 @@ public class CodeGeneratorController extends BaseController {
     @FXML
     private TreeView<String> tableTreeView;
 
+
+    /** 表字段命名方式 */
+    @FXML
+    private ComboBox<String> fieldNameTypeCombo;
+
+    /** 项目名称（生成代码的基础包名） */
+    @FXML
+    private TextField projectNameField;
+
     /** Java包名输入框（生成代码的基础包名） */
     @FXML
     private TextField packageField;
@@ -120,21 +132,13 @@ public class CodeGeneratorController extends BaseController {
     @FXML
     private Button browseButton;
 
-    /** 生成Entity复选框 */
+    /** 代码模板选择下拉框 */
     @FXML
-    private CheckBox generateEntityCheck;
+    private ComboBox<String> templateCombo;
 
-    /** 生成Mapper复选框 */
+    /** 表名前缀开关复选框 */
     @FXML
-    private CheckBox generateMapperCheck;
-
-    /** 生成Service复选框 */
-    @FXML
-    private CheckBox generateServiceCheck;
-
-    /** 生成Controller复选框 */
-    @FXML
-    private CheckBox generateControllerCheck;
+    private CheckBox tablePrefixCheck;
 
     /** 生成按钮 */
     @FXML
@@ -179,11 +183,27 @@ public class CodeGeneratorController extends BaseController {
         // 默认选中MySQL
         databaseTypeCombo.getSelectionModel().select(DbTypeEnum.MYSQL);
 
+        // 初始化字段命名方式
+        fieldNameTypeCombo.setItems(FXCollections.observableArrayList(Arrays.stream(FieldNameTypeEnum.values()).map(FieldNameTypeEnum::getDescribe).collect(Collectors.toList())));
+        fieldNameTypeCombo.getSelectionModel().select(FieldNameTypeEnum.NOT_PREFIX_AND_UNDERLINE.getDescribe());
+
+        // 初始化代码模板下拉框
+        templateCombo.setItems(FXCollections.observableArrayList(
+                "cloud-mybatis", "cloud-mongo", "cloud-elasticsearch"
+        ));
+        templateCombo.getSelectionModel().select("cloud-mybatis");
+
         // 设置默认值
         hostField.setText("localhost");
         portField.setText("3306");
+
+        projectNameField.setText("test");
         authorField.setText("Carlos");
         packageField.setText("com.carlos.demo");
+        // 默认启用表名前缀
+        tablePrefixCheck.setSelected(true);
+        // 当前路径作为默认路径
+        outputPathField.setText(new File("").getAbsolutePath());
 
         // 初始化树形视图，使用复选框树项
         CheckBoxTreeItem<String> rootItem = new CheckBoxTreeItem<>("所有表");
@@ -196,11 +216,7 @@ public class CodeGeneratorController extends BaseController {
         progressBar.setManaged(false);
         statusLabel.setText("");
 
-        // 默认选中所有生成选项
-        generateEntityCheck.setSelected(true);
-        generateMapperCheck.setSelected(true);
-        generateServiceCheck.setSelected(true);
-        generateControllerCheck.setSelected(true);
+
     }
 
     /**
@@ -230,8 +246,10 @@ public class CodeGeneratorController extends BaseController {
 
         // 表单验证：只有填写了包名和输出路径后才启用"生成"按钮
         generateButton.disableProperty().bind(
-                packageField.textProperty().isEmpty()
+                projectNameField.textProperty().isEmpty()
                         .or(outputPathField.textProperty().isEmpty())
+                        .or(packageField.textProperty().isEmpty())
+                        .or(authorField.textProperty().isEmpty())
         );
     }
 
@@ -379,13 +397,6 @@ public class CodeGeneratorController extends BaseController {
             return;
         }
 
-        // 验证生成选项：至少选择一个代码层次
-        if (!generateEntityCheck.isSelected() && !generateMapperCheck.isSelected()
-                && !generateServiceCheck.isSelected() && !generateControllerCheck.isSelected()) {
-            DialogUtil.showWarning("未选择生成选项", "请至少选择一个代码生成选项！");
-            return;
-        }
-
         // 显示确认对话框
         boolean confirmed = DialogUtil.showConfirm(
                 "确认生成",
@@ -414,20 +425,27 @@ public class CodeGeneratorController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 // 创建项目配置对象
-                ProjectInfo projectInfo = new ProjectInfo();
-                projectInfo.setGroupId(packageName);
-                projectInfo.setArtifactId("generated");
-                projectInfo.setPath(outputPath);
-                projectInfo.setAuthor(author);
+                CodeGenerateInfo codeGenerateInfo = new CodeGenerateInfo();
+                codeGenerateInfo.setProjectName(packageName);
+                codeGenerateInfo.setPackageName(packageName);
+                codeGenerateInfo.setOutputPath(outputPath);
+                codeGenerateInfo.setAuthor(author);
+
+                // 设置表名前缀配置
+                codeGenerateInfo.setUseTablePrefix(tablePrefixCheck.isSelected());
 
                 // 创建模板配置对象
                 TemplateBaseInfo templateBaseInfo = new TemplateBaseInfo();
-                projectInfo.setTemplateBaseInfo(templateBaseInfo);
+                // 设置代码模板类型
+                if (templateCombo.getValue() != null) {
+                    templateBaseInfo.setName(templateCombo.getValue());
+                }
+                codeGenerateInfo.setTemplateBaseInfo(templateBaseInfo);
 
                 // 使用Spring获取prototype scope的Generator bean
                 Generator generator = applicationContext.getBean(Generator.class);
                 // 初始化生成器
-                generator.init(dbInfo, projectInfo);
+                generator.init(dbInfo, codeGenerateInfo);
 
                 // 更新状态信息
                 updateMessage("正在生成代码...");
