@@ -211,6 +211,7 @@ public class CodeGeneratorController extends BaseController {
         }
         List<ViewItemVO> collect = templatesBaseInfo.stream().map(templateBaseInfo -> new ViewItemVO(templateBaseInfo.getName(), templateBaseInfo.getName())).collect(Collectors.toList());
         templateCombo.setItems(FXCollections.observableArrayList(collect));
+        templateCombo.getSelectionModel().select(0);
 
         // 设置默认值
         hostField.setText("100.127.6.234");
