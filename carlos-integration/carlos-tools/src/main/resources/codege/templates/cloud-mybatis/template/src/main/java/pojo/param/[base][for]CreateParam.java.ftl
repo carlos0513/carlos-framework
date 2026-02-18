@@ -22,7 +22,7 @@ import jakarta.validation.constraints.NotNull;
  */
 @Data
 @Accessors(chain = true)
-@Schema(description =  "${table.comment}新增参数", description = "${table.comment}新增参数")
+@Schema(description =  "${table.comment}新增参数")
 public class ${table.classPrefix}CreateParam {
 <#list table.columns as column>
     <#if !column.commonField && !column.primaryKey && !column.logicField  && !column.versionField>
