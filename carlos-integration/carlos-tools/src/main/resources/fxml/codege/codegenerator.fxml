@@ -15,7 +15,6 @@
     <VBox spacing="20" style="-fx-padding: 20;">
 
         <Label text="代码生成器" styleClass="title-large"/>
-        <Separator/>
 
         <!-- Step 1: Database Connection -->
         <VBox spacing="10" styleClass="card">
@@ -52,6 +51,8 @@
                 <Button fx:id="testConnectionButton" text="测试连接" styleClass="secondary-button"/>
                 <Button fx:id="loadTablesButton" text="加载表信息" styleClass="primary-button"/>
             </HBox>
+            <ProgressBar fx:id="databaseProgressBar" prefWidth="Infinity" progress="0"/>
+            <Label fx:id="databaseStatus" style="-fx-text-fill: #1976d2;"/>
         </VBox>
 
         <!-- Step 2: Table Selection -->
@@ -87,7 +88,7 @@
                 </columnConstraints>
 
                 <Label text="项目名称:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="packageField" promptText="com.carlos.demo" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <TextField fx:id="projectNameField" promptText="my-project" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                 <Label text="代码模板:" styleClass="form-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
                 <ComboBox fx:id="templateCombo" prefWidth="250" GridPane.columnIndex="3" GridPane.rowIndex="0"/>

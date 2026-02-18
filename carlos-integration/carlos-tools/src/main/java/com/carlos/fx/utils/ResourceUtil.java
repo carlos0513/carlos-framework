@@ -24,17 +24,16 @@ import java.util.jar.JarFile;
  * @author Carlos
  * @date 2025-05-06 11:34
  */
-public class CodeGeneratorUtil {
-    public static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/codege_temp";
+public class ResourceUtil {
 
     @SneakyThrows
-    public static void copyFile2Temp(String dirPath, String localTempDir) {
+    public static void copyResourceFile2Temp(String resourceName, String localTempDir) {
         // 清空临时目录
         FileUtil.del(localTempDir);
         // 获取JAR包资源路径（示例：jar:file:/path/to.jar!/templates ）
-        URL resourceUrl = CodeGeneratorUtil.class.getClassLoader().getResource(dirPath);
+        URL resourceUrl = ResourceUtil.class.getClassLoader().getResource(resourceName);
         if (resourceUrl == null) {
-            throw new FileNotFoundException("目录不存在: " + dirPath);
+            throw new FileNotFoundException("目录不存在: " + resourceName);
         }
 
         // 解析本地目录路径或者jar目录路径
@@ -42,7 +41,7 @@ public class CodeGeneratorUtil {
             // 本地目录
             File localDir = new File(URLDecoder.decode(resourceUrl.getPath(), StandardCharsets.UTF_8));
             if (!localDir.exists() || !localDir.isDirectory()) {
-                throw new FileNotFoundException("目录不存在: " + dirPath);
+                throw new FileNotFoundException("目录不存在: " + resourceName);
             }
             // 复制文件到临时目录
             File tempDir = new File(localTempDir);
@@ -63,9 +62,9 @@ public class CodeGeneratorUtil {
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
-                    if (entry.getName().startsWith(dirPath) && !entry.isDirectory()) {
+                    if (entry.getName().startsWith(resourceName) && !entry.isDirectory()) {
                         // 创建本地目录结构
-                        File localFile = new File(localTempDir, entry.getName().substring(dirPath.length()));
+                        File localFile = new File(localTempDir, entry.getName().substring(resourceName.length()));
                         Files.createDirectories(localFile.getParentFile().toPath());
                         // 复制文件内容
                         IoUtil.copy(jarFile.getInputStream(entry), Files.newOutputStream(localFile.toPath()));

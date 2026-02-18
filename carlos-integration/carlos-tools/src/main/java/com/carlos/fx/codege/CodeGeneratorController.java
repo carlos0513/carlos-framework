@@ -1,21 +1,26 @@
 package com.carlos.fx.codege;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.carlos.fx.codege.config.CodeGenerateInfo;
+import com.carlos.fx.codege.config.CodegeConstant;
 import com.carlos.fx.codege.config.DatabaseInfo;
-import com.carlos.fx.codege.entity.TableBean;
+import com.carlos.fx.codege.entity.TableBaseInfo;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
+import com.carlos.fx.codege.entity.ViewItemVO;
 import com.carlos.fx.codege.enums.DbTypeEnum;
 import com.carlos.fx.codege.enums.FieldNameTypeEnum;
-import com.carlos.fx.codege.service.DatabaseService;
-import com.carlos.fx.codege.service.Generator;
+import com.carlos.fx.codege.service.CodeGeneratorService;
 import com.carlos.fx.common.controller.BaseController;
-import com.carlos.fx.utils.AsyncTaskUtil;
-import com.carlos.fx.utils.CodeGeneratorUtil;
-import com.carlos.fx.utils.DialogUtil;
+import com.carlos.fx.utils.*;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.stage.DirectoryChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,8 +29,8 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -105,12 +110,12 @@ public class CodeGeneratorController extends BaseController {
 
     /** 表树形视图（支持复选框选择多个表） */
     @FXML
-    private TreeView<String> tableTreeView;
+    private TreeView<ViewItemVO> tableTreeView;
 
 
     /** 表字段命名方式 */
     @FXML
-    private ComboBox<String> fieldNameTypeCombo;
+    private ComboBox<FieldNameTypeEnum> fieldNameTypeCombo;
 
     /** 项目名称（生成代码的基础包名） */
     @FXML
@@ -134,7 +139,7 @@ public class CodeGeneratorController extends BaseController {
 
     /** 代码模板选择下拉框 */
     @FXML
-    private ComboBox<String> templateCombo;
+    private ComboBox<ViewItemVO> templateCombo;
 
     /** 表名前缀开关复选框 */
     @FXML
@@ -148,12 +153,22 @@ public class CodeGeneratorController extends BaseController {
     @FXML
     private ProgressBar progressBar;
 
+    /** 进度条（显示代码生成进度） */
+    @FXML
+    private ProgressBar databaseProgressBar;
+
     /** 状态标签（显示当前操作状态） */
     @FXML
     private Label statusLabel;
 
+    /** 数据库操作状态 */
+    @FXML
+    private Label databaseStatus;
+
     /** 所有表的列表（用于保存从数据库加载的表信息） */
-    private List<TableBean> allTables;
+    private List<TableBaseInfo> allTables;
+
+    List<TemplateBaseInfo> templatesBaseInfo;
 
     /**
      * 构造函数，注入Spring应用上下文
@@ -175,8 +190,7 @@ public class CodeGeneratorController extends BaseController {
     protected void initializeComponents() {
         // 初始化表列表
         allTables = new ArrayList<>();
-
-        CodeGeneratorUtil.copyFile2Temp("codege", CodeGeneratorUtil.TEMP_DIR);
+        ResourceUtil.copyResourceFile2Temp("codege", CodegeConstant.TEMP_DIR);
 
         // 初始化数据库类型下拉框，添加所有支持的数据库类型
         databaseTypeCombo.setItems(FXCollections.observableArrayList(DbTypeEnum.values()));
@@ -184,20 +198,27 @@ public class CodeGeneratorController extends BaseController {
         databaseTypeCombo.getSelectionModel().select(DbTypeEnum.MYSQL);
 
         // 初始化字段命名方式
-        fieldNameTypeCombo.setItems(FXCollections.observableArrayList(Arrays.stream(FieldNameTypeEnum.values()).map(FieldNameTypeEnum::getDescribe).collect(Collectors.toList())));
-        fieldNameTypeCombo.getSelectionModel().select(FieldNameTypeEnum.NOT_PREFIX_AND_UNDERLINE.getDescribe());
+        fieldNameTypeCombo.setItems(FXCollections.observableArrayList(FieldNameTypeEnum.values()));
+        fieldNameTypeCombo.getSelectionModel().select(FieldNameTypeEnum.NOT_PREFIX_AND_UNDERLINE);
 
         // 初始化代码模板下拉框
-        templateCombo.setItems(FXCollections.observableArrayList(
-                "cloud-mybatis", "cloud-mongo", "cloud-elasticsearch"
-        ));
-        templateCombo.getSelectionModel().select("cloud-mybatis");
+        // TODO: Carlos 2026-02-14
+        File templateRootPath = FileUtil.file(CodegeConstant.TEMP_DIR + File.separator + CodegeConstant.TEMPLATE_ROOT_PATH);
+
+        templatesBaseInfo = TemplateUtil.getTemplatesBaseInfo(templateRootPath);
+        if (CollUtil.isEmpty(templatesBaseInfo)) {
+            throw new RuntimeException("模板为空");
+        }
+        List<ViewItemVO> collect = templatesBaseInfo.stream().map(templateBaseInfo -> new ViewItemVO(templateBaseInfo.getName(), templateBaseInfo.getName())).collect(Collectors.toList());
+        templateCombo.setItems(FXCollections.observableArrayList(collect));
 
         // 设置默认值
-        hostField.setText("localhost");
-        portField.setText("3306");
+        hostField.setText("100.127.6.234");
+        portField.setText("13306");
+        usernameField.setText("root");
+        databaseField.setText("yunjin_szt_feature");
+        passwordField.setText("yunjin@123456");
 
-        projectNameField.setText("test");
         authorField.setText("Carlos");
         packageField.setText("com.carlos.demo");
         // 默认启用表名前缀
@@ -206,17 +227,19 @@ public class CodeGeneratorController extends BaseController {
         outputPathField.setText(new File("").getAbsolutePath());
 
         // 初始化树形视图，使用复选框树项
-        CheckBoxTreeItem<String> rootItem = new CheckBoxTreeItem<>("所有表");
+        CheckBoxTreeItem<ViewItemVO> rootItem = new CheckBoxTreeItem<>(new ViewItemVO("所有表", "所有表"));
         rootItem.setExpanded(true); // 默认展开根节点
         tableTreeView.setRoot(rootItem);
-        tableTreeView.setShowRoot(true); // 显示根节点
+        tableTreeView.setShowRoot(false); // 隐藏根节点
+        tableTreeView.setCellFactory(CheckBoxTreeCell.forTreeView());
 
         // 初始隐藏进度条
         progressBar.setVisible(false);
         progressBar.setManaged(false);
         statusLabel.setText("");
-
-
+        databaseStatus.setText("");
+        databaseProgressBar.setVisible(false);
+        databaseProgressBar.setManaged(false);
     }
 
     /**
@@ -265,20 +288,30 @@ public class CodeGeneratorController extends BaseController {
         DatabaseInfo dbInfo = buildDatabaseInfo();
 
         // 创建异步任务
-        Task<Boolean> task = new Task<>() {
+        Task<DatabaseUtil.ConnectionTestResult> task = new Task<>() {
             @Override
-            protected Boolean call() throws Exception {
-                DatabaseService service = new DatabaseService(dbInfo, new TemplateBaseInfo());
-                // 尝试获取表详细信息来测试连接
-                service.getTablesDetailInfo();
-                return true;
+            protected DatabaseUtil.ConnectionTestResult call() {
+                return DatabaseUtil.testConnection(dbInfo.getDataSource());
             }
         };
+
+        task.messageProperty().addListener((obs, oldVal, newVal) -> databaseStatus.setText(newVal));
+        task.progressProperty().addListener((obs, oldVal, newVal) -> databaseProgressBar.setProgress(newVal.doubleValue()));
 
         // 执行异步任务
         AsyncTaskUtil.execute(task,
                 // 成功回调
-                success -> DialogUtil.showSuccessNotification("连接成功", "数据库连接测试成功！"),
+                result -> {
+                    if (result.isSuccess()) {
+                        databaseProgressBar.setVisible(false);
+                        databaseProgressBar.setManaged(false);
+                        databaseStatus.setText("连接成功，" + result.toString());
+                    } else {
+                        databaseProgressBar.setVisible(false);
+                        databaseProgressBar.setManaged(false);
+                        databaseStatus.setText("连接失败，" + result.toString());
+                    }
+                },
                 // 失败回调
                 error -> DialogUtil.showError("连接错误", "数据库连接失败", error)
         );
@@ -295,18 +328,20 @@ public class CodeGeneratorController extends BaseController {
         DatabaseInfo dbInfo = buildDatabaseInfo();
 
         // 显示进度条和状态信息
-        progressBar.setVisible(true);
-        progressBar.setManaged(true);
-        statusLabel.setText("正在加载表信息...");
+        databaseProgressBar.setVisible(true);
+        databaseProgressBar.setManaged(true);
+        databaseStatus.setText("正在加载表信息...");
 
         // 创建异步任务
-        Task<List<TableBean>> task = new Task<>() {
+        Task<List<TableBaseInfo>> task = new Task<>() {
             @Override
-            protected List<TableBean> call() throws Exception {
-                DatabaseService service = new DatabaseService(dbInfo, new TemplateBaseInfo());
-                return service.getTablesDetailInfo();
+            protected List<TableBaseInfo> call() throws Exception {
+                return DatabaseUtil.getTables(dbInfo);
             }
         };
+
+        task.messageProperty().addListener((obs, oldVal, newVal) -> databaseStatus.setText(newVal));
+        task.progressProperty().addListener((obs, oldVal, newVal) -> databaseProgressBar.setProgress(newVal.doubleValue()));
 
         // 执行异步任务
         AsyncTaskUtil.execute(task,
@@ -317,17 +352,15 @@ public class CodeGeneratorController extends BaseController {
                     // 填充树形视图
                     populateTableTree(tables);
                     // 隐藏进度条
-                    progressBar.setVisible(false);
-                    progressBar.setManaged(false);
-                    statusLabel.setText("加载完成，共 " + tables.size() + " 张表");
-                    DialogUtil.showSuccessNotification("加载成功", "成功加载 " + tables.size() + " 张表");
+                    databaseProgressBar.setVisible(false);
+                    databaseProgressBar.setManaged(false);
+                    databaseStatus.setText("加载完成，共 " + tables.size() + " 张表");
                 },
                 // 失败回调
                 error -> {
-                    progressBar.setVisible(false);
-                    progressBar.setManaged(false);
-                    statusLabel.setText("加载失败");
-                    DialogUtil.showError("加载错误", "加载表信息失败", error);
+                    databaseProgressBar.setVisible(false);
+                    databaseProgressBar.setManaged(false);
+                    databaseStatus.setText("加载失败：" + error.getMessage());
                 }
         );
     }
@@ -342,17 +375,37 @@ public class CodeGeneratorController extends BaseController {
      *
      * @param tables 表列表
      */
-    private void populateTableTree(List<TableBean> tables) {
-        CheckBoxTreeItem<String> rootItem = (CheckBoxTreeItem<String>) tableTreeView.getRoot();
-        rootItem.getChildren().clear();
+    private void populateTableTree(List<TableBaseInfo> tables) {
+        ObservableList<TreeItem<ViewItemVO>> root = tableTreeView.getRoot().getChildren();
+        // 根据表名前缀进行分组
+        Map<String, List<TableBaseInfo>> groupedTables = tables.stream()
+                .collect(Collectors.groupingBy(i -> {
+                    String name = i.getName();
+                    String prefix = StrUtil.subBefore(name, "_", false);
+                    if (StrUtil.isBlank(prefix)) {
+                        prefix = "无前缀";
+                    }
+                    return prefix;
+                }));
 
-        // 遍历所有表，创建树节点
-        for (TableBean table : tables) {
-            CheckBoxTreeItem<String> tableItem = new CheckBoxTreeItem<>(
-                    table.getName() + " (" + table.getComment() + ")"
-            );
-            rootItem.getChildren().add(tableItem);
-        }
+        // 前缀根据字母进行排序
+        groupedTables.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    String prefix = entry.getKey();
+                    List<TableBaseInfo> childrens = entry.getValue();
+                    // 创建树形视图项
+                    CheckBoxTreeItem<ViewItemVO> prefixItem = new CheckBoxTreeItem<>(new ViewItemVO(prefix, prefix));
+                    prefixItem.setExpanded(false); // 默认展开根节点
+                    root.add(prefixItem);
+                    for (TableBaseInfo child : childrens) {
+                        String name = child.getName();
+                        String comment = StrUtil.blankToDefault(child.getComment(), name);
+                        String viewName = name + "【" + comment + "】";
+                        CheckBoxTreeItem<ViewItemVO> childItem = new CheckBoxTreeItem<>(new ViewItemVO(child.getName(), viewName));
+                        prefixItem.getChildren().add(childItem);
+                    }
+                });
     }
 
     /**
@@ -391,7 +444,7 @@ public class CodeGeneratorController extends BaseController {
      */
     private void generateCode() {
         // 获取用户选中的表
-        List<TableBean> selectedTables = getSelectedTables();
+        List<TableBaseInfo> selectedTables = getSelectedTables();
         if (selectedTables.isEmpty()) {
             DialogUtil.showWarning("未选择表", "请至少选择一张表进行代码生成！");
             return;
@@ -409,6 +462,7 @@ public class CodeGeneratorController extends BaseController {
 
         // 收集表单中的配置信息
         DatabaseInfo dbInfo = buildDatabaseInfo();
+        String projectName = projectNameField.getText().trim();
         String packageName = packageField.getText().trim();
         String author = authorField.getText().trim();
         String outputPath = outputPathField.getText().trim();
@@ -418,7 +472,9 @@ public class CodeGeneratorController extends BaseController {
         progressBar.setManaged(true);
         progressBar.setProgress(0);
         statusLabel.setText("正在生成代码...");
-        generateButton.setDisable(true);
+        generateButton.disableProperty().bind(
+                new SimpleBooleanProperty(false)
+        );
 
         // 创建异步任务
         Task<Void> task = new Task<>() {
@@ -426,7 +482,7 @@ public class CodeGeneratorController extends BaseController {
             protected Void call() throws Exception {
                 // 创建项目配置对象
                 CodeGenerateInfo codeGenerateInfo = new CodeGenerateInfo();
-                codeGenerateInfo.setProjectName(packageName);
+                codeGenerateInfo.setProjectName(projectName);
                 codeGenerateInfo.setPackageName(packageName);
                 codeGenerateInfo.setOutputPath(outputPath);
                 codeGenerateInfo.setAuthor(author);
@@ -435,25 +491,29 @@ public class CodeGeneratorController extends BaseController {
                 codeGenerateInfo.setUseTablePrefix(tablePrefixCheck.isSelected());
 
                 // 创建模板配置对象
-                TemplateBaseInfo templateBaseInfo = new TemplateBaseInfo();
                 // 设置代码模板类型
-                if (templateCombo.getValue() != null) {
-                    templateBaseInfo.setName(templateCombo.getValue());
+                ViewItemVO selectTemplate = templateCombo.getValue();
+                if (selectTemplate != null) {
+                    templatesBaseInfo.stream()
+                            .filter(i -> i.getName().equals(selectTemplate.getKey()))
+                            .findFirst()
+                            .ifPresent(codeGenerateInfo::setTemplateBaseInfo);
                 }
-                codeGenerateInfo.setTemplateBaseInfo(templateBaseInfo);
+
+                // 设置字段命名规则
+                codeGenerateInfo.setNameType(fieldNameTypeCombo.getValue());
+
+                codeGenerateInfo.setTables(selectedTables);
 
                 // 使用Spring获取prototype scope的Generator bean
-                Generator generator = applicationContext.getBean(Generator.class);
-                // 初始化生成器
-                generator.init(dbInfo, codeGenerateInfo);
+                CodeGeneratorService generator = applicationContext.getBean(CodeGeneratorService.class);
 
                 // 更新状态信息
                 updateMessage("正在生成代码...");
                 updateProgress(0, 1);
 
                 // 执行代码生成
-                generator.createObject();
-
+                generator.createObject(dbInfo, codeGenerateInfo);
                 updateProgress(1, 1);
                 return null;
             }
@@ -470,7 +530,9 @@ public class CodeGeneratorController extends BaseController {
                     progressBar.setVisible(false);
                     progressBar.setManaged(false);
                     statusLabel.setText("代码生成完成！");
-                    generateButton.setDisable(false);
+                    generateButton.disableProperty().bind(
+                            new SimpleBooleanProperty(false)
+                    );
                     // 使用新的对话框方法，询问是否打开输出目录
                     DialogUtil.showSuccessWithOpenDirectory(
                             "生成成功",
@@ -483,7 +545,9 @@ public class CodeGeneratorController extends BaseController {
                     progressBar.setVisible(false);
                     progressBar.setManaged(false);
                     statusLabel.setText("代码生成失败");
-                    generateButton.setDisable(false);
+                    generateButton.disableProperty().bind(
+                            new SimpleBooleanProperty(false)
+                    );
                     // 使用新的对话框方法，询问是否打开日志
                     DialogUtil.showErrorWithOpenLog(
                             "生成失败",
@@ -502,19 +566,21 @@ public class CodeGeneratorController extends BaseController {
      *
      * @return 选中的表列表
      */
-    private List<TableBean> getSelectedTables() {
-        List<TableBean> selectedTables = new ArrayList<>();
-        CheckBoxTreeItem<String> rootItem = (CheckBoxTreeItem<String>) tableTreeView.getRoot();
+    private List<TableBaseInfo> getSelectedTables() {
+        List<TableBaseInfo> selectedTables = new ArrayList<>();
+        CheckBoxTreeItem<ViewItemVO> root = (CheckBoxTreeItem<ViewItemVO>) tableTreeView.getRoot();
+        Map<String, String> commentMap = allTables.stream().collect(Collectors.toMap(TableBaseInfo::getName, TableBaseInfo::getComment));
 
-        // 遍历所有表节点
-        for (int i = 0; i < rootItem.getChildren().size(); i++) {
-            CheckBoxTreeItem<String> item = (CheckBoxTreeItem<String>) rootItem.getChildren().get(i);
-            // 如果该表被选中，添加到结果列表
-            if (item.isSelected()) {
-                selectedTables.add(allTables.get(i));
+        ObservableList<TreeItem<ViewItemVO>> prefixItems = root.getChildren();
+        for (TreeItem<ViewItemVO> prefixItem : prefixItems) {
+            ObservableList<TreeItem<ViewItemVO>> children = prefixItem.getChildren();
+            for (TreeItem<ViewItemVO> child : children) {
+                if (((CheckBoxTreeItem<ViewItemVO>) child).isSelected()) {
+                    ViewItemVO value = child.getValue();
+                    selectedTables.add(new TableBaseInfo(value.getKey(), commentMap.get(value.getKey())));
+                }
             }
         }
-
         return selectedTables;
     }
 

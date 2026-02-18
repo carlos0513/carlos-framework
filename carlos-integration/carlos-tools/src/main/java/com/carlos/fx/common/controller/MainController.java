@@ -96,7 +96,6 @@ public class MainController extends BaseController {
         toolListView.getItems().addAll(
                 new ToolItem("代码生成器", "Code Generator", FontAwesomeSolid.CODE, "/fxml/codege/codegenerator.fxml"),
                 new ToolItem("项目脚手架", "Project Scaffold", FontAwesomeSolid.PROJECT_DIAGRAM, "/fxml/projectge/projectgenerator.fxml"),
-                new ToolItem("加密工具", "Encrypt Tool", FontAwesomeSolid.LOCK, "/fxml/encrypt/encrypttool.fxml"),
                 new ToolItem("GitLab工具", "GitLab Tools", FontAwesomeSolid.CODE_BRANCH, "/fxml/gitlab/gitlabmain.fxml"),
                 new ToolItem("设置", "Settings", FontAwesomeSolid.COG, null)
         );

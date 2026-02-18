@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.exceptions.UtilException;
 import cn.hutool.core.util.XmlUtil;
+import com.carlos.fx.codege.config.CodegeConstant;
 import com.carlos.fx.exception.ReadXmlException;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
@@ -36,7 +37,7 @@ public class XmlUtils {
      */
     public static Map<String, String> readConvertXml() {
 
-        File file = new File(CodeGeneratorUtil.TEMP_DIR + File.separator + TYPE_CONVERT_XML);
+        File file = new File(CodegeConstant.TEMP_DIR + File.separator + TYPE_CONVERT_XML);
         if (!file.exists()) {
             log.error("can't find file:{}", file.getPath());
             throw new RuntimeException("类型配置文件不存在！");

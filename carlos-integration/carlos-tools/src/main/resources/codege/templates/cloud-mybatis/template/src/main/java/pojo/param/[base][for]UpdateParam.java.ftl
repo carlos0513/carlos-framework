@@ -1,8 +1,7 @@
 package ${project.packageName}.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -22,7 +21,7 @@ import jakarta.validation.constraints.NotNull;
 */
 @Data
 @Accessors(chain = true)
-@Schema(description =  "${table.comment}修改参数", description = "${table.comment}修改参数")
+@Schema(description =  "${table.comment}修改参数")
 public class ${table.classPrefix}UpdateParam {
 <#list table.columns as column>
     <#if !column.commonField && !column.logicField  && !column.versionField>

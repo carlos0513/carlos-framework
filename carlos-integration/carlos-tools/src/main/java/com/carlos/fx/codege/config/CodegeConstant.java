@@ -17,7 +17,10 @@ public interface CodegeConstant {
      */
     String FTL_PARAM_KEY_PROJECT = "project";
     String FTL_PARAM_KEY_TABLE = "table";
-    String FTL_PARAM_KEY_DATABASDE = "database";
+    String FTL_PARAM_KEY_DATABASE = "database";
+
+    /** 临时目录 */
+    String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/codege_temp";
 
 
     /**

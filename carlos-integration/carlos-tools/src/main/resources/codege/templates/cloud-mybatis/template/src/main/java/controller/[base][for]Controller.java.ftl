@@ -1,6 +1,5 @@
 package ${project.packageName}.controller;
 
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import ${project.packageName}.convert.${table.classPrefix}Convert;
@@ -11,8 +10,8 @@ import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
 import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
 import ${project.packageName}.service.${table.classPrefix}Service;
 import ${project.packageName}.manager.${table.classPrefix}Manager;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +40,7 @@ public class ${table.classPrefix}Controller {
     private final ${table.classPrefix}Manager ${table.classMainPrefix}Manager;
 
 
-    @ApiOperationSupport(author = "${project.author}")
+
     @PostMapping("add")
 @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated ${table.classPrefix}CreateParam param) {
@@ -49,14 +48,14 @@ public class ${table.classPrefix}Controller {
         ${table.classMainPrefix}Service.add${table.classPrefix}(dto);
     }
 
-    @ApiOperationSupport(author = "${project.author}")
-    @PostMapping("delete")
+
+@PostMapping("delete")
 @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         ${table.classMainPrefix}Service.delete${table.classPrefix}(param.getIds());
     }
 
-    @ApiOperationSupport(author = "${project.author}")
+
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated ${table.classPrefix}UpdateParam param) {
@@ -64,14 +63,14 @@ public class ${table.classPrefix}Controller {
         ${table.classMainPrefix}Service.update${table.classPrefix}(dto);
     }
 
-    @ApiOperationSupport(author = "${project.author}")
+
     @GetMapping("detail")
     @Operation(summary = BASE_NAME + "详情")
     public ${table.classPrefix}VO detail(String id) {
         return ${table.classPrefix}Convert.INSTANCE.toVO(${table.classMainPrefix}Manager.getDtoById(id));
     }
 
-    @ApiOperationSupport(author = "${project.author}")
+
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<${table.classPrefix}VO> page(${table.classPrefix}PageParam param) {

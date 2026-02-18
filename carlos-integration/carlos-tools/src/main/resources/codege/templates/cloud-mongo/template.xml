@@ -5,8 +5,8 @@
 
 -->
 <templates>
-    <name>微服务</name>
-    <describe>mongo</describe>
+    <name>微服务MongoDB</name>
+    <describe>MongoDB</describe>
     <!--逻辑删除字段-->
     <logicDeleteFields>
         <name>is_deleted</name>

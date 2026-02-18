@@ -5,8 +5,8 @@
 
 -->
 <templates>
-    <name>微服务</name>
-    <describe>mybatis</describe>
+    <name>微服务Mybatis-plus</name>
+    <describe>mybatis-plus</describe>
     <!--逻辑删除字段-->
     <logicDeleteFields>
         <name>is_deleted</name>

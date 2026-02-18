@@ -1,6 +1,8 @@
-package com.carlos.fx.encrypt.entity;
+package com.carlos.fx.codege.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -13,7 +15,9 @@ import lombok.experimental.Accessors;
  */
 @Accessors(chain = true)
 @Data
-public class TableInfo {
+@NoArgsConstructor
+@AllArgsConstructor
+public class TableBaseInfo {
 
     /**
      * 表名
@@ -23,5 +27,12 @@ public class TableInfo {
      * 表备注
      */
     private String comment;
+
+
+    // 重写toString方法
+    @Override
+    public String toString() {
+        return name + " [" + comment + "]";
+    }
 
 }

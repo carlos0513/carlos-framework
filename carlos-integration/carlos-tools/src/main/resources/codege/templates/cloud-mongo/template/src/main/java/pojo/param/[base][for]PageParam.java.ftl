@@ -1,8 +1,7 @@
 package ${project.packageName}.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

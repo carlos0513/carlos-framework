@@ -1,4 +1,4 @@
-package com.carlos.fx.encrypt.entity;
+package com.carlos.fx.codege.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -15,7 +15,7 @@ import java.util.Set;
  */
 @Accessors(chain = true)
 @Data
-public class TableBean {
+public class ObjectInfo {
 
     /**
      * 表名

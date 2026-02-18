@@ -5,7 +5,7 @@
 
 -->
 <templates>
-    <name>微服务</name>
+    <name>微服务Elasticsearch</name>
     <describe>elasticsearch</describe>
     <!--逻辑删除字段-->
     <logicDeleteFields>

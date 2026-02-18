@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-springcloud</artifactId>
+            <artifactId>carlos-spring-cloud-starter</artifactId>
         </dependency>
     </dependencies>
 

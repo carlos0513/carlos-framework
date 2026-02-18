@@ -93,11 +93,16 @@ public class ${table.classPrefix}ManagerImpl  extends BaseServiceImpl<${table.cl
     public Paging<${table.classPrefix}VO> getPage(${table.classPrefix}PageParam param){
         LambdaQueryWrapper<${table.classPrefix}> wrapper = queryWrapper();
         wrapper.select(
+    <#assign validColumns = []>
         <#list table.columns as column>
             <#if !column.logicField && !column.versionField>
-                ${table.classPrefix}::get${column.propertyNameUp}<#if column_has_next>,</#if>
+                <#assign validColumns = validColumns + [column]>
             </#if>
         </#list>
+
+    <#list validColumns as column>
+        ${table.classPrefix}::get${column.propertyNameUp}<#if column_has_next>,</#if>
+    </#list>
                 );
         PageInfo<${table.classPrefix}> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, ${table.classPrefix}Convert.INSTANCE::toVO);

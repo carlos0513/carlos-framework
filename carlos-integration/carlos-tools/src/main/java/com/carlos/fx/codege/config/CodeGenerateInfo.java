@@ -1,6 +1,8 @@
 package com.carlos.fx.codege.config;
 
+import com.carlos.fx.codege.entity.TableBaseInfo;
 import com.carlos.fx.codege.entity.TemplateBaseInfo;
+import com.carlos.fx.codege.enums.FieldNameTypeEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -49,4 +51,16 @@ public class CodeGenerateInfo {
      * @since 3.0
      */
     private TemplateBaseInfo templateBaseInfo;
+
+    /**
+     * 表名列表
+     *
+     * @since 3.0
+     */
+    private List<TableBaseInfo> tables;
+
+    /**
+     * 数据库字段命名方式
+     */
+    private FieldNameTypeEnum nameType = FieldNameTypeEnum.NOT_PREFIX_AND_CAMEL;
 }

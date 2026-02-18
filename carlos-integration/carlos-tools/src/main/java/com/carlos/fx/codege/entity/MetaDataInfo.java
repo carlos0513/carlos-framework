@@ -36,6 +36,6 @@ public class MetaDataInfo {
     /**
      * 需要生成代码的表
      */
-    private List<TableInfo> tables;
+    private List<TableBaseInfo> tables;
 
 }

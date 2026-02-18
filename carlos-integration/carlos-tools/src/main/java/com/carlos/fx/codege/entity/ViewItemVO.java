@@ -1,5 +1,6 @@
 package com.carlos.fx.codege.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,15 +14,23 @@ import lombok.experimental.Accessors;
  */
 @Accessors(chain = true)
 @Data
-public class TableInfo {
+@AllArgsConstructor
+public class ViewItemVO {
 
     /**
      * 表名
      */
-    private String name;
+    private String key;
     /**
      * 表备注
      */
-    private String comment;
+    private String value;
+
+
+    // 重写toString方法
+    @Override
+    public String toString() {
+        return value;
+    }
 
 }

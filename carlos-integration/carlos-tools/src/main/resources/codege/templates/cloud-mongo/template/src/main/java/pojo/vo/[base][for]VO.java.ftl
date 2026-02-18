@@ -1,7 +1,7 @@
 package ${project.packageName}.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

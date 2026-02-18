@@ -1,5 +1,8 @@
 package com.carlos.fx.codege.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * <p>
  * 数据库字段命名方式枚举
@@ -8,7 +11,8 @@ package com.carlos.fx.codege.enums;
  * @author Carlos
  * @date 2019/12/25 15:19 database
  */
-
+@Getter
+@AllArgsConstructor
 public enum FieldNameTypeEnum {
 
     /**
@@ -34,12 +38,10 @@ public enum FieldNameTypeEnum {
 
     private final String describe;
 
-    FieldNameTypeEnum(String describe) {
-        this.describe = describe;
-    }
-
-    public String getDescribe() {
-        return describe;
+    // 重写toString()方法
+    @Override
+    public String toString() {
+        return this.describe;
     }
 
 }

@@ -2,7 +2,7 @@ package ${project.packageName}.api;
 
 import com.carlos.core.annotation.ClientApi;
 import lombok.RequiredArgsConstructor;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 /**
