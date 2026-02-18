@@ -111,6 +111,8 @@
         <dingtalk-sdk.version>2.0.0</dingtalk-sdk.version>
         <aws-s3.version>2.20.26</aws-s3.version>
         <rocketmq-spring-boot.version>2.0.2</rocketmq-spring-boot.version>
+        <swagger-annotations.version>2.2.19</swagger-annotations.version>
+        <jakarta-validation.version>3.1.1</jakarta-validation.version>
 
         <!-- SkyWalking -->
         <skywalking.version>9.5.0</skywalking.version>
@@ -332,7 +334,7 @@
             <!-- 核心模块 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-core</artifactId>
+                <artifactId>carlos-spring-boot-starter-core</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -664,6 +666,18 @@
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-spring-boot-starter</artifactId>
                 <version>${rocketmq-spring-boot.version}</version>
+            </dependency>
+
+            <!-- Swagger & Validation -->
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
+                <version>${swagger-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta-validation.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

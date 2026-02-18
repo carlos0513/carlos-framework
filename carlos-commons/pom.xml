@@ -18,7 +18,6 @@
     </description>
 
     <modules>
-        <module>carlos-core</module>
         <module>carlos-utils</module>
         <module>carlos-excel</module>
     </modules>

@@ -3,16 +3,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.carlos</groupId>
-        <artifactId>carlos-commons</artifactId>
+        <artifactId>carlos-spring-boot</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>carlos-core</artifactId>
+    <artifactId>carlos-spring-boot-starter-core</artifactId>
 
     <description>
-        carlos-core核心模块
+        Carlos Spring Boot 核心模块，提供基础抽象、异常处理、分页、响应包装等功能
     </description>
 
     <dependencies>
@@ -43,7 +43,6 @@
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
-            <version>2.2.19</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -56,7 +55,6 @@
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
