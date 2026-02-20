@@ -12,7 +12,6 @@ import cn.idev.excel.EasyExcel;
 import com.carlos.fx.gitlab.config.GitLabServerInfo;
 import com.carlos.fx.gitlab.entity.GitlabProjectBranch;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.time.DateUtils;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Commit;
@@ -87,7 +86,7 @@ public class GitlabService {
         List<Project> projects = getGroupProjects(groupName);
         ExcelWriter writer = ExcelUtil.getWriter("/data/export/" + groupName + DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN) + ".xlsx");
         for (Project project : projects) {
-            List<Commit> commits = getCommits(project.getId(), "main", DateUtils.parseDate("2025-01-01", "yyyy-MM-dd"), new Date(), null, true, true, true);
+            List<Commit> commits = getCommits(project.getId(), "main", new Date(), new Date(), null, true, true, true);
             if (CollUtil.isEmpty(commits)) {
                 continue;
             }
@@ -113,7 +112,7 @@ public class GitlabService {
         ProjectApi projectApi = gitlabApi.getProjectApi();
         for (String id : ids) {
             Project project = projectApi.getProject(id);
-            List<Commit> commits = getCommits(project.getId(), "main", DateUtils.parseDate("2024-01-01", "yyyy-MM-dd"), new Date(), null, true, true, true);
+            List<Commit> commits = getCommits(project.getId(), "main", new Date(), new Date(), null, true, true, true);
             if (CollUtil.isEmpty(commits)) {
                 continue;
             }

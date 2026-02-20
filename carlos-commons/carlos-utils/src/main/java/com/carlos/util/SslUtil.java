@@ -9,13 +9,13 @@ import java.security.cert.X509Certificate;
 
 /**
  * <p>
- * okHttpUtil
+ * ssl禁用安全验证
  * </p>
  *
  * @author Carlos
  * @date 2024/9/23 22:46
  */
-public class OkHttpUtil {
+public class SslUtil {
 
     /**
      * X509TrustManager instance which ignored SSL certification
@@ -60,24 +60,5 @@ public class OkHttpUtil {
                 return true;
             }
         };
-    }
-
-    /**
-     * 跳过ssl检查
-     *
-     * @param client okhttpClient
-     * @return okhttp3.OkHttpClient
-     * @author Carlos
-     * @date 2024/9/23 22:55
-     */
-    public static okhttp3.OkHttpClient disableCertCheck(okhttp3.OkHttpClient client)
-            throws KeyManagementException, NoSuchAlgorithmException {
-        SSLContext sslContext = getIgnoreInitedSslContext();
-        SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-        return client
-                .newBuilder()
-                .sslSocketFactory(sslSocketFactory, IGNORE_SSL_TRUST_MANAGER_X509)
-                .hostnameVerifier(getIgnoreSslHostnameVerifier())
-                .build();
     }
 }

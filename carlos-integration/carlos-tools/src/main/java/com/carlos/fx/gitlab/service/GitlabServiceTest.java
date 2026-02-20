@@ -1,7 +1,7 @@
 package com.carlos.fx.gitlab.service;
 
 import com.carlos.fx.gitlab.config.GitLabServerInfo;
-import com.google.common.collect.Sets;
+import org.apache.commons.collections4.SetUtils;
 import org.junit.jupiter.api.Test;
 
 public class GitlabServiceTest {
@@ -21,7 +21,7 @@ public class GitlabServiceTest {
     public void exportCommit() {
         GitlabService gitlabService = new GitlabService();
         try {
-            gitlabService.exportCommit(Sets.newHashSet("248", "201", "199", "246", "254", "366"));
+            gitlabService.exportCommit(SetUtils.hashSet("248", "201", "199", "246", "254", "366"));
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

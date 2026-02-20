@@ -1,11 +1,10 @@
-package com.carlos.excel.easyexcel;
+package com.carlos.util.easyexcel;
 
 import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.idev.excel.EasyExcel;
 import cn.idev.excel.ExcelReader;
+import cn.idev.excel.FastExcel;
 import cn.idev.excel.event.AnalysisEventListener;
-import com.carlos.excel.exception.ExcelException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,13 +47,13 @@ public class ExcelUtil {
             response.setHeader(
                     "Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
-            EasyExcel.write(response.getOutputStream())
+            FastExcel.write(response.getOutputStream())
                     .autoCloseStream(Boolean.FALSE)
                     .head(head)
                     .sheet("sheet1")
                     .doWrite(data);
         } catch (final Exception e) {
-            throw new ExcelException("数据导出失败", e);
+            throw new RuntimeException("数据导出失败", e);
         }
     }
 
@@ -80,19 +79,19 @@ public class ExcelUtil {
             response.setHeader(
                     "Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
-            EasyExcel.write(response.getOutputStream(), head)
+            FastExcel.write(response.getOutputStream(), head)
                     .autoCloseStream(Boolean.TRUE)
                     .sheet("sheet1")
                     .doWrite(data);
         } catch (final Exception e) {
-            throw new ExcelException("数据导出失败", e);
+            throw new RuntimeException("数据导出失败", e);
         }
     }
 
     public static void checkExcel(final String name) {
         final String extName = FileNameUtil.extName(name);
         if (!CharSequenceUtil.equalsAny(extName, "xls", "xlsx")) {
-            throw new ExcelException("不支持的excel文件类型");
+            throw new RuntimeException("不支持的excel文件类型");
         }
 
     }
@@ -114,7 +113,7 @@ public class ExcelUtil {
 
         try {
             inputStream = new BufferedInputStream(excel.getInputStream());
-            ExcelReader excelReader = EasyExcel.read(inputStream, head, excelListener).build();
+            ExcelReader excelReader = FastExcel.read(inputStream, head, excelListener).build();
 
             return excelReader;
         } catch (IOException e) {
@@ -159,7 +158,7 @@ public class ExcelUtil {
 
         try {
             inputStream = new BufferedInputStream(excel.getInputStream());
-            ExcelReader excelReader = EasyExcel.read(inputStream, excelListener).build();
+            ExcelReader excelReader = FastExcel.read(inputStream, excelListener).build();
 
             return excelReader;
         } catch (IOException e) {

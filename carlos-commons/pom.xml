@@ -19,7 +19,6 @@
 
     <modules>
         <module>carlos-utils</module>
-        <module>carlos-excel</module>
     </modules>
 
     <!-- Commons模块特定的依赖配置 -->
