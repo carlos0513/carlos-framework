@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import jakarta.crypto.Cipher;
+import jakarta.crypto.spec.IvParameterSpec;
+import jakarta.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;

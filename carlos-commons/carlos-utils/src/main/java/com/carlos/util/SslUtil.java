@@ -1,7 +1,7 @@
 package com.carlos.util;
 
 
-import javax.net.ssl.*;
+import jakarta.net.ssl.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
