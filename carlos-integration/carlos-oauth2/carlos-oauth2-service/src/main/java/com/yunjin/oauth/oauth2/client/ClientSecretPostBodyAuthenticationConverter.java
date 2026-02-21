@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.server.authorization.web.OAuth2Client
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**

@@ -8,8 +8,6 @@
     </parent>
     <packaging>pom</packaging>
 
-    <version>${revision}</version>
-    <groupId>com.carlos</groupId>
     <artifactId>carlos-system</artifactId>
     <description>融合治理平台系统模块</description>
 

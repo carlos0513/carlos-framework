@@ -23,10 +23,6 @@
 
     <name>carlos-oauth2</name>
 
-    <properties>
-        <revision>2.0.0.RELEASE</revision>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

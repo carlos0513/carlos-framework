@@ -4,7 +4,7 @@ package com.carlos.msg.api.pojo.param;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.swing.*;
+import jakarta.swing.*;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;

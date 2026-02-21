@@ -2,7 +2,7 @@ package com.carlos.system.upload.pojo.param;
 
 
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 

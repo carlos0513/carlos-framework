@@ -21,7 +21,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import javax.security.auth.login.AccountExpiredException;
+import jakarta.security.auth.login.AccountExpiredException;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.LinkedHashSet;

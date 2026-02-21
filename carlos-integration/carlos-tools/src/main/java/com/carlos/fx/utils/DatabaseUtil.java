@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
