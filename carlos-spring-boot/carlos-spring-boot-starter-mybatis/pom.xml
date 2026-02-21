@@ -12,7 +12,7 @@
     <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
 
     <description>
-        carlos-mybatis多数据源
+        carlos-spring-boot-starter-mybatis多数据源
     </description>
 
     <dependencies>
@@ -52,8 +52,8 @@
             <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

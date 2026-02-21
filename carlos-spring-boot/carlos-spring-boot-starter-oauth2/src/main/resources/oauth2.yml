@@ -35,16 +35,20 @@ carlos:
         - /health
 
     # 客户端配置
+    # 注意：Spring Authorization Server 1.x 已移除对 password 授权类型的支持
+    # 建议使用 authorization_code + PKCE 模式替代
     clients:
       -
         client-id: carlos-client
         client-secret: carlos-secret
         client-name: carlos Client
+        # 支持的授权类型：authorization_code, refresh_token, client_credentials
+        # 注意：password 授权类型已被 Spring Authorization Server 1.x 移除支持
         authorization-grant-types:
           - authorization_code
           - refresh_token
           - client_credentials
-          - password
+          # - password  # 已废弃，不建议使用
         redirect-uris:
           - http://localhost:8080/login/oauth2/code/carlos
           - http://localhost:8080/authorized

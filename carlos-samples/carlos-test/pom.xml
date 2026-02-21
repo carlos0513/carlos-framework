@@ -36,10 +36,7 @@
             <groupId>com.carlos</groupId>
             <artifactId>carlos-spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-excel</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>com.carlos</groupId>
             <artifactId>carlos-spring-boot-starter-sms</artifactId>

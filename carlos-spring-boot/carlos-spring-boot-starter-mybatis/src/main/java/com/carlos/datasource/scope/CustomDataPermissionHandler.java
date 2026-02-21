@@ -59,9 +59,10 @@ public class CustomDataPermissionHandler implements DataPermissionHandler {
             selfEqualsTo.setRightExpression(new StringValue(StrUtil.join(StrUtil.COMMA, values)));
             return new AndExpression(where, selfEqualsTo);
         } else {
-            final Expression itemsList =
-                    new ExpressionList(
-                            values.stream().map(i -> new StringValue((String) i)).collect(Collectors.toList()));
+            // 使用 ExpressionList.withExpressions() 替代已弃用的构造函数
+            final ExpressionList itemsList = new ExpressionList<>();
+            itemsList.setExpressions(
+                    values.stream().map(i -> new StringValue((String) i)).collect(Collectors.toList()));
             final InExpression deptInExpression = new InExpression(column, itemsList);
             return new AndExpression(where, deptInExpression);
         }

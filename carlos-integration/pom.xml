@@ -20,5 +20,91 @@
     <modules>
         <module>carlos-license</module>
         <module>carlos-tools</module>
+        <!-- 治理中心模块 -->
+        <module>carlos-auth</module>
+
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- carlos-auth 模块 -->
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-auth</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-auth-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-auth-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- carlos-system 模块 -->
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-system</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-system-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-system-bus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <!-- carlos-org 模块 -->
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-org</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-org-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-org-bus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- carlos-message 模块 -->
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-message</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-message-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-message-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-message-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-message-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

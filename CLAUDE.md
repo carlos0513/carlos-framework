@@ -28,7 +28,7 @@ mvn clean install -P carlos-public    # Public server: zcarlos.com:8081
 mvn clean install -P carlos-private   # Private server: 192.168.3.30:8081
 
 # Build a specific module
-cd carlos-commons/carlos-core
+cd carlos-commons/carlos-spring-boot-starter-core
 mvn clean install
 
 # Build Spring Boot starters
@@ -79,7 +79,7 @@ carlos-framework/                          # Root aggregator POM
 ├── carlos-dependencies/                   # Dependency version management (BOM)
 ├── carlos-parent/                         # Parent POM (build config, plugins)
 ├── carlos-commons/                        # Framework-agnostic utilities
-│   ├── carlos-core/                      # Core abstractions, exceptions, pagination
+│   ├── carlos-spring-boot-starter-core/                      # Core abstractions, exceptions, pagination
 │   ├── carlos-utils/                     # Common utility functions
 │   └── carlos-excel/                     # Excel processing utilities
 ├── carlos-spring-boot/                    # Spring Boot integration layer
@@ -92,7 +92,7 @@ carlos-framework/                          # Root aggregator POM
 │   │   ├── carlos-license-core/
 │   │   ├── carlos-spring-boot-starter-license-generate/
 │   │   └── carlos-spring-boot-starter-license-verify/
-│   └── carlos-tools/                     # GUI tools (code projectGeneratorService)
+│   └── carlos-tools/                     # GUI tools (code generator)
 └── carlos-samples/                        # Examples and tests
     └── carlos-test/                      # Test application
 ```
@@ -110,7 +110,7 @@ carlos-framework/                          # Root aggregator POM
 
 **Commons Layer (Framework-agnostic):**
 
-- `carlos-core`: Base abstractions, annotations, AOP, exceptions, pagination, response wrappers
+- `carlos-spring-boot-starter-core`: Base abstractions, annotations, AOP, exceptions, pagination, response wrappers
 - `carlos-utils`: Common utilities and helper functions (tree utils, HTTP client)
 - `carlos-excel`: Excel import/export using Apache POI 5.2.5 and EasyExcel
 
@@ -118,8 +118,8 @@ carlos-framework/                          # Root aggregator POM
 
 *Core Infrastructure:*
 
-- `carlos-spring-boot-starter-springboot`: Spring Boot autoconfiguration and starter support
-- `carlos-spring-boot-starter-springcloud`: Spring Cloud Alibaba integrations (Nacos, Sentinel)
+- `carlos-spring-boot-starter-web`: Spring Boot autoconfiguration and starter support
+- `carlos-spring-cloud-starter`: Spring Cloud Alibaba integrations (Nacos, Sentinel)
 - `carlos-spring-boot-starter-gateway`: API Gateway utilities for Spring Cloud Gateway
 - `carlos-spring-boot-starter-json`: JSON serialization (Fastjson 2.0.60)
 
@@ -165,7 +165,7 @@ carlos-framework/                          # Root aggregator POM
     - `carlos-license-core`: Core licensing functionality
     - `carlos-spring-boot-starter-license-generate`: License generation (dev only)
     - `carlos-spring-boot-starter-license-verify`: License verification (production)
-- `carlos-tools`: GUI desktop tools (code projectGeneratorService, project scaffolding, Swing-based)
+- `carlos-tools`: GUI desktop tools (code generator, project scaffolding, Swing-based)
 
 **Samples:**
 
@@ -202,7 +202,7 @@ The `${revision}` placeholder pattern (currently `3.0.0-SNAPSHOT`) with the `fla
 
 The framework uses Spring Boot's autoconfiguration mechanism. Modules typically provide:
 - AutoConfiguration classes with `@Configuration` and `@ConditionalOnProperty`
-- `spring.factories` or `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` files
+- `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` files
 - `@ConfigurationProperties` classes with `carlos.*` prefix namespace
 
 Example configuration structure (from carlos-test):
@@ -235,6 +235,43 @@ The `carlos-license` module (located in `carlos-integration/`) is structured for
 
 Uses TrueLicense to validate hardware fingerprints (IP, MAC, CPU serial, mainboard serial) and time constraints.
 
+## Spring Boot 3.x Migration Notes
+
+This framework has been migrated from Spring Boot 2.7 to Spring Boot 3.5. Key migration changes include:
+
+### Jakarta EE Namespace
+
+- All `jakarta.*` imports have been migrated to `jakarta.*`
+- Notable packages: `jakarta.servlet`, `jakarta.validation`, `jakarta.annotation`
+
+### Spring Security 6.x
+
+- Using `SecurityFilterChain` instead of deprecated `WebSecurityConfigurerAdapter`
+- Using `requestMatchers()` instead of `antMatchers()`
+- New Lambda DSL configuration style
+- `@EnableMethodSecurity` instead of `@EnableGlobalMethodSecurity`
+
+### MyBatis-Plus 3.5.x
+
+- Uses `mybatis-plus-spring-boot3-starter` for Spring Boot 3 compatibility
+- `PaginationInnerInterceptor` requires explicit database type specification
+- `IdentifierGenerator.nextId()` returns `Long` instead of `Number`
+
+### MySQL Connector
+
+- `mysql-connector-java` (groupId: `mysql`) has been replaced with `mysql-connector-j` (groupId: `com.mysql`)
+
+### Spring Authorization Server (OAuth2)
+
+- Based on Spring Authorization Server 1.x
+- **Important**: Password grant type is no longer supported
+- Use `authorization_code` + PKCE for secure authentication
+
+### AutoConfiguration Registration
+
+- Uses new `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` format
+- No longer uses deprecated `spring.factories` file
+
 ## Development Guidelines
 
 ### Adding New Modules
@@ -264,10 +301,10 @@ Uses TrueLicense to validate hardware fingerprints (IP, MAC, CPU serial, mainboa
 
 **Dependency Rules:**
 
-- Commons modules (`carlos-core`, `carlos-utils`, `carlos-excel`) are foundational and framework-agnostic
+- Commons modules (`carlos-spring-boot-starter-core`, `carlos-utils`, `carlos-excel`) are foundational and framework-agnostic
 - Spring Boot starters can depend on commons modules
-- Spring Boot starters should depend on `carlos-spring-boot-starter-springboot` for base configuration
-- Spring Cloud starters should depend on `carlos-spring-boot-starter-springcloud`
+- Spring Boot starters should depend on `carlos-spring-boot-starter-web` for base configuration
+- Spring Cloud starters should depend on `carlos-spring-cloud-starter`
 - Integration modules can depend on both commons and Spring Boot starters
 - Avoid circular dependencies between modules
 
@@ -323,6 +360,7 @@ Resource filtering is enabled for `application*.yml/yaml/properties` and `bootst
 - **Parent Version**: Use `${revision}` in child POMs, not hardcoded versions
 - **Security Note**: Never include `carlos-spring-boot-starter-license-generate` module in production artifacts
 - **Layered Architecture**: The framework follows a clear layered architecture (commons → spring-boot → integration → samples)
+- **Spring Boot 3.x**: Framework has been upgraded from Spring Boot 2.7 to 3.5.9
 
 ## Recent Updates
 
@@ -331,10 +369,11 @@ Resource filtering is enabled for `application*.yml/yaml/properties` and `bootst
 A comprehensive OAuth2 authentication and authorization module based on Spring Security OAuth2 Authorization Server.
 
 **Key Features:**
-- OAuth2 Authorization Server with multiple grant types (authorization_code, password, client_credentials, refresh_token)
+
+- OAuth2 Authorization Server with multiple grant types (authorization_code, client_credentials, refresh_token)
 - OAuth2 Resource Server with JWT validation
 - Custom JWT token enhancement with user context (user_id, tenant_id, dept_id, role_ids, authorities)
-- Integration with carlos-core authentication system (LoginUserInfo, UserContext)
+- Integration with carlos-spring-boot-starter-core authentication system (LoginUserInfo, UserContext)
 - Method-level security with @PreAuthorize annotations
 - Utility class OAuth2Util for easy access to current user information
 
@@ -368,7 +407,7 @@ carlos:
     clients:
       - client-id: my-client
         client-secret: my-secret
-        authorization-grant-types: [authorization_code, refresh_token, password]
+        authorization-grant-types: [authorization_code, refresh_token]
         redirect-uris: [http://localhost:8080/authorized]
         scopes: [read, write]
 ```
@@ -400,8 +439,8 @@ public void adminOnlyMethod() { }
 
 **Dependencies:**
 
-- carlos-core (user info, exceptions)
-- carlos-redis (optional, for token storage)
+- carlos-spring-boot-starter-core (user info, exceptions)
+- carlos-spring-boot-starter-redis (optional, for token storage)
 - spring-boot-starter-security
 - spring-security-oauth2-authorization-server
 - spring-boot-starter-oauth2-resource-server
@@ -410,11 +449,47 @@ public void adminOnlyMethod() { }
 **Important Notes:**
 - Default `DefaultOAuth2UserDetailsService` is for testing only
 - Production environments must implement custom `OAuth2UserDetailsService`
-- Password grant type is deprecated in Spring Security OAuth2
+- **Password grant type is NOT supported in Spring Authorization Server 1.x**
 - Current implementation uses in-memory token storage (consider Redis for production)
 - JWT tokens include custom claims: user_id, user_name, tenant_id, dept_id, role_ids, authorities
 
 ## Current State and Recent Changes
+
+### Spring Boot 3.x Upgrade (Completed 2026-02-20)
+
+The framework has been upgraded from Spring Boot 2.7 to Spring Boot 3.5.9. Key changes:
+
+**Jakarta EE Migration:**
+
+- All `jakarta.*` packages migrated to `jakarta.*`
+- Servlet API: `jakarta.servlet` → `jakarta.servlet`
+- Validation API: `jakarta.validation` → `jakarta.validation`
+- Annotation API: `jakarta.annotation` → `jakarta.annotation`
+
+**Spring Security 6.x:**
+
+- Migrated from `WebSecurityConfigurerAdapter` to `SecurityFilterChain`
+- Updated request matchers to use new API
+- Using `@EnableMethodSecurity` for method-level security
+
+**MyBatis-Plus 3.5.x:**
+
+- Uses Spring Boot 3 compatible starter: `mybatis-plus-spring-boot3-starter`
+- Updated `PaginationInnerInterceptor` with explicit database type
+- Fixed `IdentifierGenerator.nextId()` return type to `Long`
+
+**JSqlParser Updates:**
+
+- Fixed deprecated `ExpressionList` constructor usage
+
+**Dependency Updates:**
+
+- MySQL Connector: `mysql-connector-java` → `mysql-connector-j`
+
+**OAuth2 Configuration:**
+
+- Updated example configuration to note that password grant type is not supported
+- Added clarifying comments about supported grant types
 
 ### Architecture Refactoring (2026-02-01)
 
@@ -480,4 +555,10 @@ The framework now contains **38 modules** organized in a layered architecture:
 
 - Root directory: Git repository
 - Current branch: `refactor-yunjin-to-carlos`
-- Recent changes: Architecture refactoring, module consolidation, directory reorganization
+- Recent changes: Spring Boot 3.x upgrade, architecture refactoring, module consolidation, directory reorganization
+
+## Reference Documentation
+
+- `OPTIMIZATION_REPORT.md`: Detailed optimization history and recommendations
+- `README-REF.md`: Framework quick reference
+- Module READMEs: Each module has its own README.md with detailed usage instructions

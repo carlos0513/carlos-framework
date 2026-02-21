@@ -1,8 +1,8 @@
-# carlos-springcloud
+# carlos-spring-cloud-starter
 
 ## 模块简介
 
-`carlos-springcloud` 是 Carlos 框架的 Spring Cloud Alibaba 集成模块，提供了微服务架构所需的核心组件集成，包括服务发现、配置管理、服务调用、负载均衡和容错保护等功能。基于 Spring Cloud Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.8+。
+`carlos-spring-cloud-starter` 是 Carlos 框架的 Spring Cloud Alibaba 集成模块，提供了微服务架构所需的核心组件集成，包括服务发现、配置管理、服务调用、负载均衡和容错保护等功能。基于 Spring Cloud Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.8+。
 
 ## 主要功能
 
@@ -500,7 +500,7 @@ server:
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-springcloud</artifactId>
+    <artifactId>carlos-spring-cloud-starter</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -514,8 +514,8 @@ server:
 - **Spring Cloud Alibaba Sentinel**: 熔断降级
 - **Feign OkHttp**: HTTP 客户端
 - **Caffeine**: 缓存库
-- **carlos-core**: 核心基础模块
-- **carlos-springboot**: Spring Boot 集成
+- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-starter-web**: Spring Boot 集成
 
 ## 使用指南
 
@@ -656,8 +656,8 @@ grep "refresh" logs/application.log
 
 ## 相关模块
 
-- `carlos-core`: 核心基础模块
-- `carlos-springboot`: Spring Boot 集成
+- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-starter-web`: Spring Boot 集成
 - `carlos-gateway`: API 网关
 - `carlos-apm`: APM 监控
-- `carlos-redis`: Redis 缓存
+- `carlos-spring-boot-starter-redis`: Redis 缓存

@@ -1,8 +1,8 @@
-# carlos-mybatis
+# carlos-spring-boot-starter-mybatis
 
 ## 模块简介
 
-`carlos-mybatis` 是 Carlos 框架的数据访问层模块，提供了 MyBatis-Plus 集成、多数据源支持、分页查询、数据权限控制、自动填充等功能。该模块基于 MyBatis-Plus 3.5.15 和 Dynamic DataSource 4.3.1 构建，支持 MySQL 和达梦数据库。
+`carlos-spring-boot-starter-mybatis` 是 Carlos 框架的数据访问层模块，提供了 MyBatis-Plus 集成、多数据源支持、分页查询、数据权限控制、自动填充等功能。该模块基于 MyBatis-Plus 3.5.15 和 Dynamic DataSource 4.3.1 构建，支持 MySQL 和达梦数据库。
 
 ## 主要功能
 
@@ -291,7 +291,7 @@ public class ReportServiceImpl extends BaseServiceImpl<ReportMapper, Report> {
 
 ### 6. 数据权限控制
 
-**集成 carlos-datascope 模块**实现行级数据权限：
+**集成 carlos-spring-boot-starter-datascope 模块**实现行级数据权限：
 
 ```java
 @Service
@@ -532,7 +532,7 @@ spring:
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-mybatis</artifactId>
+    <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -545,8 +545,8 @@ spring:
 - **Druid**: 1.2.27 (连接池和监控)
 - **MySQL Driver**: 8.0.33
 - **Dameng Driver**: 8.1.3.62 (达梦数据库)
-- **carlos-core**: 核心基础模块
-- **carlos-datascope**: 数据权限模块（可选）
+- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-starter-datascope**: 数据权限模块（可选）
 - **carlos-snowflake**: 雪花算法 ID 生成
 
 ## 使用示例
@@ -654,7 +654,7 @@ public class UserController {
 ## 注意事项
 
 1. **自动填充**: 需要实现 `ApplicationExtend` 接口提供用户 ID
-2. **数据权限**: 需要引入 `carlos-datascope` 模块并配置数据权限规则
+2. **数据权限**: 需要引入 `carlos-spring-boot-starter-datascope` 模块并配置数据权限规则
 3. **多数据源**: 使用 `@DS` 注解时，事务需要特别注意
 4. **乐观锁**: 更新时必须先查询获取最新版本号
 5. **逻辑删除**: 查询时会自动过滤已删除数据，如需查询所有数据需要特殊处理
@@ -662,16 +662,59 @@ public class UserController {
 7. **分页排序**: 前端传递的字段名需要与实体类属性名一致
 8. **连接池监控**: Druid 监控页面访问 `/druid/index.html`
 
+## Spring Boot 3.x 兼容性
+
+本模块基于 Spring Boot 3.x 和 MyBatis-Plus 3.5.x 构建，主要变更：
+
+### MyBatis-Plus Spring Boot 3 Starter
+
+使用 `mybatis-plus-spring-boot3-starter` 替代旧版本：
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+</dependency>
+```
+
+### 分页插件数据库类型
+
+从 Spring Boot 3.x 版本开始，`PaginationInnerInterceptor` 需要显式指定数据库类型：
+
+```java
+// 会自动配置，无需手动干预
+interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+```
+
+支持的 `DbType` 值：
+
+- `DbType.MYSQL` - MySQL
+- `DbType.POSTGRE_SQL` - PostgreSQL
+- `DbType.ORACLE` - Oracle
+- `DbType.DM` - 达梦数据库
+- `DbType.SQL_SERVER` - SQL Server
+- 其他...
+
+### JSqlParser 兼容性
+
+使用 JSqlParser 4.x 版本，注意 `ExpressionList` API 变化：
+
+```java
+// Spring Boot 3.x / JSqlParser 4.x 推荐用法
+ExpressionList itemsList = new ExpressionList<>();
+itemsList.setExpressions(expressions);
+```
+
 ## 版本要求
 
 - JDK 17+
-- Spring Boot 3.5.8+
+- Spring Boot 3.5.9+
 - Maven 3.8+
 - MySQL 8.0+ 或 达梦 8.1+
 
 ## 相关模块
 
-- `carlos-core`: 核心基础模块
-- `carlos-datascope`: 数据权限模块
+- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-starter-datascope`: 数据权限模块
 - `carlos-snowflake`: 雪花算法 ID 生成
 - `carlos-utils`: 工具模块

@@ -427,7 +427,7 @@ s3Client.putObject(...);
 
 - JDK 17+
 - Spring Boot 3.5.9+
-- carlos-core 3.0.0+
+- carlos-spring-boot-starter-core 3.0.0+
 
 ## 许可证
 

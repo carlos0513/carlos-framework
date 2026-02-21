@@ -7,7 +7,7 @@
       "Bash(then echo \"Processing $dir/pom.xml\")",
       "Bash(fi:*)",
       "Bash(done)",
-      "Bash(do if [[ \"$dir\" != \"carlos-core/\" ]])",
+      "Bash(do if [[ \"$dir\" != \"carlos-spring-boot-starter-core/\" ]])",
       "Bash(then echo \"Processing $dir\")",
       "Bash(find:*)",
       "Bash(while:*)",
@@ -34,7 +34,11 @@
       "Bash(git mv:*)",
       "Bash(mvn clean install:*)",
       "Bash(do sed -i 's/^public class/import org.springframework.stereotype.Component;\\\\n\\\\n@Component\\\\npublic class/' \"$file\")",
-      "Bash(do sed -i 's/^public class/import org.springframework.stereotype.Service;\\\\n\\\\n@Service\\\\npublic class/' \"$file\")"
+      "Bash(do sed -i 's/^public class/import org.springframework.stereotype.Service;\\\\n\\\\n@Service\\\\npublic class/' \"$file\")",
+      "Bash(xargs cat:*)",
+      "Bash(xargs file:*)",
+      "Bash(do)",
+      "Bash(if file \"$file\")"
     ],
     "deny": [
       "Read(**/test-classes/**)",

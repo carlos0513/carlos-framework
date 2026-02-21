@@ -17,7 +17,7 @@ public class CustomizeIdGenerator implements IdentifierGenerator {
 
 
     @Override
-    public Number nextId(Object entity) {
+    public Long nextId(Object entity) {
         return SnowflakeUtil.longId();
     }
 

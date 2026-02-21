@@ -42,7 +42,7 @@
 <!-- 核心依赖 -->
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-core</artifactId>
+    <artifactId>carlos-spring-boot-starter-core</artifactId>
 </dependency>
 
 <!-- Spring Cloud Gateway -->
@@ -571,9 +571,9 @@ public class CustomFilterFactory extends AbstractGatewayFilterFactory<CustomFilt
 
 ## 相关模块
 
-- `carlos-core`: 核心基础模块
-- `carlos-springcloud`: Spring Cloud 集成模块
-- `carlos-redis`: Redis 缓存模块（限流依赖）
+- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-cloud-starter`: Spring Cloud 集成模块
+- `carlos-spring-boot-starter-redis`: Redis 缓存模块（限流依赖）
 - `carlos-apm`: APM 监控模块
 - `carlos-oauth2`: OAuth2 认证模块
 

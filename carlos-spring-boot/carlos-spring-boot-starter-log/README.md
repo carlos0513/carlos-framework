@@ -419,8 +419,8 @@ public class CustomLogConfig {
 
 ## 依赖项
 
-- `carlos-core`：用户上下文管理、工具类
-- `carlos-springboot`：Spring Boot自动配置支持
+- `carlos-spring-boot-starter-core`：用户上下文管理、工具类
+- `carlos-spring-boot-starter-web`：Spring Boot自动配置支持
 - `spring-boot-starter-aop`：AOP支持
 - `spring-boot-starter-web`：Web请求处理
 
@@ -521,7 +521,7 @@ private String filterSensitiveData(Object data) {
 
 ## 相关模块
 
-- **carlos-core**：用户上下文管理、工具类、基础实体
-- **carlos-mybatis**：数据库操作，用于日志持久化存储
+- **carlos-spring-boot-starter-core**：用户上下文管理、工具类、基础实体
+- **carlos-spring-boot-starter-mybatis**：数据库操作，用于日志持久化存储
 - **carlos-oauth2**：用户认证授权，获取当前用户信息
 - **carlos-apm**：应用性能监控，与日志记录结合

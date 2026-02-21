@@ -1,8 +1,8 @@
-# carlos-redis
+# carlos-spring-boot-starter-redis
 
 ## 模块简介
 
-`carlos-redis` 是 Carlos 框架的 Redis 缓存集成模块，提供了基于 Lettuce 客户端的 Redis 连接管理、Spring Cache 抽象支持、高级 Redis 操作工具、Lua 脚本执行、多数据源支持等功能。该模块支持主从读写分离、批量操作、管道优化等企业级特性。
+`carlos-spring-boot-starter-redis` 是 Carlos 框架的 Redis 缓存集成模块，提供了基于 Lettuce 客户端的 Redis 连接管理、Spring Cache 抽象支持、高级 Redis 操作工具、Lua 脚本执行、多数据源支持等功能。该模块支持主从读写分离、批量操作、管道优化等企业级特性。
 
 **本模块已集成以下功能：**
 
@@ -556,7 +556,7 @@ spring:
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-redis</artifactId>
+    <artifactId>carlos-spring-boot-starter-redis</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -572,8 +572,8 @@ spring:
 - **Fastjson**: JSON 序列化（2.0.60）
 - **Hutool**: 工具库
 - **Guava**: 缓存工具
-- **carlos-core**: 核心基础模块
-- **carlos-json**: JSON 工具
+- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-starter-json**: JSON 工具
 
 ## 使用场景
 
@@ -791,5 +791,5 @@ MultiLevelCacheUtil.clear();
 
 ## 相关模块
 
-- `carlos-core`: 核心基础模块
-- `carlos-json`: JSON 工具
+- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-starter-json`: JSON 工具

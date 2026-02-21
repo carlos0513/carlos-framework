@@ -52,7 +52,7 @@ public final class IpUtil {
 
         String ip = null;
         // if (log.isDebugEnabled()) {
-        //     log.debug("http headers:{}", ServletUtil.getHeaderMap(request));
+        //     log.debug("http headers:{}", JakartaServletUtil.getHeaderMap(request));
         // }
 
         // X-Forwarded-For：Squid 服务代理

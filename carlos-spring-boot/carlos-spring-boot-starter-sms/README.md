@@ -1,4 +1,4 @@
-# carlos-sms
+# carlos-spring-boot-starter-sms
 
 短信发送组件，提供统一的短信发送接口，支持多个短信服务商。
 
@@ -18,7 +18,7 @@
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-sms</artifactId>
+    <artifactId>carlos-spring-boot-starter-sms</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -156,8 +156,8 @@ blends:
 
 ## 依赖模块
 
-- **carlos-core**: 核心基础功能
-- **carlos-redis**: Redis缓存支持（用于限流）
+- **carlos-spring-boot-starter-core**: 核心基础功能
+- **carlos-spring-boot-starter-redis**: Redis缓存支持（用于限流）
 
 ## 注意事项
 

@@ -1,8 +1,8 @@
-# carlos-encrypt
+# carlos-spring-boot-starter-encrypt
 
 ## 模块简介
 
-`carlos-encrypt` 是 Carlos 框架的加密工具模块，提供了基于中国国密算法的加密解密功能。该模块支持 SM2（非对称加密）和 SM4（对称加密）两种国密算法，基于 BouncyCastle 1.70 和 Hutool 5.8.40 实现。
+`carlos-spring-boot-starter-encrypt` 是 Carlos 框架的加密工具模块，提供了基于中国国密算法的加密解密功能。该模块支持 SM2（非对称加密）和 SM4（对称加密）两种国密算法，基于 BouncyCastle 1.70 和 Hutool 5.8.40 实现。
 
 ## 主要功能
 
@@ -349,7 +349,7 @@ carlos:
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-encrypt</artifactId>
+    <artifactId>carlos-spring-boot-starter-encrypt</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -358,7 +358,7 @@ carlos:
 
 - **BouncyCastle**: 1.70（密码学提供者）
 - **Hutool**: 5.8.40（SM2/SM4 工具封装）
-- **carlos-core**: 核心基础模块
+- **carlos-spring-boot-starter-core**: 核心基础模块
 - **Spring Boot**: 3.5.8+（自动配置）
 
 ## 算法特性
@@ -472,6 +472,6 @@ IllegalArgumentException: Invalid public key format
 
 ## 相关模块
 
-- `carlos-core`: 核心基础模块
+- `carlos-spring-boot-starter-core`: 核心基础模块
 - `carlos-tools`: 加密工具 GUI
 - `carlos-test`: 加密功能测试

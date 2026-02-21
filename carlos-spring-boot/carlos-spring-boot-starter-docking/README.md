@@ -1,4 +1,4 @@
-# carlos-docking
+# carlos-spring-boot-starter-docking
 
 第三方系统对接组件，提供与钉钉、融政通等第三方平台的集成功能。
 
@@ -17,7 +17,7 @@
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-docking</artifactId>
+    <artifactId>carlos-spring-boot-starter-docking</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -115,8 +115,8 @@ public void sendRztMessage() {
 
 ## 依赖模块
 
-- **carlos-core**: 核心基础功能
-- **carlos-json**: JSON序列化支持
+- **carlos-spring-boot-starter-core**: 核心基础功能
+- **carlos-spring-boot-starter-json**: JSON序列化支持
 
 ## 注意事项
 

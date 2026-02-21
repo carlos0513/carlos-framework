@@ -1,4 +1,4 @@
-# carlos-json
+# carlos-spring-boot-starter-json
 
 JSON序列化组件，提供统一的JSON处理能力，支持Fastjson和Jackson。
 
@@ -18,7 +18,7 @@ JSON序列化组件，提供统一的JSON处理能力，支持Fastjson和Jackson
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-json</artifactId>
+    <artifactId>carlos-spring-boot-starter-json</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -143,7 +143,7 @@ public class CustomSerializer extends JsonSerializer<LocalDateTime> {
 
 ## 依赖模块
 
-- **carlos-core**: 核心基础功能
+- **carlos-spring-boot-starter-core**: 核心基础功能
 - **Fastjson 2.x**: 阿里巴巴JSON库
 - **Jackson**: Spring默认JSON库
 

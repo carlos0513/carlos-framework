@@ -1,8 +1,8 @@
-# carlos-datascope
+# carlos-spring-boot-starter-datascope
 
 ## 模块简介
 
-`carlos-datascope` 是 Carlos 框架的数据权限控制模块，提供了基于注解和AOP的多维度数据权限控制解决方案。该模块支持多种数据权限类型，可用于多租户系统、部门数据隔离、个人数据权限等场景。
+`carlos-spring-boot-starter-datascope` 是 Carlos 框架的数据权限控制模块，提供了基于注解和AOP的多维度数据权限控制解决方案。该模块支持多种数据权限类型，可用于多租户系统、部门数据隔离、个人数据权限等场景。
 
 ## 主要功能
 
@@ -103,7 +103,7 @@ public List<User> getComplexData() {
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-datascope</artifactId>
+    <artifactId>carlos-spring-boot-starter-datascope</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -254,7 +254,7 @@ public List<User> getRoleData() {
 
 ### 4. 与MyBatis-Plus集成
 
-本模块与 `carlos-mybatis` 模块深度集成，支持MyBatis-Plus的查询条件自动注入：
+本模块与 `carlos-spring-boot-starter-mybatis` 模块深度集成，支持MyBatis-Plus的查询条件自动注入：
 
 ```java
 // 在MyBatis-Plus的Service中使用
@@ -277,7 +277,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> {
 
 ## 依赖项
 
-- `carlos-core`：用户上下文管理、基础工具类
+- `carlos-spring-boot-starter-core`：用户上下文管理、基础工具类
 - `spring-boot-starter-aop`：AOP支持
 - `spring-boot-starter`：Spring Boot基础依赖
 
@@ -324,9 +324,9 @@ CurrentUser.setUserContext(userContext);
 CurrentUser.remove();
 ```
 
-### 4. 与carlos-core集成
+### 4. 与carlos-spring-boot-starter-core集成
 
-本模块深度依赖 `carlos-core` 模块的 `CurrentUser` 工具类获取用户上下文信息，确保在使用前正确设置用户登录信息。
+本模块深度依赖 `carlos-spring-boot-starter-core` 模块的 `CurrentUser` 工具类获取用户上下文信息，确保在使用前正确设置用户登录信息。
 
 ## 版本要求
 
@@ -336,6 +336,6 @@ CurrentUser.remove();
 
 ## 相关模块
 
-- **carlos-core**：用户上下文管理、基础工具类
-- **carlos-mybatis**：MyBatis-Plus集成、数据访问层支持
+- **carlos-spring-boot-starter-core**：用户上下文管理、基础工具类
+- **carlos-spring-boot-starter-mybatis**：MyBatis-Plus集成、数据访问层支持
 - **carlos-oauth2**：OAuth2认证授权、用户信息管理

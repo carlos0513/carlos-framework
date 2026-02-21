@@ -142,7 +142,7 @@ public class RabbitMQConfig {
 
 ## 依赖模块
 
-- **carlos-core**: 核心基础功能
+- **carlos-spring-boot-starter-core**: 核心基础功能
 - **Spring AMQP**: RabbitMQ支持
 
 ## 注意事项

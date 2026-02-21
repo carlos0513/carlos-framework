@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-springboot</artifactId>
+            <artifactId>carlos-spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 

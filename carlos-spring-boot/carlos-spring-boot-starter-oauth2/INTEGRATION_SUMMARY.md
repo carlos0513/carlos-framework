@@ -54,7 +54,7 @@ carlos-spring-boot/carlos-oauth2/
 - ✅ 自动提取用户上下文信息
 - ✅ 可配置的公开路径
 
-### 3. 与carlos-core集成
+### 3. 与carlos-spring-boot-starter-core集成
 
 - ✅ 使用`LoginUserInfo`作为用户信息载体
 - ✅ 使用`UserContext`作为用户上下文
@@ -225,8 +225,8 @@ public class UserController {
 
 ```
 carlos-oauth2
-├── carlos-core (用户信息、异常、响应)
-├── carlos-redis (可选，用于Token存储)
+├── carlos-spring-boot-starter-core (用户信息、异常、响应)
+├── carlos-spring-boot-starter-redis (可选，用于Token存储)
 ├── spring-boot-starter-security
 ├── spring-security-oauth2-authorization-server
 ├── spring-boot-starter-oauth2-resource-server

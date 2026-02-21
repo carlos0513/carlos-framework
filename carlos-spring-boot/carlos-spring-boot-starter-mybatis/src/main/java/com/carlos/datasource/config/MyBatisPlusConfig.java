@@ -1,6 +1,7 @@
 package com.carlos.datasource.config;
 
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.autoconfigure.IdentifierGeneratorAutoConfiguration;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
@@ -82,7 +83,8 @@ public class MyBatisPlusConfig {
         // 禁全表更删插件
         interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
 
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        // 分页插件，指定数据库类型为MySQL（可根据需要修改）
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
         return interceptor;
     }

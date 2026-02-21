@@ -1,15 +1,12 @@
 package com.carlos.test.service;
 
-import com.carlos.excel.luckysheet.ExcelSheet;
 import com.carlos.test.manager.OrgUserManager;
 import com.carlos.test.pojo.dto.OrgUserDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 
@@ -58,8 +55,5 @@ public class OrgUserService {
         // 修改成功的后续操作
     }
 
-    public List<ExcelSheet> excelImport(MultipartFile file) {
-        return null;
 
-    }
 }

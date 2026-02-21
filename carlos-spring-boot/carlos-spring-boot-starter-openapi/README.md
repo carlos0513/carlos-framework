@@ -366,7 +366,7 @@ public Result<User> getUser(@PathVariable Long id) {
 
 - `springdoc-openapi-starter-webmvc-ui` (3.x): SpringDoc OpenAPI 核心依赖
 - `knife4j-openapi3-spring-boot-starter`: Knife4j UI 界面
-- `carlos-core`: 基础工具类、常量定义
+- `carlos-spring-boot-starter-core`: 基础工具类、常量定义
 - `spring-boot-starter-web`: Web 应用基础依赖
 
 ## 注意事项
@@ -422,9 +422,9 @@ A: 使用 Knife4j 的导出功能：
 2. 点击右上角"导出"按钮
 3. 选择导出格式（Markdown、Word、PDF、OpenAPI JSON/YAML）
 
-### 5. 与 carlos-core 集成
+### 5. 与 carlos-spring-boot-starter-core 集成
 
-本模块使用 `carlos-core` 模块的工具类获取应用地址和端口信息，确保文档链接的正确性。
+本模块使用 `carlos-spring-boot-starter-core` 模块的工具类获取应用地址和端口信息，确保文档链接的正确性。
 
 ## 版本要求
 
@@ -435,6 +435,6 @@ A: 使用 Knife4j 的导出功能：
 
 ## 相关模块
 
-- **carlos-core**：基础工具类、常量定义、响应格式
+- **carlos-spring-boot-starter-core**：基础工具类、常量定义、响应格式
 - **carlos-oauth2**：OAuth2 认证授权，为文档提供认证支持
 - **carlos-gateway**：API 网关，文档可能需要网关相关配置

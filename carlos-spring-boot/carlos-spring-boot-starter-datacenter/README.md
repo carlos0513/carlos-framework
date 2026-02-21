@@ -96,8 +96,8 @@ public void pullData() {
 
 ## 依赖模块
 
-- **carlos-core**: 核心基础功能
-- **carlos-encrypt**: 数据加密支持
+- **carlos-spring-boot-starter-core**: 核心基础功能
+- **carlos-spring-boot-starter-encrypt**: 数据加密支持
 
 ## 注意事项
 

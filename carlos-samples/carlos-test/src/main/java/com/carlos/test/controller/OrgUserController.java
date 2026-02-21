@@ -2,7 +2,6 @@ package com.carlos.test.controller;
 
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
-import com.carlos.excel.luckysheet.ExcelSheet;
 import com.carlos.test.convert.OrgUserConvert;
 import com.carlos.test.manager.OrgUserManager;
 import com.carlos.test.pojo.dto.OrgUserDTO;
@@ -16,10 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
 
 
 /**
@@ -80,9 +75,4 @@ public class OrgUserController {
     }
 
 
-    @PostMapping("excelImport")
-    @Operation(summary = "导入Excel数据")
-    public List<ExcelSheet> importFile(@RequestPart("file") MultipartFile file) throws IOException {
-        return userService.excelImport(file);
-    }
 }

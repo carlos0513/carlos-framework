@@ -405,12 +405,6 @@
                 <version>${revision}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.carlos</groupId>
-                <artifactId>carlos-excel</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
             <!-- 多数据源 -->
             <dependency>
                 <groupId>com.carlos</groupId>
@@ -535,9 +529,10 @@
                 <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
                 <version>${dynamic-datasource.version}</version>
             </dependency>
+            <!-- MySQL Connector/J - 注意：Spring Boot 3.x 中 artifactId 已从 mysql-connector-java 改为 mysql-connector-j -->
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql-connector.version}</version>
             </dependency>
             <dependency>

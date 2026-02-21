@@ -1,8 +1,8 @@
-# carlos-springboot
+# carlos-spring-boot-starter-web
 
 ## 模块简介
 
-`carlos-springboot` 是 Carlos 框架的 Spring Boot 集成模块，提供了企业级的 Web 应用开发所需的自动配置、请求处理、异常处理、类型转换、CORS、XSS 防护、枚举服务、资源扫描等功能。该模块通过 Spring Boot 自动配置机制，简化了应用开发配置。
+`carlos-spring-boot-starter-web` 是 Carlos 框架的 Spring Boot 集成模块，提供了企业级的 Web 应用开发所需的自动配置、请求处理、异常处理、类型转换、CORS、XSS 防护、枚举服务、资源扫描等功能。该模块通过 Spring Boot 自动配置机制，简化了应用开发配置。
 
 ## 主要功能
 
@@ -609,7 +609,7 @@ spring:
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-springboot</artifactId>
+    <artifactId>carlos-spring-boot-starter-web</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
@@ -623,8 +623,8 @@ spring:
 - **Reflections**: 类路径扫描
 - **Apache Commons Text**: XSS 转义
 - **MapStruct**: Bean 映射
-- **carlos-core**: 核心基础模块
-- **carlos-json**: JSON 工具
+- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-starter-json**: JSON 工具
 - **carlos-apm**: APM 追踪工具
 
 ## 设计模式
@@ -666,8 +666,8 @@ spring:
 
 ## 相关模块
 
-- `carlos-core`: 核心基础模块
-- `carlos-json`: JSON 工具
+- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-starter-json`: JSON 工具
 - `carlos-apm`: APM 追踪
 - `carlos-gateway`: API 网关
 - `carlos-oauth2`: OAuth2 认证授权
