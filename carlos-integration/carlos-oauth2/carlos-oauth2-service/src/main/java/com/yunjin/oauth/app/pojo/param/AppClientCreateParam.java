@@ -3,8 +3,7 @@ package com.carlos.oauth.app.pojo.param;
 
 import com.carlos.oauth.app.pojo.dto.Oauth2ClientSettings;
 import com.carlos.oauth.app.pojo.dto.Oauth2TokenSettings;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -24,32 +23,32 @@ import java.util.Set;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "应用信息新增参数", description = "应用信息新增参数")
+@Schema(value = "应用信息新增参数", description = "应用信息新增参数")
 public class AppClientCreateParam {
     @NotBlank(message = "应用名称不能为空")
-    @ApiModelProperty(value = "应用名称")
+    @Schema(value = "应用名称")
     private String appName;
     @NotBlank(message = "应用logo不能为空")
-    @ApiModelProperty(value = "应用logo")
+    @Schema(value = "应用logo")
     private String appLogo;
     @NotNull(message = "应用密钥到期时间不能为空")
-    @ApiModelProperty(value = "应用密钥到期时间")
+    @Schema(value = "应用密钥到期时间")
     private LocalDateTime clientSecretExpiresAt;
     @NotNull(message = "应用发行时间不能为空")
-    @ApiModelProperty(value = "应用发行时间")
+    @Schema(value = "应用发行时间")
     private LocalDateTime clientIssuedAt;
     @NotBlank(message = "认证方式不能为空")
-    @ApiModelProperty(value = "认证方式")
+    @Schema(value = "认证方式")
     private Set<String> authenticationMethods;
     @NotBlank(message = "grant_type不能为空")
-    @ApiModelProperty(value = "grant_type")
+    @Schema(value = "grant_type")
     private Set<String> authorizationGrantTypes;
-    @ApiModelProperty(value = "scopes")
+    @Schema(value = "scopes")
     private Set<String> scopes;
-    @ApiModelProperty(value = "重定向地址")
+    @Schema(value = "重定向地址")
     private Set<String> redirectUris;
-    @ApiModelProperty(value = "client设置 key:value;")
+    @Schema(value = "client设置 key:value;")
     private Oauth2ClientSettings clientSettings;
-    @ApiModelProperty(value = "token设置 key:value;")
+    @Schema(value = "token设置 key:value;")
     private Oauth2TokenSettings tokenSettings;
 }

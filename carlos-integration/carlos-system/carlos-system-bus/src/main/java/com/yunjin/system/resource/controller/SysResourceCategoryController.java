@@ -14,8 +14,8 @@ import com.carlos.system.resource.pojo.param.SysResourceCategoryUpdateParam;
 import com.carlos.system.resource.pojo.vo.SysResourceCategoryRecursionVO;
 import com.carlos.system.resource.pojo.vo.SysResourceCategoryVO;
 import com.carlos.system.resource.service.SysResourceCategoryService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/resource/category")
-@Api(tags = "资源分类")
+@Tag(name = "资源分类")
 public class SysResourceCategoryController {
 
     public static final String BASE_NAME = "资源分类";
@@ -46,7 +46,7 @@ public class SysResourceCategoryController {
 
 
     @PostMapping
-    @ApiOperation(value = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     @Log(title = "新增" + BASE_NAME, businessType = BusinessType.INSERT)
     public void add(@RequestBody @Validated SysResourceCategoryCreateParam param) {
         ResourceCategoryDTO dto = SysResourceCategoryConvert.INSTANCE.toDTO(param);
@@ -54,14 +54,14 @@ public class SysResourceCategoryController {
     }
 
     @PostMapping("delete")
-    @ApiOperation(value = "删除" + BASE_NAME)
+    @Operation(summary = "删除" + BASE_NAME)
     @Log(title = "删除" + BASE_NAME, businessType = BusinessType.DELETE)
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         this.resourceCategoryService.deleteResourceCategory(param.getIds());
     }
 
     @PostMapping("update")
-    @ApiOperation(value = "更新" + BASE_NAME)
+    @Operation(summary = "更新" + BASE_NAME)
     @Log(title = "更新" + BASE_NAME, businessType = BusinessType.UPDATE)
     public void update(@RequestBody @Validated SysResourceCategoryUpdateParam param) {
         ResourceCategoryDTO dto = SysResourceCategoryConvert.INSTANCE.toDTO(param);
@@ -69,31 +69,31 @@ public class SysResourceCategoryController {
     }
 
     @GetMapping("{id}")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     public SysResourceCategoryVO detail(@PathVariable String id) {
         return SysResourceCategoryConvert.INSTANCE.toVO(this.resourceCategoryManager.getDtoById(id));
     }
 
     @GetMapping("list")
-    @ApiOperation(value = BASE_NAME + "列表")
+    @Operation(summary = BASE_NAME + "列表")
     public List<SysResourceCategoryVO> list(String parentId) {
         return SysResourceCategoryConvert.INSTANCE.toListVO(this.resourceCategoryManager.getCategoryTree(parentId, true));
     }
 
     @GetMapping("tree/select")
-    @ApiOperation(value = BASE_NAME + "下拉选项")
+    @Operation(summary = BASE_NAME + "下拉选项")
     public List<SysResourceCategoryRecursionVO> select() {
         return SysResourceCategoryConvert.INSTANCE.toRecursionListVO(this.resourceCategoryManager.getCategoryTree(null, false));
     }
 
     @GetMapping("tree/list")
-    @ApiOperation(value = BASE_NAME + "树形列表")
+    @Operation(summary = BASE_NAME + "树形列表")
     public List<SysResourceCategoryRecursionVO> treeList() {
         return SysResourceCategoryConvert.INSTANCE.toRecursionListVO(this.resourceCategoryManager.getCategoryTree(null, true));
     }
 
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表", hidden = true)
+    @Operation(summary = BASE_NAME + "分页列表", hidden = true)
     public Paging<SysResourceCategoryVO> page(SysResourceCategoryPageParam param) {
         return this.resourceCategoryManager.getPage(param);
     }

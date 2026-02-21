@@ -1,7 +1,7 @@
 package com.carlos.system.upload.pojo.param;
 
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UploadParam {
 
     @NotEmpty(message = "上传文件不能为空")
-    @ApiModelProperty(value = "文件")
+    @Schema(value = "文件")
     private MultipartFile[] files;
 
     /**
@@ -59,7 +59,7 @@ public class UploadParam {
      * <p>
      * 当使用带有安全套接字层（SSL）的虚拟托管样式存储桶时，SSL通配符证书只匹配不包含句点的存储桶。要解决此问题，请使用HTTP或编写自己的证书验证逻辑。建议在使用虚拟托管样式存储桶时，不要在存储桶名称中使用句点（“.”）。
      */
-    @ApiModelProperty(value = "文件空间")
+    @Schema(value = "文件空间")
     private String namespace;
 
 }

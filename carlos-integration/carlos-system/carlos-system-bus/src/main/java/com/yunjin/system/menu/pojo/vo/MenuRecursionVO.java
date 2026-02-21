@@ -1,7 +1,7 @@
 package com.carlos.system.menu.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MenuRecursionVO extends MenuVO {
 
-    @ApiModelProperty(value = "子菜单信息")
+    @Schema(value = "子菜单信息")
     List<MenuRecursionVO> children;
 
 }

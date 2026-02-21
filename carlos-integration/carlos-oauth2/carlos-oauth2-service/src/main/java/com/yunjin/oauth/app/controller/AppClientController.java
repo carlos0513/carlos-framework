@@ -20,8 +20,8 @@ import com.carlos.oauth.app.pojo.vo.AppClientPageVO;
 import com.carlos.oauth.app.pojo.vo.AppClientVO;
 import com.carlos.oauth.app.service.AppClientService;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +43,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("oauth2/app/client")
-@Api(tags = "应用客户端信息")
+@Tag(name = "应用客户端信息")
 public class AppClientController {
 
     public static final String BASE_NAME = "应用";
@@ -55,7 +55,7 @@ public class AppClientController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
-    @ApiOperation(value = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     public AppClientVO add(@RequestBody @Validated AppClientCreateParam param) {
         AppClientDTO dto = AppClientConvert.INSTANCE.toDTO(param);
         registeredClientService.addAppClient(dto);
@@ -64,14 +64,14 @@ public class AppClientController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("delete")
-    @ApiOperation(value = "删除" + BASE_NAME)
+    @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         registeredClientService.deleteAppClient(param.getIds());
     }
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("update")
-    @ApiOperation(value = "更新" + BASE_NAME)
+    @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated AppClientUpdateParam param) {
         AppClientDTO dto = AppClientConvert.INSTANCE.toDTO(param);
         registeredClientService.updateAppClient(dto);
@@ -79,34 +79,34 @@ public class AppClientController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("resetSecret")
-    @ApiOperation(value = "重置秘钥")
+    @Operation(summary = "重置秘钥")
     public String resetSecret(@RequestBody @Validated ParamId<Serializable> param) {
         return registeredClientService.resetSecret(param.getId());
     }
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("detail")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     public AppClientVO detail(String id) {
         return AppClientConvert.INSTANCE.toVO(registeredClientService.findById(id, true));
     }
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("list")
-    @ApiOperation(value = "应用列表")
+    @Operation(summary = "应用列表")
     public List<AppClientListVO> list(String keyword) {
         return AppClientConvert.INSTANCE.toListVO(registeredClientService.list(keyword));
     }
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表")
+    @Operation(summary = BASE_NAME + "分页列表")
     public Paging<AppClientPageVO> page(AppClientPageParam param) {
         return registeredClientManager.getPage(param);
     }
 
     @PostMapping("import")
-    @ApiOperation(value = "导入应用数据")
+    @Operation(summary = "导入应用数据")
     public void importData(@RequestPart final MultipartFile file) {
         final AppClientExcelListener listener = new AppClientExcelListener(registeredClientService);
         try {
@@ -122,13 +122,13 @@ public class AppClientController {
     }
 
     @GetMapping("export")
-    @ApiOperation(value = "导出应用数据")
+    @Operation(summary = "导出应用数据")
     public void exportUser(final HttpServletResponse response) {
         registeredClientService.export(response, false);
     }
 
     @GetMapping("export/template")
-    @ApiOperation(value = "导出应用模板")
+    @Operation(summary = "导出应用模板")
     public void exportTemplate(final HttpServletResponse response) {
         registeredClientService.export(response, true);
     }

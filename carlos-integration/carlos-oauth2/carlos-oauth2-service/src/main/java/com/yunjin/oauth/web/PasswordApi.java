@@ -2,8 +2,8 @@ package com.carlos.oauth.web;
 
 import com.carlos.auth.pojo.PasswordMatchDTO;
 import com.carlos.core.response.Result;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @date 2021/12/27 16:05
  */
 @RestController
-@Api(tags = "PasswordAPI")
+@Tag(name = "PasswordAPI")
 @RequestMapping("pwd")
 @AllArgsConstructor
 @ConditionalOnBean(PasswordEncoder.class)

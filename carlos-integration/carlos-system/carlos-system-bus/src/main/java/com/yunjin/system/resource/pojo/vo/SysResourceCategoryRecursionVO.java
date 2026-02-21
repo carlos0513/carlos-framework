@@ -1,7 +1,7 @@
 package com.carlos.system.resource.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,7 +22,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SysResourceCategoryRecursionVO extends SysResourceCategoryVO {
 
-    @ApiModelProperty(value = "子类型")
+    @Schema(value = "子类型")
     List<SysResourceCategoryRecursionVO> children;
 
 }

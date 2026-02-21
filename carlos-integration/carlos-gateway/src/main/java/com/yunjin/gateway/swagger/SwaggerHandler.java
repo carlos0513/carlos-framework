@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import reactor.core.publisher.Mono;
-import springfox.documentation.swagger.web.*;
+import org.springdoc.openapi.models.OpenAPI;
+import org.springdoc.openapi.models.info.Info;
 
 import java.util.Optional;
 

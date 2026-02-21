@@ -3,7 +3,7 @@ package com.carlos.system.dict.pojo.vo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.carlos.json.jackson.annotation.EnumField;
 import com.carlos.system.dict.pojo.enums.DictTypeEnum;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -26,29 +26,29 @@ public class SysDictVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
+    @Schema(value = "主键")
     private String id;
 
-    @ApiModelProperty(value = "字典名称")
+    @Schema(value = "字典名称")
     private String dictName;
 
-    @ApiModelProperty(value = "字典编码")
+    @Schema(value = "字典编码")
     private String dictCode;
 
-    @ApiModelProperty(value = "描述")
+    @Schema(value = "描述")
     private String description;
 
     @EnumField(type = EnumField.SerializerType.FULL)
-    @ApiModelProperty(value = "字典类型 数字类型 字符类型")
+    @Schema(value = "字典类型 数字类型 字符类型")
     private DictTypeEnum type;
 
-    @ApiModelProperty(value = "创建时间")
+    @Schema(value = "创建时间")
     private LocalDateTime createTime;
 
-    @ApiModelProperty(value = "更新时间")
+    @Schema(value = "更新时间")
     private LocalDateTime updateTime;
 
-    @ApiModelProperty(value = "字典选项")
+    @Schema(value = "字典选项")
     private List<SysDictItemVO> items;
 
 }

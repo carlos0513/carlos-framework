@@ -1,8 +1,7 @@
 package com.carlos.system.menu.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -17,8 +16,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "菜单操作列表查询参数", description = "菜单操作列表查询参数")
+@Schema(value = "菜单操作列表查询参数", description = "菜单操作列表查询参数")
 public class MenuOperateSearchParam {
-    @ApiModelProperty(value = "关键字")
+    @Schema(value = "关键字")
     private String keyword;
 }

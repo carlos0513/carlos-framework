@@ -1,8 +1,7 @@
 package com.carlos.msg.base.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -22,13 +21,13 @@ import java.util.Set;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "消息渠道配置新增参数", description = "消息渠道配置新增参数")
+@Schema(value = "消息渠道配置新增参数", description = "消息渠道配置新增参数")
 public class MsgChannelConfigStateParam {
     @NotEmpty(message = "主键不能为空")
-    @ApiModelProperty(value = "主键")
+    @Schema(value = "主键")
     private Set<Serializable> ids;
 
     @NotNull(message = "状态不能为空")
-    @ApiModelProperty(value = "启用状态")
+    @Schema(value = "启用状态")
     private Boolean enabled;
 }

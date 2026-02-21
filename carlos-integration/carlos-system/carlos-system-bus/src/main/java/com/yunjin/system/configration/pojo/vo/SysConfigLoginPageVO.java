@@ -1,6 +1,6 @@
 package com.carlos.system.configration.pojo.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -19,20 +19,20 @@ import java.io.Serializable;
 public class SysConfigLoginPageVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "背景图片")
+    @Schema(value = "背景图片")
     private String backgroundImg;
-    @ApiModelProperty(value = "logo")
+    @Schema(value = "logo")
     private String logo;
-    @ApiModelProperty(value = "导航标题")
+    @Schema(value = "导航标题")
     private String title;
-    @ApiModelProperty(value = "主标题")
+    @Schema(value = "主标题")
     private String mainTitle;
-    @ApiModelProperty(value = "副标题")
+    @Schema(value = "副标题")
     private String subTitle;
-    @ApiModelProperty(value = "版本号")
+    @Schema(value = "版本号")
     private String version;
-    @ApiModelProperty(value = "供应商")
+    @Schema(value = "供应商")
     private String supplier;
-    @ApiModelProperty(value = "登录标题")
+    @Schema(value = "登录标题")
     private String loginTitle;
 }

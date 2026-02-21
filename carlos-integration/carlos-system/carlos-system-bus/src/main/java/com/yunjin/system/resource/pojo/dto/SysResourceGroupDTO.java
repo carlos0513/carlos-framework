@@ -2,7 +2,7 @@ package com.carlos.system.resource.pojo.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,10 +21,10 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SysResourceGroupDTO {
 
-    @ApiModelProperty(value = "菜单分类")
+    @Schema(value = "菜单分类")
     private String name;
 
-    @ApiModelProperty(value = "资源列表")
+    @Schema(value = "资源列表")
     List<SysResourceDTO> resources;
 
 }

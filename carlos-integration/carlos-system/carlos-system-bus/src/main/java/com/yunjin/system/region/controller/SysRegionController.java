@@ -23,10 +23,10 @@ import com.carlos.system.region.pojo.param.SysRegionPageParam;
 import com.carlos.system.region.pojo.param.SysRegionUpdateParam;
 import com.carlos.system.region.pojo.vo.SysRegionVO;
 import com.carlos.system.region.service.SysRegionService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +49,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sys/region")
-@Api(tags = "行政区域管理")
+@Tag(name = "行政区域管理")
 public class SysRegionController {
 
     public static final String BASE_NAME = "行政区域";
@@ -60,7 +60,7 @@ public class SysRegionController {
 
 
     @PostMapping
-    @ApiOperation(value = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     @Log(title = "区域管理", businessType = BusinessType.INSERT)
     public void add(@RequestBody @Validated final SysRegionCreateParam param) {
         final SysRegionDTO dto = SysRegionConvert.INSTANCE.toDTO(param);
@@ -69,7 +69,7 @@ public class SysRegionController {
 
 
     @PostMapping("delete")
-    @ApiOperation(value = "删除" + BASE_NAME)
+    @Operation(summary = "删除" + BASE_NAME)
     @Log(title = "区域管理", businessType = BusinessType.DELETE)
     public void delete(@RequestBody final ParamIdSet<Serializable> param) {
         this.regionService.deleteSysRegion(param.getIds());
@@ -77,7 +77,7 @@ public class SysRegionController {
 
 
     @PostMapping("update")
-    @ApiOperation(value = "更新" + BASE_NAME)
+    @Operation(summary = "更新" + BASE_NAME)
     @Log(title = "区域管理", businessType = BusinessType.UPDATE)
     public void update(@RequestBody @Validated final SysRegionUpdateParam param) {
         final SysRegionDTO dto = SysRegionConvert.INSTANCE.toDTO(param);
@@ -85,32 +85,32 @@ public class SysRegionController {
     }
 
     @GetMapping("{id}")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     public SysRegionVO detail(@PathVariable final String id) {
         return SysRegionConvert.INSTANCE.toVO(this.regionManager.getDtoById(id));
     }
 
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表")
+    @Operation(summary = BASE_NAME + "分页列表")
     public Paging<SysRegionVO> page(final SysRegionPageParam param) {
         return this.regionManager.getPage(param);
     }
 
 
     @GetMapping("tree/list")
-    @ApiOperation(value = "行政区域树形列表", notes = "一次性全部加载")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "regionCode", value = "当前区域code"),
-            @ApiImplicitParam(name = "regionName", value = "当前区域名称"),
-            @ApiImplicitParam(name = "codeTop", value = "是否以传入的code作为顶级树的开始")
+    @Operation(summary = "行政区域树形列表", notes = "一次性全部加载")
+    @Parameters({
+            @Parameter(name = "regionCode", value = "当前区域code"),
+            @Parameter(name = "regionName", value = "当前区域名称"),
+            @Parameter(name = "codeTop", value = "是否以传入的code作为顶级树的开始")
     })
     public Result<List<SysRegionVO>> treeList(final String parentId, final String regionName, final String regionCode, final boolean codeTop) {
         return Result.ok(this.regionService.getRegionTree(parentId, regionName, regionCode, true, codeTop));
     }
 
     @GetMapping("loadStep")
-    @ApiOperation(value = "逐级加载行政区域")
-    @ApiImplicitParams({@ApiImplicitParam(name = "regionCode", value = "当前区域code")})
+    @Operation(summary = "逐级加载行政区域")
+    @Parameters({@Parameter(name = "regionCode", value = "当前区域code")})
     public List<SysRegionVO> lodeStep(final String regionCode) {
         final List<SysRegionDTO> dtos = this.regionService.loadRegionStep(regionCode);
         return SysRegionConvert.INSTANCE.dto2vo(dtos);
@@ -118,7 +118,7 @@ public class SysRegionController {
 
     @ApiOperationSupport(author = AuthorConstant.ZHU_JUN)
     @PostMapping("import")
-    @ApiOperation(value = "0-导入区域")
+    @Operation(summary = "0-导入区域")
     @Log(title = "区域管理--导入区域", businessType = BusinessType.IMPORT)
     public Result<?> importData(@RequestPart final MultipartFile file) {
         final RegionExcelListener listener = new RegionExcelListener(regionService);
@@ -137,7 +137,7 @@ public class SysRegionController {
 
     @ApiOperationSupport(author = AuthorConstant.ZHU_JUN)
     @PostMapping("importV2")
-    @ApiOperation(value = "0-导入区域V2", notes = "支持自定义表字段和多sheet")
+    @Operation(summary = "0-导入区域V2", notes = "支持自定义表字段和多sheet")
     public Result<?> id2code(SysRegionConvertParam param) {
         MultipartFile file = param.getFile();
         String fileName = file.getOriginalFilename();
@@ -151,7 +151,7 @@ public class SysRegionController {
 
     @ApiOperationSupport(author = AuthorConstant.ZHU_JUN)
     @GetMapping("export")
-    @ApiOperation(value = "导出数据")
+    @Operation(summary = "导出数据")
     @Log(title = "行政区域--导出区域", businessType = BusinessType.EXPORT)
     public void exportUser(final HttpServletResponse response) {
         regionService.export(response, false);
@@ -159,7 +159,7 @@ public class SysRegionController {
 
     @ApiOperationSupport(author = AuthorConstant.ZHU_JUN)
     @GetMapping("export/template")
-    @ApiOperation(value = "导出模板")
+    @Operation(summary = "导出模板")
     @Log(title = "行政区域--导出模板", businessType = BusinessType.EXPORT)
     public void exportTemplate(final HttpServletResponse response) {
         regionService.export(response, true);
@@ -167,13 +167,13 @@ public class SysRegionController {
 
     @ApiOperationSupport(author = AuthorConstant.ZHU_JUN)
     @PostMapping("parents/reset")
-    @ApiOperation(value = "0-初始化父级编码")
+    @Operation(summary = "0-初始化父级编码")
     public void resetParents() {
         regionService.resetParents();
     }
 
     @PostMapping("cache/init")
-    @ApiOperation(value = "0-缓存初始化")
+    @Operation(summary = "0-缓存初始化")
     @Log(title = "初始化区域缓存", businessType = BusinessType.INSERT)
     public void cacheInit() {
         this.regionManager.initCache();
@@ -181,13 +181,13 @@ public class SysRegionController {
 
     @ApiOperationSupport(author = AuthorConstant.ZHU_JUN)
     @PostMapping("cache/clear")
-    @ApiOperation(value = "0-缓存清空")
+    @Operation(summary = "0-缓存清空")
     public void cacheClear() {
         regionManager.clearCache();
     }
 
     @GetMapping("/getAllParentRegions")
-    @ApiOperation(value = "根据code，获取上级区域,传入C,并按照A、B、C层级返回")
+    @Operation(summary = "根据code，获取上级区域,传入C,并按照A、B、C层级返回")
     public List<SysRegionVO> getAllParentRegions(@RequestParam(required = false) String regionCode) {
         List<SysRegionDTO> dto = regionService.getAllParentRegions(regionCode);
         return SysRegionConvert.INSTANCE.dto2vo(dto);

@@ -1,7 +1,7 @@
 package com.carlos.system.dict.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -24,16 +24,16 @@ public class SysDictItemListVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
+    @Schema(value = "主键")
     private String id;
 
-    @ApiModelProperty(value = "字典项值")
+    @Schema(value = "字典项值")
     private String name;
 
-    @ApiModelProperty(value = "字典项key")
+    @Schema(value = "字典项key")
     private String code;
 
-    @ApiModelProperty(value = "描述")
+    @Schema(value = "描述")
     private String description;
 
 }

@@ -16,8 +16,8 @@ import com.carlos.system.dict.pojo.param.SysDictItemUpdateParam;
 import com.carlos.system.dict.pojo.vo.SysDictItemListVO;
 import com.carlos.system.dict.pojo.vo.SysDictItemVO;
 import com.carlos.system.dict.service.SysDictItemService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +37,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sys/dict/item")
-@Api(tags = "系统字典选项")
+@Tag(name = "系统字典选项")
 public class SysDictItemController {
 
     public static final String BASE_NAME = "字典选项";
@@ -48,7 +48,7 @@ public class SysDictItemController {
 
 
     @PostMapping
-    @ApiOperation(value = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     @Log(title = "系统字典选项", businessType = BusinessType.INSERT)
     public void add(@RequestBody @Validated SysDictItemCreateParam param) {
         SysDictItemDTO dto = SysDictItemConvert.INSTANCE.toDTO(param);
@@ -56,7 +56,7 @@ public class SysDictItemController {
     }
 
     @PostMapping("delete")
-    @ApiOperation(value = "删除" + BASE_NAME)
+    @Operation(summary = "删除" + BASE_NAME)
     @Log(title = "系统字典选项", businessType = BusinessType.DELETE)
     public boolean delete(@RequestBody ParamIdSet<String> param) {
         return this.dictItemService.deleteDictItem(param.getIds());
@@ -64,7 +64,7 @@ public class SysDictItemController {
 
 
     @PostMapping("update")
-    @ApiOperation(value = "修改" + BASE_NAME)
+    @Operation(summary = "修改" + BASE_NAME)
     @Log(title = "系统字典选项", businessType = BusinessType.UPDATE)
     public boolean update(@RequestBody @Validated SysDictItemUpdateParam command) {
         SysDictItemDTO dto = SysDictItemConvert.INSTANCE.toDTO(command);
@@ -72,28 +72,28 @@ public class SysDictItemController {
     }
 
     @GetMapping("info/{id}")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     @Log(title = "系统字典选项", businessType = BusinessType.QUERY_DETAIL)
     public SysDictItemVO detail(@PathVariable String id) {
         return SysDictItemConvert.INSTANCE.toVO(this.dictItemManager.getItemById(id));
     }
 
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表")
+    @Operation(summary = BASE_NAME + "分页列表")
     @Log(title = "系统字典选项", businessType = BusinessType.QUERY)
     public IPage<SysDictItemVO> page(SysDictItemPageParam param) {
         return this.dictItemManager.getPage(param);
     }
 
     @GetMapping("list")
-    @ApiOperation(value = BASE_NAME + "列表")
+    @Operation(summary = BASE_NAME + "列表")
     @Log(title = "系统字典选项", businessType = BusinessType.QUERY)
     public List<SysDictItemVO> list(String dictId) {
         return SysDictItemConvert.INSTANCE.toListVO(this.dictItemManager.listItems(Sets.newHashSet(dictId), null, true));
     }
 
     @GetMapping("select")
-    @ApiOperation(value = BASE_NAME + "下拉列表")
+    @Operation(summary = BASE_NAME + "下拉列表")
     @Log(title = "系统字典选项", businessType = BusinessType.QUERY)
     public List<SysDictItemListVO> select(String code, String name) {
         if (StringUtils.isBlank(code)) {

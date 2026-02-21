@@ -1,8 +1,7 @@
 package com.carlos.system.configration.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -17,18 +16,18 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "系统配置新增参数", description = "系统配置新增参数")
+@Schema(value = "系统配置新增参数", description = "系统配置新增参数")
 public class SysConfigCreateParam {
 
-    @ApiModelProperty(value = "参数名称")
+    @Schema(value = "参数名称")
     private String configName;
-    @ApiModelProperty(value = "参数编码")
+    @Schema(value = "参数编码")
     private String configCode;
-    @ApiModelProperty(value = "参数键值")
+    @Schema(value = "参数键值")
     private String configValue;
-    @ApiModelProperty(value = "值类型")
+    @Schema(value = "值类型")
     private String valueType;
-    @ApiModelProperty(value = "状态")
+    @Schema(value = "状态")
     private Boolean state;
 
 }

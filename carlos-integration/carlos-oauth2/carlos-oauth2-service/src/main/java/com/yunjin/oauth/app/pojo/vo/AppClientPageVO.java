@@ -1,7 +1,7 @@
 package com.carlos.oauth.app.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,35 +21,35 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppClientPageVO implements Serializable {
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "主键")
+    @Schema(value = "主键")
     private Long id;
-    @ApiModelProperty(value = "应用编号")
+    @Schema(value = "应用编号")
     private String appKey;
-    @ApiModelProperty(value = "应用名称")
+    @Schema(value = "应用名称")
     private String appName;
-    @ApiModelProperty(value = "应用logo")
+    @Schema(value = "应用logo")
     private String appLogo;
-    @ApiModelProperty(value = "应用密钥到期时间")
+    @Schema(value = "应用密钥到期时间")
     private LocalDateTime clientSecretExpiresAt;
-    @ApiModelProperty(value = "应用发行时间")
+    @Schema(value = "应用发行时间")
     private LocalDateTime clientIssuedAt;
-    @ApiModelProperty(value = "认证方式")
+    @Schema(value = "认证方式")
     private String authenticationMethods;
-    @ApiModelProperty(value = "grant_type")
+    @Schema(value = "grant_type")
     private String authorizationGrantTypes;
-    @ApiModelProperty(value = "scopes")
+    @Schema(value = "scopes")
     private String scopes;
-    @ApiModelProperty(value = "重定向地址")
+    @Schema(value = "重定向地址")
     private String redirectUris;
-    @ApiModelProperty(value = "应用状态")
+    @Schema(value = "应用状态")
     private String state;
-    @ApiModelProperty(value = "创建人")
+    @Schema(value = "创建人")
     private Long createBy;
-    @ApiModelProperty(value = "创建时间")
+    @Schema(value = "创建时间")
     private LocalDateTime createTime;
-    @ApiModelProperty(value = "更新人")
+    @Schema(value = "更新人")
     private Long updateBy;
-    @ApiModelProperty(value = "更新时间")
+    @Schema(value = "更新时间")
     private LocalDateTime updateTime;
 
 }

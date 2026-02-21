@@ -1,8 +1,7 @@
 package com.carlos.oauth.app.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,9 +17,9 @@ import jakarta.validation.constraints.NotNull;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "应用秘钥重置参数", description = "应用秘钥重置参数")
+@Schema(value = "应用秘钥重置参数", description = "应用秘钥重置参数")
 public class AppClientResetSecretParam {
     @NotNull(message = "主键不能为空")
-    @ApiModelProperty(value = "主键")
+    @Schema(value = "主键")
     private Long id;
 }

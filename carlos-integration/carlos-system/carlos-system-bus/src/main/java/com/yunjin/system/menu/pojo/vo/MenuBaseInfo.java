@@ -1,7 +1,7 @@
 package com.carlos.system.menu.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -20,24 +20,24 @@ import lombok.experimental.Accessors;
 public class MenuBaseInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "主键")
+    @Schema(value = "主键")
     private String id;
-    @ApiModelProperty(value = "父级ID")
+    @Schema(value = "父级ID")
     private Long parentId;
-    @ApiModelProperty(value = "路径")
+    @Schema(value = "路径")
     private String path;
-    @ApiModelProperty(value = "菜单名称")
+    @Schema(value = "菜单名称")
     private String title;
-    @ApiModelProperty(value = "目标组件")
+    @Schema(value = "目标组件")
     private String component;
-    @ApiModelProperty(value = "菜单级数")
+    @Schema(value = "菜单级数")
     private Integer level;
-    @ApiModelProperty(value = "菜单排序")
+    @Schema(value = "菜单排序")
     private Integer sort;
-    @ApiModelProperty(value = "前端名称")
+    @Schema(value = "前端名称")
     private String name;
-    @ApiModelProperty(value = "前端图标")
+    @Schema(value = "前端图标")
     private String icon;
-    @ApiModelProperty(value = "菜单配置")
+    @Schema(value = "菜单配置")
     private String meta;
 }

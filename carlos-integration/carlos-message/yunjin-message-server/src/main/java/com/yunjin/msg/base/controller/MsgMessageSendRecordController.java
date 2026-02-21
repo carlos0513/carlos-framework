@@ -7,8 +7,8 @@ import com.carlos.msg.base.pojo.param.MsgMessageSendRecordPageParam;
 import com.carlos.msg.base.pojo.vo.MsgMessageSendRecordVO;
 import com.carlos.msg.base.service.MsgMessageSendRecordService;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("message/send/record")
-@Api(tags = "消息发送记录")
+@Tag(name = "消息发送记录")
 public class MsgMessageSendRecordController {
 
     public static final String BASE_NAME = "消息发送记录";
@@ -38,14 +38,14 @@ public class MsgMessageSendRecordController {
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("detail")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     public MsgMessageSendRecordVO detail(String id) {
         return MsgMessageSendRecordConvert.INSTANCE.toVO(messageSendRecordManager.getDtoById(id));
     }
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表")
+    @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgMessageSendRecordVO> page(MsgMessageSendRecordPageParam param) {
         return messageSendRecordManager.getPage(param);
     }

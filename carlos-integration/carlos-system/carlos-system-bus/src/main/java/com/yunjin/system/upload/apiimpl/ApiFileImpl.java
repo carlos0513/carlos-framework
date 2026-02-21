@@ -14,12 +14,12 @@ import com.carlos.system.upload.convert.UploadRecordConvert;
 import com.carlos.system.upload.pojo.dto.UploadFileDTO;
 import com.carlos.system.upload.pojo.dto.UploadResultDTO;
 import com.carlos.system.upload.service.FileService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,11 +34,11 @@ import java.util.stream.Collectors;
  * @author Carlos
  * @date 2021-12-15 17:40:44
  */
-@ApiIgnore
+@Hidden
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/sys/file")
-@Api(tags = "文件接口")
+@Tag(name = "文件接口")
 public class ApiFileImpl implements ApiFile {
 
 
@@ -46,7 +46,7 @@ public class ApiFileImpl implements ApiFile {
 
 
     @Override
-    @ApiOperation(value = "获取文件信息")
+    @Operation(summary = "获取文件信息")
     @GetMapping("info/{id}")
     public Result<FileInfoAO> getFile(@PathVariable("id") String id) {
         if (id == null) {
@@ -63,7 +63,7 @@ public class ApiFileImpl implements ApiFile {
 
     @Override
     @GetMapping("stream/info/{id}")
-    @ApiOperation(value = "获取文件流")
+    @Operation(summary = "获取文件流")
     public Result<FileInfoAO> getFileStreamInfo(@PathVariable("id") String id) {
         if (StrUtil.isBlank(id)) {
             return Result.fail("文件id不能为空");
@@ -74,7 +74,7 @@ public class ApiFileImpl implements ApiFile {
 
 
     @Override
-    @ApiOperation(value = "获取一组文件信息")
+    @Operation(summary = "获取一组文件信息")
     @GetMapping("group/{groupId}")
     public Result<List<FileInfoAO>> getGroupFile(@PathVariable("groupId") String groupId) {
         if (groupId == null) {
@@ -85,7 +85,7 @@ public class ApiFileImpl implements ApiFile {
     }
 
     @Override
-    @ApiOperation(value = "批量获取文件信息")
+    @Operation(summary = "批量获取文件信息")
     @GetMapping("info/ids")
     public Result<List<FileInfoAO>> getFiles(@RequestParam("ids") Set<String> ids) {
         if (CollectionUtils.isEmpty(ids)) {
@@ -96,7 +96,7 @@ public class ApiFileImpl implements ApiFile {
     }
 
     @Override
-    @ApiOperation(value = "上传文件")
+    @Operation(summary = "上传文件")
     @PostMapping("/upload")
     public Result<UploadResultAO> upload(@RequestBody @Validated ApiFileUploadParam params) {
         List<UploadFile> files = params.getFiles();

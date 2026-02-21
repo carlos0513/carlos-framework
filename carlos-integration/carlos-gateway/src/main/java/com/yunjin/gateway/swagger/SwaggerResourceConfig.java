@@ -6,8 +6,8 @@ import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.support.NameUtils;
 import org.springframework.context.annotation.Primary;
-import springfox.documentation.swagger.web.SwaggerResource;
-import springfox.documentation.swagger.web.SwaggerResourcesProvider;
+import org.springdoc.openapi.models.OpenAPI;
+import org.springdoc.openapi.models.OpenAPI;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -13,8 +13,8 @@ import com.carlos.msg.base.pojo.vo.MsgMessageTypeBaseVO;
 import com.carlos.msg.base.pojo.vo.MsgMessageTypeVO;
 import com.carlos.msg.base.service.MsgMessageTypeService;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("message/type")
-@Api(tags = "消息类型")
+@Tag(name = "消息类型")
 public class MsgMessageTypeController {
 
     public static final String BASE_NAME = "消息类型";
@@ -45,7 +45,7 @@ public class MsgMessageTypeController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
-    @ApiOperation(value = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MsgMessageTypeCreateParam param) {
         MsgMessageTypeDTO dto = MsgMessageTypeConvert.INSTANCE.toDTO(param);
         messageTypeService.addMsgMessageType(dto);
@@ -53,14 +53,14 @@ public class MsgMessageTypeController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("delete")
-    @ApiOperation(value = "删除" + BASE_NAME)
+    @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         messageTypeService.deleteMsgMessageType(param.getIds());
     }
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("update")
-    @ApiOperation(value = "更新" + BASE_NAME)
+    @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MsgMessageTypeUpdateParam param) {
         MsgMessageTypeDTO dto = MsgMessageTypeConvert.INSTANCE.toDTO(param);
         messageTypeService.updateMsgMessageType(dto);
@@ -68,7 +68,7 @@ public class MsgMessageTypeController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("update/state")
-    @ApiOperation(value = "更新" + BASE_NAME)
+    @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MsgMessageTypeUpdateStateParam param) {
         MsgMessageTypeDTO dto = MsgMessageTypeConvert.INSTANCE.toDTO(param);
         messageTypeService.updateMsgMessageType(dto);
@@ -76,21 +76,21 @@ public class MsgMessageTypeController {
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("detail")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     public MsgMessageTypeVO detail(String id) {
         return MsgMessageTypeConvert.INSTANCE.toVO(messageTypeManager.getDtoById(id));
     }
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("list")
-    @ApiOperation(value = "获取可用消息类型列表")
+    @Operation(summary = "获取可用消息类型列表")
     public List<MsgMessageTypeBaseVO> list(String keyword) {
         return messageTypeManager.getEnabledPage(keyword);
     }
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表")
+    @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgMessageTypeVO> page(MsgMessageTypePageParam param) {
         return messageTypeManager.getPage(param);
     }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yunjin.org.mapper.RoleOperateMapper">
+    <resultMap type="com.yunjin.org.pojo.entity.RoleOperate" id="baseMap">
+        <id column="id" property="id"/>
+        <result column="role_id" property="roleId"/>
+        <result column="operate_id" property="operateId"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,7 +1,7 @@
 package com.carlos.oauth.app.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -20,14 +20,14 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppClientListVO implements Serializable {
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "主键")
+    @Schema(value = "主键")
     private Long id;
-    @ApiModelProperty(value = "应用编号")
+    @Schema(value = "应用编号")
     private String appKey;
-    @ApiModelProperty(value = "应用名称")
+    @Schema(value = "应用名称")
     private String appName;
-    @ApiModelProperty(value = "应用logo")
+    @Schema(value = "应用logo")
     private String appLogo;
-    @ApiModelProperty(value = "应用密钥")
+    @Schema(value = "应用密钥")
     private String appSecret;
 }

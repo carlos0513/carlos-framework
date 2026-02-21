@@ -1,7 +1,7 @@
 package com.carlos.msg.base.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,23 +21,23 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MsgMessageTemplatePageVO implements Serializable {
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "主键ID")
+    @Schema(value = "主键ID")
     private Long id;
-    @ApiModelProperty(value = "消息类型")
+    @Schema(value = "消息类型")
     private String typeName;
-    @ApiModelProperty(value = "模板编码")
+    @Schema(value = "模板编码")
     private String templateCode;
-    @ApiModelProperty(value = "模板内容(含变量占位符)")
+    @Schema(value = "模板内容(含变量占位符)")
     private String templateContent;
-    @ApiModelProperty(value = "是否启用")
+    @Schema(value = "是否启用")
     private Boolean active;
-    @ApiModelProperty(value = "创建者编号")
+    @Schema(value = "创建者编号")
     private String createBy;
-    @ApiModelProperty(value = "创建时间")
+    @Schema(value = "创建时间")
     private LocalDateTime createTime;
-    @ApiModelProperty(value = "更新者编号")
+    @Schema(value = "更新者编号")
     private String updateBy;
-    @ApiModelProperty(value = "更新时间")
+    @Schema(value = "更新时间")
     private LocalDateTime updateTime;
 
 }

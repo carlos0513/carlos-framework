@@ -1,7 +1,7 @@
 package com.carlos.system.upload.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,14 +21,14 @@ import java.io.Serializable;
 public class FileInfoVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "文件id")
+    @Schema(value = "文件id")
     private String id;
-    @ApiModelProperty(value = "文件组id")
+    @Schema(value = "文件组id")
     private String groupId;
-    @ApiModelProperty(value = "文件名")
+    @Schema(value = "文件名")
     private String name;
-    @ApiModelProperty(value = "文件地址")
+    @Schema(value = "文件地址")
     private String url;
-    @ApiModelProperty(value = "文件base64")
+    @Schema(value = "文件base64")
     private String base64;
 }

@@ -11,8 +11,8 @@ import com.carlos.system.upload.pojo.param.SingleUploadParam;
 import com.carlos.system.upload.pojo.vo.FileInfoVO;
 import com.carlos.system.upload.pojo.vo.UploadResultVO;
 import com.carlos.system.upload.service.FileService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -35,13 +35,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sys/file")
-@Api(tags = "文件服务")
+@Tag(name = "文件服务")
 public class FileController {
 
     private final FileService fileService;
 
     @PostMapping("upload")
-    @ApiOperation(value = "上传文件")
+    @Operation(summary = "上传文件")
     public Result<UploadResultVO> upload(@RequestPart @RequestParam("files") MultipartFile[] files, @RequestParam("namespace") String namespace) {
         UploadResultDTO dto = fileService.uploadMultipartFile(namespace, Arrays.asList(files));
         UploadResultVO vo = UploadFileConvert.INSTANCE.toResultVO(dto);
@@ -49,7 +49,7 @@ public class FileController {
     }
 
     @PostMapping("singleUpload")
-    @ApiOperation(value = "单文件上传")
+    @Operation(summary = "单文件上传")
     public Result<FileInfoVO> singleUpload(SingleUploadParam param) {
         UploadResultDTO result = fileService.uploadMultipartFile(param.getNamespace(), Collections.singletonList(param.getFile()));
         List<UploadFileDTO> files = result.getFiles();
@@ -61,7 +61,7 @@ public class FileController {
     }
 
     @PostMapping("singleUploadForAnonymous")
-    @ApiOperation(value = "匿名单文件上传")
+    @Operation(summary = "匿名单文件上传")
     public Result<FileInfoVO> singleUploadforAnonymous(SingleUploadParam param) {
         UploadResultDTO result = fileService.uploadMultipartFile(param.getNamespace(), Collections.singletonList(param.getFile()));
         List<UploadFileDTO> files = result.getFiles();
@@ -72,7 +72,7 @@ public class FileController {
         return Result.ok(UploadFileConvert.INSTANCE.toFileVO(record));
     }
 
-    @ApiOperation(value = "获取二进制文件流", notes = "下载文件或者播放文件")
+    @Operation(summary = "获取二进制文件流", notes = "下载文件或者播放文件")
     @GetMapping("load")
     public void download(String id, HttpServletResponse response) {
         if (id == null) {
@@ -81,7 +81,7 @@ public class FileController {
         fileService.downloadById(id, response);
     }
 
-    @ApiOperation(value = "查询文件详情信息", notes = "查询文件信息获取地址")
+    @Operation(summary = "查询文件详情信息", notes = "查询文件信息获取地址")
     @GetMapping("{id}")
     public FileInfoVO getFile(@PathVariable("id") String id) {
         if (id == null) {

@@ -6,7 +6,7 @@ import com.carlos.msg.api.ApiMsgMessage;
 import com.carlos.msg.api.pojo.ao.MsgSendResponseAO;
 import com.carlos.msg.api.pojo.param.ApiMsgSendParam;
 import com.carlos.msg.sender.MsgSenderService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/message")
-@Api(tags = "消息Feign接口", hidden = true)
+@Tag(name = "消息Feign接口", hidden = true)
 public class ApiMsgMessageImpl implements ApiMsgMessage {
 
     private final MsgSenderService senderService;

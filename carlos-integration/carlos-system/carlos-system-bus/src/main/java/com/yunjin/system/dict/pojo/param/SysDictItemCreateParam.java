@@ -1,8 +1,7 @@
 package com.carlos.system.dict.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -20,19 +19,19 @@ import jakarta.validation.constraints.NotNull;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "系统字典详情新增参数", description = "系统字典详情新增参数")
+@Schema(value = "系统字典详情新增参数", description = "系统字典详情新增参数")
 public class SysDictItemCreateParam {
 
     @NotNull(message = "字典id不能为空")
-    @ApiModelProperty(value = "字典id")
+    @Schema(value = "字典id")
     private String dictId;
     @NotBlank(message = "字典项值不能为空")
-    @ApiModelProperty(value = "字典项值")
+    @Schema(value = "字典项值")
     private String itemName;
     @NotBlank(message = "字典项code不能为空")
-    @ApiModelProperty(value = "字典项key")
+    @Schema(value = "字典项key")
     private String itemCode;
-    @ApiModelProperty(value = "描述")
+    @Schema(value = "描述")
     private String description;
 
 }

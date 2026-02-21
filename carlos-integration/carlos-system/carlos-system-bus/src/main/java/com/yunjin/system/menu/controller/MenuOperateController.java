@@ -13,8 +13,8 @@ import com.carlos.system.menu.pojo.param.MenuOperateSearchParam;
 import com.carlos.system.menu.pojo.param.MenuOperateUpdateParam;
 import com.carlos.system.menu.pojo.vo.MenuOperateVO;
 import com.carlos.system.menu.service.MenuOperateService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sys/menu/operate")
-@Api(tags = "菜单操作")
+@Tag(name = "菜单操作")
 public class MenuOperateController {
 
     public static final String BASE_NAME = "菜单操作";
@@ -49,7 +49,7 @@ public class MenuOperateController {
 
     @ApiOperationSupport(author = "yunjin")
     @PostMapping("add")
-    @ApiOperation(value = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MenuOperateCreateParam param) {
         MenuOperateDTO dto = MenuOperateConvert.INSTANCE.toDTO(param);
         menuOperateService.addMenuOperate(dto);
@@ -57,14 +57,14 @@ public class MenuOperateController {
 
     @ApiOperationSupport(author = "yunjin")
     @PostMapping("delete")
-    @ApiOperation(value = "删除" + BASE_NAME)
+    @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         menuOperateService.deleteMenuOperate(param.getIds());
     }
 
     @ApiOperationSupport(author = "yunjin")
     @PostMapping("update")
-    @ApiOperation(value = "更新" + BASE_NAME)
+    @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MenuOperateUpdateParam param) {
         MenuOperateDTO dto = MenuOperateConvert.INSTANCE.toDTO(param);
         menuOperateService.updateMenuOperate(dto);
@@ -72,21 +72,21 @@ public class MenuOperateController {
 
     @ApiOperationSupport(author = "yunjin")
     @GetMapping("{id}")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     public MenuOperateVO detail(@PathVariable String id) {
         return MenuOperateConvert.INSTANCE.toVO(menuOperateManager.getDtoById(id));
     }
 
     @ApiOperationSupport(author = "yunjin")
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表")
+    @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MenuOperateVO> page(MenuOperatePageParam param) {
         return menuOperateManager.getPage(param);
     }
 
     @ApiOperationSupport(author = AuthorConstant.YANG_LE)
     @GetMapping("list")
-    @ApiOperation(value = BASE_NAME + "查询列表")
+    @Operation(summary = BASE_NAME + "查询列表")
     public List<MenuOperateVO> list(MenuOperateSearchParam param) {
         List<MenuOperateDTO> list = menuOperateService.listByKeyword(param);
         return MenuOperateConvert.INSTANCE.toVOS(list);

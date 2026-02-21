@@ -1,8 +1,7 @@
 package com.carlos.msg.base.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -20,20 +19,20 @@ import jakarta.validation.constraints.NotNull;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "消息模板新增参数", description = "消息模板新增参数")
+@Schema(value = "消息模板新增参数", description = "消息模板新增参数")
 public class MsgMessageTemplateCreateParam {
     @NotNull(message = "消息类型不能为空")
-    @ApiModelProperty(value = "消息分类")
+    @Schema(value = "消息分类")
     private Long typeId;
     @NotBlank(message = "模板编码不能为空")
-    @ApiModelProperty(value = "模板编码")
+    @Schema(value = "模板编码")
     private String templateCode;
     @NotBlank(message = "模板内容(含变量占位符)不能为空")
-    @ApiModelProperty(value = "模板内容(含变量占位符)")
+    @Schema(value = "模板内容(含变量占位符)")
     private String templateContent;
-    @ApiModelProperty(value = "渠道特殊配置(如短信模板ID),配置对应渠道编码")
+    @Schema(value = "渠道特殊配置(如短信模板ID),配置对应渠道编码")
     private String channelConfig;
     @NotNull(message = "是否启用不能为空")
-    @ApiModelProperty(value = "是否启用")
+    @Schema(value = "是否启用")
     private Boolean active;
 }

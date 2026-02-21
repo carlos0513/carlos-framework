@@ -7,7 +7,7 @@ import com.carlos.core.response.Result;
 import com.carlos.oauth.app.convert.AppClientConvert;
 import com.carlos.oauth.app.pojo.dto.AppClientDTO;
 import com.carlos.oauth.app.service.AppClientService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ import java.io.Serializable;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/oauth2/app/client")
-@Api(tags = "应用信息Feign接口", hidden = true)
+@Tag(name = "应用信息Feign接口", hidden = true)
 public class ApiAppClientImpl implements ApiAppClient {
 
     private final AppClientService service;

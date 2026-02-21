@@ -1,7 +1,7 @@
 package com.carlos.system.resource.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,18 +21,18 @@ import java.io.Serializable;
 public class SysResourceBaseInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "主键")
+    @Schema(value = "主键")
     private String id;
-    @ApiModelProperty(value = "分类id")
+    @Schema(value = "分类id")
     private Long categoryId;
-    @ApiModelProperty(value = "资源名称")
+    @Schema(value = "资源名称")
     private String name;
-    @ApiModelProperty(value = "接口路径")
+    @Schema(value = "接口路径")
     private String path;
-    @ApiModelProperty(value = "图标")
+    @Schema(value = "图标")
     private String icon;
-    @ApiModelProperty(value = "资源类型，按钮")
+    @Schema(value = "资源类型，按钮")
     private String type;
-    @ApiModelProperty(value = "描述")
+    @Schema(value = "描述")
     private String description;
 }

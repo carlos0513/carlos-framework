@@ -1,7 +1,7 @@
 package com.carlos.msg.base.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -20,10 +20,10 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MsgMessageTypeBaseVO implements Serializable {
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "主键ID")
+    @Schema(value = "主键ID")
     private Long id;
-    @ApiModelProperty(value = "类型编码")
+    @Schema(value = "类型编码")
     private String typeCode;
-    @ApiModelProperty(value = "类型名称")
+    @Schema(value = "类型名称")
     private String typeName;
 }

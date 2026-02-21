@@ -1,8 +1,7 @@
 package com.carlos.msg.base.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,15 +17,15 @@ import jakarta.validation.constraints.NotNull;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "消息类型修改参数", description = "消息类型修改参数")
+@Schema(value = "消息类型修改参数", description = "消息类型修改参数")
 public class MsgMessageTypeUpdateParam {
     @NotNull(message = "主键ID不能为空")
-    @ApiModelProperty(value = "主键ID")
+    @Schema(value = "主键ID")
     private Long id;
-    @ApiModelProperty(value = "类型编码")
+    @Schema(value = "类型编码")
     private String typeCode;
-    @ApiModelProperty(value = "类型名称")
+    @Schema(value = "类型名称")
     private String typeName;
-    @ApiModelProperty(value = "是否启用")
+    @Schema(value = "是否启用")
     private Boolean enabled;
 }

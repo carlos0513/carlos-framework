@@ -2,8 +2,7 @@ package com.carlos.system.configration.pojo.param;
 
 
 import com.carlos.core.param.ParamPage;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -20,10 +19,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "系统配置列表查询参数", description = "系统配置列表查询参数")
+@Schema(value = "系统配置列表查询参数", description = "系统配置列表查询参数")
 public class SysConfigPageParam extends ParamPage {
 
-    @ApiModelProperty(value = "参数名称")
+    @Schema(value = "参数名称")
     private String configName;
 
 }

@@ -9,11 +9,11 @@ import com.carlos.system.resource.convert.SysResourceCategoryConvert;
 import com.carlos.system.resource.convert.SysResourceConvert;
 import com.carlos.system.resource.service.SysResourceCategoryService;
 import com.carlos.system.resource.service.SysResourceService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 /**
  * <p>
@@ -23,11 +23,11 @@ import springfox.documentation.annotations.ApiIgnore;
  * @author yunjin
  * @date 2021-12-28 15:26:57
  */
-@ApiIgnore
+@Hidden
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sys/resource")
-@Api(tags = "系统资源Feign接口", hidden = true)
+@Tag(name = "系统资源Feign接口", hidden = true)
 public class ApiResourceImpl implements ApiResource {
 
 
@@ -37,14 +37,14 @@ public class ApiResourceImpl implements ApiResource {
 
     @Override
     @GetMapping
-    @ApiOperation(value = "获取资源信息")
+    @Operation(summary = "获取资源信息")
     public Result<SysResourceAO> getResourceById(String id) {
         return Result.ok(resourceService.getSysResource(id));
     }
 
     @Override
     @PostMapping
-    @ApiOperation(value = "添加资源")
+    @Operation(summary = "添加资源")
     public Result<Boolean> addResource(@RequestBody ApiSysResourceAddParam param) {
         resourceService.addResource(SysResourceConvert.INSTANCE.toDTO(param));
         return Result.ok(true);
@@ -52,7 +52,7 @@ public class ApiResourceImpl implements ApiResource {
 
     @Override
     @PostMapping("category")
-    @ApiOperation(value = "添加资源类型")
+    @Operation(summary = "添加资源类型")
     public Result<Boolean> addResourceCategory(@RequestBody ApiResourceCategoryAddParam param) {
         categoryService.addResourceCategory(SysResourceCategoryConvert.INSTANCE.toDTO(param));
         return Result.ok(true);

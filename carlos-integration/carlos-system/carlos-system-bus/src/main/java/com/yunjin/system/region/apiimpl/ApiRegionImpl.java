@@ -11,8 +11,8 @@ import com.carlos.system.region.convert.SysRegionConvert;
 import com.carlos.system.region.manager.SysRegionManager;
 import com.carlos.system.region.pojo.dto.SysRegionDTO;
 import com.carlos.system.region.service.SysRegionService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +28,12 @@ import java.util.Set;
  * @author yunjin
  * @date 2021-12-28 15:26:57
  */
-// @ApiIgnore
+// @Hidden
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sys/region")
-@Api(tags = "区域编码Feign接口", hidden = true)
+@Tag(name = "区域编码Feign接口", hidden = true)
 public class ApiRegionImpl implements ApiRegion {
 
     private final SysRegionService regionService;
@@ -42,7 +42,7 @@ public class ApiRegionImpl implements ApiRegion {
 
     @Override
     @GetMapping("name")
-    @ApiOperation(value = "区域预览指定父级")
+    @Operation(summary = "区域预览指定父级")
     public Result<List<String>> previewRegionName(@RequestParam("regionCode") String regionCode, @RequestParam(value = "limit", required = false) Integer limit) {
         List<String> strings = this.regionService.previewRegionName(regionCode, limit);
         return Result.ok(strings);
@@ -61,14 +61,14 @@ public class ApiRegionImpl implements ApiRegion {
 
     @Override
     @GetMapping("subCodes")
-    @ApiOperation(value = "获取当前区域及子级区域编码")
+    @Operation(summary = "获取当前区域及子级区域编码")
     public Result<Set<String>> getSubRegionCodes(@RequestParam("regionCode") String regionCode) {
         return Result.ok(this.regionService.getRegionSubCodes(regionCode));
     }
 
     @Override
     @GetMapping("info")
-    @ApiOperation(value = "获取区域信息")
+    @Operation(summary = "获取区域信息")
     public Result<RegionInfo> getRegionInfo(@RequestParam("regionCode") String regionCode, @RequestParam("limit") Integer limit) {
         return Result.ok(this.regionService.getRegionInfo(regionCode, limit));
     }

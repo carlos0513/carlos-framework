@@ -11,8 +11,8 @@ import com.carlos.msg.base.pojo.param.MsgMessageReceiverUpdateParam;
 import com.carlos.msg.base.pojo.vo.MsgMessageReceiverVO;
 import com.carlos.msg.base.service.MsgMessageReceiverService;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("message/receiver")
-@Api(tags = "消息接受者")
+@Tag(name = "消息接受者")
 public class MsgMessageReceiverController {
 
     public static final String BASE_NAME = "消息接受者";
@@ -41,7 +41,7 @@ public class MsgMessageReceiverController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
-    @ApiOperation(value = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MsgMessageReceiverCreateParam param) {
         MsgMessageReceiverDTO dto = MsgMessageReceiverConvert.INSTANCE.toDTO(param);
         messageReceiverService.addMsgMessageReceiver(dto);
@@ -49,14 +49,14 @@ public class MsgMessageReceiverController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("delete")
-    @ApiOperation(value = "删除" + BASE_NAME)
+    @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         messageReceiverService.deleteMsgMessageReceiver(param.getIds());
     }
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("update")
-    @ApiOperation(value = "更新" + BASE_NAME)
+    @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MsgMessageReceiverUpdateParam param) {
         MsgMessageReceiverDTO dto = MsgMessageReceiverConvert.INSTANCE.toDTO(param);
         messageReceiverService.updateMsgMessageReceiver(dto);
@@ -64,14 +64,14 @@ public class MsgMessageReceiverController {
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("detail")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     public MsgMessageReceiverVO detail(String id) {
         return MsgMessageReceiverConvert.INSTANCE.toVO(messageReceiverManager.getDtoById(id));
     }
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表")
+    @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgMessageReceiverVO> page(MsgMessageReceiverPageParam param) {
         return messageReceiverManager.getPage(param);
     }

@@ -2,7 +2,7 @@ package com.carlos.system.menu.pojo.vo;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -20,15 +20,15 @@ import lombok.experimental.Accessors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MenuTreeVO {
 
-    @ApiModelProperty(value = "菜单id")
+    @Schema(value = "菜单id")
     private String id;
 
-    @ApiModelProperty(value = "菜单标题")
+    @Schema(value = "菜单标题")
     private String title;
 
-    @ApiModelProperty(value = "菜单名称")
+    @Schema(value = "菜单名称")
     private String name;
 
-    @ApiModelProperty(value = "子菜单")
+    @Schema(value = "子菜单")
     List<MenuTreeVO> children;
 }

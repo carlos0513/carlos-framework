@@ -10,8 +10,8 @@ import com.carlos.system.dict.manager.SysDictCacheManager;
 import com.carlos.system.dict.pojo.dto.SysDictItemDTO;
 import com.carlos.system.dict.service.SysDictItemService;
 import com.carlos.system.pojo.ao.DictItemAO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,11 +29,11 @@ import java.util.List;
  * @author yunjin
  * @date 2021-11-22 14:49:00
  */
-// @ApiIgnore
+// @Hidden
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sys/dict")
-@Api(tags = "字典feign接口", hidden = true)
+@Tag(name = "字典feign接口", hidden = true)
 public class ApiDictImpl implements ApiDict {
 
     private final SysDictItemService dictItemService;

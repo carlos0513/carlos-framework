@@ -9,11 +9,11 @@ import com.carlos.system.menu.manager.MenuManager;
 import com.carlos.system.menu.pojo.dto.MenuDTO;
 import com.carlos.system.menu.service.MenuService;
 import com.carlos.system.pojo.ao.MenuAO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +27,11 @@ import java.util.Set;
  * @author yunjin
  * @date 2021-12-28 15:26:57
  */
-@ApiIgnore
+@Hidden
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sys/menu")
-@Api(tags = "系统菜单Feign接口", hidden = true)
+@Tag(name = "系统菜单Feign接口", hidden = true)
 public class ApiMenuImpl implements ApiMenu {
 
     private final MenuManager menuManager;
@@ -39,7 +39,7 @@ public class ApiMenuImpl implements ApiMenu {
 
     @Override
     @GetMapping
-    @ApiOperation(value = "获取菜单信息")
+    @Operation(summary = "获取菜单信息")
     public Result<MenuAO> getMenuById(@RequestParam("id") String id) {
         MenuDTO dto = menuManager.getDtoById(id);
         MenuAO ao = MenuConvert.INSTANCE.toAO(dto);
@@ -49,7 +49,7 @@ public class ApiMenuImpl implements ApiMenu {
 
     @Override
     @PostMapping("list")
-    @ApiOperation(value = "获取菜单信息")
+    @Operation(summary = "获取菜单信息")
     public Result<List<MenuAO>> listMenus(@RequestBody Set<String> ids) {
         if (CollectionUtil.isEmpty(ids)) {
             return Result.ok(Collections.emptyList());
@@ -60,7 +60,7 @@ public class ApiMenuImpl implements ApiMenu {
 
 
     @GetMapping("all")
-    @ApiOperation(value = "获取所有菜单")
+    @Operation(summary = "获取所有菜单")
     @Override
     public Result<List<MenuAO>> allMenu() {
         List<MenuDTO> menus = menuService.all();

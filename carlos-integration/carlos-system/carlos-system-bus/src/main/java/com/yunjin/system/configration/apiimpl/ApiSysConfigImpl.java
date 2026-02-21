@@ -7,8 +7,8 @@ import com.carlos.system.configration.convert.SysConfigConvert;
 import com.carlos.system.configration.pojo.dto.SysConfigDTO;
 import com.carlos.system.configration.service.SysConfigService;
 import com.carlos.system.pojo.ao.SysConfigAO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sys/config")
-@Api(tags = "系统配置")
+@Tag(name = "系统配置")
 public class ApiSysConfigImpl implements ApiSystemConfig {
 
 
@@ -34,7 +34,7 @@ public class ApiSysConfigImpl implements ApiSystemConfig {
 
     @Override
     @GetMapping("code")
-    @ApiOperation(value = "根据code获取配置")
+    @Operation(summary = "根据code获取配置")
     public Result<SysConfigAO> getByCode(String code) {
         SysConfigDTO config = this.configService.getByCode(code);
         SysConfigAO ao = SysConfigConvert.INSTANCE.toAO(config);

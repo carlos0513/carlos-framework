@@ -3,8 +3,7 @@ package com.carlos.msg.base.pojo.param;
 
 import com.carlos.core.param.ParamPage;
 import com.carlos.msg.api.pojo.enums.ChannelType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -23,21 +22,21 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "消息渠道配置列表查询参数", description = "消息渠道配置列表查询参数")
+@Schema(value = "消息渠道配置列表查询参数", description = "消息渠道配置列表查询参数")
 public class MsgChannelConfigPageParam extends ParamPage {
-    @ApiModelProperty(value = "渠道类型")
+    @Schema(value = "渠道类型")
     private ChannelType channelType;
-    @ApiModelProperty(value = "渠道名称")
+    @Schema(value = "渠道名称")
     private String channelName;
-    @ApiModelProperty(value = "样例配置信息")
+    @Schema(value = "样例配置信息")
     private String channelConfig;
-    @ApiModelProperty(value = "备注信息")
+    @Schema(value = "备注信息")
     private String remark;
-    @ApiModelProperty(value = "是否启用")
+    @Schema(value = "是否启用")
     private Boolean enabled;
-    @ApiModelProperty("开始时间")
+    @Schema("开始时间")
     private LocalDateTime start;
 
-    @ApiModelProperty("结束时间")
+    @Schema("结束时间")
     private LocalDateTime end;
 }

@@ -2,8 +2,7 @@ package com.carlos.msg.base.pojo.param;
 
 
 import com.carlos.core.param.ParamPage;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,17 +21,17 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "消息类型列表查询参数", description = "消息类型列表查询参数")
+@Schema(value = "消息类型列表查询参数", description = "消息类型列表查询参数")
 public class MsgMessageTypePageParam extends ParamPage {
-    @ApiModelProperty(value = "类型编码")
+    @Schema(value = "类型编码")
     private String typeCode;
-    @ApiModelProperty(value = "类型名称")
+    @Schema(value = "类型名称")
     private String typeName;
-    @ApiModelProperty(value = "是否启用")
+    @Schema(value = "是否启用")
     private Boolean enabled;
-    @ApiModelProperty("开始时间")
+    @Schema("开始时间")
     private LocalDateTime start;
 
-    @ApiModelProperty("结束时间")
+    @Schema("结束时间")
     private LocalDateTime end;
 }

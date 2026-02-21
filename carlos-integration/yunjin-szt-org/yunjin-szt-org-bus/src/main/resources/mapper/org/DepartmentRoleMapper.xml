@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yunjin.org.mapper.DepartmentRoleMapper">
+    <resultMap type="com.yunjin.org.pojo.entity.DepartmentRole" id="baseMap">
+        <id column="id" property="id"/>
+        <result column="department_id" property="departmentId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="version" property="version"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="tenant_id" property="tenantId"/>
+    </resultMap>
+
+    <select id="listRoleIdsByDeptIds" resultType="java.lang.String">
+        SELECT DISTINCT dr.role_id
+        FROM org_department d
+        INNER JOIN org_department_role dr
+        ON d.department_level_code = dr.department_type
+        WHERE d.id IN
+        <foreach item="id" collection="deptIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

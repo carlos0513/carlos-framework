@@ -1,8 +1,7 @@
 package com.carlos.system.configration.pojo.param;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -17,20 +16,20 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "系统配置修改参数", description = "系统配置修改参数")
+@Schema(value = "系统配置修改参数", description = "系统配置修改参数")
 public class SysConfigUpdateParam {
 
     @NotNull(message = "参数Id不能为空")
-    @ApiModelProperty(value = "参数Id")
+    @Schema(value = "参数Id")
     private String id;
-    @ApiModelProperty(value = "参数名称")
+    @Schema(value = "参数名称")
     private String configName;
-    @ApiModelProperty(value = "参数键值")
+    @Schema(value = "参数键值")
     private String configValue;
-    @ApiModelProperty(value = "值类型")
+    @Schema(value = "值类型")
     private String valueType;
-    @ApiModelProperty(value = "状态")
+    @Schema(value = "状态")
     private Boolean state;
-    @ApiModelProperty(value = "备注")
+    @Schema(value = "备注")
     private String remark;
 }

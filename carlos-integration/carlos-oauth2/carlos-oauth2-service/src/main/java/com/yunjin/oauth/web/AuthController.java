@@ -5,9 +5,9 @@ import com.carlos.boot.request.RequestInfo;
 import com.carlos.boot.request.RequestUtil;
 import com.carlos.core.response.Result;
 import com.carlos.oauth.security.service.LoginService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -37,13 +37,13 @@ public class AuthController {
     private final RegisteredClientRepository clientService;
 
     @ApiOperation("Oauth2获取token")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "grant_type", value = "授权模式", required = true),
-            @ApiImplicitParam(name = "client_id", value = "Oauth2客户端ID", required = true),
-            @ApiImplicitParam(name = "client_secret", value = "Oauth2客户端秘钥", required = true),
-            @ApiImplicitParam(name = "refresh_token", value = "刷新token"),
-            @ApiImplicitParam(name = "username", value = "登录用户名"),
-            @ApiImplicitParam(name = "password", value = "登录密码")
+    @Parameters({
+            @Parameter(name = "grant_type", value = "授权模式", required = true),
+            @Parameter(name = "client_id", value = "Oauth2客户端ID", required = true),
+            @Parameter(name = "client_secret", value = "Oauth2客户端秘钥", required = true),
+            @Parameter(name = "refresh_token", value = "刷新token"),
+            @Parameter(name = "username", value = "登录用户名"),
+            @Parameter(name = "password", value = "登录密码")
     })
 
 

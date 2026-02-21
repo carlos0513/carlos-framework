@@ -1,0 +1,48 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.yunjin.szt</groupId>
+        <artifactId>yunjin-szt-parent</artifactId>
+        <version>3.13.4.dm-SNAPSHOT</version>
+    </parent>
+
+    <packaging>pom</packaging>
+    <groupId>com.yunjin.szt</groupId>
+    <artifactId>yunjin-szt-org</artifactId>
+    <version>${revision}</version>
+
+
+    <modules>
+        <module>yunjin-szt-org-bus</module>
+        <module>yunjin-szt-org-api</module>
+        <module>yunjin-szt-org-boot</module>
+        <module>yunjin-szt-org-cloud</module>
+    </modules>
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <!--<revision>3.1.0.RELEASE</revision>-->
+    </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.yunjin.szt</groupId>
+                <artifactId>yunjin-szt-org-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yunjin.szt</groupId>
+                <artifactId>yunjin-szt-docking-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yunjin.szt</groupId>
+                <artifactId>yunjin-szt-org-bus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

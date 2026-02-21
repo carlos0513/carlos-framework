@@ -2,8 +2,8 @@ package com.carlos.system.upload.controller;
 
 
 import com.carlos.minio.utils.BucketOptUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sys/file/bucket")
-@Api(tags = "文件bucket操作")
+@Tag(name = "文件bucket操作")
 public class FileBucketController {
 
 
     @PostMapping("create")
-    @ApiOperation(value = "创建bucket")
+    @Operation(summary = "创建bucket")
     public void create(@RequestBody BucketArray param) {
         List<Bucket> buckets = param.getBuckets();
         for (Bucket bucket : buckets) {
@@ -50,7 +50,7 @@ public class FileBucketController {
 
 
     @PostMapping("policy")
-    @ApiOperation(value = "设置Policy")
+    @Operation(summary = "设置Policy")
     public void setPrivate(@RequestBody BucketArray param) {
         List<Bucket> buckets = param.getBuckets();
         for (Bucket bucket : buckets) {

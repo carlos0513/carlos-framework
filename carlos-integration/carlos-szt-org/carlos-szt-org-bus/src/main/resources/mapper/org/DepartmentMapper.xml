@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yunjin.org.mapper.DepartmentMapper">
+    <resultMap type="com.yunjin.org.pojo.entity.Department" id="baseMap">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="dept_code" property="deptCode"/>
+        <result column="region_code" property="regionCode"/>
+        <result column="address" property="address"/>
+        <result column="tel" property="tel"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="level" property="level"/>
+        <result column="state" property="state"/>
+        <result column="sort" property="sort"/>
+        <result column="description" property="description"/>
+        <result column="version" property="version"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="tenant_id" property="tenantId"/>
+    </resultMap>
+
+
+    <select id="getDeptCodeCountWithDeleted" resultType="java.lang.Long">
+        SELECT
+        <!-- 数据库适配 -->
+        <choose>
+            <!-- 达梦 -->
+            <when test="_databaseId == 'dm'">
+                CAST(RIGHT(dept_code, 3) AS INTEGER)
+            </when>
+            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
+            <otherwise>
+                CAST( right(dept_code,3) as SIGNED)
+            </otherwise>
+        </choose>
+        FROM org_department
+        WHERE LENGTH(dept_code) = #{level}
+        AND SUBSTR(dept_code,1,#{level}-4) = #{parentCode}
+        ORDER BY dept_code DESC
+        LIMIT 1
+    </select>
+
+    <select id="getAllParentDeptCodeByRecursive" parameterType="java.lang.String" resultType="java.lang.String">
+        <choose>
+            <!-- 达梦 -->
+            <when test="_databaseId == 'dm'">
+                WITH ParentHierarchy AS (
+            </when>
+            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
+            <otherwise>
+                WITH RECURSIVE ParentHierarchy AS (
+            </otherwise>
+        </choose>
+            SELECT id, parent_id, dept_code
+            FROM org_department
+            WHERE dept_code = #{deptCode, jdbcType=VARCHAR} -- 替换为你要查询的 ID
+
+            UNION ALL
+
+            SELECT ft.id, ft.parent_id, ft.dept_code
+            FROM org_department ft
+                     INNER JOIN ParentHierarchy ph ON ft.id = ph.parent_id
+        )
+        SELECT dept_code FROM ParentHierarchy WHERE parent_id IS NOT NULL;
+    </select>
+
+    <select id="selectAllSubDepartmentsByCodes" resultMap="baseMap">
+        SELECT DISTINCT d.*
+        FROM org_department d
+        WHERE EXISTS (
+        SELECT 1 FROM org_department p
+        WHERE p.dept_code IN
+        <foreach collection="deptCodes" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        AND d.dept_code LIKE CONCAT(p.dept_code, '%') AND is_deleted = 0
+        )
+    </select>
+
+    <select id="getAllSubDeptIdsByDeptCode" resultType="java.lang.String">
+        SELECT id FROM org_department
+        WHERE dept_code LIKE CONCAT(#{deptCode}, '%') AND is_deleted = 0
+    </select>
+
+    <select id="getCurrentAndChildrenDepartmentUserIds" parameterType="java.lang.String" resultType="com.yunjin.org.pojo.dto.UserDepartmentDTO">
+        SELECT u.id AS userId
+        FROM org_user u
+        LEFT JOIN org_user_department o
+        ON u.id = o.user_id
+        WHERE (o.department_id IN (
+        <choose>
+            <!-- 达梦 -->
+            <when test="_databaseId == 'dm'">
+                WITH
+            </when>
+            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
+            <otherwise>
+                WITH RECURSIVE
+            </otherwise>
+        </choose>
+        dept_tree AS (SELECT id, parent_id
+                                                               FROM org_department
+                                                               WHERE id = #{departmentId}
+                                                               UNION ALL
+                                                               SELECT d.id, d.parent_id
+                                                               FROM org_department d
+                                                                        INNER JOIN dept_tree dt ON d.parent_id = dt.id)
+                                  SELECT id
+                                  FROM dept_tree)
+         AND o.department_id  &lt;&gt; #{departmentId})
+         OR o.department_id is null
+         OR o.department_id = ''
+    </select>
+
+    <select id="getAllDepartCodes" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT o.dept_code FROM org_department o
+        WHERE o.id IN (
+        <choose>
+            <!-- 达梦 -->
+            <when test="_databaseId == 'dm'">
+                WITH
+            </when>
+            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
+            <otherwise>
+                WITH RECURSIVE
+            </otherwise>
+        </choose>
+                dept_tree AS (SELECT id, parent_id  FROM org_department
+                                                    WHERE id = #{parentId}
+                                                    UNION ALL
+                                                    SELECT d.id, d.parent_id
+                                                    FROM org_department d
+                                                    INNER JOIN dept_tree dt ON d.parent_id = dt.id)
+                                                    SELECT id
+                                                    FROM dept_tree
+                              )
+        ORDER BY o.dept_code  <!-- 添加排序，保证结果一致性 -->
+    </select>
+</mapper>

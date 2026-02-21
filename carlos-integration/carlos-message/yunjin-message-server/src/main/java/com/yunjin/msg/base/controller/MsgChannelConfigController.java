@@ -12,8 +12,8 @@ import com.carlos.msg.base.pojo.param.MsgChannelConfigUpdateParam;
 import com.carlos.msg.base.pojo.vo.MsgChannelConfigVO;
 import com.carlos.msg.base.service.MsgChannelConfigService;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +32,7 @@ import java.io.Serializable;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("channel/config")
-@Api(tags = "消息渠道配置")
+@Tag(name = "消息渠道配置")
 public class MsgChannelConfigController {
 
     public static final String BASE_NAME = "消息渠道配置";
@@ -44,7 +44,7 @@ public class MsgChannelConfigController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
-    @ApiOperation(value = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MsgChannelConfigCreateParam param) {
         MsgChannelConfigDTO dto = MsgChannelConfigConvert.INSTANCE.toDTO(param);
         channelConfigService.addMsgChannelConfig(dto);
@@ -52,21 +52,21 @@ public class MsgChannelConfigController {
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("delete")
-    @ApiOperation(value = "删除" + BASE_NAME)
+    @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         channelConfigService.deleteMsgChannelConfig(param.getIds());
     }
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("state")
-    @ApiOperation(value = "修改状态")
+    @Operation(summary = "修改状态")
     public void state(@RequestBody MsgChannelConfigStateParam param) {
         channelConfigService.changeState(param.getIds(), param.getEnabled());
     }
 
     @ApiOperationSupport(author = "Carlos")
     @PostMapping("update")
-    @ApiOperation(value = "更新" + BASE_NAME)
+    @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MsgChannelConfigUpdateParam param) {
         MsgChannelConfigDTO dto = MsgChannelConfigConvert.INSTANCE.toDTO(param);
         channelConfigService.updateMsgChannelConfig(dto);
@@ -74,14 +74,14 @@ public class MsgChannelConfigController {
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("detail")
-    @ApiOperation(value = BASE_NAME + "详情")
+    @Operation(summary = BASE_NAME + "详情")
     public MsgChannelConfigVO detail(String id) {
         return MsgChannelConfigConvert.INSTANCE.toVO(channelConfigManager.getDtoById(id));
     }
 
     @ApiOperationSupport(author = "Carlos")
     @GetMapping("page")
-    @ApiOperation(value = BASE_NAME + "分页列表")
+    @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgChannelConfigVO> page(MsgChannelConfigPageParam param) {
         return channelConfigManager.getPage(param);
     }

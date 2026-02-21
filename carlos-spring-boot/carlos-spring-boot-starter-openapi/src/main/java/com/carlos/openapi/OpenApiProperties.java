@@ -144,7 +144,7 @@ public class OpenApiProperties {
     private final List<ParameterConfig> parameters = new ArrayList<>();
 
     /**
-     * 自定义参数配置， 可配置属性请参考{@link springfox.documentation.service.Parameter}
+     * 自定义参数配置， 可配置属性请参考{@link io.swagger.v3.oas.annotations.Parameter}
      */
     @Data
     public static class ParameterConfig {
