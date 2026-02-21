@@ -1,0 +1,106 @@
+package com.carlos.system.region.apiimpl;
+
+import cn.hutool.core.collection.CollUtil;
+import com.google.common.collect.Lists;
+import com.carlos.core.base.RegionInfo;
+import com.carlos.core.response.Result;
+import com.carlos.system.api.ApiRegion;
+import com.carlos.system.pojo.ao.SysRegionAO;
+import com.carlos.system.pojo.param.ApiSysRegionAddParam;
+import com.carlos.system.region.convert.SysRegionConvert;
+import com.carlos.system.region.manager.SysRegionManager;
+import com.carlos.system.region.pojo.dto.SysRegionDTO;
+import com.carlos.system.region.service.SysRegionService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
+
+/**
+ * <p>
+ * 系统资源 api接口
+ * </p>
+ *
+ * @author yunjin
+ * @date 2021-12-28 15:26:57
+ */
+// @ApiIgnore
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/sys/region")
+@Api(tags = "区域编码Feign接口", hidden = true)
+public class ApiRegionImpl implements ApiRegion {
+
+    private final SysRegionService regionService;
+
+    private final SysRegionManager regionManager;
+
+    @Override
+    @GetMapping("name")
+    @ApiOperation(value = "区域预览指定父级")
+    public Result<List<String>> previewRegionName(@RequestParam("regionCode") String regionCode, @RequestParam(value = "limit", required = false) Integer limit) {
+        List<String> strings = this.regionService.previewRegionName(regionCode, limit);
+        return Result.ok(strings);
+    }
+
+    @Override
+    @GetMapping("ancestors")
+    public Result<List<String>> ancestors(@RequestParam("regionCode") String regionCode) {
+        List<String> parentCode = regionManager.getAncestorIdsFromCache(regionCode, 0);
+        if (CollUtil.isEmpty(parentCode)) {
+            parentCode = Lists.newArrayList();
+        }
+        parentCode.add(regionCode);
+        return Result.ok(parentCode);
+    }
+
+    @Override
+    @GetMapping("subCodes")
+    @ApiOperation(value = "获取当前区域及子级区域编码")
+    public Result<Set<String>> getSubRegionCodes(@RequestParam("regionCode") String regionCode) {
+        return Result.ok(this.regionService.getRegionSubCodes(regionCode));
+    }
+
+    @Override
+    @GetMapping("info")
+    @ApiOperation(value = "获取区域信息")
+    public Result<RegionInfo> getRegionInfo(@RequestParam("regionCode") String regionCode, @RequestParam("limit") Integer limit) {
+        return Result.ok(this.regionService.getRegionInfo(regionCode, limit));
+    }
+
+    @Override
+    @GetMapping("/getRegionTree")
+    public Result<List<SysRegionAO>> getRegionTree() {
+        List<SysRegionDTO> regionTree = this.regionService.getRegionTree();
+        List<SysRegionAO> aos = SysRegionConvert.INSTANCE.toAOList(regionTree);
+        return Result.ok(aos);
+    }
+
+    @Override
+    @GetMapping("/all")
+    public Result<List<SysRegionAO>> all() {
+        List<SysRegionDTO> regionTree = this.regionService.listAll();
+        List<SysRegionAO> aos = SysRegionConvert.INSTANCE.toAOList(regionTree);
+        return Result.ok(aos);
+    }
+
+
+    @PostMapping
+    @Override
+    public Result<SysRegionAO> addRegion(@RequestBody ApiSysRegionAddParam region) {
+        try {
+            SysRegionDTO dto = SysRegionConvert.INSTANCE.toDTO(region);
+            this.regionService.addSysRegion(dto);
+            return Result.ok(SysRegionConvert.INSTANCE.toAO(dto));
+        } catch (Exception e) {
+            log.error("{}", e.getMessage(), e);
+            return Result.fail("新增区域失败");
+        }
+    }
+
+}

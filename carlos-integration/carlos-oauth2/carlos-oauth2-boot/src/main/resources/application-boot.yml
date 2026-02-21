@@ -1,0 +1,31 @@
+# spring配置
+spring:
+  datasource:
+    dynamic:
+      primary: master
+      datasource:
+        # 主库数据源
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://${MYSQL_URL}?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: ${MYSQL_USERNAME}
+          password: ${MYSQL_PWD}
+
+###############################  缓存数据库配置 #################################
+---
+spring:
+  cache:
+    type: redis
+  redis:
+    database: ${REDIS_DB}
+    host: ${REDIS_IP}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PWD}
+    lettuce:
+      pool:
+        max-active: 50
+        max-idle: 100
+        max-wait: 30s
+        min-idle: 0
+      shutdown-timeout: 100ms
+##############################  redis缓存配置 end   ###########################

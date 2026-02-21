@@ -109,7 +109,7 @@ public class Oauth2ServerConfig {
                 authorizationEndpoint ->
                         // 授权码端点个性化confirm页面
                         authorizationEndpoint.consentPage("/token/confirm_access"));
-        // TODO: Carlos 2026-02-21  
+        // TODO: Carlos 2026-02-21
         // http.with(authServerConfig);
         // ;
         // // 自定义token 存储

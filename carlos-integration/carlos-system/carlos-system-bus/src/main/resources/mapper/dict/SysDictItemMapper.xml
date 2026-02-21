@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carlos.system.dict.mapper.SysDictItemMapper">
+    <resultMap type="com.carlos.system.dict.pojo.vo.SysDictItemVO" id="baseMap">
+        <id column="id" property="id"/>
+        <result column="dict_id" property="dictId"/>
+        <result column="item_name" property="itemName"/>
+        <result column="item_code" property="itemCode"/>
+        <result column="description" property="description"/>
+        <result column="sort" property="sort"/>
+        <result column="is_enable" property="enable"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectOwnPage" resultMap="baseMap">
+        SELECT id,
+        dict_id,
+        item_name,
+        item_code,
+        description,
+        sort,
+        is_enable,
+        create_time,
+        update_time
+        FROM sys_dict_item
+        <where>
+            <if test="param.itemName != null and param.itemName != ''">
+                AND item_name LIKE CONCAT('%', #{param.itemName}, '%')
+            </if>
+            <if test="param.description != null and param.description != ''">
+                AND description LIKE CONCAT('%', #{param.description}, '%')
+            </if>
+            <if test="param.dictId != null">
+                AND dict_id = #{param.dictId}
+            </if>
+            <if test="param.start != null">
+                AND create_time &gt;= #{param.start}
+            </if>
+            <if test="param.end != null">
+                AND create_time &lt;= #{param.end}
+            </if>
+        </where>
+        ORDER BY id DESC, sort
+    </select>
+</mapper>

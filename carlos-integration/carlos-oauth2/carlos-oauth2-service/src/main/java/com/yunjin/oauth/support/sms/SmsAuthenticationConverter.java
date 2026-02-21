@@ -1,0 +1,40 @@
+package com.carlos.oauth.support.sms;
+
+import com.carlos.oauth.support.base.BaseAuthenticationConverter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * @author yunjin
+ * @WebSite www.yunjin.cn
+ * @Description: 短信登录转换器
+ */
+public class SmsAuthenticationConverter extends BaseAuthenticationConverter<SmsAuthenticationToken> {
+
+    /**
+     * 是否支持此convert
+     *
+     * @param grantType 授权类型
+     */
+    @Override
+    public boolean support(String grantType) {
+        return "APP".equals(grantType);
+    }
+
+    @Override
+    public SmsAuthenticationToken buildToken(Authentication clientPrincipal, Set<String> requestedScopes, Map<String, String> additionalParameters) {
+        return new SmsAuthenticationToken(new AuthorizationGrantType("APP"),
+                clientPrincipal, requestedScopes, additionalParameters);
+    }
+
+
+    @Override
+    public void checkParams(Map<String, String> request) {
+
+    }
+
+
+}
