@@ -62,10 +62,6 @@
             <artifactId>carlos-spring-boot-starter-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.penggle</groupId>
-            <artifactId>kaptcha</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.carlos</groupId>
             <artifactId>carlos-utils</artifactId>
         </dependency>
