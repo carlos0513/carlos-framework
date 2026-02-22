@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>com.carlos</groupId>
-            <artifactId>yunjin-springcloud</artifactId>
+            <artifactId>carlos-spring-cloud-starter</artifactId>
         </dependency>
     </dependencies>
 

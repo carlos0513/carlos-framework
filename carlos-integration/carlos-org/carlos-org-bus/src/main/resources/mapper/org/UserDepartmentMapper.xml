@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carlos.org.mapper.UserDepartmentMapper">
+    <resultMap type="com.carlos.org.pojo.entity.UserDepartment" id="baseMap">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="department_id" property="departmentId"/>
+    </resultMap>
+
+    <resultMap type="com.carlos.org.pojo.dto.UserDepartmentDTO" id="userDeptMap">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="department_id" property="departmentId"/>
+        <result column="is_admin" property="isAdmin"/>
+        <result column="account" property="account"/>
+        <result column="phone" property="phone"/>
+        <result column="state" property="state"/>
+        <result column="sort" property="sort"/>
+        <result column="create_time" property="createTime"/>
+        <result column="roleNames" property="roleNames"/>
+    </resultMap>
+
+    <select id="listByDepartmentIdList" resultMap="userDeptMap">
+        SELECT t.id,t.user_id,t.department_id,t.is_admin,t1.account,t1.id AS userId,t1.realname,t1.phone,t1.state,
+        t1.sort,t1.create_time,
+
+        <!-- 数据库适配 -->
+        <choose>
+            <!-- 达梦 -->
+            <when test="_databaseId == 'dm'">
+                WM_CONCAT(DISTINCT t4.name || ',')
+            </when>
+            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
+            <otherwise>
+                GROUP_CONCAT(DISTINCT t4.name SEPARATOR ',')
+            </otherwise>
+        </choose>
+
+
+        AS roleNames
+        FROM org_user_department t
+        LEFT JOIN org_user t1 ON t1.id = t.user_id
+        LEFT JOIN org_role t4 ON t4.id = t.role_id
+        WHERE t.department_id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        and t1.is_deleted = 0 and t1.state != 9
+        GROUP BY t.id,t.user_id,t.department_id,t.is_admin,t1.account,
+        t1.id,t1.realname,t1.phone,t1.state, t1.sort,t1.create_time
+        ORDER BY t1.sort ASC, t1.create_time DESC
+    </select>
+
+    <select id="listByDepartmentIdPage" resultMap="userDeptMap">
+        SELECT t.id,t.user_id,t.department_id,t.is_admin,t1.account,t1.id AS userId,t1.realname,t1.phone,t1.state,
+        t1.sort,t1.create_time,
+
+        <!-- 数据库适配 -->
+        <choose>
+            <!-- 达梦 -->
+            <when test="_databaseId == 'dm'">
+                WM_CONCAT(DISTINCT t4.name || ',')
+            </when>
+            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
+            <otherwise>
+                GROUP_CONCAT(DISTINCT t4.name SEPARATOR ',')
+            </otherwise>
+        </choose>
+
+
+        AS roleNames
+        FROM org_user_department t
+        LEFT JOIN org_user t1 ON t1.id = t.user_id
+        <!--        LEFT JOIN org_user_role t3 ON t3.user_id = t1.id-->
+        LEFT JOIN org_role t4 ON t4.id = t.role_id
+        WHERE t.department_id = #{id} and t1.is_deleted = 0 and t1.state != 9
+        <if test="keyword != null and keyword != ''">
+            AND (
+            t1.account LIKE CONCAT('%',#{keyword},'%')
+            OR t1.realname LIKE CONCAT('%',#{keyword},'%')
+            OR t1.phone LIKE CONCAT('%',#{keyword},'%')
+            OR t4.name LIKE CONCAT('%',#{keyword},'%')
+            )
+        </if>
+        GROUP BY t.id,t.user_id,t.department_id,t.is_admin,t1.account,
+        t1.id,t1.realname,t1.phone,t1.state, t1.sort,t1.create_time
+        ORDER BY t1.sort ASC, t1.create_time DESC
+    </select>
+
+    <select id="isYxUser" resultType="com.carlos.org.pojo.dto.UserDepartmentDTO">
+        <choose>
+            <!-- 达梦 -->
+            <when test="_databaseId == 'dm'">
+                WITH org_hierarchy AS (
+            </when>
+            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
+            <otherwise>
+                WITH RECURSIVE org_hierarchy AS (
+            </otherwise>
+        </choose>
+        -- 基础查询：选择起始部门
+        SELECT id, parent_id
+        FROM org_department
+        WHERE id = '2025031210051899642935718752256' -- 游仙的部门ID
+        UNION ALL
+        -- 递归查询：查找所有子部门
+        SELECT o.id, o.parent_id
+        FROM org_department o
+        JOIN org_hierarchy oh ON o.parent_id = oh.id
+        )
+        SELECT ou.id as userId,oud.department_id
+        FROM org_user ou
+        INNER JOIN org_user_department oud ON ou.id = oud.user_id
+        INNER JOIN org_hierarchy oh ON oh.id = oud.department_id
+        WHERE ou.is_deleted = 0
+        AND ou.id = #{userId}
+    </select>
+    <select id="isYxDept" resultType="com.carlos.org.pojo.dto.UserDepartmentDTO">
+        <choose>
+            <!-- 达梦 -->
+            <when test="_databaseId == 'dm'">
+                WITH org_hierarchy AS (
+            </when>
+            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
+            <otherwise>
+                WITH RECURSIVE org_hierarchy AS (
+            </otherwise>
+        </choose>
+        -- 基础查询：选择起始部门
+        SELECT id, parent_id
+        FROM org_department
+        WHERE id = '2025031210051899642935718752256' -- 游仙的部门ID
+        UNION ALL
+        -- 递归查询：查找所有子部门
+        SELECT o.id, o.parent_id
+        FROM org_department o
+        JOIN org_hierarchy oh ON o.parent_id = oh.id
+        )
+        SELECT id AS departmentId
+        FROM org_hierarchy
+        where id = #{deptId}
+    </select>
+</mapper>

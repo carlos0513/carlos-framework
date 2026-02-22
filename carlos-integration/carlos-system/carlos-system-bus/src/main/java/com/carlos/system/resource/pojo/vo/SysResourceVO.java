@@ -1,0 +1,54 @@
+package com.carlos.system.resource.pojo.vo;
+
+import com.carlos.json.jackson.annotation.DictField;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+/**
+ * <p>
+ * 系统资源 显示层对象，向页面传输的对象
+ * </p>
+ *
+ * @author yunjin
+ * @date 2021-12-28 15:26:57
+ */
+@Data
+@Accessors(chain = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SysResourceVO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Schema(description = "主键")
+    private String id;
+    @Schema(description = "分类id")
+    private Long categoryId;
+    @Schema(description = "菜单名称")
+    private String categoryName;
+    @Schema(description = "资源名称")
+    private String name;
+    @Schema(description = "接口路径")
+    private String path;
+    @Schema(description = "请求方式")
+    private String method;
+    @Schema(description = "图标")
+    private String icon;
+    @Schema(description = "资源类型，按钮")
+    private String type;
+    @Schema(description = "状态，0：禁用，1：启用")
+    private String state;
+    @Schema(description = "显示和隐藏，0：显示，1：隐藏")
+    private Boolean hidden;
+    @DictField
+    @Schema(description = "资源描述")
+    private String description;
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
+    @Schema(description = "修改时间")
+    private LocalDateTime updateTime;
+
+}

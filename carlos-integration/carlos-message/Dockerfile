@@ -11,7 +11,7 @@ EXPOSE ${PORT}
 
 ENV JAVA_OPTS "-Xmx512m -Xms256m  -Djava.security.egd=file:/dev/./urandom"
 
-ENV PROJECT_NAME "yunjin-message"
+ENV PROJECT_NAME "carlos-message"
 
 ENV JAR_NAME "carlos-message"
 

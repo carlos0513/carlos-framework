@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.carlos.auth.fallback.AuthFeignConfig
+ fallback.com.carlos.auth.AuthFeignConfig

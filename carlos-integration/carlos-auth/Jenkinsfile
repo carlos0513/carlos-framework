@@ -4,11 +4,11 @@
 def calcMeta() {
 	switch (params.DEPLOY_ENV) {
 	case '开发':
-            return [tag: 'Alpha', namespace: 'carlos-szt-feature']
+            return [tag: 'Alpha', namespace: 'carlos-feature']
         case '测试':
-            return [tag: 'Beta', namespace: 'carlos-szt-test']
+            return [tag: 'Beta', namespace: 'carlos-test']
         case '演示':
-            return [tag: 'Release', namespace: 'carlos-szt-demo']
+            return [tag: 'Release', namespace: 'carlos-demo']
         case '自定义':
             def t = params.IMAGE_TAG?.trim()
             def n = params.NAMESPACE?.trim()

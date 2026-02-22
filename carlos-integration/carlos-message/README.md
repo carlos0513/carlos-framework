@@ -1,4 +1,4 @@
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Yunjin-message v2.0.0</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">carlos-message v2.0.0</h1>
 <h4 align="center">Spring Boot/Spring Cloud & Alibaba 统一消息中心</h4>
 
 ## 服务简介
@@ -18,11 +18,11 @@
 
 ~~~
 carlos-message     
-├── yunjin-message-boot              // springboot 启动
-├── yunjin-message-cloud             // springcloud 启动
-├── yunjin-message-core              // 核心模块
-├── yunjin-message-client            // 客户端模块
-├── yunjin-message-server            // 消息服务端
+├── carlos-message-boot              // springboot 启动
+├── carlos-message-cloud             // springcloud 启动
+├── carlos-message-core              // 核心模块
+├── carlos-message-client            // 客户端模块
+├── carlos-message-server            // 消息服务端
 │       └── com.msg.controller       // 消息服务端
 
 

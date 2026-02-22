@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.soundtao.message.client.ForewarnMessageTemplate,\
-com.carlos.message.utils.MessageUtil
-
-  

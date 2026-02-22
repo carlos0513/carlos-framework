@@ -26,6 +26,7 @@
         <module>carlos-gateway</module>
         <module>carlos-message</module>
         <module>carlos-system</module>
+        <module>carlos-org</module>
 
     </modules>
 
