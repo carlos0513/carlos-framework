@@ -15,12 +15,12 @@ import java.util.Set;
  * minio配置项
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/6/10 13:21
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.system.file")
+@ConfigurationProperties(prefix = "carlos.system.file")
 public class SystemFileProperties implements InitializingBean {
 
 
@@ -43,7 +43,7 @@ public class SystemFileProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        Assert.hasText(this.baseUrl, "'yunjin.system.file' must not be blank.");
+        Assert.hasText(this.baseUrl, "'carlos.system.file' must not be blank.");
         if (StrUtil.endWith(baseUrl, StrUtil.SLASH)) {
             baseUrl = StrUtil.replaceLast(baseUrl, StrUtil.SLASH, StrUtil.EMPTY);
         }

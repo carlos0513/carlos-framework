@@ -23,7 +23,7 @@ import java.io.Serializable;
  * 角色菜单操作表 查询封装实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 @Slf4j

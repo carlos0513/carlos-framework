@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 系统菜单基本信息
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/12/27
  */
 @Data

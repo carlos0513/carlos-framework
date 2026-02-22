@@ -25,7 +25,7 @@ import java.util.Set;
  * 系统用户 业务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 public interface UserService {
@@ -34,7 +34,7 @@ public interface UserService {
      * 新增系统用户
      *
      * @param dto 系统用户数据
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     UserDTO addUser(UserDTO dto);
@@ -54,7 +54,7 @@ public interface UserService {
      * 删除系统用户
      *
      * @param ids 系统用户id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     void deleteUser(Set<Serializable> ids);
@@ -72,7 +72,7 @@ public interface UserService {
      * 修改系统用户信息
      *
      * @param dto 对象信息
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     boolean updateUser(UserDTO dto);

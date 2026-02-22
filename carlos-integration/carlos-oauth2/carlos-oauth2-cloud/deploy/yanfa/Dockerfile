@@ -1,4 +1,4 @@
-FROM 192.168.23.212:32000/yunjin-docker/library/openjdk:8-jdk-alpine3.9
+FROM 192.168.23.212:32000/carlos-docker/library/openjdk:8-jdk-alpine3.9
 
 RUN mkdir -p /jar
 

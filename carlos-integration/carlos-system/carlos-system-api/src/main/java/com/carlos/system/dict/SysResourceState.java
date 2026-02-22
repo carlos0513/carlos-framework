@@ -8,7 +8,7 @@ import lombok.Getter;
 /**
  * 系统资源状态
  *
- * @author yunjin
+ * @author carlos
  * @date 2020/4/11 23:26
  */
 @Getter

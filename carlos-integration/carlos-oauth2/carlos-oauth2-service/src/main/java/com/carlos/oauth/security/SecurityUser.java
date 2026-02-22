@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * 登录用户信息
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/12/8 10:50
  */
 @Data
@@ -82,7 +82,7 @@ public class SecurityUser implements UserDetails {
      * 账户是否过期
      *
      * @return boolean true 代表用户可用
-     * @author yunjin
+     * @author carlos
      * @date 2021/3/4 14:42
      */
     @JsonIgnore

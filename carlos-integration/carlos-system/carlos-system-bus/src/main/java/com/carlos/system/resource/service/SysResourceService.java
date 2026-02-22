@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * 系统资源 业务接口实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 @Slf4j
@@ -44,7 +44,7 @@ public class SysResourceService {
      * 新增系统资源
      *
      * @param dto 系统资源数据
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     public void addResource(final SysResourceDTO dto) {
@@ -65,7 +65,7 @@ public class SysResourceService {
      * 删除系统资源
      *
      * @param ids 系统资源id
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     public void deleteResource(final Set<Serializable> ids) {
@@ -84,7 +84,7 @@ public class SysResourceService {
      * 修改系统资源信息
      *
      * @param dto 对象信息
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     public void updateResource(final SysResourceDTO dto) {
@@ -101,7 +101,7 @@ public class SysResourceService {
      * 获取资源分组
      *
      * @return java.util.List<com.carlos.sys.pojo.dto.ResourceGroupDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/13 13:11
      */
     public List<SysResourceGroupDTO> getResourceGroup() {
@@ -123,7 +123,7 @@ public class SysResourceService {
      *
      * @param id 资源id
      * @return com.carlos.voice.common.dto.sys.SysResource
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/13 15:06
      */
     public SysResourceAO getSysResource(final String id) {

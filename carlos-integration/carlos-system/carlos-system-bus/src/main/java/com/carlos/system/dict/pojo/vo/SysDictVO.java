@@ -16,7 +16,7 @@ import java.util.List;
  * 系统字典 显示层对象，向页面传输的对象
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @Data

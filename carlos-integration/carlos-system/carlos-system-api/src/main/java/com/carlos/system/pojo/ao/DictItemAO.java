@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 /**
  * 系统字典详情 数据传输对象，service和manager向外传输对象
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @Data

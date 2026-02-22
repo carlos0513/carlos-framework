@@ -19,7 +19,7 @@ import java.util.List;
  * 资源分类 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-1-5 17:23:27
  */
 @Mapper(uses = {CommonConvert.class})
@@ -32,7 +32,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     ResourceCategoryDTO toDTO(SysResourceCategoryCreateParam param);
@@ -42,7 +42,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     ResourceCategoryDTO toDTO(SysResourceCategoryUpdateParam param);
@@ -52,7 +52,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     List<ResourceCategoryDTO> toDTO(List<SysResourceCategory> dos);
@@ -62,7 +62,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     ResourceCategoryDTO toDTO(SysResourceCategory entity);
@@ -72,7 +72,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     SysResourceCategory toDO(ResourceCategoryDTO dto);
@@ -82,7 +82,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     @Mapping(target = "haveChildren", source = "id", qualifiedByName = "haveChildrenCategory")
@@ -93,7 +93,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     List<SysResourceCategoryVO> toVO(List<SysResourceCategory> dos);
@@ -103,7 +103,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param dtos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 16:12:38
      */
     List<SysResourceCategoryVO> toListVO(List<ResourceCategoryDTO> dtos);
@@ -113,7 +113,7 @@ public interface SysResourceCategoryConvert {
      *
      * @param dtos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 16:12:38
      */
     List<SysResourceCategoryRecursionVO> toRecursionListVO(List<ResourceCategoryDTO> dtos);

@@ -10,7 +10,7 @@ import java.text.ParseException;
  * token操作工具
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/12/23 17:23
  */
 public class TokenUtil {
@@ -21,7 +21,7 @@ public class TokenUtil {
      *
      * @param request 请求
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/23 17:24
      */
     public static String getFromHeader(ServerHttpRequest request) {
@@ -34,7 +34,7 @@ public class TokenUtil {
      * @param token token
      * @param claim 信息载体
      * @throws ParseException token解析异常
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/23 17:28
      */
     // public static JwtClaims getTokenClaims(String token, Class<? extends JwtClaims> claim) throws ParseException {

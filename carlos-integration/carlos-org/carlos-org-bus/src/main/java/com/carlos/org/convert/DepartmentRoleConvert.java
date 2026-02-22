@@ -13,7 +13,7 @@ import java.util.List;
  * 部门角色 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 @Mapper(uses = {CommonConvert.class})
@@ -27,7 +27,7 @@ public interface DepartmentRoleConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<DepartmentRoleDTO> toDTO(List<DepartmentRole> dos);
@@ -37,7 +37,7 @@ public interface DepartmentRoleConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     DepartmentRoleDTO toDTO(DepartmentRole entity);
@@ -47,7 +47,7 @@ public interface DepartmentRoleConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     DepartmentRole toDO(DepartmentRoleDTO dto);
@@ -57,7 +57,7 @@ public interface DepartmentRoleConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     DepartmentRoleVO toVO(DepartmentRoleDTO dto);
@@ -67,7 +67,7 @@ public interface DepartmentRoleConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<DepartmentRoleVO> toVO(List<DepartmentRole> dos);

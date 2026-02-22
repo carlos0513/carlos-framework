@@ -3,7 +3,7 @@ package com.carlos.org.config;
 /**
  * 开发人员常量
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/12/9 14:29
  */
 public interface AuthorConstant {
@@ -11,7 +11,7 @@ public interface AuthorConstant {
     /**
      * 系统
      */
-    String DEFAULT = "yunjin";
+    String DEFAULT = "carlos";
 
     String ZHU_JUN = "Zhujun";
 

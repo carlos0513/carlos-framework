@@ -13,7 +13,7 @@ import java.util.Set;
  * 部门角色 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 public interface DepartmentRoleManager extends BaseService<DepartmentRole> {
@@ -23,7 +23,7 @@ public interface DepartmentRoleManager extends BaseService<DepartmentRole> {
      *
      * @param dto 部门角色数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean add(DepartmentRoleDTO dto);
@@ -32,7 +32,7 @@ public interface DepartmentRoleManager extends BaseService<DepartmentRole> {
      * 根据部门id获取角色
      *
      * @param departmentId 部门id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<DepartmentRoleDTO> listByDeptType(String departmentId);
@@ -41,7 +41,7 @@ public interface DepartmentRoleManager extends BaseService<DepartmentRole> {
      * 根据角色id获取部门
      *
      * @param roleId 角色id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     DepartmentRoleDTO getDepartmentByRoleId(Serializable roleId);

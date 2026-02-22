@@ -25,7 +25,7 @@ import java.util.List;
  * 资源分类 查询封装实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-1-5 17:23:27
  */
 @Slf4j

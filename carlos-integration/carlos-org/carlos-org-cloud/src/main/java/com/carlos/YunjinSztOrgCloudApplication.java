@@ -7,13 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * 启动程序
  *
- * @author yunjin
+ * @author carlos
  */
 @SpringBootApplication
-public class YunjinSztOrgCloudApplication {
+public class carlosSztOrgCloudApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(YunjinSztOrgCloudApplication.class, args);
+        SpringApplication.run(carlosSztOrgCloudApplication.class, args);
         // 支持秒级别定时任务
         CronUtil.setMatchSecond(true);
         // 启动定时任务

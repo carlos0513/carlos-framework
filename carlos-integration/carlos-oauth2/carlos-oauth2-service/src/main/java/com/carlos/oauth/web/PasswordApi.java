@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * 密码相关接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/12/27 16:05
  */
 @RestController

@@ -25,7 +25,7 @@ import java.util.Map;
  * 自定义登录成功处理器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/11/4 15:01
  */
 @Slf4j

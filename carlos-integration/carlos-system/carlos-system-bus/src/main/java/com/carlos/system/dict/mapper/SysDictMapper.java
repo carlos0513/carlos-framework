@@ -14,7 +14,7 @@ import org.apache.ibatis.annotations.Param;
  * 系统字典 查询接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @Mapper
@@ -26,7 +26,7 @@ public interface SysDictMapper extends BaseMapper<SysDict> {
      *
      * @param page  分页信息
      * @param param 查询参数
-     * @author yunjin
+     * @author carlos
      * @date 2021-11-22 14:49:00
      */
     IPage<SysDictVO> selectOwnPage(Page page, @Param("param") SysDictPageParam param);

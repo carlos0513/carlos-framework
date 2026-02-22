@@ -16,8 +16,8 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.Map;
 
 /**
- * @author yunjin
- * @WebSite www.yunjin.cn
+ * @author carlos
+ * @WebSite www.carlos.cn
  * @Description: 处理用户名密码授权
  */
 @Slf4j

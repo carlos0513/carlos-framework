@@ -14,7 +14,7 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   application:
-    name: yunjin-system
+    name: carlos-system
   # spring配置
   datasource:
     druid:
@@ -44,7 +44,7 @@ spring:
           druid.stat.mergeSql: true
           druid.stat.slowSqlMillis: 5000
 ############################## application start ##############################
-yunjin:
+carlos:
   boot:
     cors:
       enable: true
@@ -56,13 +56,13 @@ yunjin:
       project-name: 系统服务
       groupId: com.carlos
       #            boot-name: @boot.artifact.name@
-      author: yunjin
+      author: carlos
       description: 系统服务
       sourceEncoding: utf-8
       version: 1.0.0
-      domain: www.yunjin.com
+      domain: www.carlos.com
   cache:
-    key-prefix: yunjin:single
+    key-prefix: carlos:single
     user-prefix: true
 
 ############################### application end ###############################
@@ -110,11 +110,11 @@ swagger:
   description: 系统服务
   title: 系统服务
   version: 2.0.0
-  terms-of-service-url: https://www.yunjin.com
+  terms-of-service-url: https://www.carlos.com
   contact:
     email: 13032820513@163.com
-    name: yunjin
-    url: www.yunjin.com
+    name: carlos
+    url: www.carlos.com
     group-name: 系统服务
 
 knife4j: # 是否开启Knife4j增强模式 默认 false
@@ -156,6 +156,6 @@ knife4j: # 是否开启Knife4j增强模式 默认 false
   # 是否开启BasicHttp验证
   basic:
     enable: false
-    username: yunjin
+    username: carlos
     password: hadoop543216
 #################################### 接口文档 Swagger end ###################################

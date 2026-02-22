@@ -12,7 +12,7 @@ import java.util.Set;
  * 系统配置 业务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-3 13:47:55
  */
 public interface SysConfigService {
@@ -21,7 +21,7 @@ public interface SysConfigService {
      * 新增系统配置
      *
      * @param dto 系统配置数据
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:55
      */
     void addSysConfig(SysConfigDTO dto);
@@ -30,7 +30,7 @@ public interface SysConfigService {
      * 删除系统配置
      *
      * @param ids 系统配置id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:55
      */
     void deleteSysConfig(Set<Serializable> ids);
@@ -39,7 +39,7 @@ public interface SysConfigService {
      * 修改系统配置信息
      *
      * @param dto 对象信息
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:55
      */
     void updateSysConfig(SysConfigDTO dto);
@@ -58,7 +58,7 @@ public interface SysConfigService {
      * 获取系统配置首页配置
      *
      * @return com.carlos.system.configration.pojo.vo.SysConfigLoginPageVO
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:55
      */
     SysConfigLoginPageVO getHomePageConfig();

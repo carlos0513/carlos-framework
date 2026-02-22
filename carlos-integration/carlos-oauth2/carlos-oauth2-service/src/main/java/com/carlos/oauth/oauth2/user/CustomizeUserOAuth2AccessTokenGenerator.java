@@ -28,7 +28,7 @@ import java.util.UUID;
  *
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/11/4 15:59
  */
 public class CustomizeUserOAuth2AccessTokenGenerator implements OAuth2TokenGenerator<OAuth2AccessToken> {

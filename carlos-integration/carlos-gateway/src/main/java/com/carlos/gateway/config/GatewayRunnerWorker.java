@@ -16,7 +16,7 @@ import org.springframework.core.Ordered;
  * 应用启动成功需要做的工作
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2020-2-18 10:11:05
  */
 @Slf4j
@@ -42,7 +42,7 @@ public class GatewayRunnerWorker implements ApplicationRunner, Ordered {
     /**
      * 获取Knife4j地址
      *
-     * @author yunjin
+     * @author carlos
      * @date 2020/7/20 17:05
      */
     public String getKnife4jUrl() {

@@ -9,7 +9,7 @@ import com.carlos.core.response.Result;
  * 认证服务功能
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-20 14:07:16
  */
 
@@ -20,7 +20,7 @@ public interface AuthService {
      *
      * @param password 原密码
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/27 16:30
      */
     String encodePassword(String password);
@@ -30,7 +30,7 @@ public interface AuthService {
      *
      * @param password 加密密码
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/27 16:30
      */
     String decodePassword(String password);
@@ -40,7 +40,7 @@ public interface AuthService {
      *
      * @param param token获取参数
      * @return com.carlos.core.auth.Oauth2TokenDTO
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/27 16:34
      */
     Result<Oauth2TokenDTO> getToken(AccessTokenParam param);
@@ -51,7 +51,7 @@ public interface AuthService {
      * @param password       需要检查的密码
      * @param encodePassword 加密密码
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022/4/25 18:37
      */
     boolean checkPassword(String password, String encodePassword);

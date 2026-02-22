@@ -10,8 +10,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 /**
- * @author yunjin
- * @WebSite www.yunjin.cn
+ * @author carlos
+ * @WebSite www.carlos.cn
  * @Description: 表单登录失败处理逻辑
  */
 

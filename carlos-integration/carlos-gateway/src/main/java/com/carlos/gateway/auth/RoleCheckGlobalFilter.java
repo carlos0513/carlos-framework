@@ -28,7 +28,7 @@ import java.util.List;
  * 认证过滤器 将登录用户的JWT转化成用户信息的全局过滤器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/3 17:54
  */
 @Slf4j

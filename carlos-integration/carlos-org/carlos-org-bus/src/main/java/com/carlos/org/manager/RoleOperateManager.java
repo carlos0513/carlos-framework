@@ -14,7 +14,7 @@ import java.io.Serializable;
  * 角色菜单操作表 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 public interface RoleOperateManager extends BaseService<RoleOperate> {
@@ -24,7 +24,7 @@ public interface RoleOperateManager extends BaseService<RoleOperate> {
      *
      * @param dto 角色菜单操作表数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     boolean add(RoleOperateDTO dto);
@@ -34,7 +34,7 @@ public interface RoleOperateManager extends BaseService<RoleOperate> {
      *
      * @param id 角色菜单操作表id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     boolean delete(Serializable id);
@@ -44,7 +44,7 @@ public interface RoleOperateManager extends BaseService<RoleOperate> {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     boolean modify(RoleOperateDTO dto);
@@ -54,7 +54,7 @@ public interface RoleOperateManager extends BaseService<RoleOperate> {
      *
      * @param id 主键id
      * @return com.carlos.system.menu.pojo.dto.RoleOperateDTO
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     RoleOperateDTO getDtoById(Serializable id);
@@ -63,7 +63,7 @@ public interface RoleOperateManager extends BaseService<RoleOperate> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     Paging<RoleOperateVO> getPage(RoleOperatePageParam param);

@@ -28,7 +28,7 @@ import java.util.Set;
  * 部门 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 @Mapper(uses = {CommonConvert.class})
@@ -41,7 +41,7 @@ public interface DepartmentConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     DepartmentDTO toDTO(DepartmentCreateParam param);
@@ -51,7 +51,7 @@ public interface DepartmentConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     DepartmentDTO toDTO(DepartmentUpdateParam param);
@@ -61,7 +61,7 @@ public interface DepartmentConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     List<DepartmentDTO> toDTO(List<Department> dos);
@@ -73,7 +73,7 @@ public interface DepartmentConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     DepartmentDTO toDTO(Department entity);
@@ -83,7 +83,7 @@ public interface DepartmentConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     Department toDO(DepartmentDTO dto);
@@ -93,7 +93,7 @@ public interface DepartmentConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     DepartmentVO toVO(DepartmentDTO dto);
@@ -103,7 +103,7 @@ public interface DepartmentConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     List<DepartmentVO> toVO(List<Department> dos);
@@ -113,7 +113,7 @@ public interface DepartmentConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     List<ThirdDepartmentVO> toThirdDeptVO(List<Department> dos);

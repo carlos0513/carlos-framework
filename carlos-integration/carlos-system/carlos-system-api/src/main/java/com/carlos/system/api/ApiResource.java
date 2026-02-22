@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 系统资源 feign 提供接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 @FeignClient(value = ServiceNameConstant.SYSTEM, contextId = "resource", path = "/api/sys/resource", fallbackFactory = FeignResourceFallbackFactory.class)
@@ -28,7 +28,7 @@ public interface ApiResource {
      *
      * @param id 资源id
      * @return java.util.List<com.carlos.sys.pojo.dto.ResourceDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/4 15:30
      */
     @GetMapping(value = "/")
@@ -38,7 +38,7 @@ public interface ApiResource {
      * 新增资源
      *
      * @param dto 资源
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/4 15:30
      */
     @PostMapping(value = "/")
@@ -48,7 +48,7 @@ public interface ApiResource {
      * 新增资源类型
      *
      * @param dto 资源类型
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/4 15:30
      */
     @PostMapping(value = "category")

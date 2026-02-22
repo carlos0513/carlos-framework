@@ -16,7 +16,7 @@ import java.util.Set;
  * 系统字典 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 public interface SysDictManager extends IService<SysDict> {
@@ -27,7 +27,7 @@ public interface SysDictManager extends IService<SysDict> {
      *
      * @param dto 字典数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021-11-22 14:49:00
      */
     boolean add(SysDictDTO dto);
@@ -46,7 +46,7 @@ public interface SysDictManager extends IService<SysDict> {
      *
      * @param id 主键id
      * @return com.carlos.dict.pojo.vo.DictVO
-     * @author yunjin
+     * @author carlos
      * @date 2021-11-22 14:49:00
      */
     SysDictDTO getDictById(Serializable id);
@@ -55,7 +55,7 @@ public interface SysDictManager extends IService<SysDict> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2021-11-22 14:49:00
      */
     IPage<SysDictVO> getPage(SysDictPageParam param);
@@ -65,7 +65,7 @@ public interface SysDictManager extends IService<SysDict> {
      *
      * @param name 字典名称
      * @return com.carlos.dict.pojo.vo.DictListVO
-     * @author yunjin
+     * @author carlos
      * @date 2021/11/25 15:06
      */
     List<SysDictDTO> listDict(String name);
@@ -75,7 +75,7 @@ public interface SysDictManager extends IService<SysDict> {
      *
      * @param code 字典code
      * @return java.lang.Long
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/6 18:28
      */
     Serializable getIdByCode(String code);
@@ -85,7 +85,7 @@ public interface SysDictManager extends IService<SysDict> {
      *
      * @param ids 字典id
      * @return java.util.List<com.carlos.dict.pojo.dto.DictDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/6 18:28
      */
     List<SysDictDTO> listByDictIds(Set<Serializable> ids);

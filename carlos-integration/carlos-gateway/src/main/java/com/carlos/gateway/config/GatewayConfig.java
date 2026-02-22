@@ -37,7 +37,7 @@ import java.util.Collections;
  * 网关配置
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/4 9:43
  */
 @Configuration
@@ -119,7 +119,7 @@ public class GatewayConfig {
 
     @Bean
     @Order(GlobalFilterOrder.ORDER_SECOND)
-    @ConditionalOnProperty(name = "yunjin.gateway.role-check", havingValue = "true")
+    @ConditionalOnProperty(name = "carlos.gateway.role-check", havingValue = "true")
     public GlobalFilter roleCheckFilter() {
         return new RoleCheckGlobalFilter(gatewayProperties);
     }

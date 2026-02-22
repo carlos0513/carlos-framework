@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
  * 自定义token信息,对token的信息进行增强
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/11/4 11:03
  */
 public class CustomizeClientOAuth2TokenCustomizer implements OAuth2TokenCustomizer<OAuth2TokenClaimsContext> {

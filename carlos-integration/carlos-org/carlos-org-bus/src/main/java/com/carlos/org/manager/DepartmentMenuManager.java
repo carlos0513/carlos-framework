@@ -12,7 +12,7 @@ import java.util.List;
  * 部门菜单表 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 public interface DepartmentMenuManager extends BaseService<DepartmentMenu> {
@@ -22,7 +22,7 @@ public interface DepartmentMenuManager extends BaseService<DepartmentMenu> {
      *
      * @param dtos 部门菜单表数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean add(List<DepartmentMenuDTO> dtos);
@@ -32,7 +32,7 @@ public interface DepartmentMenuManager extends BaseService<DepartmentMenu> {
      *
      * @param id 部门菜单表id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean delete(Serializable id);
@@ -43,7 +43,7 @@ public interface DepartmentMenuManager extends BaseService<DepartmentMenu> {
      *
      * @param id 主键id
      * @return com.carlos.org.pojo.dto.DepartmentMenuDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     DepartmentMenuDTO getDtoById(String id);
@@ -53,7 +53,7 @@ public interface DepartmentMenuManager extends BaseService<DepartmentMenu> {
      * 根据部门id获取菜单
      *
      * @param departmentId 上级部门id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:01:17
      */
     List<DepartmentMenuDTO> getMenuByDepartmentId(String departmentId);
@@ -62,7 +62,7 @@ public interface DepartmentMenuManager extends BaseService<DepartmentMenu> {
      * 根据菜单id获取部门信息
      *
      * @param menuId 上级部门id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:01:17
      */
     List<DepartmentMenuDTO> getDepartmentByMenuId(String menuId);

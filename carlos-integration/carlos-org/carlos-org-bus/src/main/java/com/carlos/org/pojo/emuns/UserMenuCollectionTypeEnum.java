@@ -11,7 +11,7 @@ import lombok.Getter;
 /**
  * 用户菜单收藏数据类型
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/17 23:54
  */
 @AppEnum(code = "UserMenuCollectionTypeEnum")

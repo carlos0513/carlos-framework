@@ -21,7 +21,6 @@
         <module>carlos-license</module>
         <module>carlos-tools</module>
         <!-- 治理中心模块 -->
-        <module>carlos-auth</module>
         <module>carlos-oauth2</module>
         <module>carlos-gateway</module>
         <module>carlos-message</module>
@@ -32,23 +31,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- carlos-auth 模块 -->
-            <dependency>
-                <groupId>com.carlos</groupId>
-                <artifactId>carlos-auth</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.carlos</groupId>
-                <artifactId>carlos-auth-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.carlos</groupId>
-                <artifactId>carlos-auth-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- carlos-system 模块 -->
             <dependency>
                 <groupId>com.carlos</groupId>

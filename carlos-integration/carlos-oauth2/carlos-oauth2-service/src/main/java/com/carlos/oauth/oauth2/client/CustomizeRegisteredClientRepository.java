@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * authorizedGrantTypes：授权客户使用的授权类型。默认值为空。 authorities：授予客户端的权限（常规的Spring Security权限）。
  * 可以通过直接访问底层存储（例如的情况下为数据库表JdbcClientDetailsService）或通过ClientDetailsManager接口（这两种实现都ClientDetailsService可以实现）来更新正在运行的应用程序中的客户端详细信息。
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/11/4 13:04
  */
 @Slf4j

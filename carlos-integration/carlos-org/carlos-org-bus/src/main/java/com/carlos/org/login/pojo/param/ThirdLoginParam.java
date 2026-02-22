@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * 第三方登录参数
  *
- * @author yunjin
+ * @author carlos
  * @date 2019-05-15
  **/
 @Data

@@ -21,7 +21,7 @@ import java.util.List;
  * 系统用户 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 @Mapper(uses = {CommonConvert.class})
@@ -34,7 +34,7 @@ public interface UserConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     UserDTO toDTO(UserCreateParam param);
@@ -44,7 +44,7 @@ public interface UserConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     UserDTO toDTO(UserUpdateParam param);
@@ -54,7 +54,7 @@ public interface UserConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     UserDTO toDTO(UserResetPwdParam param);
@@ -64,7 +64,7 @@ public interface UserConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     List<UserDTO> toDTO(List<User> dos);
@@ -74,7 +74,7 @@ public interface UserConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     @Mapping(target = "admin", source = "isAdmin")
@@ -85,7 +85,7 @@ public interface UserConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     @Mapping(target = "isAdmin", source = "admin")
@@ -96,7 +96,7 @@ public interface UserConvert {
      *
      * @param param 数据传输对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     User toDto(UserChangePwdParam param);
@@ -106,7 +106,7 @@ public interface UserConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     UserSessionVO toVO(UserDTO dto);
@@ -116,7 +116,7 @@ public interface UserConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     List<UserSessionVO> toVO(List<User> dos);

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  * 用户菜单收藏表 rest服务接口
  * </p>
  *
- * @author  yunjin
+ * @author carlos
  * @date    2024-2-28 11:10:01
  */
 @RestController

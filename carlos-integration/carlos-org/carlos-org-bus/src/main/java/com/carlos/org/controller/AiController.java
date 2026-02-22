@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * ai服务
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2024-3-23 12:31:52
  */
 @RestController

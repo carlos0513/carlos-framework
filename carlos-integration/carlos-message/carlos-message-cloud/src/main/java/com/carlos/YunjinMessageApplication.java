@@ -6,12 +6,12 @@ import org.springframework.boot.SpringApplication;
 /**
  * 启动程序
  *
- * @author yunjin
+ * @author carlos
  */
 @SpringCloudApplication
-public class YunjinMessageApplication {
+public class carlosMessageApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(YunjinMessageApplication.class, args);
+        SpringApplication.run(carlosMessageApplication.class, args);
     }
 }

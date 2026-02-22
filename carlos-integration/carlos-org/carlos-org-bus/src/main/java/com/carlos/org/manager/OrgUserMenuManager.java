@@ -13,7 +13,7 @@ import java.io.Serializable;
  * 用户菜单收藏表 查询封装接口
  * </p>
  *
- * @author  yunjin
+ * @author carlos
  * @date    2024-2-28 11:10:01
  */
 public interface OrgUserMenuManager extends BaseService<OrgUserMenu>{
@@ -23,7 +23,7 @@ public interface OrgUserMenuManager extends BaseService<OrgUserMenu>{
      *
      * @param dto 用户菜单收藏表数据
      * @return boolean
-     * @author  yunjin
+     * @author carlos
      * @date    2024-2-28 11:10:01
      */
     boolean add(OrgUserMenuDTO dto);
@@ -33,7 +33,7 @@ public interface OrgUserMenuManager extends BaseService<OrgUserMenu>{
      *
      * @param id 用户菜单收藏表id
      * @return boolean
-     * @author  yunjin
+     * @author carlos
      * @date    2024-2-28 11:10:01
      */
     boolean delete(Serializable id);
@@ -43,7 +43,7 @@ public interface OrgUserMenuManager extends BaseService<OrgUserMenu>{
      *
      * @param dto 对象信息
      * @return boolean
-     * @author  yunjin
+     * @author carlos
      * @date    2024-2-28 11:10:01
      */
     boolean modify(OrgUserMenuDTO dto);
@@ -53,7 +53,7 @@ public interface OrgUserMenuManager extends BaseService<OrgUserMenu>{
      *
      * @param id 主键id
      * @return com.carlos.pojo.dto.OrgUserMenuDTO
-     * @author yunjin
+     * @author carlos
      * @date   2024-2-28 11:10:01
      */
     OrgUserMenuDTO getDtoById(Serializable id);
@@ -62,7 +62,7 @@ public interface OrgUserMenuManager extends BaseService<OrgUserMenu>{
      * 分页列表
      *
      * @param  param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date   2024-2-28 11:10:01
      */
     Paging<OrgUserMenuVO> getPage(OrgUserMenuPageParam param);

@@ -17,7 +17,7 @@ import java.util.Set;
  * 系统菜单 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 public interface MenuManager extends BaseService<Menu> {
@@ -27,7 +27,7 @@ public interface MenuManager extends BaseService<Menu> {
      *
      * @param dto 系统菜单数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     boolean add(MenuDTO dto);
@@ -37,7 +37,7 @@ public interface MenuManager extends BaseService<Menu> {
      *
      * @param id 系统菜单id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     boolean delete(Serializable id);
@@ -47,7 +47,7 @@ public interface MenuManager extends BaseService<Menu> {
      *
      * @param dto 菜单数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     boolean modify(MenuDTO dto);
@@ -57,7 +57,7 @@ public interface MenuManager extends BaseService<Menu> {
      *
      * @param id 主键id
      * @return com.carlos.user.pojo.dto.MenuDTO
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     MenuDTO getDtoById(Serializable id);
@@ -66,7 +66,7 @@ public interface MenuManager extends BaseService<Menu> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     Paging<MenuVO> getPage(MenuPageParam param);
@@ -85,7 +85,7 @@ public interface MenuManager extends BaseService<Menu> {
      * 获取某个菜单的直接子菜单数目
      *
      * @param id 菜单id
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/28 17:00
      */
     long getSubMenuCount(Serializable id);
@@ -97,7 +97,7 @@ public interface MenuManager extends BaseService<Menu> {
      * @param detail   是否获取详情
      * @param menuType
      * @return java.util.List<com.carlos.user.pojo.dto.MenuTreeDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/29 15:26
      */
     List<MenuDTO> getMenuTree(Serializable menuId, boolean detail, MenuType menuType);
@@ -107,7 +107,7 @@ public interface MenuManager extends BaseService<Menu> {
      *
      * @param menuId 菜单id
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/29 11:22
      */
     String getNameById(Serializable menuId);

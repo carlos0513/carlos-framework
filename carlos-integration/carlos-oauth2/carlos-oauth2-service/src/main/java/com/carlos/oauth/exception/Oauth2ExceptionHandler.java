@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 全局处理OAUTH2得异常
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/4 11:49
  */
 @ControllerAdvice

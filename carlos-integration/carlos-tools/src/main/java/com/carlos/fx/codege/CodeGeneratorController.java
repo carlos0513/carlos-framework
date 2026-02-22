@@ -217,8 +217,8 @@ public class CodeGeneratorController extends BaseController {
         hostField.setText("100.127.6.234");
         portField.setText("13306");
         usernameField.setText("root");
-        databaseField.setText("yunjin_szt_feature");
-        passwordField.setText("yunjin@123456");
+        databaseField.setText("carlos_szt_feature");
+        passwordField.setText("carlos@123456");
 
         authorField.setText("Carlos");
         packageField.setText("com.carlos.demo");

@@ -21,7 +21,7 @@ import java.util.List;
  * 系统用户 feign 提供接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-20 14:07:16
  */
 @FeignClient(value = ServiceNameConstant.USER, contextId = "user", path = "/api/org/user", fallbackFactory = FeignUserFallbackFactory.class)
@@ -48,7 +48,7 @@ public interface ApiUser {
      *
      * @param id 用户id
      * @return com.carlos.core.base.UserInfo
-     * @author yunjin
+     * @author carlos
      * @date 2022/3/7 16:09
      */
     @GetMapping("getById")
@@ -59,7 +59,7 @@ public interface ApiUser {
      *
      * @param ids 用户id
      * @return com.carlos.core.base.UserInfo
-     * @author yunjin
+     * @author carlos
      * @date 2022/7/12 15:09
      */
     @PostMapping("list")
@@ -70,7 +70,7 @@ public interface ApiUser {
      *
      * @param ids 用户id
      * @return com.carlos.core.base.UserInfo
-     * @author yunjin
+     * @author carlos
      * @date 2022/7/12 15:09
      */
     @PostMapping("taskList")

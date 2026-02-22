@@ -20,7 +20,7 @@ import java.util.Set;
  * 用户菜单收藏表 业务接口实现类
  * </p>
  *
- * @author  yunjin
+ * @author carlos
  * @date    2024-2-28 11:10:01
  */
 @Slf4j

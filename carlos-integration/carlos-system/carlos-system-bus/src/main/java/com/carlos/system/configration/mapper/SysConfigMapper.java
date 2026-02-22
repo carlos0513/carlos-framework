@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 系统配置 查询接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-3 13:47:54
  */
 @Mapper

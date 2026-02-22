@@ -5,11 +5,11 @@
 def calcMeta() {
 	switch (params.DEPLOY_ENV) {
 	case '开发':
-            return [tag: 'Alpha', namespace: 'yunjin-szt-feature']
+            return [tag: 'Alpha', namespace: 'carlos-szt-feature']
         case '测试':
-            return [tag: 'Beta', namespace: 'yunjin-szt-test']
+            return [tag: 'Beta', namespace: 'carlos-szt-test']
         case '演示':
-            return [tag: 'Release', namespace: 'yunjin-szt-demo']
+            return [tag: 'Release', namespace: 'carlos-szt-demo']
         case '自定义':
             def t = params.IMAGE_TAG?.trim()
             def n = params.NAMESPACE?.trim()
@@ -70,7 +70,7 @@ pipeline {
 						// 把全局 settings.xml 下载到工作区，路径注入变量
                         configFileProvider([configFile(fileId: "b46da426-c66a-400d-a254-68ce05001b12", variable: 'MAVEN_SETTINGS')]){
 							// 执行 Maven 命令构建项目，并且设置 Maven 配置为刚刚创建的 Settings.xml 文件
-                            sh "mvn -B -U -T 1C clean package deploy -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dmaven.compile.fork=true -Dmaven.compiler.maxmem=2g -Pyunjin-private -s ${MAVEN_SETTINGS}"
+                            sh "mvn -B -U -T 1C clean package deploy -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dmaven.compile.fork=true -Dmaven.compiler.maxmem=2g -Pcarlos-private -s ${MAVEN_SETTINGS}"
                         }
                     }
                 }

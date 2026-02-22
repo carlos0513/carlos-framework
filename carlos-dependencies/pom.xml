@@ -506,7 +506,12 @@
             <!-- OAuth2组件 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-spring-boot-starter-oauth2</artifactId>
+                <artifactId>carlos-oauth2-service</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos</groupId>
+                <artifactId>carlos-oauth2-api</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 消息队列组件 -->

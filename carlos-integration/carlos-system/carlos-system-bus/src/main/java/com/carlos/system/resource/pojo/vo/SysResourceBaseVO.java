@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 系统资源基础信息
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 @Data

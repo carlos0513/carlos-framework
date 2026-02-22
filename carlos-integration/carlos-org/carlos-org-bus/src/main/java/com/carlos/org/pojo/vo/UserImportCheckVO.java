@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 字段组件配置对象，向页面传输的对象
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-12-07 10:25:02
  */
 @Data

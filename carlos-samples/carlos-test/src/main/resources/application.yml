@@ -105,7 +105,7 @@ spring:
       database: 15
       host: 100.127.6.234
       port: 16379
-      password: ${REDIS_PASSWORD:yunjin@123456}
+      password: ${REDIS_PASSWORD:carlos@123456}
       #      host: 127.0.0.1
       #      port: 26379
       #      password: 'HJbgx_7281&'
@@ -145,10 +145,10 @@ spring:
       datasource:
         # 主库数据源
         master:
-          url: jdbc:mysql://100.127.6.234:13306/yunjin_bbt?useUnicode=true&characterEncoding=UTF-8&userSSL=false&serverTimezone=GMT%2B8
+          url: jdbc:mysql://100.127.6.234:13306/carlos_bbt?useUnicode=true&characterEncoding=UTF-8&userSSL=false&serverTimezone=GMT%2B8
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: ${DB_USERNAME:root}
-          password: ${DB_PASSWORD:yunjin@123456}
+          password: ${DB_PASSWORD:carlos@123456}
       druid:
         initial-size: 5
         min-idle: 5

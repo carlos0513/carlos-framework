@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  * 系统配置 更新参数封装
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-3 13:47:55
  */
 @Data

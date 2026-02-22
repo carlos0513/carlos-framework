@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 角色菜单操作表 显示层对象，向页面传输的对象
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 @Data

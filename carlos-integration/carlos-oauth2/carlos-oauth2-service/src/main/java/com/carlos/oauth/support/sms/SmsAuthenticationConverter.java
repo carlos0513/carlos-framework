@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author yunjin
- * @WebSite www.yunjin.cn
+ * @author carlos
+ * @WebSite www.carlos.cn
  * @Description: 短信登录转换器
  */
 public class SmsAuthenticationConverter extends BaseAuthenticationConverter<SmsAuthenticationToken> {

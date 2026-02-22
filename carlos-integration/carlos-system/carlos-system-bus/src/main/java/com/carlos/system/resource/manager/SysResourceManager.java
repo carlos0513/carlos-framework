@@ -17,7 +17,7 @@ import java.util.Set;
  * 系统资源 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 public interface SysResourceManager extends BaseService<SysResource> {
@@ -27,7 +27,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      *
      * @param dto 系统资源数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     boolean add(SysResourceDTO dto);
@@ -37,7 +37,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      *
      * @param id 系统资源id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     boolean delete(Serializable id);
@@ -47,7 +47,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     boolean modify(SysResourceDTO dto);
@@ -57,7 +57,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      *
      * @param id 主键id
      * @return com.carlos.user.pojo.dto.ResourceDTO
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     SysResourceDTO getDtoById(String id);
@@ -66,7 +66,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     Paging<SysResourceVO> getPage(SysResourcePageParam param);
@@ -85,7 +85,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      *
      * @param menuId 菜单id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/28 17:12
      */
     long getResourceCountByMenuId(Serializable menuId);
@@ -95,7 +95,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      *
      * @param menuId 菜单id
      * @return java.util.List<com.carlos.sys.pojo.dto.MenuTreeDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/4 14:49
      */
     List<SysResourceTreeDTO> getResourceTree(String menuId);
@@ -105,7 +105,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      *
      * @param ids 资源id集合
      * @return java.util.List<com.carlos.sys.pojo.dto.ResourceDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/4 15:25
      */
     List<SysResourceDTO> getDtoByIds(Set<String> ids);
@@ -115,7 +115,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      *
      * @param dto 资源信息
      * @return java.lang.Long
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/12 17:44
      */
     String getIdByDto(SysResourceDTO dto);

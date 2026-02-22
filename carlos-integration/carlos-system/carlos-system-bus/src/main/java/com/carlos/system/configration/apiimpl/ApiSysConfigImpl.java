@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 系统配置 rest服务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-3 13:47:54
  */
 @RestController

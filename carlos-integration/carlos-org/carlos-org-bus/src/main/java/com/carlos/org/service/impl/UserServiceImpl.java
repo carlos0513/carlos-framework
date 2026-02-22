@@ -85,7 +85,7 @@ import java.util.stream.Collectors;
  * 系统用户 业务接口实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  */
 @Slf4j
 @Service
@@ -429,7 +429,7 @@ public class UserServiceImpl implements UserService {
             user.setHead(getFileUrl(user.getHead()));
         }
         if (StrUtil.isNotBlank(user.getSignature())) {
-            // 签名字段数据存储格式https://yunjin.minyisuban.com:40102/bbt-api/sys/file/load?id=2025051917221924395122177945600
+            // 签名字段数据存储格式https://carlos.minyisuban.com:40102/bbt-api/sys/file/load?id=2025051917221924395122177945600
             user.setSignature(getFileUrl(user.getSignature().split("=")[1]));
         }
         if (roleInfo) {

@@ -33,7 +33,7 @@ import java.util.Set;
  * 系统字典详情 查询封装实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @Slf4j

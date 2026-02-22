@@ -19,7 +19,7 @@ import java.util.Set;
  * 部门 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 public interface DepartmentManager extends BaseService<Department> {
@@ -29,7 +29,7 @@ public interface DepartmentManager extends BaseService<Department> {
      *
      * @param dto 部门数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     boolean addOrUpdate(DepartmentDTO dto);
@@ -39,7 +39,7 @@ public interface DepartmentManager extends BaseService<Department> {
      *
      * @param id 部门id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     boolean delete(Serializable id);
@@ -59,7 +59,7 @@ public interface DepartmentManager extends BaseService<Department> {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     boolean modify(DepartmentDTO dto);
@@ -69,7 +69,7 @@ public interface DepartmentManager extends BaseService<Department> {
      *
      * @param id 主键id
      * @return com.carlos.org.dto.user.DepartmentDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     DepartmentDTO getDtoById(String id);
@@ -79,7 +79,7 @@ public interface DepartmentManager extends BaseService<Department> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     Paging<DepartmentVO> getPage(DepartmentPageParam param);
@@ -88,7 +88,7 @@ public interface DepartmentManager extends BaseService<Department> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     Paging<ThirdDepartmentVO> getThirdPage(DepartmentPageParam param,Set<String> ids);
@@ -98,7 +98,7 @@ public interface DepartmentManager extends BaseService<Department> {
      *
      * @param parentId 上级部门id
      * @param deptName 部门名称
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:01:17
      */
     DepartmentDTO getDepartmentByName(String parentId, String deptName);
@@ -107,7 +107,7 @@ public interface DepartmentManager extends BaseService<Department> {
      * 根据部门ids获取部门信息
      *
      * @param deptIds 部门ids
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:01:17
      */
     List<DepartmentVO> getDepartments(List<String> deptIds);
@@ -116,7 +116,7 @@ public interface DepartmentManager extends BaseService<Department> {
      * 根据父级id获取部门信息
      *
      * @param parentId 部门父级id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-14 17:01:17
      */
     List<DepartmentDTO> getDepartmentsByParentId(String parentId);

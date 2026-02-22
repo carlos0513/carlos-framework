@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * 统一认证中心接口调用
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/11 13:51
  */
 @FeignClient(
@@ -27,7 +27,7 @@ public interface FeignAuth {
      *
      * @param param 认证信息
      * @return com.carlos.core.auth.Oauth2TokenDTO
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/27 16:08
      */
     @PostMapping(value = "/oauth2/token")
@@ -40,7 +40,7 @@ public interface FeignAuth {
      *
      * @param password 原密码
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/27 16:07
      */
     @GetMapping(value = "/pwd/encode")
@@ -51,7 +51,7 @@ public interface FeignAuth {
      *
      * @param param 参数
      * @return java.lang.Boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022/4/25 15:30
      */
     @PostMapping(value = "pwd/match")

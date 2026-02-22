@@ -22,7 +22,7 @@ import java.util.List;
  * 系统字典详情 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @Mapper
@@ -36,7 +36,7 @@ public interface SysDictItemConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 14:55
      */
     SysDictItemDTO toDTO(SysDictItemCreateParam param);
@@ -46,7 +46,7 @@ public interface SysDictItemConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 14:55
      */
     SysDictItemDTO toDTO(SysDictItemUpdateParam param);
@@ -56,7 +56,7 @@ public interface SysDictItemConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 15:13
      */
     List<SysDictItemDTO> toDTO(List<SysDictItem> dos);
@@ -66,7 +66,7 @@ public interface SysDictItemConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 15:13
      */
     SysDictItemDTO toDTO(SysDictItem entity);
@@ -76,7 +76,7 @@ public interface SysDictItemConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 14:56
      */
     SysDictItem toDO(SysDictItemDTO dto);
@@ -86,7 +86,7 @@ public interface SysDictItemConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 15:04
      */
     SysDictItemVO toVO(SysDictItemDTO dto);
@@ -96,7 +96,7 @@ public interface SysDictItemConvert {
      *
      * @param dtos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 15:04
      */
 
@@ -114,7 +114,7 @@ public interface SysDictItemConvert {
      *
      * @param dto 原始dto
      * @return 目标dto
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/3 11:53
      */
     SysDictItemDTO toDTO(SysDictItemDTO dto);
@@ -124,7 +124,7 @@ public interface SysDictItemConvert {
      *
      * @param dto 数据传输对象
      * @return com.carlos.common.core.base.DictDTO
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/30 12:33
      */
     @Mapping(source = "itemName", target = "name")

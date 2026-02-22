@@ -20,7 +20,7 @@ import java.util.Set;
  * 系统菜单 业务接口实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 @Slf4j
@@ -34,7 +34,7 @@ public class MenuService {
      * 新增系统菜单
      *
      * @param dto 系统菜单数据
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
 
@@ -65,7 +65,7 @@ public class MenuService {
      * 删除系统菜单
      *
      * @param ids 系统菜单id
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
 
@@ -91,7 +91,7 @@ public class MenuService {
      * 修改系统菜单信息
      *
      * @param dto 对象信息
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
 
@@ -117,7 +117,7 @@ public class MenuService {
      *
      * @param parentId 父id
      * @return java.lang.Integer
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/28 16:08
      */
 
@@ -138,7 +138,7 @@ public class MenuService {
      * 检查菜单下的直接子菜单是否为空
      *
      * @param id 菜单id
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/28 17:10
      */
     private void checkSubMenus(Serializable id) {

@@ -1,4 +1,4 @@
-FROM harbor01.yunjin.com/library/openjdk:8-jdk-bbt-alpine3.9
+FROM harbor01.carlos.com/library/openjdk:8-jdk-bbt-alpine3.9
 
 RUN mkdir -p /jar
 
@@ -11,7 +11,7 @@ EXPOSE ${PORT}
 
 ENV JAVA_OPTS "-Xmx512m -Xms256m -Djava.security.egd=file:/dev/./urandom"
 
-ENV PROJECT_NAME="yunjin-szt-gateway"
+ENV PROJECT_NAME="carlos-szt-gateway"
 
 ADD ./target/${PROJECT_NAME}.jar ./${PROJECT_NAME}.jar
 

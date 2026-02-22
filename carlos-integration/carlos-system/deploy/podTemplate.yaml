@@ -6,7 +6,7 @@ spec:
     # ====== ① JNLP 主容器 ======
     -
       name: jnlp
-      image: 'harbor01.yunjin.com/library/jenkins/inbound-agent:alpine'
+      image: 'harbor01.carlos.com/library/jenkins/inbound-agent:alpine'
       args: [ '$(JENKINS_SECRET)', '$(JENKINS_NAME)' ]
       resources:
         requests:
@@ -27,7 +27,7 @@ spec:
         -
           name: "MAVEN_OPTS"
           value: "-Xmx2g -XX:+UseG1GC"
-      image: "harbor01.yunjin.com/library/maven:3.8.5-openjdk-17"
+      image: "harbor01.carlos.com/library/maven:3.8.5-openjdk-17"
       imagePullPolicy: "IfNotPresent"
       resources:
         requests:
@@ -55,7 +55,7 @@ spec:
     # ====== ③ Docker CLI（复用宿主机引擎） ======
     -
       name: docker
-      image: 'harbor01.yunjin.com/library/docker:19.03.8-dind'
+      image: 'harbor01.carlos.com/library/docker:19.03.8-dind'
       command: [ 'cat' ]
       tty: true
       resources:
@@ -78,7 +78,7 @@ spec:
     # ====== ④ Kubectl ======
     -
       name: kubectl
-      image: 'harbor01.yunjin.com/library/bitnami/kubectl:latest'
+      image: 'harbor01.carlos.com/library/bitnami/kubectl:latest'
       command: [ 'cat' ]
       tty: true
       resources:

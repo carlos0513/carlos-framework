@@ -20,7 +20,7 @@ import java.util.List;
  * 系统菜单 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 @Mapper(uses = CommonConvert.class)
@@ -33,7 +33,7 @@ public interface MenuConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
 
@@ -45,7 +45,7 @@ public interface MenuConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     MenuDTO toDTO(MenuUpdateParam param);
@@ -55,7 +55,7 @@ public interface MenuConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     List<MenuDTO> toDTO(List<Menu> dos);
@@ -65,7 +65,7 @@ public interface MenuConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     MenuDTO toDTO(Menu entity);
@@ -75,7 +75,7 @@ public interface MenuConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     Menu toDO(MenuDTO dto);
@@ -85,7 +85,7 @@ public interface MenuConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     @Mapping(target = "haveChildren", source = "id", qualifiedByName = "haveChildrenMenu")
@@ -96,7 +96,7 @@ public interface MenuConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     List<MenuVO> toVO(List<Menu> dos);
@@ -106,7 +106,7 @@ public interface MenuConvert {
      *
      * @param dtos 数据传输对象
      * @return java.util.List<com.carlos.user.pojo.vo.MenuTreeVO>
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/28 18:23
      */
     List<MenuVO> toListVO(List<MenuDTO> dtos);
@@ -116,7 +116,7 @@ public interface MenuConvert {
      *
      * @param dtos 数据传输对象
      * @return java.util.List<com.carlos.user.pojo.vo.MenuTreeVO>
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/28 18:23
      */
     List<MenuTreeVO> toTreeListVO(List<MenuDTO> dtos);
@@ -126,7 +126,7 @@ public interface MenuConvert {
      *
      * @param dtos 数据传输对象
      * @return java.util.List<com.carlos.user.pojo.vo.MenuTreeVO>
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/28 18:23
      */
     List<MenuRecursionVO> toRecursionListVO(List<MenuDTO> dtos);

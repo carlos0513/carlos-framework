@@ -554,7 +554,7 @@ The framework now contains **38 modules** organized in a layered architecture:
 ### Git Status
 
 - Root directory: Git repository
-- Current branch: `refactor-yunjin-to-carlos`
+- Current branch: `refactor-carlos-to-carlos`
 - Recent changes: Spring Boot 3.x upgrade, architecture refactoring, module consolidation, directory reorganization
 
 ## Reference Documentation

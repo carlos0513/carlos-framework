@@ -1,4 +1,4 @@
-CREATE DATABASE yunjin_message;
+CREATE DATABASE carlos_message;
 
 SET NAMES utf8mb4;
 SET

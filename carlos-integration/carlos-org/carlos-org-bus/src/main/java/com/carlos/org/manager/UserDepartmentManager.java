@@ -21,7 +21,7 @@ import java.util.Set;
  * 用户部门 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 public interface UserDepartmentManager extends BaseService<UserDepartment> {
@@ -31,7 +31,7 @@ public interface UserDepartmentManager extends BaseService<UserDepartment> {
      *
      * @param dtos 用户部门数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean add(List<UserDepartmentDTO> dtos);
@@ -41,7 +41,7 @@ public interface UserDepartmentManager extends BaseService<UserDepartment> {
      *
      * @param userId 用户部门id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean deleteByUserId(String userId);

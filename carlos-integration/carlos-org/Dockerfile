@@ -1,4 +1,4 @@
-FROM harbor01.yunjin.com/library/openjdk:8-jdk-bbt-alpine3.9
+FROM harbor01.carlos.com/library/openjdk:8-jdk-bbt-alpine3.9
 
 RUN mkdir -p /jar
 

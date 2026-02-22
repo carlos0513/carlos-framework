@@ -18,7 +18,7 @@ import java.util.Set;
  * 文件信息 rest服务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @FeignClient(value = ServiceNameConstant.SYSTEM, contextId = "file", path = "/api/sys/file", fallbackFactory = FeignFileFallbackFactory.class)
@@ -29,7 +29,7 @@ public interface ApiFile {
      * 获取文件信息 不包含文件流信息
      *
      * @param id 文件id
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/29 11:29
      */
     @GetMapping("info/{id}")
@@ -39,7 +39,7 @@ public interface ApiFile {
      * 获取文件流信息，包含文件基本信息
      *
      * @param id 文件id
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/29 11:29
      */
     @GetMapping("stream/info/{id}")

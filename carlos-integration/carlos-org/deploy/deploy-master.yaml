@@ -46,10 +46,10 @@ spec:
                             value: 'carlos-spring-boot-starterbbt-master'
                         -
                             name: NACOS_USERNAME
-                            value: 'yunjin'
+                            value: 'carlos'
                         -
                             name: NACOS_PASSWORD
-                            value: 'Yunjin@123456'
+                            value: 'carlos@123456'
                         -
                             name: NACOS_GROUP
                             value: MASTER
@@ -62,7 +62,7 @@ spec:
                         # mysql配置
                         -
                             name: MYSQL_URL
-                            value: '192.168.1.169:13306/yunjin_bbt'
+                            value: '192.168.1.169:13306/carlos_bbt'
                         -
                             name: MYSQL_USERNAME
                             value: bbt
@@ -83,7 +83,7 @@ spec:
                             value: "1"
                         -
                             name: REDIS_PWD
-                            value: 'yunjin@123456'
+                            value: 'carlos@123456'
 
                         # 蓉政通接入配置
                         -

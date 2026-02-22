@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * 系统-通知公告 显示层对象，向页面传输的对象
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-14 23:48:53
  */
 @Data

@@ -42,13 +42,13 @@ spec:
               value: '#SERVER_PORT'
             -
               name: NACOS_NAMESPACE
-              value: 'yunjin-bbt-master'
+              value: 'carlos-bbt-master'
             -
               name: NACOS_USERNAME
-              value: 'yunjin'
+              value: 'carlos'
             -
               name: NACOS_PASSWORD
-              value: 'Yunjin@123456'
+              value: 'carlos@123456'
             -
               name: DEFAULT_PASSWORD
               value: '@bbt2023'
@@ -67,7 +67,7 @@ spec:
               value: "1"
             -
               name: REDIS_PWD
-              value: 'yunjin@123456'
+              value: 'carlos@123456'
 
 ---
 apiVersion: v1

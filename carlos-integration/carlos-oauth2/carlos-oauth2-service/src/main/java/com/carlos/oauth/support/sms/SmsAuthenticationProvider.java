@@ -14,8 +14,8 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.Map;
 
 /**
- * @author yunjin
- * @WebSite www.yunjin.cn
+ * @author carlos
+ * @WebSite www.carlos.cn
  * @Description: 短信登录的核心处理
  */
 public class SmsAuthenticationProvider

@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 登录参数
  *
- * @author yunjin
+ * @author carlos
  * @date 2019-05-15
  **/
 @Data

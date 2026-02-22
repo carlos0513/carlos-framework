@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
  * 对认证服务的授权配置
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/11/4 12:51
  */
 @EnableWebSecurity(debug = true)

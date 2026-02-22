@@ -13,7 +13,7 @@ import java.util.List;
  * 角色菜单 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 @Mapper(uses = {CommonConvert.class})
@@ -27,7 +27,7 @@ public interface RoleMenuConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<RoleMenuDTO> toDTO(List<RoleMenu> dos);
@@ -37,7 +37,7 @@ public interface RoleMenuConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     RoleMenuDTO toDTO(RoleMenu entity);
@@ -47,7 +47,7 @@ public interface RoleMenuConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     RoleMenu toDO(RoleMenuDTO dto);
@@ -57,7 +57,7 @@ public interface RoleMenuConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     RoleMenuVO toVO(RoleMenuDTO dto);
@@ -67,7 +67,7 @@ public interface RoleMenuConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<RoleMenuVO> toVO(List<RoleMenu> dos);

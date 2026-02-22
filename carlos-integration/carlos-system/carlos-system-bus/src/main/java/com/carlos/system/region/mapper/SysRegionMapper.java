@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 行政区域划分 查询接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-8 19:30:24
  */
 @Mapper

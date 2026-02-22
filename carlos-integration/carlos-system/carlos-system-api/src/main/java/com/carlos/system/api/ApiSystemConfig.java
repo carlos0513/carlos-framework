@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 系统菜单 feign 提供接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 @FeignClient(value = ServiceNameConstant.SYSTEM, contextId = "systemconfig", path = "/api/sys/config", fallbackFactory = FeignSystemConfigFallbackFactory.class)

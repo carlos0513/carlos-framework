@@ -17,7 +17,7 @@ import java.util.List;
  * 系统字典详情 rest服务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @FeignClient(value = ServiceNameConstant.SYSTEM, contextId = "dict", path = "api/sys/dict", fallbackFactory = FeignDictFallbackFactory.class)
@@ -28,7 +28,7 @@ public interface ApiDict {
      *
      * @param id 字典id
      * @return com.carlos.voice.common.dto.sys.DictItemDTO
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/20 17:29
      */
     @GetMapping("item/id")
@@ -39,7 +39,7 @@ public interface ApiDict {
      *
      * @param code 字典code
      * @return com.carlos.voice.common.dto.sys.DictItemDTO
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/20 17:29
      */
     @GetMapping("item/code")
@@ -50,7 +50,7 @@ public interface ApiDict {
      *
      * @param code 参数0
      * @return java.util.List<com.carlos.voice.common.dto.sys.DictItemDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/6/1 10:58
      */
     @GetMapping("item/list")

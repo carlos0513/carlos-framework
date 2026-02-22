@@ -9,7 +9,7 @@ import lombok.Getter;
 /**
  * 用户性别
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/17 23:54
  */
 @AppEnum(code = "UserState")

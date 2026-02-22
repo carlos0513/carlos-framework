@@ -33,7 +33,6 @@
         <module>carlos-spring-boot-starter-mongodb</module>
         <module>carlos-spring-boot-starter-mq</module>
         <module>carlos-spring-boot-starter-mybatis</module>
-        <module>carlos-spring-boot-starter-oauth2</module>
         <module>carlos-spring-boot-starter-openapi</module>
         <module>carlos-spring-boot-starter-oss</module>
         <module>carlos-spring-boot-starter-redis</module>

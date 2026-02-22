@@ -13,7 +13,7 @@ import java.util.List;
  * 部门菜单表 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 @Mapper(uses = {CommonConvert.class})
@@ -27,7 +27,7 @@ public interface DepartmentMenuConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<DepartmentMenuDTO> toDTO(List<DepartmentMenu> dos);
@@ -37,7 +37,7 @@ public interface DepartmentMenuConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     DepartmentMenuDTO toDTO(DepartmentMenu entity);
@@ -47,7 +47,7 @@ public interface DepartmentMenuConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<DepartmentMenu> toDO(List<DepartmentMenuDTO> dto);
@@ -57,7 +57,7 @@ public interface DepartmentMenuConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     DepartmentMenuVO toVO(DepartmentMenuDTO dto);
@@ -67,7 +67,7 @@ public interface DepartmentMenuConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<DepartmentMenuVO> toVO(List<DepartmentMenu> dos);

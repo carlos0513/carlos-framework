@@ -15,7 +15,7 @@ import java.util.List;
  * 资源分类 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-1-5 17:23:27
  */
 public interface SysResourceCategoryManager extends BaseService<SysResourceCategory> {
@@ -25,7 +25,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      *
      * @param dto 资源分类数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     boolean add(ResourceCategoryDTO dto);
@@ -35,7 +35,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      *
      * @param id 资源分类id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     boolean delete(Serializable id);
@@ -45,7 +45,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     boolean modify(ResourceCategoryDTO dto);
@@ -55,7 +55,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      *
      * @param id 主键id
      * @return com.carlos.voice.common.dto.sys.ResourceCategoryDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     ResourceCategoryDTO getDtoById(String id);
@@ -64,7 +64,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     Paging<SysResourceCategoryVO> getPage(SysResourceCategoryPageParam param);
@@ -75,7 +75,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      * @param categoryId 分类id
      * @param detail     是否获取详情信息
      * @return java.util.List<com.carlos.voice.common.dto.sys.ResourceCategoryDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/5 16:46
      */
     List<ResourceCategoryDTO> getCategoryTree(String categoryId, boolean detail);
@@ -86,7 +86,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      * @param parentId 父id
      * @param detail   是否获取详情
      * @return java.util.List<com.carlos.voice.common.dto.sys.ResourceCategoryDTO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/5 17:47
      */
     List<ResourceCategoryDTO> getCategoryByParentId(String parentId, boolean detail);
@@ -96,7 +96,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      *
      * @param categoryId 类型id
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/5 17:18
      */
     String getNameById(Serializable categoryId);
@@ -106,7 +106,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      *
      * @param categoryId 分类id
      * @return java.lang.Boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/6 10:46
      */
     boolean existChildren(Serializable categoryId);
@@ -117,7 +117,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      * @param parentId 父id
      * @param name     类型名称
      * @return java.lang.Long
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/12 16:48
      */
     String getIdByName(String parentId, String name);

@@ -26,7 +26,7 @@ import java.util.List;
  * 菜单操作 rest服务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 @RestController
@@ -42,7 +42,7 @@ public class MenuOperateController {
     private final MenuOperateManager menuOperateManager;
 
 
-    @ApiOperationSupport(author = "yunjin")
+    @ApiOperationSupport(author = "carlos")
     @PostMapping("add")
     @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MenuOperateCreateParam param) {
@@ -50,14 +50,14 @@ public class MenuOperateController {
         menuOperateService.addMenuOperate(dto);
     }
 
-    @ApiOperationSupport(author = "yunjin")
+    @ApiOperationSupport(author = "carlos")
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         menuOperateService.deleteMenuOperate(param.getIds());
     }
 
-    @ApiOperationSupport(author = "yunjin")
+    @ApiOperationSupport(author = "carlos")
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MenuOperateUpdateParam param) {
@@ -65,14 +65,14 @@ public class MenuOperateController {
         menuOperateService.updateMenuOperate(dto);
     }
 
-    @ApiOperationSupport(author = "yunjin")
+    @ApiOperationSupport(author = "carlos")
     @GetMapping("{id}")
     @Operation(summary = BASE_NAME + "详情")
     public MenuOperateVO detail(@PathVariable String id) {
         return MenuOperateConvert.INSTANCE.toVO(menuOperateManager.getDtoById(id));
     }
 
-    @ApiOperationSupport(author = "yunjin")
+    @ApiOperationSupport(author = "carlos")
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MenuOperateVO> page(MenuOperatePageParam param) {

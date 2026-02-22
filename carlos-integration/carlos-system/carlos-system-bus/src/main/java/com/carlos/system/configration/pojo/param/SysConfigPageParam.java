@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
  * 系统配置 列表查询参数封装
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-3 13:47:55
  */
 @Data

@@ -11,7 +11,7 @@ import lombok.Getter;
  * 字典类型枚举
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/17 23:54
  */
 @AppEnum(code = "DictType")

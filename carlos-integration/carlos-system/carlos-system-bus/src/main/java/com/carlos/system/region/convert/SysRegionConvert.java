@@ -22,7 +22,7 @@ import java.util.List;
  * 行政区域划分 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-8 19:30:24
  */
 @Mapper(uses = {CommonConvert.class})
@@ -35,7 +35,7 @@ public interface SysRegionConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     SysRegionDTO toDTO(SysRegionCreateParam param);
@@ -45,7 +45,7 @@ public interface SysRegionConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     SysRegionDTO toDTO(SysRegionUpdateParam param);
@@ -55,7 +55,7 @@ public interface SysRegionConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     List<SysRegionDTO> toDTO(List<SysRegion> dos);
@@ -65,7 +65,7 @@ public interface SysRegionConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     SysRegionDTO toDTO(SysRegion entity);
@@ -75,7 +75,7 @@ public interface SysRegionConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     SysRegion toDO(SysRegionDTO dto);
@@ -85,7 +85,7 @@ public interface SysRegionConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     SysRegionVO toVO(SysRegionDTO dto);
@@ -95,7 +95,7 @@ public interface SysRegionConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     List<SysRegionVO> toVO(List<SysRegion> dos);

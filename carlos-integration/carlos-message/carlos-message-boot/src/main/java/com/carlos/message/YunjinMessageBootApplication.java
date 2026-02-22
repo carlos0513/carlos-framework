@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class YunjinMessageBootApplication {
+public class carlosMessageBootApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YunjinMessageBootApplication.class, args);
+        SpringApplication.run(carlosMessageBootApplication.class, args);
     }
 }

@@ -10,8 +10,8 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import java.io.IOException;
 
 /**
- * @author yunjin
- * @WebSite www.yunjin.cn
+ * @author carlos
+ * @WebSite www.carlos.cn
  * @Description: sso 退出功能 ，根据客户端传入跳转
  */
 public class SsoLogoutSuccessHandler implements LogoutSuccessHandler {

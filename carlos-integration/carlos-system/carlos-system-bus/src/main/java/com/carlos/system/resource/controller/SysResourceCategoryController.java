@@ -30,7 +30,7 @@ import java.util.List;
  * 资源分类 rest服务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-1-5 17:23:27
  */
 @RestController

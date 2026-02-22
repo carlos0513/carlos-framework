@@ -39,7 +39,7 @@ spring:
   cloud:
     nacos:
       username: ${NACOS_USERNAME:nacos}
-      password: ${NACOS_PASSWORD:yunjin@123456}
+      password: ${NACOS_PASSWORD:carlos@123456}
       discovery:
         server-addr: ${NACOS_ADDR:http://100.127.6.234:18848/}
         namespace: ${NACOS_NAMESPACE:carlos-dev}

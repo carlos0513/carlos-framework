@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * 行政区域划分 数据传输对象，service和manager向外传输对象
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-8 19:30:24
  */
 @Data

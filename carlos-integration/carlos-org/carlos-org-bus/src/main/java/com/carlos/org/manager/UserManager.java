@@ -24,7 +24,7 @@ import java.util.Set;
  * 系统用户 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  */
 public interface UserManager extends BaseService<User> {
 
@@ -116,7 +116,7 @@ public interface UserManager extends BaseService<User> {
      * @param account
      * @param id
      * @return com.carlos.org.dto.user.UserDTO
-     * @author yunjin
+     * @author carlos
      * @date 20212/11/14 14:51
      */
     UserDTO selectByAccountAndId(String account, String id);

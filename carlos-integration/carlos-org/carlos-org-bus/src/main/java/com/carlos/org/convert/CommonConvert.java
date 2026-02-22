@@ -14,7 +14,7 @@ import java.io.Serializable;
  * 通用转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 @Named("CommonConvert")
@@ -25,7 +25,7 @@ public class CommonConvert {
      *
      * @param id source字段绑定的参数
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     @Named("toName")

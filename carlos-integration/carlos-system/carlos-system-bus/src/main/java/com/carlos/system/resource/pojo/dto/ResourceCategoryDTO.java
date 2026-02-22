@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 资源分类 数据传输对象，service和manager向外传输对象
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-1-5 17:23:27
  */
 @Data

@@ -17,7 +17,7 @@ import java.io.Serializable;
  * 用户菜单收藏表 数据源对象
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2024-2-28 11:10:01
  */
 @Data

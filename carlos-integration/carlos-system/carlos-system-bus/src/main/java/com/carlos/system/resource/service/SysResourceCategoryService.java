@@ -17,7 +17,7 @@ import java.util.Set;
  * 资源分类 业务接口实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-1-5 17:23:27
  */
 @Slf4j
@@ -32,7 +32,7 @@ public class SysResourceCategoryService {
      *
      * @param dto 资源分类数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     public void addResourceCategory(final ResourceCategoryDTO dto) {
@@ -55,7 +55,7 @@ public class SysResourceCategoryService {
      *
      * @param ids 资源分类id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     public void deleteResourceCategory(final Set<Serializable> ids) {
@@ -74,7 +74,7 @@ public class SysResourceCategoryService {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-1-5 17:23:27
      */
     public void updateResourceCategory(final ResourceCategoryDTO dto) {
@@ -91,7 +91,7 @@ public class SysResourceCategoryService {
      *
      * @param categoryId 分类id
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/13 13:47
      */
     public String getParentName(final String categoryId) {

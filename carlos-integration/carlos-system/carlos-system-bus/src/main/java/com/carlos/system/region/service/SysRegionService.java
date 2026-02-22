@@ -41,7 +41,7 @@ import java.util.stream.Stream;
  * 行政区域划分 业务接口实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-8 19:30:25
  */
 @Slf4j
@@ -55,7 +55,7 @@ public class SysRegionService {
      * 新增行政区域划分
      *
      * @param dto 行政区域划分数据
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:25
      */
     public void addSysRegion(SysRegionDTO dto) {
@@ -91,7 +91,7 @@ public class SysRegionService {
      * 删除行政区域划分
      *
      * @param ids 行政区域划分id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:25
      */
     public void deleteSysRegion(Set<Serializable> ids) {
@@ -114,7 +114,7 @@ public class SysRegionService {
      * 修改行政区域划分信息
      *
      * @param dto 对象信息
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:25
      */
     public void updateSysRegion(SysRegionDTO dto) {

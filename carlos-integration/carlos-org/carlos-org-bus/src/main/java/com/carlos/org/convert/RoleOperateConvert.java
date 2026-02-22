@@ -15,7 +15,7 @@ import java.util.List;
  * 角色菜单操作表 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 @Mapper(uses = {CommonConvert.class})
@@ -28,7 +28,7 @@ public interface RoleOperateConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     RoleOperateDTO toDTO(RoleOperateCreateParam param);
@@ -38,7 +38,7 @@ public interface RoleOperateConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     RoleOperateDTO toDTO(RoleOperateUpdateParam param);
@@ -48,7 +48,7 @@ public interface RoleOperateConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     List<RoleOperateDTO> toDTO(List<RoleOperate> dos);
@@ -58,7 +58,7 @@ public interface RoleOperateConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     RoleOperateDTO toDTO(RoleOperate entity);
@@ -68,7 +68,7 @@ public interface RoleOperateConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     RoleOperate toDO(RoleOperateDTO dto);
@@ -78,7 +78,7 @@ public interface RoleOperateConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     RoleOperateVO toVO(RoleOperateDTO dto);
@@ -88,7 +88,7 @@ public interface RoleOperateConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     List<RoleOperateVO> toVO(List<RoleOperate> dos);
@@ -98,7 +98,7 @@ public interface RoleOperateConvert {
      *
      * @param entity 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     RoleOperateVO toVO(RoleOperate entity);

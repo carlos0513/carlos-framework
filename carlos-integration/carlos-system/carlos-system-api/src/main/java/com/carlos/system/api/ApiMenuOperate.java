@@ -16,7 +16,7 @@ import java.util.Set;
  * 菜单操作 feign 提供接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 @FeignClient(value = ServiceNameConstant.SYSTEM, contextId = "menuOperate", path = "/api/sys/menu/operate", fallbackFactory = ApiMenuOperateFallbackFactory.class)

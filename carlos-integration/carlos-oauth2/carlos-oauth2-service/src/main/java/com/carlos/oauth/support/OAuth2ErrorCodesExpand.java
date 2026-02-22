@@ -1,8 +1,8 @@
 package com.carlos.oauth.support;
 
 /**
- * @author yunjin
- * @WebSite www.yunjin.cn
+ * @author carlos
+ * @WebSite www.carlos.cn
  * @Description:
  */
 public interface OAuth2ErrorCodesExpand {

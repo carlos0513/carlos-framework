@@ -15,7 +15,7 @@ import java.util.List;
  * 用户角色 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 @Mapper(uses = {CommonConvert.class})
@@ -29,7 +29,7 @@ public interface UserRoleConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<UserRoleDTO> toDTO(List<UserRole> dos);
@@ -39,7 +39,7 @@ public interface UserRoleConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     UserRoleDTO toDTO(UserRole entity);
@@ -49,7 +49,7 @@ public interface UserRoleConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     UserRole toDO(UserRoleDTO dto);
@@ -59,7 +59,7 @@ public interface UserRoleConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     UserRoleVO toVO(UserRoleDTO dto);
@@ -69,7 +69,7 @@ public interface UserRoleConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<UserRoleVO> toVO(List<UserRole> dos);
@@ -79,7 +79,7 @@ public interface UserRoleConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<UserRole> toDO(List<UserRoleDTO> dos);

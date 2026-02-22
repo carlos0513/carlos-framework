@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  * 绵阳定开 参数扩展
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2024-1104 10:10:28
  */
 @Data

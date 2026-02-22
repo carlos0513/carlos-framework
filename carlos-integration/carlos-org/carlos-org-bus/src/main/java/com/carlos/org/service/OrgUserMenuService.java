@@ -11,7 +11,7 @@ import java.util.Set;
  * 用户菜单收藏表 业务接口
  * </p>
  *
- * @author  yunjin
+ * @author carlos
  * @date    2024-2-28 11:10:01
  */
 public interface OrgUserMenuService{
@@ -20,7 +20,7 @@ public interface OrgUserMenuService{
      * 新增用户菜单收藏表
      *
      * @param dto 用户菜单收藏表数据
-     * @author  yunjin
+     * @author carlos
      * @date    2024-2-28 11:10:01
      */
     void addOrgUserMenu(OrgUserMenuDTO dto);
@@ -29,7 +29,7 @@ public interface OrgUserMenuService{
      * 删除用户菜单收藏表
      *
      * @param ids 用户菜单收藏表id
-     * @author  yunjin
+     * @author carlos
      * @date    2024-2-28 11:10:01
      */
     void deleteOrgUserMenu(Set<String> ids);
@@ -38,7 +38,7 @@ public interface OrgUserMenuService{
      * 修改用户菜单收藏表信息
      *
      * @param dto 对象信息
-     * @author  yunjin
+     * @author carlos
      * @date    2024-2-28 11:10:01
      */
     void updateOrgUserMenu(OrgUserMenuDTO dto);

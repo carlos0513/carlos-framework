@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  * 部门 分类树查询参数封装
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 @Data

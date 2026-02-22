@@ -24,7 +24,7 @@ import java.util.Set;
  * 部门 业务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 public interface DepartmentService {
@@ -33,7 +33,7 @@ public interface DepartmentService {
      * 新增部门
      *
      * @param dto 部门数据
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     void saveOrUpdate(DepartmentDTO dto);
@@ -42,7 +42,7 @@ public interface DepartmentService {
      * 删除部门
      *
      * @param ids 部门id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     void deleteDepartment(Set<Serializable> ids);
@@ -60,7 +60,7 @@ public interface DepartmentService {
      * 修改部门信息
      *
      * @param dto 对象信息
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     void updateDepartment(DepartmentDTO dto);

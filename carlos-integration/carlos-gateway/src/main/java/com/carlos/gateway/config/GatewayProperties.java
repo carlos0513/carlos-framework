@@ -12,12 +12,12 @@ import java.util.List;
  * 网关相关配置
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/4/13 16:00
  */
 
 @Data
-@ConfigurationProperties(prefix = "yunjin.gateway")
+@ConfigurationProperties(prefix = "carlos.gateway")
 public class GatewayProperties implements InitializingBean {
 
     private String prefix = "/bbt-api";

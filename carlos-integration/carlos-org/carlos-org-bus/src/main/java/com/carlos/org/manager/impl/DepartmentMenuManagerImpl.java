@@ -19,7 +19,7 @@ import java.util.List;
  * 部门菜单表 查询封装实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 @Slf4j

@@ -16,7 +16,7 @@ import java.util.Set;
  * 行政区域划分 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-8 19:30:24
  */
 public interface SysRegionManager extends BaseService<SysRegion> {
@@ -26,7 +26,7 @@ public interface SysRegionManager extends BaseService<SysRegion> {
      *
      * @param dto 行政区域划分数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     boolean add(SysRegionDTO dto);
@@ -36,7 +36,7 @@ public interface SysRegionManager extends BaseService<SysRegion> {
      *
      * @param id 行政区域划分id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     boolean delete(Serializable id);
@@ -46,7 +46,7 @@ public interface SysRegionManager extends BaseService<SysRegion> {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     boolean modify(SysRegionDTO dto);
@@ -56,7 +56,7 @@ public interface SysRegionManager extends BaseService<SysRegion> {
      *
      * @param id 主键id
      * @return com.carlos.system.region.pojo.dto.SysRegionDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     SysRegionDTO getDtoById(Serializable id);
@@ -65,7 +65,7 @@ public interface SysRegionManager extends BaseService<SysRegion> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-8 19:30:24
      */
     Paging<SysRegionVO> getPage(SysRegionPageParam param);
@@ -73,7 +73,7 @@ public interface SysRegionManager extends BaseService<SysRegion> {
     /**
      * 根据regionCode获取区域信息
      *
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-9 21:24:24
      */
     SysRegionDTO getByRegionCode(String regionCode);

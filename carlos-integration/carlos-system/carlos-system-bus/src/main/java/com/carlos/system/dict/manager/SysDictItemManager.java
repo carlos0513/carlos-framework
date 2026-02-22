@@ -16,7 +16,7 @@ import java.util.Set;
  * 系统字典详情 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 public interface SysDictItemManager extends IService<SysDictItem> {
@@ -26,7 +26,7 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      *
      * @param dto 数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021-11-22 14:49:00
      */
     boolean add(SysDictItemDTO dto);
@@ -39,7 +39,7 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      * @param name     名称
      * @param code     编码
      * @return long
-     * @author yunjin
+     * @author carlos
      * @date 2021-11-22 14:49:00
      */
     long count(Serializable dictId, Serializable excludeId, String name, String code);
@@ -49,7 +49,7 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      *
      * @param id 主键id
      * @return com.carlos.dict.pojo.vo.DictItemVO
-     * @author yunjin
+     * @author carlos
      * @date 2021-11-22 14:49:00
      */
     SysDictItemDTO getItemById(Serializable id);
@@ -58,7 +58,7 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2021-11-22 14:49:00
      */
     IPage<SysDictItemVO> getPage(SysDictItemPageParam param);
@@ -68,7 +68,7 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      *
      * @param id 字典选项id
      * @return java.lang.Long
-     * @author yunjin
+     * @author carlos
      * @date 2021/11/25 16:39
      */
     String getDictIdById(String id);
@@ -80,7 +80,7 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      * @param name   搜索名称
      * @param onlyEnable 是否只查询启用的
      * @return java.util.List<com.carlos.dict.pojo.vo.DictItemListVO>
-     * @author yunjin
+     * @author carlos
      * @date 2021/11/25 16:54
      */
     List<SysDictItemDTO> listItems(Set<Serializable> dictIds, String name, boolean onlyEnable);
@@ -90,7 +90,7 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      *
      * @param dictCode 字典编码
      * @return java.util.List<com.carlos.dict.pojo.vo.DictItemVO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/4 11:13
      */
     List<SysDictItemDTO> listByDictCode(String dictCode);
@@ -100,7 +100,7 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      *
      * @param ids 字典选项id
      * @return java.util.List<com.carlos.dict.pojo.vo.DictItemVO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/4 11:13
      */
     List<SysDictItemDTO> listByItemIds(Set<String> ids);

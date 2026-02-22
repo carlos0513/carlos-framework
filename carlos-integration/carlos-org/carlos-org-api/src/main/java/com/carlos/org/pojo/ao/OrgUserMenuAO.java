@@ -11,7 +11,7 @@ import java.io.Serializable;
     * 用户菜单收藏表 API提供的对象(API Object)
     * </p>
 *
-* @author  yunjin
+ * @author carlos
 * @date    2024-2-28 11:10:01
 */
 @Data

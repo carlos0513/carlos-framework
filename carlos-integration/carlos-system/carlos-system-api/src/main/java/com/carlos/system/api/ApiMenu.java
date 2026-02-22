@@ -19,7 +19,7 @@ import java.util.Set;
  * 系统菜单 feign 提供接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 @FeignClient(value = ServiceNameConstant.SYSTEM, contextId = "menu", path = "/api/sys/menu", fallbackFactory = FeignMenuFallbackFactory.class)
@@ -30,7 +30,7 @@ public interface ApiMenu {
      *
      * @param id 菜单id
      * @return com.carlos.voice.common.dto.sys.MenuDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/6 14:52
      */
     @GetMapping(value = "/")

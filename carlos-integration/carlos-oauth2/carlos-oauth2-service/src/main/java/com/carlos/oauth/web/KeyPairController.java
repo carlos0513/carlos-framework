@@ -16,7 +16,7 @@ import java.util.Map;
  * 获取RSA公钥接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/4 12:48
  */
 @AllArgsConstructor
@@ -30,7 +30,7 @@ public class KeyPairController {
      * 由于我们的网关服务需要RSA的公钥来验证签名是否合法，所以认证服务需要有个接口把公钥暴露出来
      *
      * @return java.util.Map<java.lang.String, java.lang.Object>
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/6 10:38
      */
     @GetMapping("/rsa/public")

@@ -75,7 +75,7 @@ sourceEncoding: utf-8
 version: 1.0.0-SNAPSHOT
 domain: www.zcarlos.com
 cache:
-key-prefix: yunjin:single
+key-prefix: carlos:single
 user-prefix: true
 
 ############################ application end ###############################

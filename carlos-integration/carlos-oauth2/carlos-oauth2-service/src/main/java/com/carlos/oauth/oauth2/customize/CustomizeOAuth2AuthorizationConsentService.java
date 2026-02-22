@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * 2.资源服务器未校验权限 资源服务器需通过 .hasAuthority() 或 .hasRole() 方法声明所需的权限，否则即使授权同意信息存在也不会触发校验。
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/11/4 13:19
  */
 public class CustomizeOAuth2AuthorizationConsentService implements OAuth2AuthorizationConsentService {

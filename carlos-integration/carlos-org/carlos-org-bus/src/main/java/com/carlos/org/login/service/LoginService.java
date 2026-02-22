@@ -13,7 +13,7 @@ import com.carlos.org.pojo.dto.UserDTO;
  * 登录服务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2019-05-23
  **/
 public interface LoginService {
@@ -24,7 +24,7 @@ public interface LoginService {
      *
      * @param loginParam 登录参数
      * @return 返回token和用户的登录信息
-     * @author yunjin
+     * @author carlos
      * @date 2020/4/15 14:49
      */
     LoginSuccessVO login(LoginParam loginParam);
@@ -43,7 +43,7 @@ public interface LoginService {
     /**
      * 退出登录
      *
-     * @author yunjin
+     * @author carlos
      * @date 2021/2/20 12:05
      */
     void logout();

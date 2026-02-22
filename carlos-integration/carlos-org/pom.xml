@@ -35,11 +35,6 @@
             </dependency>
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-docking-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.carlos</groupId>
                 <artifactId>carlos-org-bus</artifactId>
                 <version>${project.version}</version>
             </dependency>

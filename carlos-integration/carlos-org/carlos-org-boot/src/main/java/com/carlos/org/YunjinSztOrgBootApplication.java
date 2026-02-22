@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class YunjinSztOrgBootApplication {
+public class carlosSztOrgBootApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YunjinSztOrgBootApplication.class, args);
+        SpringApplication.run(carlosSztOrgBootApplication.class, args);
     }
 }

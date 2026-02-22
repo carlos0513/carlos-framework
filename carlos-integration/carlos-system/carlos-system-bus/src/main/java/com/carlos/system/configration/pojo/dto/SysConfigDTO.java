@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * 系统配置 数据传输对象，service和manager向外传输对象
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-3 13:47:54
  */
 @Data

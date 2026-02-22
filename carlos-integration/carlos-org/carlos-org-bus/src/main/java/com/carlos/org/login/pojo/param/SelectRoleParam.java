@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 选择角色参数
  *
- * @author yunjin
+ * @author carlos
  * @date 2019-05-15
  **/
 @Data

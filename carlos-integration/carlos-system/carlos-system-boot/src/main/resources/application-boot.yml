@@ -14,7 +14,7 @@ spring:
 
 
 ---
-yunjin:
+carlos:
   system:
     file:
       base-url: http://127.0.0.1:9511
@@ -26,7 +26,7 @@ yunjin:
     access-key: ${MINIO_USERNAME}
     secret-key: ${MINIO_PWD}
     public-endpoint: ${MINIO_PUBLIC_HOST}
-    bucket: yunjin-default
+    bucket: carlos-default
     connect-timeout: 10s
     write-timeout: 60s
     read-timeout: 10s

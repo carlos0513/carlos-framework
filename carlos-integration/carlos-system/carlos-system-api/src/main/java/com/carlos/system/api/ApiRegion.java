@@ -21,7 +21,7 @@ import java.util.Set;
  * 行政区域 feign 提供接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @FeignClient(value = ServiceNameConstant.SYSTEM, contextId = "region", fallbackFactory = FeignRegionFallbackFactory.class, path = "/api/sys/region")

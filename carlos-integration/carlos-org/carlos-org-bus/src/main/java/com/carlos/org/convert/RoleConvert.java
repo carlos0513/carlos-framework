@@ -21,7 +21,7 @@ import java.util.List;
  * 系统角色 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 @Mapper(uses = {CommonConvert.class})
@@ -34,7 +34,7 @@ public interface RoleConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     RoleDTO toDTO(RoleCreateParam param);
@@ -44,7 +44,7 @@ public interface RoleConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     RoleDTO toDTO(RoleUpdateParam param);
@@ -54,7 +54,7 @@ public interface RoleConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     List<RoleDTO> toDTO(List<Role> dos);
@@ -64,7 +64,7 @@ public interface RoleConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     RoleDTO toDTO(Role entity);
@@ -74,7 +74,7 @@ public interface RoleConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     Role toDO(RoleDTO dto);
@@ -84,7 +84,7 @@ public interface RoleConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     RoleVO toVO(RoleDTO dto);
@@ -94,7 +94,7 @@ public interface RoleConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     List<RoleVO> toVO(List<Role> dos);

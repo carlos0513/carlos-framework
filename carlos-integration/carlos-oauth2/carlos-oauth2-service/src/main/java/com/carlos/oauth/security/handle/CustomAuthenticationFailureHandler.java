@@ -18,8 +18,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import java.io.IOException;
 
 /**
- * @author yunjin
- * @WebSite www.yunjin.cn
+ * @author carlos
+ * @WebSite www.carlos.cn
  * @Description: 处理登录以及续签失败
  */
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {

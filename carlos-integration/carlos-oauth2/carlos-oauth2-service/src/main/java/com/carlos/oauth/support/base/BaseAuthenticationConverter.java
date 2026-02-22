@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * 自定义登录信息转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/11/4 17:39
  */
 public abstract class BaseAuthenticationConverter<T extends BaseAuthenticationToken> implements AuthenticationConverter {

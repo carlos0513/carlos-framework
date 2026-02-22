@@ -71,7 +71,7 @@ pipeline {
 						// 把全局 settings.xml 下载到工作区，路径注入变量
                         configFileProvider([configFile(fileId: "b46da426-c66a-400d-a254-68ce05001b12", variable: 'MAVEN_SETTINGS')]){
 							// 执行 Maven 命令构建项目，并且设置 Maven 配置为刚刚创建的 Settings.xml 文件
-                            sh "mvn -B -U -T 1C clean package deploy -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dmaven.compile.fork=true -Dmaven.compiler.maxmem=2g -Pyunjin-private -s ${MAVEN_SETTINGS}"
+                            sh "mvn -B -U -T 1C clean package deploy -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dmaven.compile.fork=true -Dmaven.compiler.maxmem=2g -Pcarlos-private -s ${MAVEN_SETTINGS}"
                         }
                     }
                 }

@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  * 资源分类 更新参数封装
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-1-5 17:23:27
  */
 @Data

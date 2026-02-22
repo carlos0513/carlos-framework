@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * 系统字典 数据源对象
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @Data

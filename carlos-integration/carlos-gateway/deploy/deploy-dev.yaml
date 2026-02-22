@@ -42,7 +42,7 @@ spec:
               value: '#SERVER_PORT'
             -
               name: NACOS_NAMESPACE
-              value: yunjin-szt-feature
+              value: carlos-szt-feature
             -
               name: NACOS_USERNAME
               value: bbt

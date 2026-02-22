@@ -23,7 +23,7 @@ CREATE TABLE sys_service_register
   ROW_FORMAT = DYNAMIC;
 
 
-ALTER TABLE `yunjin_bbt`.`sys_region`
+ALTER TABLE `carlos_bbt`.`sys_region`
     ADD COLUMN `sort` INT NULL DEFAULT 0 COMMENT '排序' AFTER `update_time`
 
 

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * 系统字典详情 业务接口实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @Slf4j
@@ -48,7 +48,7 @@ public class SysDictItemService {
      *
      * @param dictId 字典id
      * @param items  字典选项
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 10:22
      */
     @Transactional(rollbackFor = Exception.class)
@@ -87,7 +87,7 @@ public class SysDictItemService {
      *
      * @param dict 字典
      * @param items 字典选项
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 13:52
      */
     @Transactional(rollbackFor = Exception.class)
@@ -119,7 +119,7 @@ public class SysDictItemService {
      *
      * @param dto 字典选项
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 13:52
      */
     @Transactional(rollbackFor = Exception.class)
@@ -157,7 +157,7 @@ public class SysDictItemService {
      * @param dict 字典
      * @param ids 字典选项id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 13:50
      */
     @Transactional(rollbackFor = Exception.class)
@@ -171,7 +171,7 @@ public class SysDictItemService {
      * 删除字典选项
      *
      * @param dict 字典
-     * @author yunjin
+     * @author carlos
      * @date 2021/12/2 13:50
      */
     public void deleteByDict(SysDictDTO dict) {
@@ -185,7 +185,7 @@ public class SysDictItemService {
      *
      * @param dictId 字典id
      * @return java.lang.Long
-     * @author yunjin
+     * @author carlos
      * @date 2021/11/25 17:21
      */
     public Integer getNewSort(final Serializable dictId) {
@@ -201,7 +201,7 @@ public class SysDictItemService {
      * @param code 字典code
      * @param name 选项名称
      * @return com.carlos.sys.pojo.dto.DictItemDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/6 18:06
      */
     public List<SysDictItemDTO> getItemsByDictCode(final String code, final String name) {

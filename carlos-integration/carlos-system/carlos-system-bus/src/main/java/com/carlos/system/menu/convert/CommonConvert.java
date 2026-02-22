@@ -9,7 +9,7 @@ import java.io.Serializable;
  * 通用转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 @Named("CommonConvert")
@@ -20,7 +20,7 @@ public class CommonConvert {
      *
      * @param id source字段绑定的参数
      * @return java.lang.String
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     @Named("toName")

@@ -3,7 +3,7 @@ package com.carlos.auth;
 /**
  * 服务名称常量
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/12/9 14:29
  */
 public interface ServiceNameConstant {

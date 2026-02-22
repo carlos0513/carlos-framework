@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * 启动时进行字典初始化
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/26 16:45
  */
 @Component

@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
  * 系统角色 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 @Mapper
@@ -23,7 +23,7 @@ public interface LoginConvert {
      *
      * @param vo 参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     LoginSuccessAO voToAO(LoginSuccessVO vo);

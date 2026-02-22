@@ -9,7 +9,7 @@ import lombok.Getter;
 /**
  * 系统资源类型
  *
- * @author yunjin
+ * @author carlos
  * @date 2020/4/11 23:26
  */
 @Getter

@@ -16,7 +16,7 @@ import java.util.Set;
  * 系统角色 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 public interface RoleManager extends BaseService<Role> {
@@ -26,7 +26,7 @@ public interface RoleManager extends BaseService<Role> {
      *
      * @param dto 系统角色数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     boolean add(RoleDTO dto);
@@ -36,7 +36,7 @@ public interface RoleManager extends BaseService<Role> {
      *
      * @param id 系统角色id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     boolean delete(Serializable id);
@@ -46,7 +46,7 @@ public interface RoleManager extends BaseService<Role> {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     boolean modify(RoleDTO dto);
@@ -77,7 +77,7 @@ public interface RoleManager extends BaseService<Role> {
      *
      * @param id 主键id
      * @return com.carlos.org.dto.user.RoleDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     RoleDTO getDtoById(Serializable id);
@@ -87,7 +87,7 @@ public interface RoleManager extends BaseService<Role> {
      *
      * @param ids 主键id
      * @return com.carlos.org.dto.user.RoleDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     List<RoleDTO> getDtoByIds(Set<String> ids);
@@ -96,7 +96,7 @@ public interface RoleManager extends BaseService<Role> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     Paging<RolePageVO> getPage(RolePageParam param);

@@ -17,7 +17,7 @@ import java.util.List;
  * 系统配置 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-3 13:47:54
  */
 @Mapper(uses = {CommonConvert.class})
@@ -30,7 +30,7 @@ public interface SysConfigConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:54
      */
     SysConfigDTO toDTO(SysConfigCreateParam param);
@@ -40,7 +40,7 @@ public interface SysConfigConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:54
      */
     SysConfigDTO toDTO(SysConfigUpdateParam param);
@@ -50,7 +50,7 @@ public interface SysConfigConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:54
      */
     List<SysConfigDTO> toDTO(List<SysConfig> dos);
@@ -60,7 +60,7 @@ public interface SysConfigConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:54
      */
     SysConfigDTO toDTO(SysConfig entity);
@@ -70,7 +70,7 @@ public interface SysConfigConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:54
      */
     SysConfig toDO(SysConfigDTO dto);
@@ -80,7 +80,7 @@ public interface SysConfigConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:54
      */
     SysConfigVO toVO(SysConfigDTO dto);
@@ -90,7 +90,7 @@ public interface SysConfigConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-3 13:47:54
      */
     List<SysConfigVO> toVO(List<SysConfig> dos);

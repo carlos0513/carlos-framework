@@ -17,7 +17,7 @@ import java.util.List;
  * 用户部门 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 @Mapper(uses = {CommonConvert.class})
@@ -31,7 +31,7 @@ public interface UserDepartmentConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<UserDepartmentDTO> toDTO(List<UserDepartment> dos);
@@ -41,7 +41,7 @@ public interface UserDepartmentConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     UserDepartmentDTO toDTO(UserDepartment entity);
@@ -51,7 +51,7 @@ public interface UserDepartmentConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
 
@@ -62,7 +62,7 @@ public interface UserDepartmentConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<UserDepartment> toDO(List<UserDepartmentDTO> dto);
@@ -72,7 +72,7 @@ public interface UserDepartmentConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     @Mapping(target = "admin", source = "isAdmin")
@@ -83,7 +83,7 @@ public interface UserDepartmentConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<UserDepartmentVO> toVO(List<UserDepartment> dos);
@@ -93,7 +93,7 @@ public interface UserDepartmentConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     @Mapping(target = "admin", source = "isAdmin")
@@ -103,7 +103,7 @@ public interface UserDepartmentConvert {
      *
      * @param dto
      * @return 用户部门关联显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-14 12:21:46
      */
     UserDepartmentDTO userDtoToDepartmentDto(UserDTO dto);
@@ -113,7 +113,7 @@ public interface UserDepartmentConvert {
      *
      * @param dtos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     List<UserDepartmentVO> dtoToVO(List<UserDepartmentDTO> dtos);

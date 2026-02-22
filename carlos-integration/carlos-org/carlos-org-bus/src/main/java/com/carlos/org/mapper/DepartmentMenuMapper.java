@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 部门菜单表 查询接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 @Mapper

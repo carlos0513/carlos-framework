@@ -16,7 +16,7 @@ import java.util.Set;
  * 菜单操作 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 public interface MenuOperateManager extends BaseService<MenuOperate> {
@@ -26,7 +26,7 @@ public interface MenuOperateManager extends BaseService<MenuOperate> {
      *
      * @param dto 菜单操作数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     boolean add(MenuOperateDTO dto);
@@ -36,7 +36,7 @@ public interface MenuOperateManager extends BaseService<MenuOperate> {
      *
      * @param id 菜单操作id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     boolean delete(Serializable id);
@@ -46,7 +46,7 @@ public interface MenuOperateManager extends BaseService<MenuOperate> {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     boolean modify(MenuOperateDTO dto);
@@ -56,7 +56,7 @@ public interface MenuOperateManager extends BaseService<MenuOperate> {
      *
      * @param id 主键id
      * @return com.carlos.system.menu.pojo.dto.MenuOperateDTO
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     MenuOperateDTO getDtoById(Serializable id);
@@ -65,7 +65,7 @@ public interface MenuOperateManager extends BaseService<MenuOperate> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     Paging<MenuOperateVO> getPage(MenuOperatePageParam param);

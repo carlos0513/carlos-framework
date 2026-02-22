@@ -14,7 +14,7 @@ import java.util.Set;
  * 角色菜单 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 public interface RoleMenuManager extends BaseService<RoleMenu> {
@@ -24,7 +24,7 @@ public interface RoleMenuManager extends BaseService<RoleMenu> {
      *
      * @param dto 角色菜单数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean add(RoleMenuDTO dto);
@@ -34,7 +34,7 @@ public interface RoleMenuManager extends BaseService<RoleMenu> {
      *
      * @param id 角色菜单id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean delete(Serializable id);
@@ -44,7 +44,7 @@ public interface RoleMenuManager extends BaseService<RoleMenu> {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean modify(RoleMenuDTO dto);
@@ -54,7 +54,7 @@ public interface RoleMenuManager extends BaseService<RoleMenu> {
      *
      * @param id 主键id
      * @return com.carlos.org.pojo.dto.RoleMenuDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     RoleMenuDTO getDtoById(String id);

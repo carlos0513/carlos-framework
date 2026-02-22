@@ -23,7 +23,7 @@ import java.util.List;
  * 系统资源 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-28 15:26:57
  */
 @Mapper(uses = {CommonConvert.class})
@@ -36,7 +36,7 @@ public interface SysResourceConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     SysResourceDTO toDTO(SysResourceCreateParam param);
@@ -46,7 +46,7 @@ public interface SysResourceConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     SysResourceDTO toDTO(SysResourceUpdateParam param);
@@ -56,7 +56,7 @@ public interface SysResourceConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     List<SysResourceDTO> toDTO(List<SysResource> dos);
@@ -66,7 +66,7 @@ public interface SysResourceConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     SysResourceDTO toDTO(SysResource entity);
@@ -76,7 +76,7 @@ public interface SysResourceConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     SysResource toDO(SysResourceDTO dto);
@@ -86,7 +86,7 @@ public interface SysResourceConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     SysResourceVO toVO(SysResourceDTO dto);
@@ -96,7 +96,7 @@ public interface SysResourceConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     @Mapping(target = "categoryName", source = "categoryId", qualifiedByName = "toCategoryName")
@@ -107,7 +107,7 @@ public interface SysResourceConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2021-12-28 15:26:57
      */
     List<SysResourceVO> toVO(List<SysResource> dos);
@@ -126,7 +126,7 @@ public interface SysResourceConvert {
      *
      * @param resourceTree 参数0
      * @return java.util.List<com.carlos.sys.pojo.vo.ResourceTreeVO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/4 15:13
      */
     List<SysResourceTreeVO> toTreeVO(List<SysResourceTreeDTO> resourceTree);
@@ -136,7 +136,7 @@ public interface SysResourceConvert {
      *
      * @param resource 参数0
      * @return java.util.List<com.carlos.sys.pojo.vo.ResourceGroupVO>
-     * @author yunjin
+     * @author carlos
      * @date 2022/1/13 12:46
      */
     List<SysResourceGroupVO> toGroupVO(List<SysResourceGroupDTO> resource);

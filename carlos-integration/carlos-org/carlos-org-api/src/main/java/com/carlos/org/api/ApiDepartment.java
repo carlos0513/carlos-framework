@@ -26,7 +26,7 @@ import java.util.Set;
  * 部门 feign 提供接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-12-20 14:07:16
  */
 @FeignClient(value = ServiceNameConstant.USER, path = "/api/org/department", contextId = "department", fallbackFactory = FeignDepartmentFallbackFactory.class)

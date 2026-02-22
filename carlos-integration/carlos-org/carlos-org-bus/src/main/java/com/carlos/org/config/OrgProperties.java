@@ -18,7 +18,7 @@ import java.time.Duration;
  */
 @Slf4j
 @Data
-@ConfigurationProperties (prefix = "yunjin.org")
+@ConfigurationProperties(prefix = "carlos.org")
 public class OrgProperties implements InitializingBean {
 
 

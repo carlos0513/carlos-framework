@@ -31,7 +31,7 @@ import java.util.Set;
  * 系统字典 业务接口实现类
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @Slf4j
@@ -50,7 +50,7 @@ public class SysDictService {
      *
      * @param dto 字典数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021/11/30 10:28
      */
 
@@ -77,7 +77,7 @@ public class SysDictService {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021/11/30 16:59
      */
     @Transactional(rollbackFor = Exception.class)
@@ -110,7 +110,7 @@ public class SysDictService {
      *
      * @param ids 字典id
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2021/11/30 11:03
      */
 

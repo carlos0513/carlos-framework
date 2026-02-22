@@ -22,7 +22,7 @@ import java.io.Serializable;
  * 用户菜单收藏表 查询封装实现类
  * </p>
  *
- * @author  yunjin
+ * @author carlos
  * @date    2024-2-28 11:10:01
  */
 @Slf4j

@@ -31,7 +31,7 @@ import java.util.List;
  * 系统字典详情 rest服务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021-11-22 14:49:00
  */
 @RestController

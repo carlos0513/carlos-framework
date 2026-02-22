@@ -17,7 +17,7 @@ import java.util.Set;
  * 系统角色 业务接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 18:19:17
  */
 public interface RoleService {
@@ -26,7 +26,7 @@ public interface RoleService {
      * 新增系统角色
      *
      * @param dto 系统角色数据
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     Boolean addRole(RoleDTO dto);
@@ -44,7 +44,7 @@ public interface RoleService {
      * 删除系统角色
      *
      * @param ids 系统角色id
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     Boolean deleteRole(Set<String> ids);
@@ -53,7 +53,7 @@ public interface RoleService {
      * 修改系统角色信息
      *
      * @param dto 对象信息
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 18:19:17
      */
     Boolean updateRole(RoleDTO dto);

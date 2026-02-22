@@ -16,12 +16,12 @@ import java.util.Set;
  * 网关认证相关属性配置
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/12/22 10:13
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.gateway.auth")
+@ConfigurationProperties(prefix = "carlos.gateway.auth")
 public class GatewayAuthProperties implements InitializingBean {
 
     /**

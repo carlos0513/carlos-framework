@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = "yunjin.system")
+@ConfigurationProperties(prefix = "carlos.system")
 public class MenuApiMappingProperties {
 
 

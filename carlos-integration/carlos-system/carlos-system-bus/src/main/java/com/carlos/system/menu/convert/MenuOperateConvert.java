@@ -16,7 +16,7 @@ import java.util.List;
  * 菜单操作 转换器
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2023-7-7 14:19:55
  */
 @Mapper(uses = {CommonConvert.class})
@@ -29,7 +29,7 @@ public interface MenuOperateConvert {
      *
      * @param param 新增参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     MenuOperateDTO toDTO(MenuOperateCreateParam param);
@@ -39,7 +39,7 @@ public interface MenuOperateConvert {
      *
      * @param param 修改参数
      * @return 数据传输对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     MenuOperateDTO toDTO(MenuOperateUpdateParam param);
@@ -49,7 +49,7 @@ public interface MenuOperateConvert {
      *
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     List<MenuOperateDTO> toDTO(List<MenuOperate> dos);
@@ -59,7 +59,7 @@ public interface MenuOperateConvert {
      *
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     MenuOperateDTO toDTO(MenuOperate entity);
@@ -69,7 +69,7 @@ public interface MenuOperateConvert {
      *
      * @param dto 数据传输对象
      * @return 数据持久化对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     MenuOperate toDO(MenuOperateDTO dto);
@@ -79,7 +79,7 @@ public interface MenuOperateConvert {
      *
      * @param dto 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     MenuOperateVO toVO(MenuOperateDTO dto);
@@ -89,7 +89,7 @@ public interface MenuOperateConvert {
      *
      * @param dos 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     List<MenuOperateVO> toVO(List<MenuOperate> dos);
@@ -99,7 +99,7 @@ public interface MenuOperateConvert {
      *
      * @param entity 数据传输对象
      * @return 数据显示对象
-     * @author yunjin
+     * @author carlos
      * @date 2023-7-7 14:19:55
      */
     MenuOperateVO toVO(MenuOperate entity);

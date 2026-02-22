@@ -16,7 +16,7 @@ import java.util.Set;
  * 用户角色 查询封装接口
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-11 19:21:46
  */
 public interface UserRoleManager extends BaseService<UserRole> {
@@ -26,7 +26,7 @@ public interface UserRoleManager extends BaseService<UserRole> {
      *
      * @param dto 用户角色数据
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean add(List<UserRoleDTO> dto);
@@ -36,7 +36,7 @@ public interface UserRoleManager extends BaseService<UserRole> {
      *
      * @param dtos 用户角色数据
      * @return void
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11
      */
 
@@ -55,7 +55,7 @@ public interface UserRoleManager extends BaseService<UserRole> {
      *
      * @param dto 对象信息
      * @return boolean
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     boolean modify(UserRoleDTO dto);
@@ -65,7 +65,7 @@ public interface UserRoleManager extends BaseService<UserRole> {
      *
      * @param id 主键id
      * @return com.carlos.org.dto.user.UserRoleDTO
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     UserRoleDTO getDtoById(String id);
@@ -74,7 +74,7 @@ public interface UserRoleManager extends BaseService<UserRole> {
      * 分页列表
      *
      * @param param 分页参数
-     * @author yunjin
+     * @author carlos
      * @date 2022-11-11 19:21:46
      */
     Paging<UserRoleVO> getPage(UserRolePageParam param);

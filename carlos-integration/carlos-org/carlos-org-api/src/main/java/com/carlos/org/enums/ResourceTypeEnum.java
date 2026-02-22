@@ -10,7 +10,7 @@ import lombok.Getter;
 /**
  * 资源类型
  *
- * @author yunjin
+ * @author carlos
  * @date 2021/11/17 23:54
  */
 @AppEnum(code = "ResourceTypeEnum")

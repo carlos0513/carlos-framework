@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * 15。 令牌生命周期管理 跟踪令牌状态（如是否已过期、是否被撤销），并支持动态更新或删除令牌 15。 分布式一致性支持 在微服务场景下，确保多个授权服务器实例间的令牌状态同步（需配合 Redis 或数据库实现）2。
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022/11/4 14:35
  */
 public class CustomizeOAuth2AuthorizationService implements OAuth2AuthorizationService {

@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
  * 图片信息显示层对象
  * </p>
  *
- * @author yunjin
+ * @author carlos
  * @date 2022-11-28 10:48:53
  */
 @Data

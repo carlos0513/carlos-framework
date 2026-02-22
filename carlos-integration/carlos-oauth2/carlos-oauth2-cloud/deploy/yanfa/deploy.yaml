@@ -43,7 +43,7 @@ spec:
               value: govern
             -
               name: NACOS_PASSWORD
-              value: yunjin@123456
+              value: carlos@123456
             -
               name: NACOS_ADDR
               value: 192.168.25.125:18848

@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
  * 用户菜单收藏表 新增参数封装
  * </p>
  *
- * @author  yunjin
+ * @author carlos
  * @date    2024-2-28 11:10:01
  */
 @Data
