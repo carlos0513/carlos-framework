@@ -1,0 +1,17 @@
+# Carlos OAuth2 自动配置类注册
+# 这些类会在 Spring Boot 启动时自动加载
+
+# OAuth2 配置属性
+com.carlos.oauth.config.OAuth2Properties
+
+# OAuth2 服务层配置
+com.carlos.oauth.config.OAuth2ServiceConfig
+
+# OAuth2 授权服务器配置（仅在 carlos.oauth2.authorization-server.enabled=true 时生效）
+com.carlos.oauth.config.OAuth2AuthorizationServerConfig
+
+# OAuth2 资源服务器配置（仅在 carlos.oauth2.resource-server.enabled=true 时生效）
+com.carlos.oauth.config.OAuth2ResourceServerConfig
+
+# 第三方登录配置（仅在 carlos.oauth2.third-party.enabled=true 时生效）
+com.carlos.oauth.config.ThirdPartyLoginConfig

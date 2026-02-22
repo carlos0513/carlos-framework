@@ -82,8 +82,27 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-
         T authenticationToken = (T) authentication;
+
+        Map<String, String> reqParameters = authenticationToken.getParameters();
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = buildToken(reqParameters);
+
+        return doAuthenticate(authenticationToken, usernamePasswordAuthenticationToken);
+    }
+
+    /**
+     * 执行认证流程
+     *
+     * <p>支持子类传入自定义的用户认证信息（如第三方登录）。</p>
+     *
+     * @param authenticationToken 原始认证 Token
+     * @param userAuthenticationToken 用户认证 Token
+     * @return Authentication 认证结果
+     * @throws AuthenticationException 认证异常
+     */
+    protected Authentication doAuthenticate(T authenticationToken,
+                                            UsernamePasswordAuthenticationToken userAuthenticationToken)
+            throws AuthenticationException {
 
         OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(authenticationToken);
 
@@ -103,14 +122,18 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
             throw new ComponentException("scope is null");
         }
 
-        Map<String, String> reqParameters = authenticationToken.getParameters();
         try {
-
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = buildToken(reqParameters);
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = userAuthenticationToken;
 
             log.debug("got usernamePasswordAuthenticationToken=" + usernamePasswordAuthenticationToken);
 
-            Authentication usernamePasswordAuthentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            Authentication usernamePasswordAuthentication;
+            if (usernamePasswordAuthenticationToken != null) {
+                usernamePasswordAuthentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            } else {
+                // 如果传入 null，假设已经通过其他方式认证（如第三方登录）
+                throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_REQUEST);
+            }
 
             // @formatter:off
             DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
