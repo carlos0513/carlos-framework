@@ -33,17 +33,17 @@
         <dependencies>
             <!-- carlos-system 模块 -->
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.system</groupId>
                 <artifactId>carlos-system</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.system</groupId>
                 <artifactId>carlos-system-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.system</groupId>
                 <artifactId>carlos-system-bus</artifactId>
                 <version>${project.version}</version>
             </dependency>
