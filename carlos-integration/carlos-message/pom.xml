@@ -10,6 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
+    <groupId>com.carlos.message</groupId>
     <artifactId>carlos-message</artifactId>
     <description>消息中心</description>
 
@@ -25,17 +26,17 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message-server</artifactId>
                 <version>${project.version}</version>
             </dependency>

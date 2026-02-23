@@ -68,27 +68,27 @@
 
             <!-- carlos-message 模块 -->
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
