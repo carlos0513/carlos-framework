@@ -1,10 +1,10 @@
 # carlos-openapi
 
-## 模块简介
+## 一、模块简介
 
 `carlos-openapi` 是 Carlos 框架的 API 文档生成模块，基于 SpringDoc OpenAPI 3 和 Knife4j 提供强大的 REST API 文档生成和管理功能。该模块支持自动生成 OpenAPI 规范文档，并提供美观的交互式文档界面。
 
-## 主要功能
+## 二、主要功能
 
 ### 1. 自动 API 文档生成
 
@@ -113,7 +113,9 @@ public class OpenApiConfig {
 }
 ```
 
-## 快速开始
+Spring Boot 3 + OpenAPI 注解完整指南
+
+## 三、依赖配置
 
 ### 1. 添加依赖
 
@@ -159,107 +161,546 @@ openapi:
   license-url: "https://www.apache.org/licenses/LICENSE-2.0"
 ```
 
-### 3. 使用示例
+---
 
-#### 控制器注解使用：
+## 四、核心注解详解
+
+1. 全局配置注解
+
+@OpenAPIDefinition - 定义全局 API 信息
+
+```java
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@Configuration
+@OpenAPIDefinition(
+    info = @Info(
+        title = "用户管理系统 API",
+        version = "1.0.0",
+        description = "基于 Spring Boot 3 的用户管理服务",
+        contact = @Contact(name = "技术支持", email = "support@example.com"),
+        license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0")
+    ),
+    servers = {
+        @Server(url = "http://localhost:8080", description = "本地环境"),
+        @Server(url = "https://api.example.com", description = "生产环境")
+    },
+    tags = {
+        @Tag(name = "用户管理", description = "用户相关接口"),
+        @Tag(name = "订单管理", description = "订单相关接口")
+    },
+    security = @SecurityRequirement(name = "bearerAuth")
+)
+@SecurityScheme(
+    name = "bearerAuth",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT",
+    description = "JWT Token 认证"
+)
+public class OpenApiConfig {
+}
+```
+
+---
+
+2. Controller 层注解
+
+@Tag - 控制器分组
+
+```java
+@ApiSupport(order = 284)
+@RestController
+@RequestMapping("/api/users")
+@Tag(name = "用户管理", description = "用户增删改查接口")
+public class UserController {
+}
+```
+
+@Hidden - 隐藏控制器或方法
 
 ```java
 @RestController
-@RequestMapping("/api/user")
-@Tag(name = "用户管理", description = "用户相关操作接口")
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @Operation(summary = "获取用户列表", description = "分页查询用户列表")
-    @ApiResponse(responseCode = "200", description = "成功返回用户列表")
-    @ApiResponse(responseCode = "401", description = "未授权")
-    @GetMapping("/list")
-    public Result<Page<User>> getUserList(
-            @Parameter(description = "分页参数", required = true) PageParam param,
-            @Parameter(description = "搜索关键词") @RequestParam(required = false) String keyword) {
-        return userService.getUserPage(param, keyword);
-    }
-
-    @Operation(summary = "创建用户", description = "创建新用户")
-    @PostMapping("/create")
-    public Result<User> createUser(
-            @Parameter(description = "用户信息", required = true)
-            @RequestBody @Valid CreateUserRequest request) {
-        return userService.createUser(request);
-    }
-
-    @Operation(summary = "获取用户详情", description = "根据ID获取用户详情")
-    @GetMapping("/{id}")
-    public Result<User> getUserById(
-            @Parameter(description = "用户ID", required = true)
-            @PathVariable Long id) {
-        return userService.getUserById(id);
+@Hidden  // 整个控制器不显示在文档中
+public class InternalController {
+    
+    @GetMapping("/public")
+    @Hidden  // 仅隐藏此方法
+    public String hiddenMethod() {
+        return "hidden";
     }
 }
 ```
 
-#### 实体类注解使用：
+---
+
+3. 方法层注解
+
+@Operation - 接口描述
+
+```java
+@ApiOperationSupport(order = 33)
+@Operation(
+    summary = "获取用户详情",           // 接口简短描述
+    description = "根据用户ID获取详细信息", // 详细描述
+    operationId = "getUserById",      // 操作唯一标识
+    tags = {"用户管理"},               // 覆盖类级别的 tag
+    method = "GET",                   // HTTP 方法
+    deprecated = false,               // 是否废弃
+    hidden = false,                   // 是否隐藏
+    
+    // 安全要求
+    security = @SecurityRequirement(name = "bearerAuth"),
+    
+    // 请求参数
+    parameters = {
+        @Parameter(name = "id", description = "用户ID", required = true, in = ParameterIn.PATH),
+        @Parameter(name = "includeDeleted", description = "是否包含已删除用户", in = ParameterIn.QUERY)
+    },
+    
+    // 请求体（用于 POST/PUT）
+    requestBody = @RequestBody(
+        description = "用户信息",
+        required = true,
+        content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = UserDTO.class),
+            examples = @ExampleObject(
+                name = "示例",
+                value = "{\"username\": \"zhangsan\", \"age\": 25}"
+            )
+        )
+    ),
+    
+    // 响应定义
+    responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "查询成功",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = UserVO.class)
+            )
+        ),
+        @ApiResponse(responseCode = "404", description = "用户不存在"),
+        @ApiResponse(responseCode = "500", description = "服务器内部错误")
+    }
+)
+@GetMapping("/{id}")
+public UserVO getUser(@PathVariable Long id, @RequestParam(defaultValue = "false") Boolean includeDeleted) {
+    return userService.getById(id);
+}
+```
+
+@ApiResponses / @ApiResponse - 响应定义
+
+```java
+@ApiResponses(value = {
+    @ApiResponse(
+        responseCode = "201",
+        description = "创建成功",
+        content = @Content(
+            schema = @Schema(implementation = UserVO.class),
+            examples = @ExampleObject(
+                value = "{\"id\": 1, \"username\": \"zhangsan\"}"
+            )
+        ),
+        headers = @Header(
+            name = "Location",
+            description = "新资源URL",
+            schema = @Schema(type = "string")
+        )
+    ),
+    @ApiResponse(
+        responseCode = "400", 
+        description = "请求参数错误",
+        content = @Content(
+            schema = @Schema(implementation = ErrorResponse.class)
+        )
+    ),
+    @ApiResponse(responseCode = "409", description = "用户已存在")
+})
+@PostMapping
+public ResponseEntity<UserVO> createUser(@RequestBody UserDTO dto) {
+    // ...
+}
+```
+
+---
+
+4. 参数注解
+
+@Parameter - 参数描述
+
+```java
+@GetMapping("/search")
+public List<UserVO> search(
+    @Parameter(
+        name = "keyword",
+        description = "搜索关键词",
+        required = true,
+        example = "张三",
+        in = ParameterIn.QUERY,
+        schema = @Schema(type = "string", minLength = 2, maxLength = 50)
+    ) 
+    @RequestParam String keyword,
+    
+    @Parameter(
+        description = "页码",
+        example = "1",
+        schema = @Schema(type = "integer", defaultValue = "1", minimum = "1")
+    )
+    @RequestParam(defaultValue = "1") Integer pageNum,
+    
+    @Parameter(
+        description = "每页大小",
+        schema = @Schema(allowableValues = {"10", "20", "50"}, defaultValue = "10")
+    )
+    @RequestParam(defaultValue = "10") Integer pageSize,
+    
+    @Parameter(hidden = true)  // 隐藏参数
+    @RequestHeader("X-Internal-Token") String internalToken
+) {
+    return userService.search(keyword, pageNum, pageSize);
+}
+```
+
+特殊参数类型：
+
+```java
+// 文件上传
+@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public String upload(
+    @Parameter(description = "用户头像", required = true)
+    @RequestPart("file") MultipartFile file,
+    
+    @Parameter(description = "用户ID")
+    @RequestPart("userId") String userId
+) {
+    return "success";
+}
+
+// Spring Data Pageable（分页）
+@GetMapping("/page")
+@Operation(summary = "分页查询")
+public Page<UserVO> page(
+    @ParameterObject  // 将 Pageable 展开为 page, size, sort 参数 [^27^]
+    @PageableDefault(size = 10, sort = "createTime", direction = Sort.Direction.DESC)
+    Pageable pageable
+) {
+    return userService.page(pageable);
+}
+```
+
+---
+
+5. 模型注解（DTO/VO）
+
+@Schema - 模型定义
 
 ```java
 @Data
-@Schema(description = "用户信息")
-public class User {
-
-    @Schema(description = "用户ID", example = "1")
+@Schema(
+    name = "UserDTO",
+    description = "用户数据传输对象",
+    requiredMode = Schema.RequiredMode.REQUIRED  // 全局要求所有字段必填
+)
+public class UserDTO {
+    
+    @Schema(
+        description = "用户ID",
+        example = "10001",
+        accessMode = Schema.AccessMode.READ_ONLY,  // 仅响应，不接收
+        hidden = false
+    )
     private Long id;
-
-    @Schema(description = "用户名", example = "admin", required = true)
+    
+    @Schema(
+        description = "用户名",
+        example = "zhangsan",
+        requiredMode = Schema.RequiredMode.REQUIRED,
+        minLength = 3,
+        maxLength = 20,
+        pattern = "^[a-zA-Z0-9_]+$"
+    )
+    @NotBlank(message = "用户名不能为空")
     private String username;
-
-    @Schema(description = "昵称", example = "管理员")
-    private String nickName;
-
-    @Schema(description = "邮箱", example = "admin@example.com")
-    private String email;
-
-    @Schema(description = "手机号", example = "13800138000")
-    private String phone;
-
-    @Schema(description = "创建时间", example = "2023-01-01 12:00:00")
+    
+    @Schema(
+        description = "年龄",
+        example = "25",
+        minimum = "0",
+        maximum = "150"
+    )
+    @Min(0)
+    @Max(150)
+    private Integer age;
+    
+    @Schema(
+        description = "用户状态",
+        example = "ACTIVE",
+        allowableValues = {"ACTIVE", "INACTIVE", "DELETED"}
+    )
+    private UserStatus status;
+    
+    @Schema(
+        description = "创建时间",
+        type = "string",
+        format = "date-time",
+        example = "2024-01-15T10:30:00Z"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+    
+    @Schema(
+        description = "订单列表",
+        implementation = OrderVO.class  // 指定复杂类型
+    )
+    private List<OrderVO> orders;
+    
+    @Schema(hidden = true)  // 隐藏字段
+    private String password;
+}
+
+// 枚举定义
+@Schema(enumAsRef = true, description = "用户状态")  // 枚举作为引用 [^27^]
+public enum UserStatus {
+    ACTIVE("激活"),
+    INACTIVE("未激活"),
+    DELETED("已删除");
+    
+    private final String desc;
+    
+    UserStatus(String desc) {
+        this.desc = desc;
+    }
+    
+    @JsonValue
+    public String getDesc() {
+        return desc;
+    }
 }
 ```
 
-#### 枚举类注解使用：
+---
+
+6. 回调与链接
+
+@Callback - 回调定义
 
 ```java
-@Getter
-@AllArgsConstructor
-@Schema(description = "用户状态枚举")
-public enum UserStatus {
-
-    @Schema(description = "正常")
-    NORMAL(1, "正常"),
-
-    @Schema(description = "禁用")
-    DISABLED(0, "禁用"),
-
-    @Schema(description = "锁定")
-    LOCKED(2, "锁定");
-
-    @Schema(description = "状态值")
-    private final Integer value;
-
-    @Schema(description = "状态描述")
-    private final String description;
+@Operation(
+    summary = "订阅事件",
+    callbacks = {
+        @Callback(
+            name = "onEvent",
+            callbackUrlExpression = "{$request.body#/callbackUrl}",
+            operations = @CallbackOperation(
+                summary = "事件通知",
+                method = "post",
+                requestBody = @RequestBody(
+                    content = @Content(
+                        schema = @Schema(implementation = EventDTO.class)
+                    )
+                ),
+                responses = @ApiResponse(responseCode = "200", description = "接收成功")
+            )
+        )
+    }
+)
+@PostMapping("/subscribe")
+public void subscribe(@RequestBody SubscribeDTO dto) {
+    // ...
 }
 ```
 
-### 4. 访问文档界面
+---
 
-应用启动后，访问以下地址查看文档：
+## 五、完整实战示例
+
+```java
+@RestController
+@ApiSupport(order = 1)
+@RequestMapping("/api/v1/users")
+@Tag(name = "用户管理", description = "用户 CRUD 操作")
+@SecurityRequirement(name = "bearerAuth")
+public class UserController {
+
+    @Operation(
+        summary = "创建用户",
+        description = "创建新用户，用户名不能重复",
+        responses = {
+            @ApiResponse(
+                responseCode = "201",
+                description = "创建成功",
+                content = @Content(schema = @Schema(implementation = UserVO.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "参数校验失败"),
+            @ApiResponse(responseCode = "409", description = "用户名已存在")
+        }
+    )
+    @ApiOperationSupport(order = 33)
+    @PostMapping
+    public ResponseEntity<UserVO> create(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "用户信息",
+            required = true,
+            content = @Content(
+                schema = @Schema(implementation = UserCreateDTO.class),
+                examples = @ExampleObject(
+                    name = "标准示例",
+                    summary = "标准用户创建",
+                    value = """
+                        {
+                            "username": "zhangsan",
+                            "email": "zhangsan@example.com",
+                            "phone": "13800138000"
+                        }
+                        """
+                )
+            )
+        )
+        @RequestBody @Valid UserCreateDTO dto
+    ) {
+        UserVO user = userService.create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @Operation(
+        summary = "获取用户列表",
+        description = "支持分页和条件查询",
+        parameters = {
+            @Parameter(name = "deptId", description = "部门ID", in = ParameterIn.QUERY),
+            @Parameter(name = "status", description = "状态", in = ParameterIn.QUERY)
+        }
+    )
+    @GetMapping
+    public PageResult<UserVO> list(
+        @ParameterObject @PageableDefault(size = 20) Pageable pageable,
+        @Parameter(hidden = true) UserQueryParam queryParam
+    ) {
+        return userService.list(pageable, queryParam);
+    }
+
+    @Operation(
+        summary = "更新用户",
+        description = "根据ID更新用户信息",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "更新成功"),
+            @ApiResponse(responseCode = "404", description = "用户不存在", content = @Content)
+        }
+    )
+    @PutMapping("/{id}")
+    public UserVO update(
+        @Parameter(description = "用户ID", required = true) @PathVariable Long id,
+        @RequestBody @Valid UserUpdateDTO dto
+    ) {
+        return userService.update(id, dto);
+    }
+
+    @Operation(
+        summary = "删除用户",
+        description = "逻辑删除用户",
+        deprecated = true,  // 标记为废弃
+        responses = {
+            @ApiResponse(responseCode = "204", description = "删除成功", content = @Content),
+            @ApiResponse(responseCode = "404", description = "用户不存在")
+        }
+    )
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+        @Parameter(description = "用户ID", required = true) @PathVariable Long id
+    ) {
+        userService.delete(id);
+    }
+}
+```
+
+---
+
+## 六、配置属性
+
+```yaml
+springdoc:
+  # API 文档端点配置
+  api-docs:
+    enabled: true                    # 启用 API docs
+    path: /v3/api-docs              # API docs 路径
+    groups:
+      enabled: true                 # 启用分组
+    
+  # Swagger UI 配置
+  swagger-ui:
+    enabled: true                   # 启用 UI
+    path: /swagger-ui.html          # UI 访问路径
+    config-url: /v3/api-docs/swagger-config
+    url: /v3/api-docs
+    display-request-duration: true  # 显示请求耗时
+    disable-swagger-default-url: true  # 禁用默认 Petstore
+    operations-sorter: method       # 按方法排序
+    tags-sorter: alpha              # 标签按字母排序
+    
+  # 扫描配置
+  packages-to-scan: com.example.controller  # 扫描包
+  paths-to-match: /api/**          # 匹配路径
+  
+  # 分组配置
+  group-configs:
+    - group: 用户模块
+      paths-to-match: /api/users/**
+      packages-to-scan: com.example.user
+    - group: 订单模块
+      paths-to-match: /api/orders/**
+      
+  # 模型配置
+  model-converters:
+    pageable-converter:
+      enabled: true                # 启用 Pageable 转换
+    deprecating-converter:
+      enabled: true                # 识别 @Deprecated
+      
+  # 显示配置
+  show-login-endpoint: false       # 显示登录端点
+  show-actuator: false             # 显示 Actuator
+  model-and-view-allowed: false    # 允许 ModelAndView
+```
+
+---
+
+## 七、访问地址
+
+启动应用后访问：
 
 - **Knife4j 文档界面**: `http://localhost:8080/doc.html`
 - **原生 Swagger UI**: `http://localhost:8080/swagger-ui.html`
 - **OpenAPI JSON**: `http://localhost:8080/v3/api-docs`
 - **OpenAPI YAML**: `http://localhost:8080/v3/api-docs.yaml`
+
+---
+
+## 八、与 Springfox 对比
+
+| 特性   | Springfox (Swagger 2)    | SpringDoc (OpenAPI 3)           |
+|------|--------------------------|---------------------------------|
+| 注解包  | `io.swagger.annotations` | `io.swagger.v3.oas.annotations` |
+| 主注解  | `@Api`                   | `@Tag`                          |
+| 方法描述 | `@ApiOperation`          | `@Operation`                    |
+| 参数描述 | `@ApiParam`              | `@Parameter`                    |
+| 模型描述 | `@ApiModel`              | `@Schema`                       |
+| 响应描述 | `@ApiResponse`           | `@ApiResponse`（保留）              |
+| 请求体  | 不支持                      | `@RequestBody`                  |
+| 回调   | 不支持                      | `@Callback`                     |
+| 链接   | 不支持                      | `@Link`                         |
+
+更多详细信息可参考官方文档 [springdoc.org](https://springdoc.org/) 。
 
 ## 详细功能说明
 
@@ -362,14 +803,7 @@ public Result<User> getUser(@PathVariable Long id) {
 | `openapi.auth2.client-id`      | String      | -                            | 客户端 ID          |
 | `openapi.auth2.grant-type`     | String      | -                            | 授权类型            |
 
-## 依赖项
-
-- `springdoc-openapi-starter-webmvc-ui` (3.x): SpringDoc OpenAPI 核心依赖
-- `knife4j-openapi3-spring-boot-starter`: Knife4j UI 界面
-- `carlos-spring-boot-starter-core`: 基础工具类、常量定义
-- `spring-boot-starter-web`: Web 应用基础依赖
-
-## 注意事项
+## 九、注意事项
 
 ### 1. 性能考虑
 
@@ -426,14 +860,14 @@ A: 使用 Knife4j 的导出功能：
 
 本模块使用 `carlos-spring-boot-starter-core` 模块的工具类获取应用地址和端口信息，确保文档链接的正确性。
 
-## 版本要求
+### 6. 版本要求
 
 - JDK 17+
 - Spring Boot 3.5.8+
 - SpringDoc OpenAPI 2.x+
 - Knife4j 4.x+
 
-## 相关模块
+### 7.相关模块
 
 - **carlos-spring-boot-starter-core**：基础工具类、常量定义、响应格式
 - **carlos-oauth2**：OAuth2 认证授权，为文档提供认证支持

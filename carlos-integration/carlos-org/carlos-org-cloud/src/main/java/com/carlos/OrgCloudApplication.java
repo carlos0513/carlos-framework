@@ -10,10 +10,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author carlos
  */
 @SpringBootApplication
-public class carlosSztOrgCloudApplication {
+public class OrgCloudApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(carlosSztOrgCloudApplication.class, args);
+        SpringApplication.run(OrgCloudApplication.class, args);
         // 支持秒级别定时任务
         CronUtil.setMatchSecond(true);
         // 启动定时任务

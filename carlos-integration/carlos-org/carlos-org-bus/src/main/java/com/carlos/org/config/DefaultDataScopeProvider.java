@@ -22,7 +22,7 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 @ConditionalOnBean(ApplicationExtend.class)
-public class carlosDataScopeProvider implements DataScopeProvider {
+public class DefaultDataScopeProvider implements DataScopeProvider {
 
     private final ApplicationExtend applicationExtend;
     private final UserScopeService scopeService;

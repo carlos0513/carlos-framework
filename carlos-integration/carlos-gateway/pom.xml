@@ -47,10 +47,11 @@
         <!--     <artifactId>sentinel-datasource-nacos</artifactId> -->
         <!-- </dependency> -->
 
-        <!--Swagger UI-->
+        <!-- 网关聚合 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

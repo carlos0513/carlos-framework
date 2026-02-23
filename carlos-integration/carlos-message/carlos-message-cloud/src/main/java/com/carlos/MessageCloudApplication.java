@@ -9,9 +9,9 @@ import org.springframework.boot.SpringApplication;
  * @author carlos
  */
 @SpringCloudApplication
-public class carlosMessageApplication {
+public class MessageCloudApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(carlosMessageApplication.class, args);
+        SpringApplication.run(MessageCloudApplication.class, args);
     }
 }

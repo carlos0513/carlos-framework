@@ -218,11 +218,11 @@
             <distributionManagement>
                 <repository>
                     <id>carlos-releases</id>
-                    <url>http://zcarlos.com:8081/repository/maven-releases/</url>
+                    <url>http://zcarlos.com:8081/nexus/repository/maven-releases/</url>
                 </repository>
                 <snapshotRepository>
                     <id>carlos-snapshots</id>
-                    <url>http://zcarlos.com:8081/repository/maven-snapshots/</url>
+                    <url>http://zcarlos.com:8081/nexus/repository/maven-snapshots/</url>
                 </snapshotRepository>
             </distributionManagement>
         </profile>

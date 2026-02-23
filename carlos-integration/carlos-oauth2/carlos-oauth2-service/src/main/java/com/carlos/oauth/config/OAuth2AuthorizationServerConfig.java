@@ -47,6 +47,8 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;

@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>
@@ -56,21 +57,18 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        final OpenApiProperties.ContactProperties contact = properties.getContact();
-        Contact c = new Contact();
-        c.setName(contact.getName());
-        c.setEmail(contact.getEmail());
-        c.setUrl(contact.getUrl());
-        return new OpenAPI()
+        OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
                         .title(properties.getTitle())
                         .version(properties.getVersion())
                         .description(properties.getDescription())
                         .termsOfService(properties.getTermsOfServiceUrl())
-                        .contact(c)
                         .license(new License()
                                 .name(properties.getLicense())
                                 .url(properties.getLicenseUrl())));
+        // 联系方式
+        Optional.ofNullable(properties.getContact()).ifPresent(contact -> openAPI.getInfo().contact(new Contact().name(contact.getName()).email(contact.getEmail()).url(contact.getUrl())));
+        return openAPI;
     }
 
 

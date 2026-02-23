@@ -1,0 +1,78 @@
+# ==========================================
+# 网关聚合配置（Knife4j 4.x 支持 Gateway）
+# ==========================================
+
+knife4j:
+  # 启用网关聚合模式
+  gateway:
+    enabled: true
+
+    # 发现模式：自动从注册中心发现服务
+    strategy: discover
+
+    # 手动配置模式（strategy: manual 时使用）
+    routes:
+      -
+        name: user-service
+        url: /user-service
+        service-name: user-service
+        context-path: /
+        order: 1
+
+      -
+        name: order-service
+        url: /order-service
+        service-name: order-service
+        context-path: /
+        order: 2
+
+      -
+        name: system-service
+        url: /system-service
+        service-name: system-service
+        context-path: /
+        order: 3
+
+    # 发现模式配置（配合 Nacos/Eureka）
+    discover:
+      # 是否启用发现
+      enabled: true
+      # 排除的服务名
+      excluded-services:
+        - gateway-service
+        - monitor-service
+      # 包含的服务名（优先级高于 excluded）
+      included-services:
+        - user-service
+        - order-service
+      # 服务排序
+      order: 1
+
+  # 其他配置与普通模式相同
+  enable: true
+  production: false
+
+  setting:
+    title: 微服务 API 文档中心
+    description: 网关聚合所有服务的 API 文档
+
+spring:
+  cloud:
+    gateway:
+      # 网关路由配置
+      routes:
+        -
+          id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - StripPrefix=1
+
+        -
+          id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order-service/**
+          filters:
+            - StripPrefix=1
