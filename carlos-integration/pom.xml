@@ -51,17 +51,17 @@
 
             <!-- carlos-org 模块 -->
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.org</groupId>
                 <artifactId>carlos-org</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.org</groupId>
                 <artifactId>carlos-org-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.carlos</groupId>
+                <groupId>com.carlos.org</groupId>
                 <artifactId>carlos-org-bus</artifactId>
                 <version>${project.version}</version>
             </dependency>
