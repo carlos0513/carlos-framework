@@ -250,6 +250,11 @@ app:
   version: @project.version@
 ```
 
+### 编码规范
+
+- 所有文件使用 UTF-8 编码（无 BOM）
+- 保持原始文件编码，禁止转换
+- 中文内容使用 UTF-8 存储
 ## Spring Boot 3.x 迁移指南
 
 ### 重要变更

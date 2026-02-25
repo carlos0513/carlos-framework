@@ -1,4 +1,4 @@
-package com.carlos;
+package com.carlos.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -12,7 +12,21 @@
 
     <artifactId>carlos-spring-boot-starter-gateway</artifactId>
 
-    <description>微服务网关基础组件</description>
+    <description>
+        微服务网关基础组件
+
+        本模块提供 Spring Cloud Gateway 网关基础功能，包括：
+        - 服务发现和路由转发（Nacos）
+        - 负载均衡（Spring Cloud LoadBalancer）
+        - OAuth2 资源服务器支持（JWT Token 统一验证）
+        - API 文档聚合（Knife4j）
+
+        OAuth2 资源服务器功能：
+        - 统一在网关层验证 JWT Token
+        - 支持 JWK Set URI 和 Issuer URI 配置
+        - 支持白名单路径配置
+        - 支持权限提取（scope、authorities、role_ids）
+    </description>
 
 
     <dependencies>
@@ -52,6 +66,46 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- ==================== Spring Security OAuth2 Resource Server ==================== -->
+
+        <!-- Spring Resource Server - 用于验证 JWT Token -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <!-- Spring Security 响应式支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- JOSE - JWT 处理 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+
+        <!-- 自动配置支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <!-- 配置处理器 - 用于生成配置元数据 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>
