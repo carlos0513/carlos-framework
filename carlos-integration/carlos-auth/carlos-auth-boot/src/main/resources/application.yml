@@ -9,6 +9,9 @@ spring:
       matching-strategy: ant_path_matcher
   application:
     name: carlos-auth
+  # 配置文件导入
+  config:
+    import: classpath:application-auth.yml
   # spring配置
   datasource:
     druid:

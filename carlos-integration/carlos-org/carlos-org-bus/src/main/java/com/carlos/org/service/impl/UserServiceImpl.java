@@ -367,8 +367,8 @@ public class UserServiceImpl implements UserService {
         if (StrUtil.isNotBlank(head)) {
             try {
                 ApiFile apiFile = SpringUtil.getBean(ApiFile.class);
-                Result<FileInfoAO> apiResult = apiFile.getFile(head);
-                Optional.ofNullable(apiResult).ifPresent(i -> {
+                Result<FileInfoAO> Result = apiFile.getFile(head);
+                Optional.ofNullable(Result).ifPresent(i -> {
                     if (Boolean.FALSE.equals(i.getSuccess())) {
                         log.error("Get file info fail:{}", i.getMessage());
                     }
@@ -398,8 +398,8 @@ public class UserServiceImpl implements UserService {
         if (StrUtil.isNotBlank(head)) {
             try {
                 ApiFile apiFile = SpringUtil.getBean(ApiFile.class);
-                Result<FileInfoAO> apiResult = apiFile.getFile(head);
-                Optional.ofNullable(apiResult).ifPresent(i -> {
+                Result<FileInfoAO> Result = apiFile.getFile(head);
+                Optional.ofNullable(Result).ifPresent(i -> {
                     if (Boolean.FALSE.equals(i.getSuccess())) {
                         log.error("Get file info fail:{}", i.getMessage());
                     }

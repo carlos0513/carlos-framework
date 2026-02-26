@@ -139,7 +139,7 @@ public class FileController {
         try {
             String objectName = "uploads/" + System.currentTimeMillis() + "-" + file.getOriginalFilename();
             OssFile ossFile = ossTemplate.putObject(objectName, file.getInputStream(), file.getContentType());
-            return Result.success(ossFile);
+            return Result.ok(ossFile);
         } catch (Exception e) {
             return Result.fail("上传失败: " + e.getMessage());
         }
@@ -151,7 +151,7 @@ public class FileController {
     @GetMapping("/url")
     public Result<String> getUrl(@RequestParam String objectName) {
         String url = ossTemplate.getObjectUrl(objectName);
-        return Result.success(url);
+        return Result.ok(url);
     }
 
     /**
@@ -160,7 +160,7 @@ public class FileController {
     @DeleteMapping("/delete")
     public Result<Void> delete(@RequestParam String objectName) {
         ossTemplate.deleteObject(objectName);
-        return Result.success();
+        return Result.ok();
     }
 }
 ```

@@ -6,7 +6,6 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClaimAccessor;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.token.*;
@@ -58,17 +57,17 @@ public class CustomizeUserOAuth2AccessTokenGenerator implements OAuth2TokenGener
         Instant expiresAt = issuedAt.plus(registeredClient.getTokenSettings().getAccessTokenTimeToLive());
 
         // @formatter:off
-        JwtClaimsSet.Builder claimsBuilder = JwtClaimsSet.builder();
+        OAuth2TokenClaimsSet.Builder claimsBuilder = OAuth2TokenClaimsSet.builder();
         if (StringUtils.hasText(issuer)) {
-            claimsBuilder.issuer(issuer);
+            claimsBuilder.claim("iss", issuer);
         }
         claimsBuilder
-                .subject(context.getPrincipal().getName())
-                .audience(Collections.singletonList(registeredClient.getClientId()))
-                .issuedAt(issuedAt)
-                .expiresAt(expiresAt)
-                .notBefore(issuedAt)
-                .id(UUID.randomUUID().toString());
+                .claim("sub", context.getPrincipal().getName())
+                .claim("aud", Collections.singletonList(registeredClient.getClientId()))
+                .claim("iat", issuedAt)
+                .claim("exp", expiresAt)
+                .claim("nbf", issuedAt)
+                .claim("jti", UUID.randomUUID().toString());
         if (!CollectionUtils.isEmpty(context.getAuthorizedScopes())) {
             claimsBuilder.claim(OAuth2ParameterNames.SCOPE, context.getAuthorizedScopes());
         }
@@ -95,7 +94,7 @@ public class CustomizeUserOAuth2AccessTokenGenerator implements OAuth2TokenGener
             this.accessTokenCustomizer.customize(accessTokenContext);
         }
 
-        JwtClaimsSet accessTokenClaimsSet = claimsBuilder.build();
+        OAuth2TokenClaimsSet accessTokenClaimsSet = claimsBuilder.build();
 
         // 组装key token:client:username:uuid
         // String key = String.format("%s::%s::%s", SecurityContextHolder.getContext().getAuthentication().getPrincipal(),

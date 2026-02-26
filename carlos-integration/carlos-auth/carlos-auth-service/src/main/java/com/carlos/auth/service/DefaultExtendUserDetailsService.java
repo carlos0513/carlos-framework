@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 默认的用户详情服务实现
  *
  * <p><strong>警告：此类仅用于开发和测试！</strong></p>
  *

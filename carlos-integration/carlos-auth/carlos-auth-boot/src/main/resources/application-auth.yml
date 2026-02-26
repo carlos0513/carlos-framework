@@ -1,0 +1,299 @@
+# ========================================
+# 认证服务配置
+# ========================================
+# 配置日期: 2026-02-26
+# 版本: 3.0.0
+# 作者: Carlos
+# ========================================
+
+auth:
+  server:
+    # JWT密钥配置（使用JKS文件）
+    jwt:
+      # JKS文件路径（classpath或文件系统路径）
+      key-store: classpath:auth.jks
+      # JKS文件密码
+      key-store-password: ${JKS_PASSWORD:changeit}
+      # 密钥别名
+      key-alias: auth-key
+      # 密钥密码
+      key-password: ${KEY_PASSWORD:changeit}
+      # JKS类型
+      key-store-type: JKS
+      # JWT发行者
+      issuer: ${AUTH_ISSUER:http://localhost:9511}
+      # 访问令牌有效期（15分钟）
+      access-token-ttl: 900
+      # 刷新令牌有效期（7天）
+      refresh-token-ttl: 604800
+      # 是否启用刷新令牌轮换
+      refresh-token-rotation: true
+      # ID令牌有效期
+      id-token-ttl: 900
+
+    # 登录安全策略
+    security:
+      # 登录失败锁定阈值（5次）
+      login-fail-threshold: 5
+      # 锁定时长（900秒=15分钟）
+      lock-duration: 900
+      # 启用验证码阈值（第3次起）
+      captcha-threshold: 3
+      # 验证码长度
+      captcha-length: 6
+      # 验证码有效期（300秒=5分钟）
+      captcha-ttl: 300
+      # 是否启用MFA
+      mfa-enabled: true
+      # MFA发行者名称（显示在Google Authenticator中）
+      mfa-issuer-name: CarlosAuth
+
+    # 验证码发送限制
+    captcha-limit:
+      sms:
+        # 每日发送上限
+        daily-limit: 10
+        # 发送间隔（60秒）
+        interval: 60
+      email:
+        daily-limit: 10
+        interval: 60
+
+    # IP封禁策略
+    ip-block:
+      # 触发阈值（5分钟20次失败）
+      threshold: 20
+      # 统计时间窗口（300秒=5分钟）
+      time-window: 300
+      # 封禁时长（3600秒=1小时）
+      block-duration: 3600
+
+    # 速率限制配置
+    rate-limit:
+      # 登录限流（用户级）
+      login:
+        # 桶容量
+        capacity: 5
+        # 补充速率
+        refill-rate: 5
+        # 补充周期（毫秒）
+        refill-period: 60000
+      # API限流（用户级）
+      api:
+        capacity: 100
+        refill-rate: 100
+        refill-period: 60000
+      # IP限流（未登录用户）
+      ip:
+        capacity: 50
+        refill-rate: 50
+        refill-period: 60000
+      # 验证码发送限流
+      captcha-send:
+        capacity: 3
+        refill-rate: 1
+        refill-period: 60000
+      # 令牌颁发限流（客户端级）
+      token-generation:
+        capacity: 1000
+        refill-rate: 1000
+        refill-period: 3600000
+
+    # 可信设备配置
+    trusted-device:
+      # 设备指纹算法：simple（User-Agent+IP）、enhanced（增加屏幕/时区）
+      fingerprint-mode: simple
+      # 自动保存可信设备（登录成功后）
+      auto-save: true
+      # 设备有效期（90天）
+      device-ttl: 7776000
+
+    # 审计日志配置
+    audit:
+      # 登录审计
+      login:
+        enabled: true
+        # 分区表前缀
+        table-prefix: audit_login_
+        # 保留天数
+        retention-days: 90
+        # 归档配置
+        archive:
+          enabled: true
+          # 归档存储（minio/s3/local）
+          storage: minio
+          # 归档后是否删除原数据
+          delete-after-archive: true
+      # 操作审计
+      operation:
+        enabled: true
+        # 敏感操作列表
+        sensitive-operations:
+          - UPDATE_PASSWORD
+          - RESET_PASSWORD
+          - DISABLE_MFA
+          - ENABLE_MFA
+          - UPDATE_USER
+          - DELETE_USER
+
+    # 安全告警配置
+    security-alert:
+      enabled: true
+      # 告警规则
+      rules:
+        unusual-location:
+          enabled: true
+          severity: HIGH
+        new-device:
+          enabled: true
+          severity: MEDIUM
+        brute-force:
+          enabled: true
+          severity: CRITICAL
+          threshold: 20
+        off-hours:
+          enabled: true
+          severity: LOW
+          # 非工作时间（22:00-06:00）
+          start-time: 22:00
+          end-time: 06:00
+      # 通知渠道
+      notification:
+        # 邮件通知
+        email:
+          enabled: false
+          # SMTP配置
+          smtp-host: ${SMTP_HOST:smtp.gmail.com}
+          smtp-port: ${SMTP_PORT:587}
+          username: ${SMTP_USERNAME:}
+          password: ${SMTP_PASSWORD:}
+        # 短信通知（高级别告警）
+        sms:
+          enabled: false
+          # 短信服务商配置
+          provider: aliyun
+          access-key: ${SMS_ACCESS_KEY:}
+          secret-key: ${SMS_SECRET_KEY:}
+        # 钉钉Webhook
+        dingtalk:
+          enabled: false
+          webhook-url: ${DINGTALK_WEBHOOK:}
+          secret: ${DINGTALK_SECRET:}
+
+    # OAuth2配置
+    oauth2:
+      # 客户端配置
+      clients:
+        -
+          client-id: carlos-admin-web
+          client-secret: ${CLIENT_SECRET:secret}
+          # 授权类型
+          authorization-grant-types:
+            - authorization_code
+            - refresh_token
+            - client_credentials
+          # 重定向URI（前端回调地址）
+          redirect-uris:
+            - http://localhost:3000/callback
+            - http://localhost:8080/authorized
+          # 作用域
+          scopes:
+            - read
+            - write
+            - profile
+          # 是否需要授权许可
+          require-authorization-consent: true
+          # 访问令牌有效期
+          access-token-ttl: 900
+          # 刷新令牌有效期
+          refresh-token-ttl: 604800
+
+    # Session配置
+    session:
+      # Session超时（1800秒=30分钟）
+      timeout: 1800
+      # 并发控制策略：deny-拒绝、allow-允许、limit_n-限制数量
+      concurrent-strategy: deny
+      # 最大并发会话数（limit_n策略时生效）
+      max-sessions: 3
+      # Cookie名称
+      cookie-name: AUTH_SESSION
+      # Cookie域
+      cookie-domain: .carlos.com
+      # Cookie路径
+      cookie-path: /
+      # HttpOnly（防止XSS）
+      http-only: true
+      # Secure（仅限HTTPS）
+      secure: false
+      # SameSite策略
+      same-site: Lax
+
+# ========================================
+# Spring Security配置
+# ========================================
+spring:
+  security:
+    # OAuth2资源服务器
+    oauth2:
+      resourceserver:
+        jwt:
+          # JWT发行者URI
+          issuer-uri: ${auth.server.jwt.issuer}
+          # JWK Set URI（自动发现）
+          jwk-set-uri: ${auth.server.jwt.issuer}/oauth2/jwks
+
+  # ========================================
+  # Redis配置
+  # ========================================
+  redis:
+    # 数据库索引
+    database: 0
+    # Redis服务器地址
+    host: ${REDIS_HOST:localhost}
+    # Redis服务器端口
+    port: ${REDIS_PORT:6379}
+    # 密码
+    password: ${REDIS_PASSWORD:}
+    # 连接超时（毫秒）
+    timeout: 5000
+    # 连接池配置
+    lettuce:
+      pool:
+        # 最大连接数
+        max-active: 20
+        # 最大阻塞等待时间（-1表示无限制）
+        max-wait: -1
+        # 最大空闲连接
+        max-idle: 10
+        # 最小空闲连接
+        min-idle: 0
+
+# ========================================
+# 监控和管理配置
+# ========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        # 暴露的端点
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      # 显示详细健康信息
+      show-details: always
+
+# ========================================
+# 日志脱敏配置（可选：如果需要在logback中配置）
+# ========================================
+logging:
+  level:
+    com.carlos.auth: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+  # 日志翻滚配置（通过logback-spring.xml配置更灵活）
+  file:
+    name: log/auth/auth-service.log
+    max-size: 100MB
+    max-history: 30

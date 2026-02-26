@@ -469,6 +469,68 @@ public class OAuth2Properties {
         private String issuer = "http://localhost:8080";
 
         /**
+         * JKS 密钥库路径
+         *
+         * <p>指定 JKS 格式的密钥库文件路径，可以是类路径或文件系统路径。</p>
+         *
+         * <p><strong>配置示例：</strong></p>
+         * <pre>{@code
+         * # 类路径
+         * key-store: classpath:auth.jks
+         *
+         * # 文件系统路径
+         * key-store: file:/etc/carlos/auth.jks
+         * }</pre>
+         *
+         * <p><strong>生产环境建议：</strong></p>
+         * <ul>
+         *   <li>使用文件系统路径，避免密钥打包在 JAR 中</li>
+         *   <li>将密钥库文件备份到安全的位置</li>
+         *   <li>设置强密码保护密钥库</li>
+         * </ul>
+         */
+        private String keyStore;
+
+        /**
+         * 密钥库密码
+         *
+         * <p>访问 JKS 密钥库的密码。</p>
+         *
+         * <p><strong>安全提示：</strong></p>
+         * <ul>
+         *   <li>不要在代码中硬编码密码</li>
+         *   <li>使用环境变量或配置中心管理密码</li>
+         *   <li>生产环境使用强密码（至少 16 位，包含大小写字母、数字、特殊字符）</li>
+         * </ul>
+         */
+        private String keyStorePassword;
+
+        /**
+         * 密钥别名
+         *
+         * <p>密钥在密钥库中的别名。</p>
+         * <p><strong>默认值：</strong>auth-key</p>
+         */
+        private String keyAlias = "auth-key";
+
+        /**
+         * 密钥密码
+         *
+         * <p>访问密钥的密码。如果不配置，默认使用密钥库密码。</p>
+         */
+        private String keyPassword;
+
+        /**
+         * 密钥长度（仅生成新密钥时使用）
+         *
+         * <p>指定生成 RSA 密钥的长度。</p>
+         * <p><strong>可选项：</strong>2048 或 4096</p>
+         * <p><strong>默认值：</strong>2048（开发测试）</p>
+         * <p><strong>生产环境建议：</strong>4096</p>
+         */
+        private Integer keySize = 2048;
+
+        /**
          * Token 中是否包含用户信息
          *
          * <p>设置为 true 时，Token 中会包含用户 ID、角色、权限等信息。</p>
@@ -739,164 +801,6 @@ public class OAuth2Properties {
              * <p><strong>默认值：</strong>30 分钟</p>
              */
             private Duration lockDuration = Duration.ofMinutes(30);
-        }
-    }
-
-    /**
-     * 第三方登录配置属性
-     *
-     * <p>配置微信、钉钉、短信等第三方登录方式。</p>
-     *
-     * <h3>配置示例：</h3>
-     * <pre>{@code
-     * carlos:
-     *   oauth2:
-     *     third-party:
-     *       enabled: true       # 总开关
-     *       wechat: true        # 启用微信登录
-     *       dingtalk: true      # 启用钉钉登录
-     *       sms: true           # 启用短信登录
-     * }</pre>
-     *
-     * <h3>客户端配置：</h3>
-     * <pre>{@code
-     * carlos:
-     *   oauth2:
-     *     clients:
-     *       - client-id: mobile-app
-     *         authorization-grant-types:
-     *           - wx_code      # 微信登录
-     *           - dt_code      # 钉钉登录
-     *           - sms_code     # 短信登录
-     * }</pre>
-     *
-     * @see ThirdPartyProperties
-     */
-    @NestedConfigurationProperty
-    private ThirdPartyProperties thirdParty = new ThirdPartyProperties();
-
-    /**
-     * 第三方登录配置
-     */
-    @Data
-    public static class ThirdPartyProperties {
-
-        /**
-         * 是否启用第三方登录
-         * <p><strong>默认值：</strong>false</p>
-         */
-        private boolean enabled = false;
-
-        /**
-         * 是否启用微信登录
-         *
-         * <p>启用后需要实现 {@link com.carlos.auth.support.thirdparty.ThirdPartyLoginService}
-         * 类型的 Bean，名称为 wechatLoginService。</p>
-         * <p><strong>默认值：</strong>false</p>
-         */
-        private boolean wechat = false;
-
-        /**
-         * 是否启用钉钉登录
-         *
-         * <p>启用后需要实现 {@link com.carlos.auth.support.thirdparty.ThirdPartyLoginService}
-         * 类型的 Bean，名称为 dingtalkLoginService。</p>
-         * <p><strong>默认值：</strong>false</p>
-         */
-        private boolean dingtalk = false;
-
-        /**
-         * 是否启用短信登录
-         *
-         * <p>启用后需要实现 {@link com.carlos.auth.support.thirdparty.ThirdPartyLoginService}
-         * 类型的 Bean，名称为 smsLoginService。</p>
-         * <p><strong>默认值：</strong>false</p>
-         */
-        private boolean sms = false;
-
-        /**
-         * 微信配置
-         */
-        @NestedConfigurationProperty
-        private WechatProperties wechatConfig = new WechatProperties();
-
-        /**
-         * 钉钉配置
-         */
-        @NestedConfigurationProperty
-        private DingtalkProperties dingtalkConfig = new DingtalkProperties();
-
-        /**
-         * 短信配置
-         */
-        @NestedConfigurationProperty
-        private SmsProperties smsConfig = new SmsProperties();
-
-        /**
-         * 微信登录配置
-         */
-        @Data
-        public static class WechatProperties {
-            /**
-             * 微信应用 ID
-             */
-            private String appId;
-
-            /**
-             * 微信应用密钥
-             */
-            private String appSecret;
-
-            /**
-             * 授权回调地址
-             */
-            private String redirectUri;
-        }
-
-        /**
-         * 钉钉登录配置
-         */
-        @Data
-        public static class DingtalkProperties {
-            /**
-             * 钉钉应用 ID
-             */
-            private String appId;
-
-            /**
-             * 钉钉应用密钥
-             */
-            private String appSecret;
-
-            /**
-             * 授权回调地址
-             */
-            private String redirectUri;
-        }
-
-        /**
-         * 短信登录配置
-         */
-        @Data
-        public static class SmsProperties {
-            /**
-             * 验证码有效期（分钟）
-             * <p><strong>默认值：</strong>5</p>
-             */
-            private int codeExpireMinutes = 5;
-
-            /**
-             * 每日发送次数限制
-             * <p><strong>默认值：</strong>10</p>
-             */
-            private int dailyLimit = 10;
-
-            /**
-             * 短信服务提供商
-             * <p>支持：aliyun、tencent</p>
-             * <p><strong>默认值：</strong>aliyun</p>
-             */
-            private String provider = "aliyun";
         }
     }
 }
