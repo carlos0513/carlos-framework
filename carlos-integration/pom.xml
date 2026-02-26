@@ -21,7 +21,7 @@
         <module>carlos-license</module>
         <module>carlos-tools</module>
         <!-- 治理中心模块 -->
-        <module>carlos-oauth2</module>
+        <module>carlos-auth</module>
         <module>carlos-gateway</module>
         <module>carlos-message</module>
         <module>carlos-system</module>

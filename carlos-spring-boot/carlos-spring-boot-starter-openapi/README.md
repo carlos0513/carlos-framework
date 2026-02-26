@@ -870,5 +870,5 @@ A: 使用 Knife4j 的导出功能：
 ### 7.相关模块
 
 - **carlos-spring-boot-starter-core**：基础工具类、常量定义、响应格式
-- **carlos-oauth2**：OAuth2 认证授权，为文档提供认证支持
+- **carlos-auth**：OAuth2 认证授权，为文档提供认证支持
 - **carlos-gateway**：API 网关，文档可能需要网关相关配置

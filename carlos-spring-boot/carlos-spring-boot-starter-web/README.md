@@ -670,4 +670,4 @@ spring:
 - `carlos-spring-boot-starter-json`: JSON 工具
 - `carlos-apm`: APM 追踪
 - `carlos-gateway`: API 网关
-- `carlos-oauth2`: OAuth2 认证授权
+- `carlos-auth`: OAuth2 认证授权

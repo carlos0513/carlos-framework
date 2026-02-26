@@ -151,7 +151,7 @@ ab -n 10000 -c 100 http://localhost:9812/api/user/list
 - carlos-spring-boot-starter-core
 - carlos-spring-boot-starter-mybatis
 - carlos-spring-boot-starter-redis
-- carlos-oauth2
+- carlos-auth
 - carlos-minio
 - carlos-spring-boot-starter-sms
 - carlos-spring-boot-starter-docking

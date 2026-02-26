@@ -523,5 +523,5 @@ private String filterSensitiveData(Object data) {
 
 - **carlos-spring-boot-starter-core**：用户上下文管理、工具类、基础实体
 - **carlos-spring-boot-starter-mybatis**：数据库操作，用于日志持久化存储
-- **carlos-oauth2**：用户认证授权，获取当前用户信息
+- **carlos-auth**：用户认证授权，获取当前用户信息
 - **carlos-apm**：应用性能监控，与日志记录结合

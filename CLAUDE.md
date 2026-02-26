@@ -364,7 +364,7 @@ Resource filtering is enabled for `application*.yml/yaml/properties` and `bootst
 
 ## Recent Updates
 
-### carlos-oauth2 Module (Added 2026-01-25)
+### carlos-auth Module (Added 2026-01-25)
 
 A comprehensive OAuth2 authentication and authorization module based on Spring Security OAuth2 Authorization Server.
 
@@ -379,7 +379,7 @@ A comprehensive OAuth2 authentication and authorization module based on Spring S
 
 **Module Structure:**
 ```
-carlos-oauth2/
+carlos-auth/
 ├── config/                    # OAuth2 configuration classes
 │   ├── OAuth2Properties.java
 │   ├── OAuth2AuthorizationServerConfig.java
@@ -435,7 +435,7 @@ public void adminOnlyMethod() { }
 
 - Full documentation: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/README.md`
 - Integration summary: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/INTEGRATION_SUMMARY.md`
-- Example code: `com.carlos.oauth2.example.*`
+- Example code: `com.carlos.auth.example.*`
 
 **Dependencies:**
 

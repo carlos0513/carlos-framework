@@ -435,4 +435,4 @@ public Result<Void> internalMethod() {
 - `carlos-spring-boot-starter-web`: Spring Boot 自动配置
 - `carlos-spring-boot-starter-mybatis`: MyBatis-Plus 集成
 - `carlos-spring-boot-starter-redis`: Redis 缓存
-- `carlos-oauth2`: OAuth2 认证授权
+- `carlos-auth`: OAuth2 认证授权

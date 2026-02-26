@@ -338,4 +338,4 @@ CurrentUser.remove();
 
 - **carlos-spring-boot-starter-core**：用户上下文管理、基础工具类
 - **carlos-spring-boot-starter-mybatis**：MyBatis-Plus集成、数据访问层支持
-- **carlos-oauth2**：OAuth2认证授权、用户信息管理
+- **carlos-auth**：OAuth2认证授权、用户信息管理

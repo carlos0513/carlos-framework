@@ -506,12 +506,12 @@
             <!-- OAuth2组件 -->
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-oauth2-service</artifactId>
+                <artifactId>carlos-auth-service</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.carlos</groupId>
-                <artifactId>carlos-oauth2-api</artifactId>
+                <artifactId>carlos-auth-api</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- 消息队列组件 -->

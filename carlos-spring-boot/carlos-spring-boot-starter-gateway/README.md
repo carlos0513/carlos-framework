@@ -164,9 +164,9 @@ carlos:
 4. 请求转发到下游服务（可携带用户信息 Header）
 5. 下游服务无需再次验证 Token，直接处理业务
 
-### 与 carlos-oauth2-service 的关系
+### 与 carlos-auth-service 的关系
 
-- **carlos-oauth2-service**: 作为授权服务器，负责颁发 Token
+- **carlos-auth-service**: 作为授权服务器，负责颁发 Token
 - **carlos-spring-boot-starter-gateway**: 作为资源服务器，负责验证 Token
 
 ## 注意事项

@@ -345,9 +345,9 @@ META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
 
 ### 建议测试策略
 
-1. **核心模块必测**: carlos-spring-boot-starter-core、carlos-spring-boot-starter-mybatis、carlos-oauth2
+1. **核心模块必测**: carlos-spring-boot-starter-core、carlos-spring-boot-starter-mybatis、carlos-auth
 2. **集成测试优先**: 数据库、Redis、MQ 等外部依赖
-3. **安全模块重点测**: carlos-spring-boot-starter-encrypt、carlos-license、carlos-oauth2
+3. **安全模块重点测**: carlos-spring-boot-starter-encrypt、carlos-license、carlos-auth
 4. **工具类覆盖**: carlos-utils、carlos-excel
 
 ## 安全注意事项
