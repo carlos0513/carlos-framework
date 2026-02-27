@@ -25,15 +25,15 @@ public class RoleMenuDTO {
     /**
      * 角色id
      */
-    private String roleId;
+    private Long roleId;
     /**
      * 菜单id
      */
-    private String menuId;
+    private Long menuId;
     /**
      * 租户id
      */
-    private String tenantId;
+    private Long tenantId;
     /**
      * 菜单id的集合
      */

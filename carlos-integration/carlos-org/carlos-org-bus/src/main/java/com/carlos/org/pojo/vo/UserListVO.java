@@ -33,7 +33,7 @@ public class UserListVO implements Serializable {
     @Schema(description = "部门名称")
     private String departmentName;
     @Schema(description = "部门id")
-    private String departmentId;
+    private Long departmentId;
     @Schema(description = "部门层级")
     private String departmentLevelCode;
     @Schema(description = "创建者")

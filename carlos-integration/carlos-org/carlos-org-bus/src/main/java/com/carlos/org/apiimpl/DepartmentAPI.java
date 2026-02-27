@@ -212,7 +212,7 @@ public class DepartmentAPI implements ApiDepartment {
     @GetMapping("all/subDept/deptCode")
     @Operation(summary = "deptCode下级部门code")
     public Result<Set<String>> allSubDeptCodeByDeptCode(String deptCode) {
-        String id = departmentService.getDepartmentByCode(deptCode).getId();
+        Serializable id = departmentService.getDepartmentByCode(deptCode).getId();
         Set<String> codes = departmentService.allSubDepartmentCode(id, true);
         return Result.ok((codes));
     }

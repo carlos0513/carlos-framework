@@ -20,7 +20,7 @@ public class UserDeptRoleVO {
     /**
      * 用户id
      */
-    private String userId;
+    private Long userId;
     /**
      * 用户名
      */
@@ -32,7 +32,7 @@ public class UserDeptRoleVO {
     /**
      * 角色id
      */
-    private String roleId;
+    private Long roleId;
     /**
      * 角色名称
      */

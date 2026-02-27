@@ -1,4 +1,4 @@
-package com.carlos.org.service.impl;
+package com.carlos.org.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -33,9 +33,6 @@ import com.carlos.org.pojo.enums.OrgDockingTypeEnum;
 import com.carlos.org.pojo.param.*;
 import com.carlos.org.pojo.vo.DepartmentBaseVO;
 import com.carlos.org.pojo.vo.DepartmentStepTreeVO;
-import com.carlos.org.service.DepartmentService;
-import com.carlos.org.service.OrgDockingMappingService;
-import com.carlos.org.service.UserDepartmentService;
 import com.google.common.collect.Lists;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;

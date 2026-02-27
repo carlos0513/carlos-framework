@@ -26,7 +26,7 @@ public class DepartmentTreeVO implements Serializable {
     @Schema(description = "主键")
     private Long id;
     @Schema(description = "上级id")
-    private String parentId;
+    private Long parentId;
     @Schema(description = "部门名称")
     private String deptName;
     @Schema(description = "部门编号")
@@ -61,7 +61,7 @@ public class DepartmentTreeVO implements Serializable {
         @Schema(description = "主键")
         private Long id;
         @Schema(description = "用户id")
-        private String userId;
+        private Long userId;
         @Schema(description = "用户名")
         private String account;
         @Schema(description = "姓名")

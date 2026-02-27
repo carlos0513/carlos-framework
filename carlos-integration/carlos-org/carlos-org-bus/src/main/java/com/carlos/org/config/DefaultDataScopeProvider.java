@@ -2,7 +2,7 @@ package com.carlos.org.config;
 
 import com.carlos.core.interfaces.ApplicationExtend;
 import com.carlos.datascope.DataScopeProvider;
-import com.carlos.org.service.impl.UserScopeService;
+import com.carlos.org.service.UserScopeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

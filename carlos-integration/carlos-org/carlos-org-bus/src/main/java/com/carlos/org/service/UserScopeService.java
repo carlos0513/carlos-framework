@@ -1,4 +1,4 @@
-package com.carlos.org.service.impl;
+package com.carlos.org.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.carlos.boot.util.ExtendInfoUtil;
@@ -7,8 +7,6 @@ import com.carlos.core.response.Result;
 import com.carlos.org.manager.UserManager;
 import com.carlos.org.manager.UserRoleManager;
 import com.carlos.org.pojo.dto.UserDTO;
-import com.carlos.org.service.DepartmentService;
-import com.carlos.org.service.UserDepartmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

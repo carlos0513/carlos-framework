@@ -12,7 +12,7 @@ public class SystemOperationLog {
     /**
      * 主键ID
      */
-    private String id;
+    private Long id;
     /**
      * 操作人id
      */

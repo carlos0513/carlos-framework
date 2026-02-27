@@ -33,12 +33,12 @@ public class OrgDockingMapping implements Serializable {
      * 系统数据id
      */
     @TableField(value = "system_id")
-    private String systemId;
+    private Long systemId;
     /**
      * 目标系统id
      */
     @TableField(value = "target_id")
-    private String targetId;
+    private Long targetId;
     /**
      * 目标系统标识
      */

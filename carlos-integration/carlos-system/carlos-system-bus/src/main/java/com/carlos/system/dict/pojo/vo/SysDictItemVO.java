@@ -27,7 +27,7 @@ public class SysDictItemVO implements Serializable {
     private Long id;
 
     @Schema(description = "字典id")
-    private String dictId;
+    private Long dictId;
 
     @Schema(description = "字典项值")
     private String itemName;

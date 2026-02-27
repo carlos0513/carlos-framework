@@ -48,7 +48,7 @@ public class AuditLogin implements Serializable {
      * 客户端ID
      */
     @TableField(value = "client_id")
-    private String clientId;
+    private Long clientId;
 
     /**
      * 事件类型：LOGIN-登录、LOGOUT-登出、REFRESH-刷新令牌、LOCKED-账号锁定
@@ -96,7 +96,7 @@ public class AuditLogin implements Serializable {
      * 会话ID
      */
     @TableField(value = "session_id")
-    private String sessionId;
+    private Long sessionId;
 
     /**
      * 创建时间（分区字段）

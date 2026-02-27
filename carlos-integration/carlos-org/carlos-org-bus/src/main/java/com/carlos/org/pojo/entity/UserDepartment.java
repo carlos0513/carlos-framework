@@ -36,12 +36,12 @@ public class UserDepartment extends Model<UserDepartment> implements Serializabl
      * 用户id
      */
     @TableField(value = "user_id")
-    private String userId;
+    private Long userId;
     /**
      * 部门id
      */
     @TableField(value = "department_id")
-    private String departmentId;
+    private Long departmentId;
     /**
      * 是否是管理员
      */

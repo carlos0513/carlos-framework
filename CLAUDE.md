@@ -1,211 +1,212 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文档为 Claude Code (claude.ai/code) 提供本代码库的开发指导和规范。
 
-## Project Overview
+## 项目概述
 
-**Carlos Framework** is a Java-based microservices framework built on Spring Boot 3.5.9 (JDK 17) and Spring Cloud Alibaba. The project is organized as a multi-module Maven build with a clear layered architecture:
+**Carlos Framework** 是基于 Spring Boot 3.5.9 (JDK 17) 和 Spring Cloud Alibaba 的 Java 微服务框架。项目采用多模块 Maven 构建结构，具有清晰的分层架构：
 
-- **carlos-dependencies**: Centralized dependency version management (BOM)
-- **carlos-parent**: Unified parent POM with build configuration and plugin management
-- **carlos-commons**: Framework-agnostic common utilities (core, utils, excel)
-- **carlos-spring-boot**: Spring Boot integration layer with 22 starter modules
-- **carlos-integration**: Third-party integrations (license, tools)
-- **carlos-samples**: Example applications and test modules
+- **carlos-dependencies**: 集中式依赖版本管理 (BOM)
+- **carlos-parent**: 统一父 POM，包含构建配置和插件管理
+- **carlos-commons**: 与框架无关的公共工具类 (core, utils, excel)
+- **carlos-spring-boot**: Spring Boot 集成层，包含 22 个 starter 模块
+- **carlos-integration**: 第三方集成 (license, tools)
+- **carlos-samples**: 示例应用程序和测试模块
 
-This is an internal framework/scaffold project designed to accelerate application development by providing pre-built integrations and utilities.
+这是一个内部框架/脚手架项目，旨在通过提供预构建的集成和工具来加速应用开发。
 
-## Maven Commands
+## Maven 命令
 
-### Building the Project
+### 构建项目
 
 ```bash
-# Build all modules (tests are skipped by default in pom.xml)
+# 构建所有模块 (pom.xml 中默认跳过测试)
 mvn clean install
 
-# Build with specific profile (internal Nexus repository)
-mvn clean install -P carlos-public    # Public server: zcarlos.com:8081
-mvn clean install -P carlos-private   # Private server: 192.168.3.30:8081
+# 使用指定 profile 构建 (内部 Nexus 仓库)
+mvn clean install -P carlos-public    # 公共服务器: zcarlos.com:8081
+mvn clean install -P carlos-private   # 私有服务器: 192.168.3.30:8081
 
-# Build a specific module
+# 构建指定模块
 cd carlos-commons/carlos-spring-boot-starter-core
 mvn clean install
 
-# Build Spring Boot starters
+# 构建 Spring Boot starters
 cd carlos-spring-boot
 mvn clean install
 
-# Deploy to Nexus
+# 部署到 Nexus
 mvn clean deploy -P carlos-public
 ```
 
-### Running Tests
+### 运行测试
 
 ```bash
-# Run unit tests (currently skipped in pom.xml configuration)
+# 运行单元测试 (pom.xml 配置中当前已跳过)
 mvn test
 
-# Run specific test
+# 运行指定测试
 mvn test -Dtest=ClassName#methodName
 
-# Run integration tests
+# 运行集成测试
 mvn verify
 ```
 
-### Dependency Management
+### 依赖管理
 
 ```bash
-# Check for dependency updates
+# 检查依赖更新
 mvn versions:display-dependency-updates
 
-# Check for plugin updates
+# 检查插件更新
 mvn versions:display-plugin-updates
 
-# Upgrade to latest versions
+# 升级到最新版本
 mvn versions:use-latest-versions
 
-# View effective POM
+# 查看有效 POM
 mvn help:effective-pom
 ```
 
-## Architecture
+## 架构
 
-### Module Structure
+### 模块结构
 
-The framework follows a layered architecture with clear separation of concerns:
+框架遵循分层架构，职责清晰分离：
 
 ```
-carlos-framework/                          # Root aggregator POM
-├── carlos-dependencies/                   # Dependency version management (BOM)
-├── carlos-parent/                         # Parent POM (build config, plugins)
-├── carlos-commons/                        # Framework-agnostic utilities
-│   ├── carlos-spring-boot-starter-core/                      # Core abstractions, exceptions, pagination
-│   ├── carlos-utils/                     # Common utility functions
-│   └── carlos-excel/                     # Excel processing utilities
-├── carlos-spring-boot/                    # Spring Boot integration layer
+carlos-framework/                          # 根聚合 POM
+├── carlos-dependencies/                   # 依赖版本管理 (BOM)
+├── carlos-parent/                         # 父 POM (构建配置、插件)
+├── carlos-commons/                        # 与框架无关的工具类
+│   ├── carlos-spring-boot-starter-core/                      # 核心抽象、异常、分页
+│   ├── carlos-utils/                     # 公共工具函数
+│   └── carlos-excel/                     # Excel 处理工具
+├── carlos-spring-boot/                    # Spring Boot 集成层
 │   ├── carlos-spring-boot-starter-apm/
 │   ├── carlos-spring-boot-starter-redis/
 │   ├── carlos-spring-boot-starter-mybatis/
-│   └── ... (22 starters total)
-├── carlos-integration/                    # Third-party integrations
-│   ├── carlos-license/                   # Software licensing (TrueLicense)
+│   └── ... (共 22 个 starters)
+├── carlos-integration/                    # 第三方集成
+│   ├── carlos-license/                   # 软件许可证 (TrueLicense)
 │   │   ├── carlos-license-core/
 │   │   ├── carlos-spring-boot-starter-license-generate/
 │   │   └── carlos-spring-boot-starter-license-verify/
-│   └── carlos-tools/                     # GUI tools (code generator)
-└── carlos-samples/                        # Examples and tests
-    └── carlos-test/                      # Test application
+│   └── carlos-tools/                     # GUI 工具 (代码生成器)
+└── carlos-samples/                        # 示例和测试
+    └── carlos-test/                      # 测试应用
 ```
 
-**Build Order:**
+**构建顺序：**
 
 1. carlos-dependencies (BOM)
-2. carlos-parent (parent POM)
-3. carlos-commons (3 modules)
-4. carlos-spring-boot (22 modules)
-5. carlos-integration (5 modules)
-6. carlos-samples (1 module)
+2. carlos-parent (父 POM)
+3. carlos-commons (3 个模块)
+4. carlos-spring-boot (22 个模块)
+5. carlos-integration (5 个模块)
+6. carlos-samples (1 个模块)
 
-### Key Component Modules
+### 核心组件模块
 
-**Commons Layer (Framework-agnostic):**
+**Commons 层 (与框架无关)：**
 
-- `carlos-spring-boot-starter-core`: Base abstractions, annotations, AOP, exceptions, pagination, response wrappers
-- `carlos-utils`: Common utilities and helper functions (tree utils, HTTP client)
-- `carlos-excel`: Excel import/export using Apache POI 5.2.5 and EasyExcel
+- `carlos-spring-boot-starter-core`: 基础抽象、注解、AOP、异常、分页、响应包装器
+- `carlos-utils`: 公共工具类和辅助函数 (树形工具、HTTP 客户端)
+- `carlos-excel`: 使用 Apache POI 5.2.5 和 EasyExcel 进行 Excel 导入/导出
 
-**Spring Boot Integration Layer:**
+**Spring Boot 集成层：**
 
-*Core Infrastructure:*
+*核心基础设施：*
 
-- `carlos-spring-boot-starter-web`: Spring Boot autoconfiguration and starter support
-- `carlos-spring-cloud-starter`: Spring Cloud Alibaba integrations (Nacos, Sentinel)
-- `carlos-spring-boot-starter-gateway`: API Gateway utilities for Spring Cloud Gateway
-- `carlos-spring-boot-starter-json`: JSON serialization (Fastjson 2.0.60)
+- `carlos-spring-boot-starter-web`: Spring Boot 自动配置和 starter 支持
+- `carlos-spring-cloud-starter`: Spring Cloud Alibaba 集成 (Nacos, Sentinel)
+- `carlos-spring-boot-starter-gateway`: Spring Cloud Gateway 的 API 网关工具
+- `carlos-spring-boot-starter-json`: JSON 序列化 (Fastjson 2.0.60)
 
-*Data Access:*
+*数据访问：*
 
-- `carlos-spring-boot-starter-mybatis`: MyBatis-Plus integration with multi-datasource support
-- `carlos-spring-boot-starter-mongodb`: MongoDB integration
-- `carlos-spring-boot-starter-redis`: Redis + Redisson + Caffeine (unified caching solution)
-- `carlos-spring-boot-starter-datascope`: Data permission/scope control
+- `carlos-spring-boot-starter-mybatis`: MyBatis-Plus 集成，支持多数据源
+- `carlos-spring-boot-starter-mongodb`: MongoDB 集成
+- `carlos-spring-boot-starter-redis`: Redis + Redisson + Caffeine (统一缓存方案)
+- `carlos-spring-boot-starter-datascope`: 数据权限/范围控制
 
-*Storage & Messaging:*
+*存储与消息：*
 
-- `carlos-spring-boot-starter-minio`: MinIO object storage integration
-- `carlos-spring-boot-starter-oss`: OSS (Object Storage Service) abstraction
-- `carlos-spring-boot-starter-mq`: Message queue abstractions
+- `carlos-spring-boot-starter-minio`: MinIO 对象存储集成
+- `carlos-spring-boot-starter-oss`: OSS (对象存储服务) 抽象
+- `carlos-spring-boot-starter-mq`: 消息队列抽象
 
-*Security & Authentication:*
+*安全与认证：*
 
-- `carlos-spring-boot-starter-encrypt`: Encryption utilities (SM2, SM4 national cryptography)
-- `carlos-spring-boot-starter-oauth2`: OAuth2 authentication and authorization
+- `carlos-spring-boot-starter-encrypt`: 加密工具 (国密 SM2, SM4)
+- `carlos-spring-boot-starter-oauth2`: OAuth2 认证和授权
 
-*Integration:*
+*集成：*
 
-- `carlos-spring-boot-starter-docking`: Third-party integration framework (DingTalk, RongZhengTong)
-- `carlos-spring-boot-starter-datacenter`: Data center integration/synchronization
-- `carlos-spring-boot-starter-sms`: SMS sending abstraction with multi-provider support
+- `carlos-spring-boot-starter-docking`: 第三方集成框架 (钉钉、荣之通)
+- `carlos-spring-boot-starter-datacenter`: 数据中心集成/同步
+- `carlos-spring-boot-starter-sms`: 短信发送抽象，支持多提供商
 
-*Observability:*
+*可观测性：*
 
-- `carlos-spring-boot-starter-log`: Logging enhancements
-- `carlos-spring-boot-starter-apm`: APM integration (SkyWalking 9.5.0)
+- `carlos-spring-boot-starter-log`: 日志增强
+- `carlos-spring-boot-starter-apm`: APM 集成 (SkyWalking 9.5.0)
 
-*Utilities:*
+*工具类：*
 
-- `carlos-spring-boot-starter-openapi`: OpenAPI/Swagger documentation support (Knife4j)
-- `carlos-spring-boot-starter-snowflake`: Distributed ID generation
-- `carlos-spring-boot-starter-flowable`: Flowable workflow engine integration
-- `carlos-spring-boot-starter-disruptor`: Disruptor high-performance queue component
+- `carlos-spring-boot-starter-openapi`: OpenAPI/Swagger 文档支持 (Knife4j)
+- `carlos-spring-boot-starter-snowflake`: 分布式 ID 生成
+- `carlos-spring-boot-starter-flowable`: Flowable 工作流引擎集成
+- `carlos-spring-boot-starter-disruptor`: Disruptor 高性能队列组件
 
-**Integration Layer:**
+**Integration 层：**
 
-- `carlos-license`: TrueLicense-based software licensing system (3 sub-modules)
-    - `carlos-license-core`: Core licensing functionality
-    - `carlos-spring-boot-starter-license-generate`: License generation (dev only)
-    - `carlos-spring-boot-starter-license-verify`: License verification (production)
-- `carlos-tools`: GUI desktop tools (code generator, project scaffolding, Swing-based)
+- `carlos-license`: 基于 TrueLicense 的软件许可证系统 (3 个子模块)
+    - `carlos-license-core`: 核心许可证功能
+    - `carlos-spring-boot-starter-license-generate`: 许可证生成 (仅开发使用)
+    - `carlos-spring-boot-starter-license-verify`: 许可证验证 (生产使用)
+- `carlos-tools`: GUI 桌面工具 (代码生成器、项目脚手架、基于 Swing)
 
-**Samples:**
+**Samples：**
 
-- `carlos-test`: Test application demonstrating framework usage
+- `carlos-test`: 演示框架用法的测试应用
 
-### Technology Stack (from carlos-dependencies/pom.xml)
+### 技术栈 (来自 carlos-dependencies/pom.xml)
 
-| Component | Version | Notes |
-|-----------|---------|-------|
-| Spring Boot | 3.5.9 | |
-| Spring Cloud | 2025.0.1 | |
+| 组件                   | 版本         | 说明                     |
+|----------------------|------------|------------------------|
+| Spring Boot          | 3.5.9      |                        |
+| Spring Cloud         | 2025.0.1   |                        |
 | Spring Cloud Alibaba | 2025.0.0.0 | Nacos, Sentinel, Seata |
-| JDK | 17 | Minimum required version |
-| Maven | 3.8+ | Minimum required version |
-| MyBatis-Plus | 3.5.15 | With Join extension 1.5.4 |
-| Seata | 2.0.0 | Distributed transactions |
-| Hutool | 5.8.40 | Utility library |
-| MapStruct | 1.6.3 | Bean mapping |
-| Guava | 33.4.8-jre | |
-| Druid | 1.2.27 | Database connection pool |
-| SkyWalking | 9.5.0 | APM tracing |
+| JDK                  | 17         | 最低版本要求                 |
+| Maven                | 3.8+       | 最低版本要求                 |
+| MyBatis-Plus         | 3.5.15     | 带 Join 扩展 1.5.4        |
+| Seata                | 2.0.0      | 分布式事务                  |
+| Hutool               | 5.8.40     | 工具库                    |
+| MapStruct            | 1.6.3      | Bean 映射                |
+| Guava                | 33.4.8-jre |                        |
+| Druid                | 1.2.27     | 数据库连接池                 |
+| SkyWalking           | 9.5.0      | APM 追踪                 |
 
-### Dependency Version Management
+### 依赖版本管理
 
-The framework uses a centralized dependency management approach:
+框架采用集中式依赖管理方案：
 
-1. **carlos-dependencies**: Defines all dependency versions using `<dependencyManagement>`
-2. **carlos-parent**: Imports carlos-dependencies BOM and provides build configuration
-3. **All modules**: Inherit from carlos-parent and reference dependencies without versions
+1. **carlos-dependencies**: 使用 `<dependencyManagement>` 定义所有依赖版本
+2. **carlos-parent**: 导入 carlos-dependencies BOM 并提供构建配置
+3. **所有模块**: 继承自 carlos-parent，引用依赖时无需指定版本
 
-The `${revision}` placeholder pattern (currently `3.0.0-SNAPSHOT`) with the `flatten-maven-plugin` manages versions centrally. All child modules inherit this version.
+使用 `${revision}` 占位符模式 (当前为 `3.0.0-SNAPSHOT`) 和 `flatten-maven-plugin` 集中管理版本。所有子模块继承此版本。
 
-### Configuration Patterns
+### 配置模式
 
-The framework uses Spring Boot's autoconfiguration mechanism. Modules typically provide:
-- AutoConfiguration classes with `@Configuration` and `@ConditionalOnProperty`
-- `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` files
-- `@ConfigurationProperties` classes with `carlos.*` prefix namespace
+框架使用 Spring Boot 的自动配置机制。模块通常提供：
 
-Example configuration structure (from carlos-test):
+- 带 `@Configuration` 和 `@ConditionalOnProperty` 的 AutoConfiguration 类
+- `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 文件
+- 使用 `carlos.*` 前缀命名空间的 `@ConfigurationProperties` 类
+
+配置结构示例 (来自 carlos-test)：
 ```yaml
 carlos:
   boot:
@@ -225,93 +226,193 @@ carlos:
       enabled: ${RZT_ENABLE:true}
 ```
 
-### Licensing Module Architecture
+### 许可证模块架构
 
-The `carlos-license` module (located in `carlos-integration/`) is structured for security:
+`carlos-license` 模块 (位于 `carlos-integration/`) 采用安全设计：
 
-- `carlos-license-core`: Shared models and abstractions
-- `carlos-spring-boot-starter-license-generate`: Certificate generation (should NOT be included in production deployments)
-- `carlos-spring-boot-starter-license-verify`: Certificate verification (include this in applications)
+- `carlos-license-core`: 共享模型和抽象
+- `carlos-spring-boot-starter-license-generate`: 证书生成 (不应包含在生产部署中)
+- `carlos-spring-boot-starter-license-verify`: 证书验证 (应用中应包含此模块)
 
-Uses TrueLicense to validate hardware fingerprints (IP, MAC, CPU serial, mainboard serial) and time constraints.
+使用 TrueLicense 验证硬件指纹 (IP, MAC, CPU 序列号、主板序列号) 和时间限制。
 
-## Spring Boot 3.x Migration Notes
+## Spring Boot 3.x 迁移说明
 
-This framework has been migrated from Spring Boot 2.7 to Spring Boot 3.5. Key migration changes include:
+本框架已从 Spring Boot 2.7 迁移到 Spring Boot 3.5。主要迁移变更包括：
 
-### Jakarta EE Namespace
+### Jakarta EE 命名空间
 
-- All `jakarta.*` imports have been migrated to `jakarta.*`
-- Notable packages: `jakarta.servlet`, `jakarta.validation`, `jakarta.annotation`
+- 所有 `javax.*` 导入已迁移到 `jakarta.*`
+- 主要包: `jakarta.servlet`, `jakarta.validation`, `jakarta.annotation`
 
 ### Spring Security 6.x
 
-- Using `SecurityFilterChain` instead of deprecated `WebSecurityConfigurerAdapter`
-- Using `requestMatchers()` instead of `antMatchers()`
-- New Lambda DSL configuration style
-- `@EnableMethodSecurity` instead of `@EnableGlobalMethodSecurity`
+- 使用 `SecurityFilterChain` 替代弃用的 `WebSecurityConfigurerAdapter`
+- 使用 `requestMatchers()` 替代 `antMatchers()`
+- 新的 Lambda DSL 配置风格
+- 使用 `@EnableMethodSecurity` 替代 `@EnableGlobalMethodSecurity`
 
 ### MyBatis-Plus 3.5.x
 
-- Uses `mybatis-plus-spring-boot3-starter` for Spring Boot 3 compatibility
-- `PaginationInnerInterceptor` requires explicit database type specification
-- `IdentifierGenerator.nextId()` returns `Long` instead of `Number`
+- 使用 `mybatis-plus-spring-boot3-starter` 以兼容 Spring Boot 3
+- `PaginationInnerInterceptor` 需要显式指定数据库类型
+- `IdentifierGenerator.nextId()` 返回 `Long` 而不是 `Number`
 
 ### MySQL Connector
 
-- `mysql-connector-java` (groupId: `mysql`) has been replaced with `mysql-connector-j` (groupId: `com.mysql`)
+- `mysql-connector-java` (groupId: `mysql`) 已替换为 `mysql-connector-j` (groupId: `com.mysql`)
 
 ### Spring Authorization Server (OAuth2)
 
-- Based on Spring Authorization Server 1.x
-- **Important**: Password grant type is no longer supported
-- Use `authorization_code` + PKCE for secure authentication
+- 基于 Spring Authorization Server 1.x
+- **重要**: Password 授予类型不再支持
+- 使用 `authorization_code` + PKCE 进行安全认证
 
-### AutoConfiguration Registration
+### AutoConfiguration 注册
 
-- Uses new `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` format
-- No longer uses deprecated `spring.factories` file
+- 使用新的 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 格式
+- 不再使用弃用的 `spring.factories` 文件
 
-## Development Guidelines
+## 开发规范
 
-### Adding New Modules
+### 代码规范
 
-**For Spring Boot Starters:**
-1. Create module under `carlos-spring-boot/`
-2. Add `<module>` entry to `carlos-spring-boot/pom.xml`
-3. Set parent to `carlos-spring-boot` with version `${revision}`
-4. Follow naming convention: `carlos-spring-boot-starter-{function}`
-5. Add dependency management entry in `carlos-dependencies/pom.xml`
+#### 不可变性 (Immutability) - **至关重要**
 
-**For Common Utilities:**
+始终创建新对象，**严禁**修改原对象 (Mutation)：
 
-1. Create module under `carlos-commons/`
-2. Add `<module>` entry to `carlos-commons/pom.xml`
-3. Set parent to `carlos-commons` with version `${revision}`
-4. Follow naming convention: `carlos-{function}`
-5. Ensure no Spring Boot dependencies (keep it framework-agnostic)
+```java
+// 错误：修改原对象 (Mutation)
+public User updateUserName(User user, String name) {
+    user.setName(name);  // 直接修改了原对象！
+    return user;
+}
 
-**For Third-party Integrations:**
+// 正确：不可变性 (Immutability)
+public User updateUserName(User user, String name) {
+    return User.builder()
+        .id(user.getId())
+        .name(name)
+        .email(user.getEmail())
+        .build();
+}
+```
 
-1. Create module under `carlos-integration/`
-2. Add `<module>` entry to `carlos-integration/pom.xml`
-3. Set parent to `carlos-parent` with version `${revision}`
+#### 文件组织
 
-### Module Dependencies
+提倡"多而小"的文件，而非"少而大"的文件：
 
-**Dependency Rules:**
+- 高内聚，低耦合
+- 建议每文件 200-400 行，最大不超过 800 行
+- 从大型组件中提取工具函数 (Utilities)
+- 按功能/领域 (Feature/Domain) 组织，而非按类型 (Type) 组织
 
-- Commons modules (`carlos-spring-boot-starter-core`, `carlos-utils`, `carlos-excel`) are foundational and framework-agnostic
-- Spring Boot starters can depend on commons modules
-- Spring Boot starters should depend on `carlos-spring-boot-starter-web` for base configuration
-- Spring Cloud starters should depend on `carlos-spring-cloud-starter`
-- Integration modules can depend on both commons and Spring Boot starters
-- Avoid circular dependencies between modules
+#### 命名规范
 
-**Layering:**
+- **类名**: 使用 UpperCamelCase，名词形式 (如: `UserService`, `OrderController`)
+- **方法名**: 使用 lowerCamelCase，动词开头 (如: `getUser()`, `createOrder()`)
+- **常量**: 使用 UPPER_SNAKE_CASE (如: `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT`)
+- **包名**: 全小写，多层嵌套 (如: `com.carlos.auth.service.impl`)
+
+#### 错误处理
+
+始终进行全面的错误处理：
+
+```java
+try {
+    Result result = riskyOperation();
+    return result;
+} catch (SpecificException e) {
+    log.error("操作失败，具体原因: {}", e.getMessage(), e);
+    throw new BusinessException("友好的用户提示信息");
+} catch (Exception e) {
+    log.error("未知错误: {}", e.getMessage(), e);
+    throw new SystemException("系统繁忙，请稍后重试");
+}
+```
+
+#### 输入验证
+
+始终验证用户输入：
+
+```java
+import javax.validation.constraints.*;
+
+public class UserCreateParam {
+    @NotBlank(message = "用户名不能为空")
+    @Size(min = 3, max = 20, message = "用户名长度必须在 3-20 之间")
+    private String username;
+
+    @NotBlank(message = "邮箱不能为空")
+    @Email(message = "邮箱格式不正确")
+    private String email;
+
+    @Min(value = 0, message = "年龄不能为负数")
+    @Max(value = 150, message = "年龄不能超过 150")
+    private Integer age;
+}
+```
+
+#### 函数大小
+
+- 函数应小而专注，**不超过 50 行**
+- 单个函数只做一件事
+- 嵌套层级不超过 4 层
+
+#### 代码质量检查清单
+
+在标记工作完成之前，确认以下内容：
+
+- [ ] 代码易读且命名良好
+- [ ] 函数体量小（<50 行）
+- [ ] 文件内容聚焦（<800 行）
+- [ ] 无深度嵌套（>4 层）
+- [ ] 具备完善的错误处理
+- [ ] 不存在 console.log 语句（使用日志框架）
+- [ ] 不存在硬编码 (Hardcoded) 数值（使用常量）
+- [ ] 不存在修改原对象 (Mutation) 操作（已采用不可变模式）
+- [ ] 所有用户输入均已验证
+- [ ] 日志级别使用正确
+
+### 添加新模块
+
+**Spring Boot Starters：**
+
+1. 在 `carlos-spring-boot/` 下创建模块
+2. 在 `carlos-spring-boot/pom.xml` 中添加 `<module>` 条目
+3. 设置父项目为 `carlos-spring-boot`，版本为 `${revision}`
+4. 遵循命名约定: `carlos-spring-boot-starter-{function}`
+5. 在 `carlos-dependencies/pom.xml` 中添加依赖管理条目
+
+**公共工具类：**
+
+1. 在 `carlos-commons/` 下创建模块
+2. 在 `carlos-commons/pom.xml` 中添加 `<module>` 条目
+3. 设置父项目为 `carlos-commons`，版本为 `${revision}`
+4. 遵循命名约定: `carlos-{function}`
+5. 确保无 Spring Boot 依赖（保持与框架无关）
+
+**第三方集成：**
+
+1. 在 `carlos-integration/` 下创建模块
+2. 在 `carlos-integration/pom.xml` 中添加 `<module>` 条目
+3. 设置父项目为 `carlos-parent`，版本为 `${revision}`
+
+### 模块依赖规则
+
+**依赖规则：**
+
+- Commons 模块 (`carlos-spring-boot-starter-core`, `carlos-utils`, `carlos-excel`) 是基础，与框架无关
+- Spring Boot starters 可以依赖 commons 模块
+- Spring Boot starters 应依赖 `carlos-spring-boot-starter-web` 获取基础配置
+- Spring Cloud starters 应依赖 `carlos-spring-cloud-starter`
+- Integration 模块可以依赖 commons 和 Spring Boot starters
+- 避免模块间的循环依赖
+
+**分层结构：**
 
 ```
-carlos-samples (test apps)
+carlos-samples (测试应用)
     ↓
 carlos-integration (license, tools)
     ↓
@@ -319,80 +420,222 @@ carlos-spring-boot (22 starters)
     ↓
 carlos-commons (core, utils, excel)
     ↓
-carlos-parent (build config)
+carlos-parent (构建配置)
     ↓
 carlos-dependencies (BOM)
 ```
 
-### Code Generation Tools
+### Git 工作流
 
-The `carlos-tools` module (located in `carlos-integration/`) provides a Swing-based GUI for:
-- Database code generation (MyBatis/MongoDB/Elasticsearch from MySQL schema)
-- Project scaffolding
-- Encryption utilities
-- GitLab integration
+#### 提交信息格式
 
-Run with: `com.carlos.fx.ToolsApplication.main()` method
+```
+<type>: <description>
 
-### Encryption Standards
+<optional body>
+```
 
-This framework uses Chinese national cryptography standards (SM2/SM4) rather than RSA/AES in some modules. Be aware when reviewing encryption code.
+类型 (Types): feat, fix, refactor, docs, test, chore, perf, ci
 
-### Configuration Files
+**示例：**
 
-Resource filtering is enabled for `application*.yml/yaml/properties` and `bootstrap*.yml` files using `@...@` delimiters for Maven property substitution.
+```
+feat: 添加用户登录功能
 
-### Testing
+- 实现用户名密码登录
+- 集成 JWT token
+- 添加登录日志记录
+```
 
-- Unit tests: `*Test.java` in `src/test/java` (currently skipped in build)
-- Integration tests: `*IT.java` (use maven-failsafe-plugin)
-- Test configuration in `carlos-samples/carlos-test` module demonstrates framework usage
+#### 拉取请求 (Pull Request) 工作流
 
-## Important Notes
+创建 PR 时：
 
-- **Git Repository**: The root directory is a git repository
-- **Multi-Profile Support**: Two Nexus repository profiles exist for different deployment environments
-    - `carlos-public`: Public server at zcarlos.com:8081
-    - `carlos-private`: Private server at 192.168.3.30:8081
-- **JDK 17 Required**: This is a Spring Boot 3 project requiring JDK 17+
-- **Maven 3.8+ Required**: Minimum Maven version is 3.8
-- **Internal Use Only**: This framework is for internal use only
-- **Parent Version**: Use `${revision}` in child POMs, not hardcoded versions
-- **Security Note**: Never include `carlos-spring-boot-starter-license-generate` module in production artifacts
-- **Layered Architecture**: The framework follows a clear layered architecture (commons → spring-boot → integration → samples)
-- **Spring Boot 3.x**: Framework has been upgraded from Spring Boot 2.7 to 3.5.9
+1. 分析完整的提交历史（不仅是最近一次提交）
+2. 使用 `git diff [base-branch]...HEAD` 查看所有变更
+3. 起草详尽的 PR 摘要
+4. 包含带有 TODO 的测试计划
+5. 如果是新分支，使用 `-u` 参数推送
 
-## Recent Updates
+#### 功能实现工作流
 
-### carlos-auth Module (Added 2026-01-25)
+1. **规划先行**
+    - 使用 **planner** 智能体创建实现计划
+    - 识别依赖关系与风险
+    - 拆分为多个阶段
 
-A comprehensive OAuth2 authentication and authorization module based on Spring Security OAuth2 Authorization Server.
+2. **测试驱动开发 (TDD)**
+    - 先编写测试 (RED)
+    - 运行测试 - 应当失败 (FAIL)
+    - 编写最简实现代码 (GREEN)
+    - 运行测试 - 应当通过 (PASS)
+    - 重构 (IMPROVE)
+    - 验证 80% 以上的覆盖率
 
-**Key Features:**
+3. **代码评审**
+    - 在编写代码后立即使用 **code-reviewer** 智能体
+    - 解决严重 (CRITICAL) 和高 (HIGH) 等级的问题
+    - 尽可能修复中 (MEDIUM) 等级的问题
 
-- OAuth2 Authorization Server with multiple grant types (authorization_code, client_credentials, refresh_token)
-- OAuth2 Resource Server with JWT validation
-- Custom JWT token enhancement with user context (user_id, tenant_id, dept_id, role_ids, authorities)
-- Integration with carlos-spring-boot-starter-core authentication system (LoginUserInfo, UserContext)
-- Method-level security with @PreAuthorize annotations
-- Utility class OAuth2Util for easy access to current user information
+### 测试要求
 
-**Module Structure:**
+#### 最低测试覆盖率: 80%
+
+测试类型（全部必选）：
+
+1. **单元测试** - 独立函数、工具类、组件 (JUnit 5)
+2. **集成测试** - API 端点、数据库操作 (MockMvc)
+3. **端到端测试** - 关键用户流程 (Playwright)
+
+#### 测试命名约定
+
+- 单元测试类: `*Test.java` (位于 `src/test/java`)
+- 集成测试类: `*IT.java` (使用 maven-failsafe-plugin)
+- 测试方法: 使用 `should_xxx_when_xxx` 或 `test_xxx` 格式
+
+```java
+@Test
+@DisplayName("应该成功创建用户当参数合法时")
+void should_create_user_successfully_when_params_valid() {
+    // given
+    UserCreateParam param = new UserCreateParam();
+    param.setUsername("testuser");
+    param.setEmail("test@example.com");
+
+    // when
+    User user = userService.createUser(param);
+
+    // then
+    assertNotNull(user);
+    assertEquals("testuser", user.getUsername());
+    verify(userMapper, times(1)).insert(any(User.class));
+}
+```
+
+#### Mock 使用规范
+
+- 使用 `@Mock` 和 `@InjectMocks` 创建 Mock 对象
+- 使用 `@ExtendWith(MockitoExtension.class)` 启用 Mockito
+- 明确验证 Mock 对象的交互行为
+- 避免过度 Mock，只 Mock 外部依赖
+
+### 安全规范
+
+#### 强制安全检查 (提交前必须检查)
+
+- [ ] 无硬编码凭据（API 密钥、密码、令牌/Tokens）
+- [ ] 所有用户输入均已验证
+- [ ] 预防 SQL 注入（使用参数化查询/MyBatis-Plus）
+- [ ] 预防 XSS（对 HTML 进行净化处理/Sanitized）
+- [ ] 已启用 CSRF 保护
+- [ ] 身份验证/授权已验证
+- [ ] 所有端点均已设置速率限制（Rate limiting）
+- [ ] 错误消息不泄露敏感数据
+
+#### 凭据管理
+
+```java
+// 严禁：硬编码凭据
+private String apiKey = "sk-proj-xxxxx";
+
+// 推荐：环境变量
+@Value("${api.key}")
+private String apiKey;
+
+// 或在启动时验证
+@PostConstruct
+public void init() {
+    if (StringUtils.isEmpty(apiKey)) {
+        throw new IllegalStateException("API_KEY not configured");
+    }
+}
+```
+
+### 日志规范
+
+- 使用 SLF4J + Logback 日志框架
+- 使用占位符而不是字符串拼接
+- 合理使用日志级别：
+    - **ERROR**: 系统错误，需要立即处理
+    - **WARN**: 潜在问题，不影响系统运行
+    - **INFO**: 重要业务流程
+    - **DEBUG**: 调试信息，生产环境可关闭
+    - **TRACE**: 详细追踪信息
+
+```java
+// 正确
+log.info("用户 {} 登录成功，IP: {}", username, ip);
+log.debug("订单创建参数: {}", JSON.toJSONString(orderParam));
+
+// 错误
+log.info("用户 " + username + " 登录成功");  // 性能差
+System.out.println("调试信息");  // 生产环境无法关闭
+```
+
+### 代码生成工具
+
+`carlos-tools` 模块 (位于 `carlos-integration/`) 提供基于 Swing 的 GUI，用于：
+
+- 数据库代码生成 (从 MySQL 模式生成 MyBatis/MongoDB/Elasticsearch 代码)
+- 项目脚手架
+- 加密工具
+- GitLab 集成
+
+运行方式: 执行 `com.carlos.fx.ToolsApplication.main()` 方法
+
+### 加密标准
+
+本框架在某些模块中使用国密标准 (SM2/SM4) 而不是 RSA/AES。查阅加密代码时请注意这一点。
+
+### 配置文件
+
+资源过滤已启用，支持 `application*.yml/yaml/properties` 和 `bootstrap*.yml` 文件使用 `@...@` 分隔符进行 Maven 属性替换。
+
+## 重要注意事项
+
+- **Git 仓库**: 根目录是 Git 仓库
+- **多 Profile 支持**: 存在两个 Nexus 仓库 profile，用于不同的部署环境
+    - `carlos-public`: 公共服务器 zcarlos.com:8081
+    - `carlos-private`: 私有服务器 192.168.3.30:8081
+- **需要 JDK 17**: 这是 Spring Boot 3 项目，需要 JDK 17+
+- **需要 Maven 3.8+**: 最低 Maven 版本为 3.8
+- **仅限内部使用**: 此框架仅限内部使用
+- **父版本**: 在子 POM 中使用 `${revision}`，不要使用硬编码版本
+- **安全注意**: 切勿在生产制品中包含 `carlos-spring-boot-starter-license-generate` 模块
+- **分层架构**: 框架遵循清晰的分层架构 (commons → spring-boot → integration → samples)
+- **Spring Boot 3.x**: 框架已从 Spring Boot 2.7 升级到 3.5.9
+
+## 近期更新
+
+### carlos-auth 模块 (2026-01-25 新增)
+
+基于 Spring Security OAuth2 Authorization Server 的综合 OAuth2 认证和授权模块。
+
+**主要特性：**
+
+- OAuth2 Authorization Server，支持多种授权类型 (authorization_code, client_credentials, refresh_token)
+- OAuth2 Resource Server，支持 JWT 验证
+- 自定义 JWT token 增强，包含用户上下文 (user_id, tenant_id, dept_id, role_ids, authorities)
+- 与 carlos-spring-boot-starter-core 认证系统集成 (LoginUserInfo, UserContext)
+- 基于 @PreAuthorize 注解的方法级安全控制
+- OAuth2Util 工具类，便于访问当前用户信息
+
+**模块结构：**
 ```
 carlos-auth/
-├── config/                    # OAuth2 configuration classes
+├── config/                    # OAuth2 配置类
 │   ├── OAuth2Properties.java
 │   ├── OAuth2AuthorizationServerConfig.java
 │   └── OAuth2ResourceServerConfig.java
-├── constant/                  # OAuth2 constants
-├── enhancer/                  # JWT token enhancer
-├── exception/                 # OAuth2 exceptions
-├── service/                   # User details service
-├── util/                      # OAuth2 utilities
-└── example/                   # Usage examples
+├── constant/                  # OAuth2 常量
+├── enhancer/                  # JWT token 增强器
+├── exception/                 # OAuth2 异常
+├── service/                   # 用户详情服务
+├── util/                      # OAuth2 工具类
+└── example/                   # 使用示例
 ```
 
-**Configuration Example:**
+**配置示例：**
 ```yaml
 carlos:
   oauth2:
@@ -412,122 +655,122 @@ carlos:
         scopes: [read, write]
 ```
 
-**Usage:**
+**使用方式：**
 ```java
-// Get current user information
+// 获取当前用户信息
 UserContext userContext = OAuth2Util.extractUserContext();
 Long userId = OAuth2Util.getCurrentUserId();
 String userName = OAuth2Util.getCurrentUserName();
 
-// Method-level security
+// 方法级安全控制
 @PreAuthorize("hasRole('ADMIN')")
 public void adminOnlyMethod() { }
 ```
 
-**OAuth2 Endpoints:**
-- `POST /oauth2/token` - Get access token
-- `POST /oauth2/revoke` - Revoke token
-- `POST /oauth2/introspect` - Token introspection
-- `GET /oauth2/jwks` - JWK Set
-- `GET /oauth2/authorize` - Authorization endpoint
+**OAuth2 端点：**
 
-**Documentation:**
+- `POST /oauth2/token` - 获取访问令牌
+- `POST /oauth2/revoke` - 撤销令牌
+- `POST /oauth2/introspect` - 令牌自省
+- `GET /oauth2/jwks` - JWK 集
+- `GET /oauth2/authorize` - 授权端点
 
-- Full documentation: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/README.md`
-- Integration summary: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/INTEGRATION_SUMMARY.md`
-- Example code: `com.carlos.auth.example.*`
+**文档：**
 
-**Dependencies:**
+- 完整文档: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/README.md`
+- 集成摘要: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/INTEGRATION_SUMMARY.md`
+- 示例代码: `com.carlos.auth.example.*`
 
-- carlos-spring-boot-starter-core (user info, exceptions)
-- carlos-spring-boot-starter-redis (optional, for token storage)
+**依赖：**
+
+- carlos-spring-boot-starter-core (用户信息、异常)
+- carlos-spring-boot-starter-redis (可选，用于令牌存储)
 - spring-boot-starter-security
 - spring-security-oauth2-authorization-server
 - spring-boot-starter-oauth2-resource-server
 - spring-security-oauth2-jose
 
-**Important Notes:**
-- Default `DefaultOAuth2UserDetailsService` is for testing only
-- Production environments must implement custom `OAuth2UserDetailsService`
-- **Password grant type is NOT supported in Spring Authorization Server 1.x**
-- Current implementation uses in-memory token storage (consider Redis for production)
-- JWT tokens include custom claims: user_id, user_name, tenant_id, dept_id, role_ids, authorities
+**重要说明：**
 
-## Current State and Recent Changes
+- 默认的 `DefaultOAuth2UserDetailsService` 仅用于测试
+- 生产环境必须实现自定义的 `OAuth2UserDetailsService`
+- **Spring Authorization Server 1.x 不支持 Password 授权类型**
+- 当前实现使用内存令牌存储 (生产环境考虑使用 Redis)
+- JWT 令牌包含自定义声明: user_id, user_name, tenant_id, dept_id, role_ids, authorities
 
-### Spring Boot 3.x Upgrade (Completed 2026-02-20)
+### Spring Boot 3.x 升级 (2026-02-20 完成)
 
-The framework has been upgraded from Spring Boot 2.7 to Spring Boot 3.5.9. Key changes:
+框架已从 Spring Boot 2.7 升级到 Spring Boot 3.5.9。主要变更：
 
-**Jakarta EE Migration:**
+**Jakarta EE 迁移：**
 
-- All `jakarta.*` packages migrated to `jakarta.*`
-- Servlet API: `jakarta.servlet` → `jakarta.servlet`
-- Validation API: `jakarta.validation` → `jakarta.validation`
-- Annotation API: `jakarta.annotation` → `jakarta.annotation`
+- 所有 `javax.*` 包已迁移到 `jakarta.*`
+- 主要 Servlet API: `javax.servlet` → `jakarta.servlet`
+- 验证 API: `javax.validation` → `jakarta.validation`
+- 注解 API: `javax.annotation` → `jakarta.annotation`
 
-**Spring Security 6.x:**
+**Spring Security 6.x：**
 
-- Migrated from `WebSecurityConfigurerAdapter` to `SecurityFilterChain`
-- Updated request matchers to use new API
-- Using `@EnableMethodSecurity` for method-level security
+- 从 `WebSecurityConfigurerAdapter` 迁移到 `SecurityFilterChain`
+- 更新请求匹配器以使用新 API
+- 使用 `@EnableMethodSecurity` 进行方法级安全控制
 
-**MyBatis-Plus 3.5.x:**
+**MyBatis-Plus 3.5.x：**
 
-- Uses Spring Boot 3 compatible starter: `mybatis-plus-spring-boot3-starter`
-- Updated `PaginationInnerInterceptor` with explicit database type
-- Fixed `IdentifierGenerator.nextId()` return type to `Long`
+- 使用 Spring Boot 3 兼容的 starter: `mybatis-plus-spring-boot3-starter`
+- 更新 `PaginationInnerInterceptor` 并显式指定数据库类型
+- 修复 `IdentifierGenerator.nextId()` 返回类型为 `Long`
 
-**JSqlParser Updates:**
+**JSqlParser 更新：**
 
-- Fixed deprecated `ExpressionList` constructor usage
+- 修复已弃用的 `ExpressionList` 构造函数用法
 
-**Dependency Updates:**
+**依赖更新：**
 
 - MySQL Connector: `mysql-connector-java` → `mysql-connector-j`
 
-**OAuth2 Configuration:**
+**OAuth2 配置：**
 
-- Updated example configuration to note that password grant type is not supported
-- Added clarifying comments about supported grant types
+- 更新示例配置以说明不支持 password 授权类型
+- 添加关于支持授权类型的说明注释
 
-### Architecture Refactoring (2026-02-01)
+### 架构重构 (2026-02-01)
 
-The framework underwent a major architecture refactoring to improve clarity and maintainability:
+框架进行了重大架构重构以提高清晰度和可维护性：
 
-**Directory Structure Changes:**
+**目录结构变更：**
 
-- `carlos-spring-boot-framework` → `carlos-framework` (root aggregator)
+- `carlos-spring-boot-framework` → `carlos-framework` (根聚合器)
 - `carlos-spring-boot-dependencies` → `carlos-dependencies` (BOM)
-- `carlos-spring-boot-parent` → `carlos-parent` (parent POM)
-- `carlos-spring-boot-commons` → `carlos-commons` (framework-agnostic utilities)
-- `carlos-spring-boot-starters` → `carlos-spring-boot` (Spring Boot integration)
-- Created `carlos-integration/` for third-party integrations (license, tools)
-- Created `carlos-samples/` for examples and tests
+- `carlos-spring-boot-parent` → `carlos-parent` (父 POM)
+- `carlos-spring-boot-commons` → `carlos-commons` (与框架无关的工具类)
+- `carlos-spring-boot-starters` → `carlos-spring-boot` (Spring Boot 集成)
+- 创建 `carlos-integration/` 用于第三方集成 (license, tools)
+- 创建 `carlos-samples/` 用于示例和测试
 
-**Benefits:**
+**优势：**
 
-- Clear separation between framework-agnostic utilities and Spring Boot integrations
-- Better naming that doesn't imply everything is Spring Boot-specific
-- Improved extensibility for future framework integrations (e.g., Spring Cloud, Quarkus)
-- Follows industry best practices (similar to Spring Framework, Apache Commons)
+- 框架无关工具类与 Spring Boot 集成之间的清晰分离
+- 更好的命名，不暗示所有内容都是 Spring Boot 特定的
+- 为未来框架集成提供更好的可扩展性 (例如 Spring Cloud, Quarkus)
+- 遵循行业最佳实践 (类似于 Spring Framework, Apache Commons)
 
-### Module Consolidation (2026-02-01)
+### 模块合并 (2026-02-01)
 
-**Redis Module Enhancement:**
+**Redis 模块增强：**
 
-- Merged `carlos-spring-boot-starter-redisson` into `carlos-spring-boot-starter-redis`
-- Added Caffeine local cache integration
-- Added multi-level cache support (Caffeine L1 + Redis L2)
-- Unified caching solution: Redis + Redisson + Caffeine in one module
+- 将 `carlos-spring-boot-starter-redisson` 合并到 `carlos-spring-boot-starter-redis`
+- 添加 Caffeine 本地缓存集成
+- 添加多级缓存支持 (Caffeine L1 + Redis L2)
+- 统一缓存方案：一个模块中包含 Redis + Redisson + Caffeine
 
-**Removed Modules:**
+**移除的模块：**
 
-- `carlos-magicapi`: Removed (no longer needed)
+- `carlos-magicapi`: 已移除 (不再需要)
 
-### Version Updates
+### 版本更新
 
-Current versions:
+当前版本：
 
 - Spring Boot: **3.5.9**
 - Spring Cloud: **2025.0.1**
@@ -539,26 +782,26 @@ Current versions:
 - Guava: **33.4.8-jre**
 - Redisson: **3.51.0**
 
-### Module Count
+### 模块数量
 
-The framework now contains **38 modules** organized in a layered architecture:
+框架目前包含 **38 个模块**，组织成分层架构：
 
-- 1 root aggregator (carlos-framework)
-- 1 BOM (carlos-dependencies)
-- 1 parent POM (carlos-parent)
-- 4 commons modules (carlos-commons + 3 sub-modules)
-- 23 Spring Boot modules (carlos-spring-boot + 22 starters)
-- 6 integration modules (carlos-integration + 5 sub-modules)
-- 2 sample modules (carlos-samples + 1 test app)
+- 1 个根聚合器 (carlos-framework)
+- 1 个 BOM (carlos-dependencies)
+- 1 个父 POM (carlos-parent)
+- 4 个 commons 模块 (carlos-commons + 3 个子模块)
+- 23 个 Spring Boot 模块 (carlos-spring-boot + 22 个 starters)
+- 6 个集成模块 (carlos-integration + 5 个子模块)
+- 2 个示例模块 (carlos-samples + 1 个测试应用)
 
-### Git Status
+### Git 状态
 
-- Root directory: Git repository
-- Current branch: `refactor-carlos-to-carlos`
-- Recent changes: Spring Boot 3.x upgrade, architecture refactoring, module consolidation, directory reorganization
+- 根目录：Git 仓库
+- 当前分支：`refactor-carlos-auth-module-reorganization`
+- 近期变更：Spring Boot 3.x 升级、架构重构、模块合并、目录重组
 
-## Reference Documentation
+## 参考文档
 
-- `OPTIMIZATION_REPORT.md`: Detailed optimization history and recommendations
-- `README-REF.md`: Framework quick reference
-- Module READMEs: Each module has its own README.md with detailed usage instructions
+- `OPTIMIZATION_REPORT.md`: 详细的优化历史和建议
+- `README-REF.md`: 框架快速参考
+- 模块 README：每个模块都有自己的 README.md，包含详细的使用说明

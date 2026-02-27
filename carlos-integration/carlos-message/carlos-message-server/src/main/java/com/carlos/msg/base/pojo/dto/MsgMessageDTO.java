@@ -34,7 +34,7 @@ public class MsgMessageDTO {
     /** 系统来源标识 */
     private String sourceBusiness;
     /** 发送人id */
-    private String sendUserId;
+    private Long sendUserId;
     /** 发送人名称 */
     private String sendUserName;
     /** 操作反馈类型(无, 详情, 站内跳转, 外链) */

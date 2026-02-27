@@ -143,7 +143,7 @@ public class User extends Model<User> implements Serializable {
      * 租户id
      */
     @TableField(value = "tenant_id")
-    private String tenantId;
+    private Long tenantId;
     /**
      * 排序
      */

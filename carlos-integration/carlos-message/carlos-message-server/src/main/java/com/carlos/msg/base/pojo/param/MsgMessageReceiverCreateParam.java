@@ -25,7 +25,7 @@ public class MsgMessageReceiverCreateParam {
     private Long messageId;
     @NotBlank(message = "接收者id不能为空")
     @Schema(description = "接收者id")
-    private String receiverId;
+    private Long receiverId;
     @NotBlank(message = "接收者号码 钉钉号 手机号码不能为空")
     @Schema(description = "接收者号码 钉钉号 手机号码")
     private String receiverNumber;

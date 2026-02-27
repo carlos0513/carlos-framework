@@ -33,7 +33,7 @@ public class SysResource implements Serializable {
      * 分类id
      */
     @TableField(value = "category_id")
-    private String categoryId;
+    private Long categoryId;
     /**
      * 资源名称
      */

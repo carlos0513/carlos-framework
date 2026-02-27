@@ -36,16 +36,16 @@ public class RoleMenu extends Model<RoleMenu> implements Serializable {
      * 角色id
      */
     @TableField(value = "role_id")
-    private String roleId;
+    private Long roleId;
     /**
      * 菜单id
      */
     @TableField(value = "menu_id")
-    private String menuId;
+    private Long menuId;
     /**
      * 租户id
      */
     @TableField(value = "tenant_id")
-    private String tenantId;
+    private Long tenantId;
 
 }

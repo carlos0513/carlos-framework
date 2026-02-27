@@ -30,7 +30,7 @@ public class MenuPageParam extends ParamPage {
     private String keyword;
 
     @Schema(description = "父级id")
-    private String parentId;
+    private Long parentId;
 
     @Schema(description = "显示和隐藏，0：显示，1：隐藏")
     private Boolean hidden;

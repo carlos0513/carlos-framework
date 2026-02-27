@@ -1,4 +1,4 @@
-package com.carlos.org.service.impl;
+package com.carlos.org.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
@@ -26,7 +26,6 @@ import com.carlos.org.pojo.param.UserDeptRoleDTO;
 import com.carlos.org.pojo.vo.RoleDetailVO;
 import com.carlos.org.pojo.vo.RolePageVO;
 import com.carlos.org.pojo.vo.UserRoleVO;
-import com.carlos.org.service.*;
 import com.carlos.system.api.ApiMenu;
 import com.carlos.system.enums.MenuType;
 import com.carlos.system.pojo.ao.MenuAO;

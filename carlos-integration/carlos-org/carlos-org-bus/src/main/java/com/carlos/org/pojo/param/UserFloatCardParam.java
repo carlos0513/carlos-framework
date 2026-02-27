@@ -20,7 +20,7 @@ public class UserFloatCardParam {
 
     @NotBlank(message = "用户id不能为空")
     @Schema(description = "用户id")
-    private String userId;
+    private Long userId;
     @Schema(description = "部门id")
     private String deptId;
     @Schema(description = "部门编码")

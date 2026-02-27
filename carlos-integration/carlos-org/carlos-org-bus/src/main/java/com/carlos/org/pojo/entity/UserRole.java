@@ -36,16 +36,16 @@ public class UserRole extends Model<UserRole> implements Serializable {
      * 用户id
      */
     @TableField(value = "user_id")
-    private String userId;
+    private Long userId;
     /**
      * 角色id
      */
     @TableField(value = "role_id")
-    private String roleId;
+    private Long roleId;
     /**
      * 租户id
      */
     @TableField(value = "tenant_id")
-    private String tenantId;
+    private Long tenantId;
 
 }

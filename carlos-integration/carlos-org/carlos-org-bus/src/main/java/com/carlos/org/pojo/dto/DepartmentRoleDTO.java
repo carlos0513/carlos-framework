@@ -25,11 +25,11 @@ public class DepartmentRoleDTO {
     /**
      * 部门id
      */
-    private String departmentId;
+    private Long departmentId;
     /**
      * 角色id
      */
-    private String roleId;
+    private Long roleId;
     /**
      * 版本
      */

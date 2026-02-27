@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -32,13 +31,6 @@ public class RoleCreateParam {
     @Schema(description = "用户部门权限列表")
     private List<UserDeptRoleDTO> userDeptRoles;
 
-    @Schema(description = "表单权限")
-    private List<PermissionParam> permissions;
-
-    @Schema(description = "组织机构")
-    @NotEmpty(message = "组织机构层级不能为空")
-    private Set<String> departmentTypes;
-
     @Schema(description = "菜单id")
     private Set<String> menuIds;
 
@@ -49,21 +41,4 @@ public class RoleCreateParam {
     @NotEmpty(message = "移动端菜单id不能为空")
     @Schema(description = "移动端菜单id")
     private Set<String> mobileMenuIds;
-
-    @NotEmpty(message = "资源组id不能为空")
-    @Schema(description = "资源组id")
-    private String resourceGroupId;
-
-    @Data
-    @Accessors(chain = true)
-    public static class PermissionParam implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-        @Schema(description = "表id")
-        private String tableId;
-        @Schema(description = "操作类型ids")
-        private Set<String> operateIds;
-
-    }
-
 }

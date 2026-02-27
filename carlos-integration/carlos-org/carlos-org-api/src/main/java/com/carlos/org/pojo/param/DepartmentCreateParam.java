@@ -22,7 +22,7 @@ public class DepartmentCreateParam {
     @Schema(description = "主键")
     private Long id;
     @Schema(description = "上级机构")
-    private String parentId;
+    private Long parentId;
     @NotBlank(message = "部门名称不能为空")
     @Schema(description = "部门名称")
     private String deptName;
@@ -31,7 +31,7 @@ public class DepartmentCreateParam {
     @Schema(description = "机构排序")
     private int sort;
     @Schema(description = "对方系统数据id")
-    private String targetId;
+    private Long targetId;
     @Schema(description = "对方系统数据code")
     private String targetCode;
     @Schema(description = "第三方部门id")

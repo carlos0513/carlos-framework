@@ -24,13 +24,13 @@ public class UserDeptRoleDTO {
 
     @Schema(description = "用户id")
     @NotBlank(message = "用户id不能为空")
-    private String userId;
+    private Long userId;
     @Schema(description = "部门id")
     @NotBlank(message = "部门不能为空")
-    private String departmentId;
+    private Long departmentId;
     @Schema(description = "角色id")
     @NotBlank(message = "角色id不能为空")
-    private String roleId;
+    private Long roleId;
 
     @Schema(description = "全部父级,依次排序(包含自己)")
     private List<String> allParentIds;

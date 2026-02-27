@@ -1,4 +1,4 @@
-package com.carlos.org.service.impl;
+package com.carlos.org.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -7,7 +7,6 @@ import com.carlos.core.exception.ServiceException;
 import com.carlos.org.manager.RoleMenuManager;
 import com.carlos.org.pojo.dto.RoleMenuDTO;
 import com.carlos.org.pojo.vo.MenuIdVO;
-import com.carlos.org.service.RoleMenuService;
 import com.carlos.system.enums.MenuType;
 import com.carlos.system.pojo.ao.MenuAO;
 import lombok.RequiredArgsConstructor;

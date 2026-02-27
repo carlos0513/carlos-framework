@@ -31,7 +31,7 @@ public class CurrentUserRoleVO implements Serializable {
     private String code;
 
     @Schema(description = "部门id")
-    private String departmentId;
+    private Long departmentId;
 
     @Schema(description = "部门名称")
     private String departmentName;

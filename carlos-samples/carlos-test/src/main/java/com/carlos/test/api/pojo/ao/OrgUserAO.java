@@ -20,7 +20,7 @@ public class OrgUserAO implements Serializable {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 用户名
      */
@@ -84,7 +84,7 @@ public class OrgUserAO implements Serializable {
     /**
      * 创建者
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -92,7 +92,7 @@ public class OrgUserAO implements Serializable {
     /**
      * 修改者
      */
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */

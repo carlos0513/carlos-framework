@@ -23,7 +23,7 @@ public class OrgUserUpdateParam {
 
     @NotBlank(message = "主键不能为空")
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "用户名")
     private String account;
     @Schema(description = "真实姓名")

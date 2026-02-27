@@ -19,9 +19,9 @@ public class OrgDockingMappingDTO {
     /** 主键ID */
     private Long id;
     /** 系统数据id */
-    private String systemId;
+    private Long systemId;
     /** 目标系统id */
-    private String targetId;
+    private Long targetId;
     /** 目标系统标识 */
     private String targetCode;
     /** 对接类型 */

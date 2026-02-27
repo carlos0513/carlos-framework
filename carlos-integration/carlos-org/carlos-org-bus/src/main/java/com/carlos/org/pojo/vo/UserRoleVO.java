@@ -22,9 +22,9 @@ public class UserRoleVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "用户id")
-    private String userId;
+    private Long userId;
     @Schema(description = "角色id")
-    private String roleId;
+    private Long roleId;
     @Schema(description = "角色名称")
     private String roleName;
 

@@ -23,7 +23,7 @@ public class SysDictItemCreateParam {
 
     @NotNull(message = "字典id不能为空")
     @Schema(description = "字典id")
-    private String dictId;
+    private Long dictId;
     @NotBlank(message = "字典项值不能为空")
     @Schema(description = "字典项值")
     private String itemName;

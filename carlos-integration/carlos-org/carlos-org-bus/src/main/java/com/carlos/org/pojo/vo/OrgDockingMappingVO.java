@@ -24,9 +24,9 @@ public class OrgDockingMappingVO implements Serializable {
     @Schema(description = "主键ID")
     private Long id;
     @Schema(description = "系统数据id")
-    private String systemId;
+    private Long systemId;
     @Schema(description = "目标系统id")
-    private String targetId;
+    private Long targetId;
     @Schema(description = "目标系统标识")
     private String targetCode;
     @Schema(description = "对接类型")

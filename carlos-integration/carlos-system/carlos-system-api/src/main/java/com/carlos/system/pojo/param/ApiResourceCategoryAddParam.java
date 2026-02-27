@@ -23,7 +23,7 @@ public class ApiResourceCategoryAddParam {
     /**
      * 父级ID
      */
-    private String parentId;
+    private Long parentId;
     /**
      * 类型名称
      */

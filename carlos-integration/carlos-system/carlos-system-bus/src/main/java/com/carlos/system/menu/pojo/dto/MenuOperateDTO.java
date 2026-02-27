@@ -36,7 +36,7 @@ public class MenuOperateDTO {
     /**
      * 菜单id
      */
-    private String menuId;
+    private Long menuId;
     /**
      * 请求方式
      */

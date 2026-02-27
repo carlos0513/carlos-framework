@@ -54,7 +54,7 @@ public class Department extends Model<Department> implements Serializable {
      * 父id
      */
     @TableField(value = "parent_id")
-    private String parentId;
+    private Long parentId;
     /**
      * 部门层级
      */
@@ -111,6 +111,6 @@ public class Department extends Model<Department> implements Serializable {
      * 租户id
      */
     @TableField(value = "tenant_id")
-    private String tenantId;
+    private Long tenantId;
 
 }

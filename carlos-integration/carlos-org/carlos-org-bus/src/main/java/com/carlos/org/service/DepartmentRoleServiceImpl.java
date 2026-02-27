@@ -1,4 +1,4 @@
-package com.carlos.org.service.impl;
+package com.carlos.org.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,7 +10,6 @@ import com.carlos.org.manager.DepartmentRoleManager;
 import com.carlos.org.pojo.dto.DepartmentRoleDTO;
 import com.carlos.org.pojo.entity.Department;
 import com.carlos.org.pojo.entity.DepartmentRole;
-import com.carlos.org.service.DepartmentRoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,9 +40,6 @@ public class DepartmentRoleServiceImpl implements DepartmentRoleService {
 
     @Override
     public void addDepartmentRole(DepartmentRoleDTO dto) {
-        if (StrUtil.isBlank(dto.getDepartmentType())) {
-            throw new ServiceException("部门层级不能为空！");
-        }
         if (StrUtil.isBlank(dto.getRoleId())) {
             throw new ServiceException("角色id不能为空！");
         }
@@ -80,18 +76,6 @@ public class DepartmentRoleServiceImpl implements DepartmentRoleService {
         return departmentManager.list(new LambdaQueryWrapper<>(Department.class).select(Department::getId).in(Department::getDepartmentLevelCode, types))
                 .stream().map(Department::getId).collect(Collectors.toSet());
     }
-
-    @Override
-    public void initRoles(String deptId) {
-//        List<RoleDTO> roles = roleManager.listAll(null);
-//        for (RoleDTO role : roles) {
-//            DepartmentRoleDTO departmentRoleDTO = new DepartmentRoleDTO();
-//            departmentRoleDTO.setDepartmentType(deptId);
-//            departmentRoleDTO.setRoleId(role.getId());
-//            this.addDepartmentRole(departmentRoleDTO);
-//        }
-    }
-
 
     @Override
     public boolean existRelation(String departmentLevelCode, String roleId) {

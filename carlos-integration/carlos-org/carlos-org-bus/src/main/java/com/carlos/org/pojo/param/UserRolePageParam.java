@@ -25,11 +25,11 @@ import java.time.LocalDateTime;
 public class UserRolePageParam extends ParamPage {
 
     @Schema(description = "用户id")
-    private String userId;
+    private Long userId;
     @Schema(description = "角色id")
-    private String roleId;
+    private Long roleId;
     @Schema(description = "租户id")
-    private String tenantId;
+    private Long tenantId;
     @Schema(description = "开始时间")
     private LocalDateTime start;
 

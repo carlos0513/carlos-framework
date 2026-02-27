@@ -53,7 +53,7 @@ public class DepartmentDTO {
     /**
      * 父id
      */
-    private String parentId;
+    private Long parentId;
     /**
      * 状态，0：禁用，1：启用
      */

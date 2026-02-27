@@ -30,7 +30,7 @@ public class MenuOperateVO implements Serializable {
     @Schema(description = "接口路径")
         private String path;
     @Schema(description = "菜单id")
-        private String menuId;
+    private Long menuId;
     @Schema(description = "请求方式")
         private String operateMethod;
     @Schema(description = "图标")

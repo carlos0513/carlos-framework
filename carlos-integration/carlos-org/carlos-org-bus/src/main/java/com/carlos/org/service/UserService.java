@@ -253,17 +253,6 @@ public interface UserService {
     String getFileUrl(String fileId);
 
     /**
-     * 获取用户手机号
-     *
-     * @param userId 手机号码
-     * @return com.carlos.org.pojo.dto.UserDTO
-     * @author Carlos
-     * @date 2023/4/12 13:53
-     */
-    String getPhoneByUserId(String userId);
-
-
-    /**
      * 用户基本信息
      *
      * @param id    用户id
@@ -324,8 +313,6 @@ public interface UserService {
      * @date 2025-07-24 00:53
      */
     UserDTO getUserOrgInfo(String deptCode, String userId);
-
-    UserDTO selectUserById(String systemId);
 
     void export(UserPageParam param, HttpServletResponse response);
 

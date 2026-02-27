@@ -25,9 +25,9 @@ public class DepartmentRoleVO implements Serializable {
     @Schema(description = "主键")
     private Long id;
     @Schema(description = "部门id")
-    private String departmentId;
+    private Long departmentId;
     @Schema(description = "角色id")
-    private String roleId;
+    private Long roleId;
     @Schema(description = "创建者")
     private Long createBy;
     @Schema(description = "创建时间")
@@ -35,6 +35,6 @@ public class DepartmentRoleVO implements Serializable {
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
     @Schema(description = "租户id")
-    private String tenantId;
+    private Long tenantId;
 
 }

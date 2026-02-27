@@ -114,7 +114,7 @@ public class RoleDTO {
          * 部门名称
          */
         private String departmentName;
-        private String departmentId;
+        private Long departmentId;
         private String departmentLevelCode;
         /**
          * 创建者

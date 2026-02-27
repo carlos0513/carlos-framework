@@ -24,7 +24,7 @@ public class DepartmentBaseInfoVO implements Serializable {
     @Schema(description = "主键")
     private Long id;
     @Schema(description = "上级Id")
-    private String parentId;
+    private Long parentId;
     @Schema(description = "上级名称")
     private String parentDeptName;
     @Schema(description = "部门名称")

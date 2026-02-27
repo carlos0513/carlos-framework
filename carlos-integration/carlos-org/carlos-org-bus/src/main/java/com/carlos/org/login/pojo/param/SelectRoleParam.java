@@ -16,6 +16,6 @@ public class SelectRoleParam {
 
     @NotBlank(message = "请选择登录角色")
     @Schema(description = "角色")
-    private String roleId;
+    private Long roleId;
 
 }

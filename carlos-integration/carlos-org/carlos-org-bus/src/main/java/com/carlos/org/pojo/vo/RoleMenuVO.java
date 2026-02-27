@@ -24,10 +24,10 @@ public class RoleMenuVO implements Serializable {
     @Schema(description = "主键")
     private Long id;
     @Schema(description = "角色id")
-    private String roleId;
+    private Long roleId;
     @Schema(description = "菜单id")
-    private String menuId;
+    private Long menuId;
     @Schema(description = "租户id")
-    private String tenantId;
+    private Long tenantId;
 
 }

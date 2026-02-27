@@ -23,7 +23,7 @@ public class DepartmentUserVO implements Serializable {
     @Schema(description = "真实姓名")
     private String realname;
     @Schema(description = "用户id")
-    private String userId;
+    private Long userId;
     @Schema(description = "手机号码")
     private String phone;
     @Schema(description = "管理员")

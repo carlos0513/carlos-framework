@@ -86,6 +86,6 @@ public class Role extends Model<Role> implements Serializable {
      * 租户id
      */
     @TableField(value = "tenant_id")
-    private String tenantId;
+    private Long tenantId;
 
 }

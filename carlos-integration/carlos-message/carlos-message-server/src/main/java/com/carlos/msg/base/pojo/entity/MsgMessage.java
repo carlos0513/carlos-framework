@@ -67,7 +67,7 @@ public class MsgMessage implements Serializable {
      * 发送人id
      */
     @TableField(value = "send_user_id")
-    private String sendUserId;
+    private Long sendUserId;
     /**
      * 发送人名称
      */

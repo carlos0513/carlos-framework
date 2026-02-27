@@ -60,7 +60,7 @@ public class AuditOperation implements Serializable {
      * 资源ID
      */
     @TableField(value = "resource_id")
-    private String resourceId;
+    private Long resourceId;
 
     /**
      * 操作前值（JSON格式）

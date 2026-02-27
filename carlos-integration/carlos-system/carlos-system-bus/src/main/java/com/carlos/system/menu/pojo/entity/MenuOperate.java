@@ -47,7 +47,7 @@ public class MenuOperate implements Serializable {
      * 菜单id
      */
     @TableField(value = "menu_id")
-    private String menuId;
+    private Long menuId;
     /**
      * 请求方式
      */

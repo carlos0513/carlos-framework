@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 public class DepartmentCreateOrUpdateParam {
     private String deptId;
     private String name;
-    private String parentId;
+    private Long parentId;
     private Integer order;
     private Integer level;
     private String tel;

@@ -109,7 +109,7 @@ public class TestController {
 
         for (int i = 10000; i < 30000; i++) {
             OrgUserDTO user = new OrgUserDTO();
-            user.setId("" + i);
+            user.setId((long) i);
             user.setAccount("account");
             user.setLastLogin(LocalDateTime.now());
             user.setLoginCount(RandomUtil.randomInt(500));
@@ -129,16 +129,6 @@ public class TestController {
         System.out.println(value);
     }
 
-
-    //
-    // @PostMapping("importFile2")
-    // @Operation(summary = "导入Excel数据2")
-    // public void importFile2(@RequestPart("file") MultipartFile file) throws IOException {
-    //     // 写法3：
-    //     EasyExcel.read(file.getInputStream(), PersonInfoData.class, new ExcelDataImportListener(new PersonImportExecutor())).sheet().doRead();
-    //     log.info("2222222222222222");
-    //
-    // }
 
     private final static ThreadLocal<String> NORMAL_THREAD_LOCAL = new ThreadLocal<>();
     private final static TransmittableThreadLocal<String> TRANS_THREAD_LOCAL = new TransmittableThreadLocal<>();

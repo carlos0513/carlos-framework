@@ -47,7 +47,7 @@ public class UserInfoUpdateParam {
         /**
          * 文件分组
          */
-        private String groupId;
+        private Long groupId;
         /**
          * 文件名称
          */

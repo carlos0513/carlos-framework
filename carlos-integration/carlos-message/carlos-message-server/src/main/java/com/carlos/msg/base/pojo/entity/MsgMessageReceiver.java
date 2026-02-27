@@ -40,7 +40,7 @@ public class MsgMessageReceiver implements Serializable {
      * 接收者id
      */
     @TableField(value = "receiver_id")
-    private String receiverId;
+    private Long receiverId;
     /**
      * 接收者号码 钉钉号 手机号码
      */

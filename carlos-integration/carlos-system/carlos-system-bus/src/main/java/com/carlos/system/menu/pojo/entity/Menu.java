@@ -34,7 +34,7 @@ public class Menu implements Serializable {
      * 父级ID
      */
     @TableField(value = "parent_id")
-    private String parentId;
+    private Long parentId;
     /**
      * controller名称
      */

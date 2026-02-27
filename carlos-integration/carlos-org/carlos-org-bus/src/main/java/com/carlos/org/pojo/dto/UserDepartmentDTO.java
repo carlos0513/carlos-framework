@@ -26,11 +26,11 @@ public class UserDepartmentDTO {
     /**
      * 用户id
      */
-    private String userId;
+    private Long userId;
     /**
      * 部门id
      */
-    private String departmentId;
+    private Long departmentId;
     /**
      * 部门id
      */
@@ -84,7 +84,7 @@ public class UserDepartmentDTO {
     /**
      * 用户角色
      */
-    private String roleId;
+    private Long roleId;
     /**
      * 用户名称
      */

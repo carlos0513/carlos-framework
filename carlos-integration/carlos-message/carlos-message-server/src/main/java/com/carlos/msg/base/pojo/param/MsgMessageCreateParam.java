@@ -43,7 +43,7 @@ public class MsgMessageCreateParam {
     private String sourceBusiness;
     @NotBlank(message = "发送人id不能为空")
     @Schema(description = "发送人id")
-    private String sendUserId;
+    private Long sendUserId;
     @NotBlank(message = "发送人名称不能为空")
     @Schema(description = "发送人名称")
     private String sendUserName;

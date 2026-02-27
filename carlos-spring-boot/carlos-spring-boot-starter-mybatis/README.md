@@ -199,8 +199,8 @@ public class User {
 @TableName("sys_order")
 public class Order {
     // 使用日期 + 雪花算法生成 32 位字符串 ID
-    @TableId(type = IdType.ASSIGN_UUID)
-    private String id;  // 格式: 202601251430123456789012345678
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;  // 格式: 202601251430123456789012345678
 }
 ```
 

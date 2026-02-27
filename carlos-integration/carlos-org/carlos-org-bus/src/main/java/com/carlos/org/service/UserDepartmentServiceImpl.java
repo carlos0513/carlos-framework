@@ -1,4 +1,4 @@
-package com.carlos.org.service.impl;
+package com.carlos.org.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
@@ -20,7 +20,6 @@ import com.carlos.org.pojo.param.CurSubExecutorPageParam;
 import com.carlos.org.pojo.param.DepartmentUserListParam.DepartmentUserModify;
 import com.carlos.org.pojo.param.UserDeptRoleDTO;
 import com.carlos.org.pojo.param.UserPageParam;
-import com.carlos.org.service.UserDepartmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -25,7 +25,7 @@ public class UploadRecordDTO {
     /**
      * 文件分组
      */
-    private String groupId;
+    private Long groupId;
     /**
      * 文件库名称
      */

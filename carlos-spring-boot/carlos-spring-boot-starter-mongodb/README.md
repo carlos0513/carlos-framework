@@ -16,7 +16,7 @@
 @Data
 public class User {
     @Id
-    private String id;
+    private Long id;
 
     @Indexed(unique = true)
     private String username;
@@ -202,10 +202,10 @@ public abstract class AbstractMybatisCommonField implements MybatisCommonField {
     private LocalDateTime updateTime;
 
     @TableField(fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private String updateBy;
+    private Long updateBy;
 }
 ```
 
@@ -261,7 +261,7 @@ spring:
 public class Product extends AbstractMybatisCommonField {
 
     @Id
-    private String id;
+    private Long id;
 
     @Indexed
     private String productCode;

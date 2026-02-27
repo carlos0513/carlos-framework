@@ -22,7 +22,7 @@ public class SysDictItemDTO {
     /**
      * 字典id
      */
-    private String dictId;
+    private Long dictId;
     /**
      * 字典项值
      */

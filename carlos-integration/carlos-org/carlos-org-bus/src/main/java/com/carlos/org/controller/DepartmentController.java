@@ -242,12 +242,6 @@ public class DepartmentController {
         this.departmentService.initCache();
     }
 
-    @PostMapping("initRoles")
-    @Operation(summary = "初始化部门角色")
-    @Deprecated   //fixme 3.11版本后deptId有问题 ,部门id和角色无直接关系
-    public void initRoles(String deptId) {
-        this.departmentRoleService.initRoles(deptId);
-    }
 
 
 

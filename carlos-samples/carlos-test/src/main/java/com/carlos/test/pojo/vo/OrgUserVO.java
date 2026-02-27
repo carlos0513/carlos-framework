@@ -23,7 +23,7 @@ public class OrgUserVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "用户名")
     private String account;
     @Schema(description = "真实姓名")
@@ -55,11 +55,11 @@ public class OrgUserVO implements Serializable {
     @Schema(description = "登录次数")
     private Integer loginCount;
     @Schema(description = "创建者")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Schema(description = "修改者")
-    private String updateBy;
+    private Long updateBy;
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
 

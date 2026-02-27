@@ -25,7 +25,7 @@ public class MenuDTO {
     /**
      * 父级ID
      */
-    private String parentId;
+    private Long parentId;
     /**
      * controller名称
      */

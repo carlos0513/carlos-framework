@@ -1,4 +1,4 @@
-package com.carlos.org.service.impl;
+package com.carlos.org.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.codec.Base64;
@@ -9,7 +9,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -30,7 +29,6 @@ import com.carlos.org.UserUtil;
 import com.carlos.org.config.OrgConstant;
 import com.carlos.org.config.OrgProperties;
 import com.carlos.org.convert.UserConvert;
-import com.carlos.org.enums.SmsMessageEnum;
 import com.carlos.org.login.PasswordConvertUtil;
 import com.carlos.org.login.pojo.enums.SmsCodeTypeEnum;
 import com.carlos.org.login.service.AuthService;
@@ -50,7 +48,6 @@ import com.carlos.org.pojo.param.UserDeptRoleDTO;
 import com.carlos.org.pojo.vo.DepartmentBaseVO;
 import com.carlos.org.pojo.vo.UserPageVO;
 import com.carlos.org.pojo.vo.UserSessionVO;
-import com.carlos.org.service.*;
 import com.carlos.redis.util.RedisUtil;
 import com.carlos.system.api.ApiFile;
 import com.carlos.system.api.ApiMenu;
@@ -102,13 +99,10 @@ public class UserServiceImpl implements UserService {
 
     private final SmsCodeService smsCodeService;
     private final OrgDockingMappingService dockingMappingService;
-    private final SmsMessageService smsMessageService;
 
     private final OrgProperties orgProperties;
 
     private final UserDepartmentService userDepartmentService;
-
-    ThreadPoolExecutor pool = ExecutorUtil.get(2, 6, "user-create", 100, null);
 
 
     @Override
@@ -157,37 +151,8 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException("新增用户失败！");
         }
 
-        // 异步发送短信，不影响主流程
-        String finalTempPwd = tempPwd;
-        pool.submit(() -> {
-            sendCreateUserMsg(dto, finalTempPwd);
-        });
-
-
         // 保存完成的后续业务
         return dto;
-    }
-
-    private void sendCreateUserMsg(UserDTO dto, String finalTempPwd) {
-        try {
-            // 发送创建用户短信
-            LinkedHashMap<String, String> map = new LinkedHashMap<>();
-            // 需要对username和account进行判断，如果是纯数字，则需要进行脱敏处理
-            String userName = dto.getRealname();
-            String account = dto.getAccount();
-            if (NumberUtil.isNumber(userName) && userName.length() == 11) {
-                userName = CharSequenceUtil.hide(userName, 3, userName.length() - 4);
-            }
-            if (NumberUtil.isNumber(account) && account.length() == 11) {
-                account = CharSequenceUtil.hide(account, 3, account.length() - 4);
-            }
-            map.put("username", userName);
-            map.put("account", account);
-            map.put("password", finalTempPwd);
-            smsMessageService.sendSms(dto.getPhone(), SmsMessageEnum.CREATE_USER.getTemplateCode(), map);
-        } catch (Exception e) {
-            log.error("send create user sms failed, phone: {}, account: {}", dto.getPhone(), dto.getAccount(), e);
-        }
     }
 
 

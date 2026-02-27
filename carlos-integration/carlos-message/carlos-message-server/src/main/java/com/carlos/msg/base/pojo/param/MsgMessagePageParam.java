@@ -38,7 +38,7 @@ public class MsgMessagePageParam extends ParamPage {
     @Schema(description = "系统来源标识")
     private String sourceBusiness;
     @Schema(description = "发送人id")
-    private String sendUserId;
+    private Long sendUserId;
     @Schema(description = "发送人名称")
     private String sendUserName;
     @Schema(description = "操作反馈类型(无, 详情, 站内跳转, 外链)")

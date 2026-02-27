@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 public class MenuCreateParam {
 
     @Schema(description = "父级ID")
-    private String parentId;
+    private Long parentId;
     @NotBlank(message = "功能名称不能为空")
     @Schema(description = "标题")
     private String title;

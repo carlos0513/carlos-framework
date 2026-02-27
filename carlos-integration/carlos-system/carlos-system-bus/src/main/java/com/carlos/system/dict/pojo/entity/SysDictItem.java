@@ -33,7 +33,7 @@ public class SysDictItem implements Serializable {
      * 字典id
      */
     @TableField("dict_id")
-    private String dictId;
+    private Long dictId;
     /**
      * 字典项值
      */

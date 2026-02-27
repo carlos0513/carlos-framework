@@ -34,7 +34,7 @@ public class UserImportCheckVO implements Serializable {
         @Schema(description = "文件id")
         private Long id;
         @Schema(description = "文件组id")
-        private String groupId;
+        private Long groupId;
         @Schema(description = "文件名")
         private String name;
         @Schema(description = "文件地址")

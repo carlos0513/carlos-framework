@@ -24,7 +24,7 @@ public class DepartmentAdminParam {
 
     @NotBlank(message = "用户id不能为空")
     @Schema(description = "用户id", required = true)
-    private String userId;
+    private Long userId;
 
     @NotNull(message = "管理员标识不能为空")
     @Schema(description = "是否为管理标识 true:设为管理员;false:取消", required = true)

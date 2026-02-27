@@ -26,7 +26,7 @@ public class MsgMessageReceiverPageParam extends ParamPage {
     @Schema(description = "消息id")
     private Long messageId;
     @Schema(description = "接收者id")
-    private String receiverId;
+    private Long receiverId;
     @Schema(description = "接收者号码 钉钉号 手机号码")
     private String receiverNumber;
     @Schema(description = "接收者设备")

@@ -2,7 +2,7 @@ package com.carlos.org.apiimpl;
 
 import com.carlos.core.response.Result;
 import com.carlos.org.api.ApiUserScope;
-import com.carlos.org.service.impl.UserScopeService;
+import com.carlos.org.service.UserScopeService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

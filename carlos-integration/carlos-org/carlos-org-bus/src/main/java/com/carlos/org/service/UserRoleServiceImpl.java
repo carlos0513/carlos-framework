@@ -1,4 +1,4 @@
-package com.carlos.org.service.impl;
+package com.carlos.org.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
@@ -7,7 +7,6 @@ import com.carlos.core.exception.ServiceException;
 import com.carlos.org.manager.UserRoleManager;
 import com.carlos.org.pojo.dto.UserRoleDTO;
 import com.carlos.org.pojo.entity.UserRole;
-import com.carlos.org.service.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -23,7 +23,7 @@ public class UploadFileDTO {
     /**
      * 文件组id
      */
-    private String groupId;
+    private Long groupId;
     /**
      * 文件url
      */

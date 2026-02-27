@@ -27,11 +27,11 @@ public class UserDepartmentVO implements Serializable {
     @Schema(description = "主键")
     private Long id;
     @Schema(description = "用户id")
-    private String userId;
+    private Long userId;
     @Schema(description = "部门id")
-    private String departmentId;
+    private Long departmentId;
     @Schema(description = "租户id")
-    private String tenantId;
+    private Long tenantId;
     @Schema(description = "用户名")
     private String account;
     @Schema(description = "排序")

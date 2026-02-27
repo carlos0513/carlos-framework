@@ -125,7 +125,7 @@ public class UserDTO {
     private List<UserDeptRoleDTO> deptRoles;
 
     private String department;
-    private String departmentId;
+    private Long departmentId;
     private String departmentName;
     private String departmentLevelCode;
     /**
@@ -158,7 +158,7 @@ public class UserDTO {
     /**
      * 角色id
      */
-    private String roleId;
+    private Long roleId;
 
     /**
      * 角色名称，多个角色以英文逗号分割

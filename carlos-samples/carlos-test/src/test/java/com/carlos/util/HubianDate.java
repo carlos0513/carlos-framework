@@ -287,7 +287,7 @@ public class HubianDate {
             @JsonProperty("isDelete")
             private Boolean isDelete;
             @JsonProperty("id")
-            private String id;
+            private Long id;
 
             @NoArgsConstructor
             @Data
@@ -359,7 +359,7 @@ public class HubianDate {
                 @JsonProperty("isDelete")
                 private Boolean isDelete;
                 @JsonProperty("id")
-                private String id;
+                private Long id;
             }
         }
     }
