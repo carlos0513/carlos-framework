@@ -19,7 +19,7 @@ public class DepartmentExcel implements Serializable {
      * 主键
      */
     @ExcelProperty(value = "主键")
-    private String id;
+    private Long id;
 
     /**
      * 部门名称

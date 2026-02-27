@@ -128,14 +128,6 @@ public class UserImportController {
         return userImportService.handleRegionData(file);
     }
 
-
-    @GetMapping("initDeptRegion")
-    @Operation(summary = "初始化部门区域")
-    public void initDeptRegion(HttpServletResponse response, String token) {
-        checkToken(token);
-        userImportService.initDeptRegion();
-    }
-
     /**
      * 检查口令
      *

@@ -22,7 +22,7 @@ public class SysResourceDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 分类ID
      */

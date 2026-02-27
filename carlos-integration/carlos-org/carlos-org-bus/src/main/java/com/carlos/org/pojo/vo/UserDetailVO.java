@@ -26,7 +26,7 @@ public class UserDetailVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "真实姓名")
     private String realname;
     @Schema(description = "手机号码")

@@ -2,7 +2,6 @@ package com.carlos.org.service;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -11,15 +10,12 @@ import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
-import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.idev.excel.EasyExcel;
 import cn.idev.excel.FastExcel;
 import cn.idev.excel.annotation.ExcelProperty;
 import cn.idev.excel.util.ListUtils;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.carlos.core.base.RegionInfo;
 import com.carlos.core.exception.ComponentException;
 import com.carlos.core.exception.ServiceException;
 import com.carlos.core.response.Result;
@@ -27,7 +23,9 @@ import com.carlos.core.util.ExecutorUtil;
 import com.carlos.org.config.OrgProperties;
 import com.carlos.org.listener.UserExcelListener;
 import com.carlos.org.manager.*;
-import com.carlos.org.pojo.dto.*;
+import com.carlos.org.pojo.dto.DepartmentDTO;
+import com.carlos.org.pojo.dto.RoleDTO;
+import com.carlos.org.pojo.dto.UserDTO;
 import com.carlos.org.pojo.entity.UserDepartment;
 import com.carlos.org.pojo.entity.UserImport;
 import com.carlos.org.pojo.enums.UserGenderEnum;
@@ -90,10 +88,6 @@ public class UserImportService {
 
     private final static String BASE_DIR = "bbt/init/org/";
     private static final ThreadPoolExecutor DATA_POOL = ExecutorUtil.get(12, 10000, "user-import-", 1024, null);
-
-    public void initAdmin() {
-
-    }
 
     public Map<String, UserImport> init() {
         List<UserImport> list = userImportManager.list();
@@ -178,8 +172,6 @@ public class UserImportService {
                             DepartmentDTO departmentDTO = departmentService.getDepartment(parentId, deptName);
                             if (departmentDTO == null) {
                                 departmentDTO = new DepartmentDTO().setDeptName(deptName).setParentId(i == 0 ? "0" : parentId);
-                                departmentDTO.setRegionCode(regionCode);
-                                departmentDTO.setDepartmentType(user.getDepartmentType());
                                 departmentService.saveOrUpdate(departmentDTO);
                             }
                             String id = departmentDTO.getId();
@@ -222,12 +214,11 @@ public class UserImportService {
             userImport.setRealname(user.getRealname());
             userImport.setIdentify(user.getIdentify());
             userImport.setPhone(user.getPhone());
-            userImport.setRegionCode(user.getDepartmentInfo().getRegionCode());
             List<UserDepartment> roleRefs = userRoleMap.get(user.getId());
             if (CollUtil.isNotEmpty(roleRefs)) {
                 UserDepartment userRole = roleRefs.get(0);
-                String roleName = roleMap.get(userRole.getRoleId());
-                userImport.setRole(roleName);
+                // String roleName = roleMap.get(userRole.getRoleId());
+                // userImport.setRole(roleName);
             }
 
             Set<String> departmentIds = user.getDepartmentIds();
@@ -259,612 +250,8 @@ public class UserImportService {
 
     }
 
-    public void mergeUserInfo() {
-        ExcelReader yjUserReader = ExcelUtil.getReader("D:\\trans\\yj_user.xlsx");
-        ExcelReader yjDeptReader = ExcelUtil.getReader("D:\\trans\\yj_dept.xlsx");
-        ExcelReader hbUserReader = ExcelUtil.getReader("D:\\trans\\hb_user_role.xlsx");
-        ExcelReader hbDeptReader = ExcelUtil.getReader("D:\\trans\\hb_dept.xlsx");
 
 
-        List<UserDeptMapDTO> yjUserSheet = yjUserReader.readAll(UserDeptMapDTO.class);
-        List<UserDeptMapDTO> yjDeptSheet = yjDeptReader.readAll(UserDeptMapDTO.class);
-        List<UserDeptMapDTO> hbUserSheet = hbUserReader.readAll(UserDeptMapDTO.class);
-        List<UserDeptMapDTO> hbDeptSheet = hbDeptReader.readAll(UserDeptMapDTO.class);
-
-        Map<String, UserDeptMapDTO> yjUserMap = yjUserSheet.stream().collect(Collectors.toMap(UserDeptMapDTO::getAccount, i -> i, (a, b) -> a));
-        Map<String, UserDeptMapDTO> yjDeptMap = yjDeptSheet.stream().collect(Collectors.toMap(UserDeptMapDTO::getDept, i -> i, (a, b) -> a));
-        Map<String, UserDeptMapDTO> hbUserMap = hbUserSheet.stream().collect(Collectors.toMap(UserDeptMapDTO::getAccount, i -> i, (a, b) -> a));
-        Map<String, UserDeptMapDTO> hbDeptMap = hbDeptSheet.stream().collect(Collectors.toMap(UserDeptMapDTO::getDept, i -> i, (a, b) -> a));
-
-
-        ExcelReader reader = ExcelUtil.getReader("D:\\trans\\final-exec.xlsx");
-        ExcelReader sheet2Reader = reader.setSheet(1);
-        List<UserMergeImportDTO> sheet2User = sheet2Reader.readAll(UserMergeImportDTO.class);
-
-        List<UserDeptMapDTO> userMapping = new ArrayList<>();
-        List<UserDeptMapDTO> deptMapping = new ArrayList<>();
-        List<UserDeptMapDTO> roleMapping = new ArrayList<>();
-
-
-        Map<String, String> roleMap = Maps.newHashMap();
-
-        // 更改用户
-        for (UserMergeImportDTO user : sheet2User) {
-            UserDeptMapDTO hbUser = hbUserMap.get(user.getAccount());
-            if (hbUser == null) {
-                log.warn("未找到用户：{}", user.getAccount());
-                continue;
-            }
-
-            UserDeptMapDTO userMap = new UserDeptMapDTO();
-            userMap.setYjUserId(user.getId());
-            userMap.setHbUserId(hbUser.getHbUserId());
-            userMap.setAccount(user.getAccount());
-            userMap.setPhone(user.getPhone());
-            userMap.setRealname(user.getRealname());
-            List<DepartmentDTO> dds = departmentService.getByUserId(user.getId());
-            if (CollUtil.isNotEmpty(dds)) {
-                userMap.setDeptCode(dds.get(0).getDeptCode());
-                userMap.setYjDeptId(dds.get(0).getId());
-                userMap.setDept(dds.get(0).getDeptName());
-            }
-
-            // 合并汇编和云津用户角色  todo
-            List<UserDepartment> yjUrserRoles = userDepartmentManager.list(new LambdaQueryWrapper<>(UserDepartment.class).eq(UserDepartment::getUserId, user.getId()));
-            Set<String> yjRoleIds = yjUrserRoles.stream().map(UserDepartment::getRoleId).collect(Collectors.toSet());
-            String hbRoleId = hbUser.getHbRoleId();
-            String hbRoleName = hbUser.getHbRoleName();
-            List<String> hbRoleNames = StrUtil.split(hbRoleName, ",");
-            List<String> hbRoleIds = StrUtil.split(hbRoleId, ",");
-
-            for (int i = 0; i < hbRoleNames.size(); i++) {
-                String role = hbRoleNames.get(i);
-                String yjRoleId = roleMap.get(role);
-                if (yjRoleId == null) {
-                    RoleDTO roleDTO = new RoleDTO();
-                    roleDTO.setName(role);
-                    roleDTO = roleService.getOrAdd(roleDTO);
-                    yjRoleId = roleDTO.getId();
-                    roleMap.put(role, yjRoleId);
-
-                    // 添加角色映射
-                    UserDeptMapDTO rMap = new UserDeptMapDTO();
-                    rMap.setHbRoleName(role);
-                    rMap.setHbRoleId(hbRoleIds.get(i));
-                    rMap.setYjRoleId(yjRoleId);
-                    roleMapping.add(rMap);
-                }
-                yjRoleIds.add(yjRoleId);
-            }
-
-            UserDTO yjUser = new UserDTO();
-            yjUser.setId(user.getId());
-            yjUser.setAccount(user.getAccount());
-            yjUser.setRoleIds(yjRoleIds);
-            userService.updateUser(yjUser);
-            userMapping.add(userMap);
-        }
-
-
-        // 处理新增的用户
-        ExcelReader sheet1Reader = reader.setSheet(0);
-        List<UserMergeImportDTO> sheet1User = sheet1Reader.readAll(UserMergeImportDTO.class);
-        Map<String, String> deptMap = Maps.newHashMap();
-
-        HashSet<String> objects = Sets.newHashSet();
-        for (UserMergeImportDTO user : sheet1User) {
-            String account = user.getAccount();
-
-            UserDeptMapDTO hbUser = hbUserMap.get(account);
-            if (hbUser == null) {
-                log.warn("未找到用户：{}", account);
-                continue;
-            }
-
-            HashSet<String> yjRoleIds = Sets.newHashSet();
-            String hbRoleId = hbUser.getHbRoleId();
-            String hbRoleName = hbUser.getHbRoleName();
-            List<String> hbRoleNames = StrUtil.split(hbRoleName, ",");
-            List<String> hbRoleIds = StrUtil.split(hbRoleId, ",");
-
-            for (int i = 0; i < hbRoleNames.size(); i++) {
-                String role = hbRoleNames.get(i);
-                String yjRoleId = roleMap.get(role);
-                if (yjRoleId == null) {
-                    RoleDTO roleDTO = new RoleDTO();
-                    roleDTO.setName(role);
-                    roleDTO = roleService.getOrAdd(roleDTO);
-                    yjRoleId = roleDTO.getId();
-                    roleMap.put(role, yjRoleId);
-
-                    // 添加角色映射
-                    UserDeptMapDTO rMap = new UserDeptMapDTO();
-                    rMap.setHbRoleName(role);
-                    rMap.setHbRoleId(hbRoleIds.get(i));
-                    rMap.setYjRoleId(yjRoleId);
-                    roleMapping.add(rMap);
-                }
-                yjRoleIds.add(yjRoleId);
-            }
-
-
-            String deptString = user.getDepartment();
-
-            List<String> departments = StrUtil.split(deptString, ",");
-            HashSet<String> deptIds = Sets.newHashSet();
-
-            for (String department : departments) {
-                String departmentId = deptMap.get(department);
-                if (departmentId == null) {
-                    // 添加新的部门
-                    List<String> depts = StrUtil.split(department, StrUtil.DASHED);
-                    List<String> newList = new ArrayList<>();
-                    List<String> deptCom = new ArrayList<>();
-                    for (String dept : depts) {
-                        newList.add(dept);
-                        deptCom.add(StrUtil.join(StrUtil.DASHED, newList));
-                    }
-                    String parentId = null;
-                    for (int i = 0; i < deptCom.size(); i++) {
-                        String s = deptCom.get(i);
-                        String did = deptMap.get(s);
-                        if (did == null) {
-                            // 检查数据库是否存在此部门
-                            String deptName = i == 0 ? s : StrUtil.subAfter(s, StrUtil.DASHED, true);
-                            DepartmentDTO departmentDTO = departmentService.getDepartment(parentId, deptName);
-                            if (departmentDTO == null) {
-                                departmentDTO = new DepartmentDTO().setDeptName(deptName).setParentId(i == 0 ? "0" : parentId).setCreateBy("system");
-                                departmentService.saveOrUpdate(departmentDTO);
-                            }
-                            String id = departmentDTO.getId();
-                            deptMap.put(s, id);
-
-                            log.info("deptName:{}", s);
-                            UserDeptMapDTO dMap = hbDeptMap.get(s);
-                            if (dMap != null) {
-                                dMap.setDeptCode(departmentDTO.getDeptCode());
-                                dMap.setYjDeptId(departmentDTO.getId());
-                                deptMapping.add(dMap);
-                            } else {
-                                log.warn("deptname  null:{}", s);
-                            }
-                            did = id;
-                        }
-                        parentId = did;
-                    }
-                    departmentId = parentId;
-                }
-                deptIds.add(departmentId);
-            }
-
-            UserDTO dto = userService.getUserByCredentials(account);
-            if (dto != null) {
-                objects.add(account);
-                log.warn("用户重复,保存映射关系：{}", account);
-            } else {
-                dto = new UserDTO();
-                dto.setAccount(account);
-                dto.setRealname(user.getRealname());
-                dto.setPwd(Base64.encode("Chq@bbt2023"));
-                dto.setPhone(StrUtil.subWithLength(account, 0, 11));
-                dto.setAdmin(false);
-                dto.setRoleIds(yjRoleIds);
-                dto.setCreateBy("system");
-                dto.setDepartmentIds(deptIds);
-                try {
-                    userService.addUser(dto);
-                } catch (Exception e) {
-                    log.error("用户添加失败  message:{} user：{}", e.getMessage(), dto);
-                    continue;
-                }
-            }
-
-            UserDeptMapDTO userMap = new UserDeptMapDTO();
-            userMap.setYjUserId(dto.getId());
-            userMap.setHbUserId(Optional.ofNullable(hbUserMap.get(user.getAccount())).map(UserDeptMapDTO::getHbUserId).orElse(""));
-            userMap.setAccount(user.getAccount());
-            userMap.setPhone(user.getPhone());
-            userMap.setRealname(user.getRealname());
-            deptIds.stream().findFirst().ifPresent(did -> {
-                DepartmentDTO dd = departmentService.getDepartmentById(did);
-                userMap.setDept(dd.getDeptName());
-                userMap.setDeptCode(dd.getDeptCode());
-                userMap.setYjDeptId(did);
-            });
-            userMapping.add(userMap);
-        }
-        log.warn("用户重复：{}", StrUtil.join(StrUtil.COMMA, objects));
-        ExcelWriter writer = ExcelUtil.getWriter("D:\\trans\\mapping_info.xlsx");
-        ExcelWriter sheet1 = writer.setSheet("用户");
-        sheet1.write(userMapping);
-        ExcelWriter sheet2 = writer.setSheet("部门");
-        sheet2.write(deptMapping);
-        ExcelWriter sheet3 = writer.setSheet("角色");
-        sheet3.write(roleMapping);
-        writer.flush();
-    }
-
-
-
-    /**
-     * 初始化部门区域
-     *
-     * @author Carlos
-     * @date 2024/9/14 15:55
-     */
-    public void initDeptRegion() {
-        String sqlFormat = "UPDATE org_department SET region_code = NULL WHERE id = '%s';";
-
-        List<DepartmentDTO> depts = departmentManager.listAll();
-        Map<String, DepartmentDTO> deptMap = depts.stream().collect(Collectors.toMap(DepartmentDTO::getId, k -> k));
-
-        ApiRegion apiRegion = SpringUtil.getBean(ApiRegion.class);
-        Result<List<SysRegionAO>> result = apiRegion.all();
-        if (!result.getSuccess()) {
-            log.error("Api request failed, message: {}, detail message:{}", result.getMessage(), result.getStack());
-            throw new ServiceException(result.getMessage());
-        }
-        List<SysRegionAO> regions = result.getData();
-
-        Map<String, List<SysRegionAO>> regionNameMap = regions.stream().collect(Collectors.groupingBy(SysRegionAO::getRegionName));
-
-        List<DeptRegionExcel> excels = new ArrayList<>();
-        int size = depts.size();
-        for (int j = 0; j < size; j++) {
-            DepartmentDTO dept = depts.get(j);
-            DeptRegionExcel excel = new DeptRegionExcel();
-            log.info("处理部门{}/{}:{}:{}", j, size, dept.getId(), dept.getDeptName());
-            String id = dept.getId();
-            excel.setId(id);
-            excel.setDeptName(dept.getDeptName());
-            excel.setDeptCode(dept.getDeptCode());
-
-            String regionCode = dept.getRegionCode();
-            // 如果部门已经存在区域，直接跳过
-            if (StrUtil.isNotBlank(regionCode)) {
-                excel.setDeal(false);
-                excel.setMessage("使用部门已有区域");
-                RegionInfo region = getReregion(regionCode);
-                excel.setSourceRegionCode(regionCode);
-                excel.setSourceRegionName(StrUtil.join(StrUtil.DASHED, region.getFullName()));
-                excels.add(excel);
-                continue;
-            }
-            // 获取部门下的用户信息
-            List<UserDTO> deptUsers = getDeptUsers(id);
-            if (CollUtil.isNotEmpty(deptUsers)) {
-                // 取用户中区域最小的，及区域code最长的区域，如果长度一致的编码有多个，此选择机制无效，进入下一轮选择
-                List<String> strings = deptUsers.stream().map(UserDTO::getRegionCode).filter(StrUtil::isNotBlank).collect(Collectors.toList());
-                List<String> regionCodes = findLongestStrings(strings);
-                if (regionCodes.size() == 1) {
-                    // 通过用户筛选出唯一的区域
-                    regionCode = regionCodes.get(0);
-                    RegionInfo region = getReregion(regionCode);
-                    excel.setTargetRegionCode(regionCode);
-                    excel.setTargetRegionName(StrUtil.join(StrUtil.DASHED, region.getFullName()));
-                    excel.setDealRemark("根据部门下的人员选择区域编码最长");
-                    excel.setDeal(true);
-                    excel.setRollbackSql(StrUtil.format(sqlFormat, id));
-                    excels.add(excel);
-                    DepartmentDTO dto = new DepartmentDTO();
-                    dto.setId(id);
-                    dto.setRegionCode(excel.getTargetRegionCode());
-                    departmentService.updateDepartment(dto);
-                    continue;
-                }
-            }
-
-            String[] keywords = {"省", "市", "区", "县", "街道", "镇", "网格", "社区", "村"};
-            // 用部门名称和区域名称匹配
-            String deptName = dept.getDeptName();
-            if (!StrUtil.containsAny(deptName, keywords)) {
-                excel.setDeal(false);
-                excel.setMessage("该部门名称与区域不具备关联关系");
-                excels.add(excel);
-                continue;
-            }
-
-            List<SysRegionAO> matchRegions = regionNameMap.get(deptName);
-            if (matchRegions == null) {
-                // 未匹配到区域
-                excel.setDeal(false);
-                excel.setMessage("该部门名称未匹配到区域");
-                excels.add(excel);
-                continue;
-            }
-
-            // 匹配到唯一的名称
-            if (matchRegions.size() == 1) {
-                SysRegionAO r = matchRegions.get(0);
-                excel.setTargetRegionCode(r.getRegionCode());
-                excel.setTargetRegionName(r.getRegionName());
-                excel.setDealRemark("部门名称匹配到唯一的区域名称");
-                excel.setDeal(true);
-                excel.setRollbackSql(StrUtil.format(sqlFormat, id));
-                DepartmentDTO dto = new DepartmentDTO();
-                dto.setId(id);
-                dto.setRegionCode(excel.getTargetRegionCode());
-                dto.setParentId(dept.getParentId());
-                departmentService.updateDepartment(dto);
-                excels.add(excel);
-                continue;
-            } else {
-                // 再次往上匹配一级
-                String parentId = dept.getParentId();
-                DepartmentDTO parentDept = deptMap.get(parentId);
-                String parentDeptName = parentDept.getDeptName();
-                List<SysRegionAO> collect = matchRegions.stream().filter(a -> a.getRegionName().equals(parentDeptName)).collect(Collectors.toList());
-                if (CollUtil.isEmpty(collect)) {
-                    // 往上未匹配到合适的区域
-                    // 未匹配到区域
-                    excel.setDeal(false);
-                    excel.setMessage("进行两级匹配时未命中区域");
-                    excels.add(excel);
-                    continue;
-                }
-                if (collect.size() == 1) {
-                    SysRegionAO r = collect.get(0);
-                    excel.setTargetRegionCode(r.getRegionCode());
-                    excel.setTargetRegionName(r.getRegionName());
-                    excel.setDealRemark("两级名称匹配命中区域");
-                    excel.setDeal(true);
-                    excel.setRollbackSql(StrUtil.format(sqlFormat, id));
-                    excels.add(excel);
-                    DepartmentDTO dto = new DepartmentDTO();
-                    dto.setId(id);
-                    dto.setParentId(dept.getParentId());
-                    dto.setRegionCode(excel.getTargetRegionCode());
-                    departmentService.updateDepartment(dto);
-                    continue;
-                } else {
-                    excel.setDeal(false);
-                    excel.setMessage("进行两级匹配时命中多个，需要优化代码继续匹配");
-                    excels.add(excel);
-                }
-            }
-        }
-
-        ExcelUtil.getWriter(BASE_DIR + "部门区域初始化" + DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN) + ".xlsx").write(excels, true).flush().close();
-
-    }
-
-    public static List<String> findLongestStrings(List<String> strings) {
-        if (strings == null || strings.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        int maxLength = 0;
-        for (String str : strings) {
-            maxLength = Math.max(maxLength, str.length());
-        }
-
-        List<String> longest = new ArrayList<>();
-        for (String str : strings) {
-            if (str.length() == maxLength) {
-                longest.add(str);
-            }
-        }
-        return longest;
-    }
-
-    /**
-     * 获取部门下的用户
-     *
-     * @param deptId 参数0
-     * @return java.util.List<com.carlos.org.pojo.dto.UserDTO>
-     * @throws
-     * @author Carlos
-     * @date 2024/9/14 13:16
-     */
-    private List<UserDTO> getDeptUsers(String deptId) {
-        Set<String> userIds = this.userDepartmentManager.getUserIdByDepartmentId(deptId);
-        if (CollectionUtil.isEmpty(userIds)) {
-            return null;
-        }
-
-        return this.userManager.getByIds(userIds);
-    }
-
-
-    /**
-     * 获取区域信息
-     *
-     * @param regionCode 参数0
-     * @return com.carlos.core.base.RegionInfo
-     * @author Carlos
-     * @date 2024/9/14 13:05
-     */
-    private RegionInfo getReregion(String regionCode) {
-        ApiRegion apiRegion = SpringUtil.getBean(ApiRegion.class);
-        Result<RegionInfo> result = apiRegion.getRegionInfo(regionCode, 20);
-        if (!result.getSuccess()) {
-            log.error("Api request failed, message: {}, detail message:{}", result.getMessage(), result.getStack());
-            throw new ServiceException(result.getMessage());
-        }
-        return result.getData();
-
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public String handleUserData(MultipartFile file) {
-        Integer headerIndex = 1;
-        // 保存导入的数据文件
-        String filename = file.getOriginalFilename();
-        if (CharSequenceUtil.isBlank(filename)) {
-            throw new ServiceException("文件名不能为空");
-        }
-        Map<Integer, String> header;
-        List<Map<Integer, String>> batchData;
-        try {
-            // 适配多级表头
-            headerIndex = headerIndex == null ? 1 : headerIndex;
-            com.carlos.util.easyexcel.ExcelUtil.checkExcel(filename);
-            List<Map<Integer, String>> maps = EasyExcel.read(file.getInputStream()).sheet().headRowNumber(headerIndex - 1).doReadSync();
-            // 检查参数
-            if (maps.size() < 2) {
-                throw new ServiceException("文件数据为空");
-            }
-            header = maps.get(0);
-            batchData = maps.subList(1, maps.size());
-        } catch (IOException e) {
-            throw new ServiceException("数据导入失败!");
-        } catch (POIXMLException e) {
-            throw new ServiceException("文件损坏，无法解析!");
-        }
-        List<String> userImportCol = new ArrayList<>();
-        userImportCol.add("id");
-        userImportCol.add("account");
-        userImportCol.add("realname");
-        userImportCol.add("identify");
-        userImportCol.add("phone");
-        userImportCol.add("department");
-        userImportCol.add("role");
-        userImportCol.add("department_type");
-        userImportCol.add("department_type_name");
-        userImportCol.add("region_code");
-        userImportCol.add("gender");
-        userImportCol.add("email");
-        // 导入模板判断
-        Collection<String> values = header.values();
-        Set<String> missingFields = Sets.newHashSet();
-        userImportCol.forEach(i -> {
-            if (!values.contains(i)) {
-                missingFields.add(i);
-            }
-        });
-        if (CollUtil.isNotEmpty(missingFields)) {
-            log.error("template error, missing fields:{}:", missingFields);
-            throw new ServiceException("模板错误，请使用正确的模板! 缺失字段：" + CharSequenceUtil.join(StrPool.COMMA, missingFields));
-        }
-        List<String> insertColList = new ArrayList<>();
-        for (String head : header.values()) {
-            if (userImportCol.contains(head)) {
-                insertColList.add(head);
-            }
-        }
-        // 构建dept_type关系
-        Map<String, String> departmentTypeMap = buildTypeMap();
-        // 查询已有的region
-        Map<String, String> regionMap = buildRegionMap();
-
-        List<UserImport> valuesStrList = new ArrayList<>();
-//        List<UserImport> list = userImportManager.list();
-//        List<String> ids = new ArrayList<>();
-//        for (UserImport userImport:list){
-//            ids.add(userImport.getId());
-//        }
-//        userImportManager.removeByIds(ids);
-        for (Map<Integer, String> row : batchData) {
-            UserImport userImport = new UserImport();
-            for (Integer lieNum : row.keySet()) {
-                String tempHead = header.get(lieNum);
-                if (insertColList.contains(tempHead)) {
-                    String valStr = row.get(lieNum);
-                    // 处理空格
-                    if (StrUtil.isNotBlank(valStr)) {
-                        valStr = valStr.replaceAll("\\s+", "");
-                    }
-                    switch (tempHead) {
-                        case "id":
-                            userImport.setId(valStr);
-                            break;
-                        case "account":
-                            userImport.setAccount(valStr);
-                            break;
-                        case "realname":
-                            userImport.setRealname(valStr);
-                            break;
-                        case "identify":
-                            userImport.setIdentify(valStr);
-                            break;
-                        case "phone":
-                            userImport.setPhone(valStr);
-                            break;
-                        case "department":
-                            userImport.setDepartment(valStr);
-                            break;
-                        case "role":
-                            userImport.setRole(valStr);
-                            break;
-                        case "department_type":
-                            userImport.setDepartmentType(valStr);
-                            break;
-                        case "department_type_name":
-                            userImport.setDepartmentTypeName(valStr);
-                            break;
-                        case "region_code":
-                            userImport.setRegionCode(valStr);
-                            break;
-                        case "gender":
-                            userImport.setGender(valStr);
-                            break;
-                        case "email":
-                            userImport.setEmail(valStr);
-                            break;
-                        default:
-                            break;
-
-                    }
-                }
-            }
-            // 设置department_type
-            String departmentTypeName = userImport.getDepartmentTypeName();
-            String departmentType = departmentTypeMap.get(departmentTypeName);
-            if (StrUtil.isBlank(userImport.getDepartmentType())) {
-                userImport.setDepartmentType(departmentType);
-            } else {
-                if (StrUtil.isNotBlank(departmentType)) {
-                    userImport.setDepartmentType(departmentType);
-                }
-            }
-            if (StrUtil.isBlank(userImport.getPhone())) {
-                throw new ServiceException("电话号码缺失，异常行信息：" + userImport.toString());
-            }
-            if (StrUtil.isBlank(userImport.getId())) {
-                throw new ServiceException("id缺失，异常行信息：" + userImport.toString());
-            }
-            if (StrUtil.isBlank(userImport.getRole())) {
-//                throw new ServiceException("角色缺失，异常行信息："+userImport.toString());
-                userImport.setRole("普通用户");
-            }
-            if (StrUtil.isBlank(userImport.getAccount())) {
-                throw new ServiceException("用户名缺失，异常行信息：" + userImport.toString());
-            }
-            if (StrUtil.isBlank(userImport.getDepartmentTypeName())) {
-                throw new ServiceException("部门分类名缺失（department_type_name），异常行信息：" + userImport.toString());
-            }
-            if (StrUtil.isBlank(userImport.getDepartment())) {
-                throw new ServiceException("部门名缺失（department），异常行信息：" + userImport.toString());
-            }
-            if (StrUtil.isBlank(userImport.getRegionCode())) {
-                throw new ServiceException("区域编码缺失（region_code），异常行信息：" + userImport.toString());
-            }
-            if (StrUtil.isBlank(userImport.getDepartmentType())) {
-                throw new ServiceException("部门类型映射失败(department_type_name查department_type)，异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
-            }
-            Set<String> deptTypeSet = new HashSet<>(departmentTypeMap.values());
-            if (!deptTypeSet.contains(userImport.getDepartmentType())) {
-                throw new ServiceException("未知部门类型（department_type），异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
-            }
-            String regionCode = userImport.getRegionCode();
-            if (!regionMap.containsKey(regionCode)) {
-                throw new ServiceException("未知区域编码，异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
-            }
-            valuesStrList.add(userImport);
-//            if(valuesStrList.size()>=1000){
-//                userImportManager.saveBatch(valuesStrList);
-//                valuesStrList = new ArrayList<>();
-//            }
-        }
-//        if(valuesStrList.size()>0){
-//            userImportManager.saveBatch(valuesStrList);
-//        }
-        log.info("表头：" + header.toString());
-
-//        init();
-        importUser(valuesStrList);
-        return header.toString();
-    }
 
     private void importUser(List<UserImport> list) throws ServiceException {
         String createBy = "0";
@@ -945,9 +332,6 @@ public class UserImportService {
                             if (departmentDTO == null) {
                                 if (StrUtil.equals(s, department)) {
                                     departmentDTO = new DepartmentDTO().setDeptName(deptName).setParentId(i == 0 ? "0" : parentId);
-                                    departmentDTO.setRegionCode(regionCode);
-                                    departmentDTO.setDepartmentType(user.getDepartmentType());
-                                    departmentDTO.setDepartmentLevelCode(departmentDTO.getDepartmentType().substring(departmentDTO.getDepartmentType().lastIndexOf("-") + 1));
                                     departmentDTO.setCreateBy(createBy);
                                     departmentService.saveOrUpdate(departmentDTO);
                                 } else {
@@ -980,18 +364,6 @@ public class UserImportService {
                         }
                         roleId = roleDTO.getId();
                         roleMap.put(role, roleId);
-                    }
-                    // 校验部门层级下是否存在改角色,如果存在就添加,不存就就略过
-                    boolean existRelation = departmentRoleService.existRelation(departmentDTO.getDepartmentLevelCode(), roleId);
-                    if (existRelation) {
-                        UserDeptRoleDTO deptRoleDto = new UserDeptRoleDTO().setDepartmentId(departmentDTO.getId()).setRoleId(roleId).setDepartmentType(departmentDTO.getDepartmentLevelCode());
-                        deptRoles.add(deptRoleDto);
-                    } else {
-                        log.error("部门层级下不存在该角色，请检查角色下部门层级关系，部门层级：{}，角色：{}",
-                                departmentDTO.getDepartmentLevelCode(), role);
-                        throw new ServiceException("部门层级下不存在该角色，请检查角色下部门层级关系，" +
-                                "角色：" + role + "部门层级:" + departmentDTO.getDepartmentLevelCode() +
-                                "，异常行id为：" + user.getId());
                     }
                 }
                 deptIds.add(departmentId);
@@ -1102,12 +474,6 @@ public class UserImportService {
                     case "department":
                         userImport.setDepartment(valStr);
                         break;
-                    case "department_type":
-                        userImport.setDepartmentType(valStr);
-                        break;
-                    case "department_type_name":
-                        userImport.setDepartmentTypeName(valStr);
-                        break;
                     case "region_code":
                         userImport.setRegionCode(valStr);
                         break;
@@ -1116,23 +482,7 @@ public class UserImportService {
 
                 }
             }
-            // 设置department_type
-            String departmentTypeName = userImport.getDepartmentTypeName();
-            String departmentType = departmentTypeMap.get(departmentTypeName);
-            if (StrUtil.isBlank(userImport.getDepartmentType())) {
-                userImport.setDepartmentType(departmentType);
-            } else {
-                if (StrUtil.isNotBlank(departmentType)) {
-                    userImport.setDepartmentType(departmentType);
-                }
-            }
-            if (StrUtil.isBlank(userImport.getDepartmentType())) {
-                throw new ServiceException("部门类型映射失败(department_type_name查department_type)，异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
-            }
-            Set<String> deptTypeSet = new HashSet<>(departmentTypeMap.values());
-            if (!deptTypeSet.contains(userImport.getDepartmentType())) {
-                throw new ServiceException("未知部门类型（department_type），异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
-            }
+
             String regionCode = userImport.getRegionCode();
             if (!regionMap.containsKey(regionCode)) {
                 throw new ServiceException("未知区域编码(region_code)，异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
@@ -1140,9 +490,6 @@ public class UserImportService {
 
             if (StrUtil.isBlank(userImport.getId())) {
                 throw new ServiceException("id缺失，异常行信息：" + userImport.toString());
-            }
-            if (StrUtil.isBlank(userImport.getDepartmentTypeName())) {
-                throw new ServiceException("部门分类名缺失（department_type_name），异常行信息：" + userImport.toString());
             }
             if (StrUtil.isBlank(userImport.getDepartment())) {
                 throw new ServiceException("部门名缺失（department），异常行信息：" + userImport.toString());
@@ -1177,8 +524,6 @@ public class UserImportService {
                             if (departmentDTO == null) {
                                 if (StrUtil.equals(s, department)) {
                                     departmentDTO = new DepartmentDTO().setDeptName(deptName).setParentId(i == 0 ? "0" : parentId);
-                                    departmentDTO.setRegionCode(userImport.getRegionCode());
-                                    departmentDTO.setDepartmentType(userImport.getDepartmentType());
                                     departmentDTO.setCreateBy(createBy);
                                     departmentService.saveOrUpdate(departmentDTO);
                                 } else {
@@ -1631,7 +976,6 @@ public class UserImportService {
                 roleIds.add(roleId);
             }
 
-            String regionCode = user.getRegionCode();
             String realname = user.getRealname();
             UserDTO dto = new UserDTO();
             dto.setAccount(user.getAccount());
@@ -1639,7 +983,6 @@ public class UserImportService {
             dto.setPhone(phone);
             dto.setAdmin(false);
             dto.setRoleIds(roleIds);
-            dto.setRegionCode(regionCode);
             String gender = user.getGender();
             UserGenderEnum ge = UserGenderEnum.UNKNOWN;
             if (StrUtil.isNotBlank(gender)) {
@@ -1683,8 +1026,6 @@ public class UserImportService {
                                 DepartmentDTO departmentDTO = departmentService.getDepartment(parentId, deptName);
                                 if (departmentDTO == null) {
                                     departmentDTO = new DepartmentDTO().setDeptName(deptName).setParentId(i == 0 ? "0" : parentId);
-                                    departmentDTO.setRegionCode(regionCode);
-                                    departmentDTO.setDepartmentType(user.getDepartmentType());
                                     departmentDTO.setSort(deptSort);
                                     departmentService.saveOrUpdate(departmentDTO);
                                 }
@@ -1707,13 +1048,11 @@ public class UserImportService {
             dto.setDepartmentIds(deptIds);
             // 设置部门角色
             List<UserDeptRoleDTO> deptRoles = new ArrayList<>();
-            // TODO 部门、角色目前仅支持单个传入
-            String departmentTypeLevel = user.getDepartmentType().substring(user.getDepartmentType().lastIndexOf("-") + 1);
+
             for (String deptId : deptIds) {
                 for (String roleId : roleIds) {
                     UserDeptRoleDTO deptRole = new UserDeptRoleDTO();
                     deptRole.setDepartmentId(deptId);
-                    deptRole.setDepartmentType(departmentTypeLevel);
                     deptRole.setRoleId(roleId);
                     deptRoles.add(deptRole);
                 }
@@ -1856,9 +1195,6 @@ public class UserImportService {
                 excel.setPhone(phone);
                 excel.setRole(roleId);
                 excel.setDepartment(deptName);
-                excel.setDepartmentType(deptType);
-                excel.setDepartmentTypeName(typeFullName);
-                excel.setRegionCode(regionCode);
                 excel.setUserSort(1);
                 excel.setDeptSort(deptSort);
                 list.add(excel);
@@ -1879,9 +1215,6 @@ public class UserImportService {
                         excel.setPhone(phone);
                         excel.setRole(roleId);
                         excel.setDepartment(deptName + "-" + dept);
-                        excel.setDepartmentType(deptType);
-                        excel.setDepartmentTypeName("02" + suffix);
-                        excel.setRegionCode(regionCode);
                         excel.setUserSort(100);
                         excel.setDeptSort(sort);
                         list.add(excel);

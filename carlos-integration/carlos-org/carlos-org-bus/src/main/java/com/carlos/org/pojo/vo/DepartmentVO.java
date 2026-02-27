@@ -23,7 +23,7 @@ public class DepartmentVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "部门名称")
     private String deptName;
     @Schema(description = "部门编号")
@@ -35,11 +35,11 @@ public class DepartmentVO implements Serializable {
     @Schema(description = "联系方式")
     private String tel;
     @Schema(description = "创建者")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Schema(description = "修改者")
-    private String updateBy;
+    private Long updateBy;
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
     @Schema(description = "部门排序")

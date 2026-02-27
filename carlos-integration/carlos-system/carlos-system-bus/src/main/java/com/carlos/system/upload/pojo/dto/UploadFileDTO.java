@@ -18,7 +18,7 @@ public class UploadFileDTO {
     /**
      * 文件id 非必填
      */
-    private String id;
+    private Long id;
 
     /**
      * 文件组id

@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 public class UserExportDTO {
-    private String id;
+    private Long id;
     private String account;
     private String realname;
     private String identify;
@@ -20,9 +20,9 @@ public class UserExportDTO {
     private String email;
     private String description;
     private UserStateEnum stateEnum;
-    private String createBy;
+    private Long createBy;
     private String createTime;
-    private String updateBy;
+    private Long updateBy;
     private String updateTime;
     private Integer sort;
     private String deptName;

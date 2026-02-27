@@ -3,15 +3,12 @@ package com.carlos.org.service;
 import com.carlos.core.base.DepartmentInfo;
 import com.carlos.core.pagination.Paging;
 import com.carlos.org.enums.DeptRelationEnum;
-import com.carlos.org.param.DepartmentCreateOrUpdateParam;
-import com.carlos.org.pojo.ao.CommonCustomAO;
 import com.carlos.org.pojo.dto.DepartmentDTO;
 import com.carlos.org.pojo.dto.UserDTO;
 import com.carlos.org.pojo.dto.UserDepartmentDTO;
 import com.carlos.org.pojo.param.*;
 import com.carlos.org.pojo.vo.DepartmentBaseVO;
 import com.carlos.org.pojo.vo.DepartmentStepTreeVO;
-import com.carlos.org.pojo.vo.ThirdDepartmentVO;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.Serializable;
@@ -85,26 +82,6 @@ public interface DepartmentService {
      */
     List<DepartmentDTO> departmentTree(Serializable departmentId, boolean userFlag);
 
-    /**
-     * 获取平级部门
-     *
-     * @param departmentId        部门id
-     * @param dataStewardUserFlag
-     * @return java.util.List<com.carlos.org.dto.user.DepartmentDTO>
-     * @author Carlos
-     * @date 2022/12/20 9:10
-     */
-    List<DepartmentDTO> getSameLevelDepartment(Serializable departmentId, boolean userFlag, boolean dataStewardUserFlag);
-
-    /**
-     * 根据父级部门以及部门区域 获取同层级部门
-     *
-     * @param departmentId 部门id
-     * @return java.util.List<com.carlos.org.dto.user.DepartmentDTO>
-     * @author Carlos
-     * @date 2022/12/20 9:10
-     */
-    List<DepartmentDTO> getPeerLevelDepartment(Serializable departmentId);
 
     /**
      * 预览部门名称
@@ -260,16 +237,6 @@ public interface DepartmentService {
     List<DepartmentDTO> getSubDepartment(String parentId);
 
     /**
-     * 获取第n层级的部门
-     *
-     * @param level 参数0
-     * @return java.util.List<com.carlos.org.pojo.dto.DepartmentDTO>
-     * @author Carlos
-     * @date 2023/6/2 0:44
-     */
-    List<DepartmentDTO> getDepartmentByLevel(int level);
-
-    /**
      * 获取当前登录用户下级部门列表
      *
      * @return
@@ -284,14 +251,6 @@ public interface DepartmentService {
      */
     Set<String> getDepartmentIdsRecurById(String root);
 
-    /**
-     * @param
-     * @return java.util.List<com.carlos.org.pojo.dto.DepartmentDTO>
-     * @description: 当前用户下级网格以及微网格
-     * @author: gule
-     * @date: 2023-08-09 10:15
-     */
-    List<DepartmentDTO> currentGrid();
 
     /**
      * @Title: subTree
@@ -302,22 +261,6 @@ public interface DepartmentService {
      */
     List<DepartmentDTO> subTree(Boolean userFlag);
 
-    /***
-     * @desc: 用户当前部门及下级部门
-     * @author: GaoQiao
-     * @date: 2023/12/6 9:53
-     * @param: [userId]
-     * @return: java.util.List<com.carlos.org.pojo.dto.DepartmentDTO>
-     **/
-    DepartmentDTO getCurrentAndSubLeveDept();
-
-    /***
-     * @desc: 获取同级部门及下级部门
-     * @author: GaoQiao
-     * @date: 2023/12/13 10:15
-     * @return: java.util.List<com.carlos.org.pojo.dto.DepartmentDTO>
-     **/
-    List<DepartmentDTO> getSameAndSubLeveDept();
 
     /***
      * @desc: 获取上级部门
@@ -336,15 +279,6 @@ public interface DepartmentService {
      */
     Set<String> getCurrentAndAllSubDepartmentId(String deptCode);
 
-    /**
-     * 修改部门区域信息
-     *
-     * @param regionName 参数0
-     * @throws
-     * @author Carlos
-     * @date 2024/4/8 15:26
-     */
-    void changeRegion(String regionName);
 
     /**
      * 缓存初始化
@@ -354,19 +288,8 @@ public interface DepartmentService {
      */
     void initCache();
 
-    /**
-     * 获取一段时间内部门人员活动率排名列表
-     *
-     * @param startTime
-     * @param endTime
-     * @param deptIds
-     * @return
-     */
-    List<CommonCustomAO> getAactivityRatio(String startTime, String endTime, List<String> deptIds);
 
     Set<String> allSubDepartmentCode(String id, boolean addSelf);
-
-    DepartmentDTO getDepartmentByRegionCode(String regionCode);
 
     /**
      * @Title: allDepartmentByName
@@ -379,32 +302,8 @@ public interface DepartmentService {
 
     List<DepartmentDTO> getDepartmentByCodes(List<String> codes);
 
-    /**
-     * @Title: treeAndUser
-     * @Description: 获取所有部门树及对应数据专员
-     * @Date: 2024/9/26 17:17
-     * @Parameters: []
-     * @Return java.util.List<com.carlos.org.pojo.dto.DepartmentDTO>
-     */
-    List<DepartmentDTO> treeAndUser();
-
-    List<DepartmentDTO> getMeToFourthLevelDept();
-
-    /**
-     * 获取多个层级的部门
-     *
-     * @param level
-     * @return
-     */
-    List<DepartmentDTO> getDepartmentByLevels(List<Integer> level);
-
     Paging<UserDepartmentDTO> getCurSubUser(CurSubExecutorPageParam param);
 
-    void saveOrUpdateForThird(DepartmentDTO dto);
-
-    void deleteForThird(String deptId);
-
-    void batchSaveOrUpdateForThird(Set<DepartmentCreateOrUpdateParam> param);
 
     /**
      * 绵阳定制需求 优化部门组织树查询速度
@@ -434,68 +333,15 @@ public interface DepartmentService {
      */
     List<DepartmentDTO> listByThirdIds(Set<String> thirdIds);
 
-    /**
-     * 三方部门组织树
-     * @return list
-     */
-    List<DepartmentDTO> thirdDeptTree();
-
-    /**
-     * 本系统部门组织树
-     * @return list
-     */
-    List<DepartmentDTO> systemDeptTree();
-
-    /**
-     * 组织机构
-     *
-     * @param
-     * @return
-     */
-    Paging<ThirdDepartmentVO> thirdPage(DepartmentPageParam param);
-
-    /**
-     * 组织机构
-     *
-     * @param
-     * @return
-     */
-    Paging<ThirdDepartmentVO> deptInfoPage(DepartmentPageParam param);
-
     Paging<UserDepartmentDTO> getUserPageByDeptId(TaskExecutorPageMianYangParam param);
 
-    List<DepartmentDTO> subscribingDepartment();
 
     List<String> previewDepartmentNameByCode(String code, Integer limit);
 
     List<DepartmentDTO> listThirdInfoByIds(Set<String> ids);
 
-    /**
-     * @Title: sameAndSuperiorDept
-     * @Description: 当前层级及同层级上级部门树
-     * @Date: 2025/7/3 16:43
-     * @Parameters: []
-     * @Return java.util.List<com.carlos.org.pojo.dto.DepartmentDTO>
-     */
-    List<DepartmentDTO> sameAndSuperiorDept();
 
     Paging<UserDepartmentDTO> getCurDeptUser(CurDeptExecutorPageParam param);
-
-    List<DepartmentDTO> getFullDepartment(String departmentId);
-
-    /**
-     * 部门组织树
-     * @param deptRelationEnum 部门关系枚举
-     * @param level 要获取的上级级别（1表示直接上级，2表示上级的上级，以此类推）
-     * @return list
-     */
-    List<DepartmentDTO> deptTree(DeptRelationEnum deptRelationEnum, Integer level);
-
-    /**
-     * 一键下派部门
-     * @return list
-     */
-    List<DepartmentDTO> autoDispatchDept();
 
     /**
      * 查询部门树-部门逐级加载
@@ -545,13 +391,6 @@ public interface DepartmentService {
      */
     Map<String, List<DepartmentDTO>> getParentMapByCodes(Set<String> deptCodes, Integer limit);
 
-    /**
-     * 根据code，获取上级部门,传入C,并按照A、B、C有序返回
-     *
-     * @param deptCode code
-     * @return list
-     */
-    List<DepartmentDTO> getAllParentDepartments(String deptCode, String deptId);
 
     /**
      * 根据当前传入部门的id，获取当前及下面所有子部门的deptcode
@@ -561,11 +400,6 @@ public interface DepartmentService {
      */
     Set<String> getAllDepartCodes(String parentId);
 
-    /**
-     * 获取当前及所有子部门
-     * @return
-     */
-    List<DepartmentDTO> getCurrentAndAllSubset();
 
     DepartmentStepTreeVO getTreeStep(String departmentId);
 }

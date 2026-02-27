@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 public class CurSubPageDto extends ParamPage {
 
     @Schema(description = "组织机构id")
-    private String id;
+    private Long id;
 
     @Schema(description = "当前任务id")
     private String taskId;

@@ -25,7 +25,7 @@ public class SysResourceTreeDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 前端名称
      */

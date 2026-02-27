@@ -4,12 +4,11 @@ import com.carlos.core.base.DepartmentInfo;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.response.Result;
 import com.carlos.org.api.ApiDepartment;
-import com.carlos.org.param.DepartmentCreateOrUpdateParam;
-import com.carlos.org.param.DepartmentDeleteParam;
-import com.carlos.org.pojo.ao.*;
+import com.carlos.org.pojo.ao.DepartmentAO;
+import com.carlos.org.pojo.ao.DepartmentUserAO;
+import com.carlos.org.pojo.ao.UserDepartmentVO;
 import com.carlos.org.pojo.param.CurDeptExecutorPageParam;
 import com.carlos.org.pojo.param.CurSubExecutorPageParam;
-import com.carlos.org.pojo.param.TaskExecutorPageMianYangParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 
@@ -38,33 +37,8 @@ public class FeignDepartmentFallbackFactory implements FallbackFactory<ApiDepart
         return new ApiDepartment() {
 
             @Override
-            public Result<List<CommonCustomAO>> getAactivityRatio(String startTime, String endTime, List<String> deptIds) {
-                return Result.fail("手机端获取活跃度列表失败", message);
-            }
-
-            @Override
-            public Result<List<DepartmentAO>> getDepyByUserId(String userId) {
+            public Result<List<DepartmentAO>> getDeptByUserId(String userId) {
                 return Result.fail("根据用户ID获取部门列表失败", message);
-            }
-
-            @Override
-            public Result<Integer> deptCountStatistic() {
-                return Result.fail("所有部门数量获取失败", message);
-            }
-
-            @Override
-            public Result<List<DepartmentAO>> tree(String departmentId, boolean userFlag) {
-                return Result.fail("部门信息获取失败", message);
-            }
-
-            @Override
-            public Result<List<DepartmentAO>> allDepartment() {
-                return Result.fail("部门信息获取失败", message);
-            }
-
-            @Override
-            public Result<List<DepartmentAO>> currentSameLeveDept(boolean userFlag) {
-                return Result.fail("部门信息获取失败", message);
             }
 
             @Override
@@ -148,17 +122,7 @@ public class FeignDepartmentFallbackFactory implements FallbackFactory<ApiDepart
             }
 
             @Override
-            public Result<Set<String>> allSubDepartmentCode(String id, boolean addSelf) {
-                return Result.fail("下级部门code获取失败", message);
-            }
-
-            @Override
             public Result<Set<String>> allSubDeptCodeByDeptCode(String deptCode) {
-                return Result.fail("下级部门code获取失败", message);
-            }
-
-            @Override
-            public Result<Set<String>> allSubDeptCodeByReginCode(String regionCode) {
                 return Result.fail("下级部门code获取失败", message);
             }
 
@@ -173,11 +137,6 @@ public class FeignDepartmentFallbackFactory implements FallbackFactory<ApiDepart
             }
 
             @Override
-            public Result<List<DepartmentAO>> getSubDepartmentByTypeLike(String deptTypeListStr) {
-                return Result.fail("根据机构类型获取部门", message);
-            }
-
-            @Override
             public Result<Paging<DepartmentUserAO>> getCurSubUser(CurSubExecutorPageParam param) {
                 return Result.fail("查询当前以及下级部门人员失败", message);
             }
@@ -188,48 +147,8 @@ public class FeignDepartmentFallbackFactory implements FallbackFactory<ApiDepart
             }
 
             @Override
-            public Result<List<DepartmentAO>> treeMianYang(String departmentId, boolean userFlag) {
-                return Result.fail("部门信息获取失败", message);
-            }
-
-            @Override
-            public Result<Paging<DepartmentUserAO>> getUserPageByDeptId(TaskExecutorPageMianYangParam param) {
-                return Result.fail("分页获取部门下用户信息失败", message);
-            }
-
-            @Override
             public Result<Paging<DepartmentUserAO>> listCurDeptUser(CurDeptExecutorPageParam param) {
                 return Result.fail("查询当前部门人员失败", message);
-            }
-
-            @Override
-            public Result<String> add(DepartmentCreateOrUpdateParam param) {
-                return Result.fail("第三方新增部门失败", message);
-            }
-
-            @Override
-            public Result<Integer> batchAdd(Set<DepartmentCreateOrUpdateParam> param) {
-                return Result.fail("第三方批量新增部门失败", message);
-            }
-
-            @Override
-            public void update(DepartmentCreateOrUpdateParam param) {
-
-            }
-
-            @Override
-            public void delete(DepartmentDeleteParam param) {
-
-            }
-
-            @Override
-            public Result<List<DepartmentBaseAO>> listByThirdIds(Set<String> thirdIds) {
-                return Result.fail("根据三方id获取部门信息失败", message);
-            }
-
-            @Override
-            public Result<List<DepartmentAO>> listDepartmentByRegionCode(String regionCode) {
-                return Result.fail("根据区域获取部门信息失败", message);
             }
 
             @Override
@@ -252,10 +171,6 @@ public class FeignDepartmentFallbackFactory implements FallbackFactory<ApiDepart
                 return Result.fail("获取当前传入部门及子级所有部门id失败", message);
             }
 
-            @Override
-            public Result<List<DepartmentBaseAO>> listThirdInfoByIds(Set<String> ids) {
-                return Result.fail("根据id获取三方部门信息失败", message);
-            }
         };
     }
 }

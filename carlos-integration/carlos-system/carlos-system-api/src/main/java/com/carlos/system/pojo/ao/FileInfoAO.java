@@ -16,7 +16,7 @@ public class FileInfoAO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 文件分组
      */

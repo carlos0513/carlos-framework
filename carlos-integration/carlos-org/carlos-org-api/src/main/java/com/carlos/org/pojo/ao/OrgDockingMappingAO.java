@@ -19,7 +19,7 @@ public class OrgDockingMappingAO {
     /**
      * 主键ID
      */
-    private String id;
+    private Long id;
     /**
      * 系统数据id
      */

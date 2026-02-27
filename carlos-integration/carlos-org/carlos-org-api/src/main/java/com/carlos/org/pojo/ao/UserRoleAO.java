@@ -16,7 +16,7 @@ public class UserRoleAO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 用户id
      */

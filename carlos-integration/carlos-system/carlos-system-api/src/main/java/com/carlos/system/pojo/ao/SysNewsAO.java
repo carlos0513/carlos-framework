@@ -25,7 +25,7 @@ public class SysNewsAO implements Serializable {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 标题
      */
@@ -53,7 +53,7 @@ public class SysNewsAO implements Serializable {
     /**
      * 创建者
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -61,7 +61,7 @@ public class SysNewsAO implements Serializable {
     /**
      * 修改者
      */
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */

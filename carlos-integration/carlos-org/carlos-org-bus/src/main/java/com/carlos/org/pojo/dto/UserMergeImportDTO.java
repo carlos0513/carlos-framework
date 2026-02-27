@@ -21,7 +21,7 @@ public class UserMergeImportDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
-    private String id;
+    private Long id;
     private String account;
     private String account1;
     private String realname;

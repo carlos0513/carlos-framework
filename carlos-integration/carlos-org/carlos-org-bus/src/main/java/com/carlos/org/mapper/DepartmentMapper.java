@@ -20,13 +20,6 @@ import java.util.Set;
 @Mapper
 public interface DepartmentMapper extends MPJBaseMapper<Department> {
 
-
-    Long getDeptCodeCountWithDeleted(@Param("level") Integer level, @Param("parentCode") String parentCode);
-
-    Set<String> getAllSubDeptIdsByDeptCode(@Param("deptCode") String deptCode);
-
-    List<String> getAllParentDeptCodeByRecursive(@Param("deptCode") String deptCode);
-
     List<Department> selectAllSubDepartmentsByCodes(@Param("deptCodes") Set<String> deptCodes);
 
     /**
@@ -37,11 +30,4 @@ public interface DepartmentMapper extends MPJBaseMapper<Department> {
      */
     List<UserDepartmentDTO> getCurrentAndChildrenDepartmentUserIds(@Param("departmentId") String departmentId);
 
-    /**
-     * 获取当前部门以及下级所有部门的deptCode
-     *
-     * @param parentId
-     * @return
-     */
-    List<String> getAllDepartCodes(@Param("parentId") String parentId);
 }

@@ -26,7 +26,7 @@ public class SysRegionVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "自增ID")
-    private String id;
+    private Long id;
     @Schema(description = "行政区域编码")
     private String regionCode;
     @Schema(description = "行政区域名称")
@@ -67,11 +67,11 @@ public class SysRegionVO implements Serializable {
     private int sort;
     // @UserIdField(type = UserIdField.SerializerType.REALNAME)
     // @Schema(description = "创建人")
-    // private String createBy;
+    // private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Schema(description = "更新人")
-    private String updateBy;
+    private Long updateBy;
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
     @Schema(description = "子级数目")

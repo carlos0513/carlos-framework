@@ -18,7 +18,7 @@ public class SysDictItemDTO {
     /**
      * 字典选项id
      */
-    private String id;
+    private Long id;
     /**
      * 字典id
      */

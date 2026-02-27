@@ -29,7 +29,7 @@ public class MsgChannelConfig implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
     private Long id;
     /**
      * 渠道编码
@@ -66,7 +66,7 @@ public class MsgChannelConfig implements Serializable {
      * 创建者编号
      */
     @TableField(value = "create_by")
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -76,7 +76,7 @@ public class MsgChannelConfig implements Serializable {
      * 更新者编号
      */
     @TableField(value = "update_by")
-    private String updateBy;
+    private Long updateBy;
     /**
      * 更新时间
      */

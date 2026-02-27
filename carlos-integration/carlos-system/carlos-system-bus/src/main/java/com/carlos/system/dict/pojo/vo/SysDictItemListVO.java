@@ -25,7 +25,7 @@ public class SysDictItemListVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "主键")
-    private String id;
+    private Long id;
 
     @Schema(description = "字典项值")
     private String name;

@@ -25,7 +25,7 @@ public class DepartmentStepTreeVO implements Serializable {
     @Data
     public static class DeptInfo {
         @Schema(description = "主键")
-        private String id;
+        private Long id;
         @Schema(description = "上级id")
         private String parentId;
         @Schema(description = "部门名称")
@@ -40,7 +40,7 @@ public class DepartmentStepTreeVO implements Serializable {
     @Data
     public static class User {
         @Schema(description = "主键")
-        private String id;
+        private Long id;
         @Schema(description = "用户id")
         private String userId;
         @Schema(description = "用户名")

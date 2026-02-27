@@ -50,7 +50,7 @@ public class MsgMessageVO implements Serializable {
     @Schema(description = "推送渠道(短信、站内信、钉钉等)")
     private String pushChannel;
     @Schema(description = "创建人")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 

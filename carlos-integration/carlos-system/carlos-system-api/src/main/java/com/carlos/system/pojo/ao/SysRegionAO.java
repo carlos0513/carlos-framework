@@ -20,7 +20,7 @@ public class SysRegionAO {
     /**
      * 自增ID
      */
-    private String id;
+    private Long id;
     /**
      * 行政区域编码
      */
@@ -96,7 +96,7 @@ public class SysRegionAO {
     /**
      * 创建人
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -104,7 +104,7 @@ public class SysRegionAO {
     /**
      * 更新人
      */
-    private String updateBy;
+    private Long updateBy;
     /**
      * 更新时间
      */

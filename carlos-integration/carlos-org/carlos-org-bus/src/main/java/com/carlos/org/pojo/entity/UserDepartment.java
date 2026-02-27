@@ -30,8 +30,8 @@ public class UserDepartment extends Model<UserDepartment> implements Serializabl
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 用户id
      */
@@ -47,11 +47,5 @@ public class UserDepartment extends Model<UserDepartment> implements Serializabl
      */
     @TableField(value = "is_admin")
     private Boolean isAdmin;
-
-    @TableField(value = "role_id")
-    private String roleId;
-
-    @TableField(value = "department_level_code")
-    private String departmentLevelCode;
 
 }

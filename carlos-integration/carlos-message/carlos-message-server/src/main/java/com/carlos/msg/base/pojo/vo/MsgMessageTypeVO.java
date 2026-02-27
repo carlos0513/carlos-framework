@@ -30,11 +30,11 @@ public class MsgMessageTypeVO implements Serializable {
     @Schema(description = "是否启用")
     private Boolean enabled;
     @Schema(description = "创建者编号")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Schema(description = "更新者编号")
-    private String updateBy;
+    private Long updateBy;
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 

@@ -3,6 +3,7 @@ package ${project.packageName}.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -23,7 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @TableName("${table.name}")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ${table.classPrefix} implements Serializable{
+public class ${table.classPrefix} extends Model<${table.classPrefix}> implements Serializable{
 private static final long serialVersionUID = 1L;
 <#list table.columns as column>
     /**

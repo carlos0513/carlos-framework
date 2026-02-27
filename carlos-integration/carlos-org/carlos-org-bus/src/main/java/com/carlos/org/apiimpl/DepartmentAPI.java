@@ -1,8 +1,5 @@
 package com.carlos.org.apiimpl;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
-import com.carlos.boot.util.ExtendInfoUtil;
 import com.carlos.core.base.DepartmentInfo;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.response.Result;
@@ -10,14 +7,13 @@ import com.carlos.org.api.ApiDepartment;
 import com.carlos.org.convert.DepartmentConvert;
 import com.carlos.org.manager.DepartmentManager;
 import com.carlos.org.manager.UserDepartmentManager;
-import com.carlos.org.param.DepartmentCreateOrUpdateParam;
-import com.carlos.org.param.DepartmentDeleteParam;
-import com.carlos.org.pojo.ao.*;
+import com.carlos.org.pojo.ao.DepartmentAO;
+import com.carlos.org.pojo.ao.DepartmentUserAO;
+import com.carlos.org.pojo.ao.UserDepartmentVO;
 import com.carlos.org.pojo.dto.DepartmentDTO;
 import com.carlos.org.pojo.dto.UserDepartmentDTO;
 import com.carlos.org.pojo.param.CurDeptExecutorPageParam;
 import com.carlos.org.pojo.param.CurSubExecutorPageParam;
-import com.carlos.org.pojo.param.TaskExecutorPageMianYangParam;
 import com.carlos.org.service.DepartmentService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,45 +50,10 @@ public class DepartmentAPI implements ApiDepartment {
     private final DepartmentManager departmentManager;
 
     @Override
-    public Result<List<CommonCustomAO>> getAactivityRatio(String startTime, String endTime, List<String> deptIds) {
-        return Result.ok(departmentService.getAactivityRatio(startTime, endTime, deptIds));
-    }
-
-    @Override
-    public Result<List<DepartmentAO>> getDepyByUserId(String userId) {
+    public Result<List<DepartmentAO>> getDeptByUserId(String userId) {
         List<DepartmentDTO> dtos = departmentService.getByUserId(userId);
         return Result.ok(DepartmentConvert.INSTANCE.toAOS(dtos));
     }
-
-    @Override
-    public Result<Integer> deptCountStatistic() {
-        List<DepartmentDTO> departments = departmentService.getDepartments();
-        return Result.ok(departments.size());
-    }
-
-    @Override
-
-    @GetMapping("/tree")
-    @Operation(summary = "当前用户部门树形列表")
-    public Result<List<DepartmentAO>> tree(@RequestParam("departmentId") String departmentId, @RequestParam("userFlag") boolean userFlag) {
-        long start = System.currentTimeMillis();
-        List<DepartmentDTO> dtos = departmentService.departmentTree(departmentId, userFlag);
-        if (log.isDebugEnabled()) {
-            log.debug("method departmentTree time:{}", DateUtil.formatBetween(DateUtil.spendMs(start)));
-        }
-
-        return Result.ok(DepartmentConvert.INSTANCE.toAOS(dtos));
-    }
-
-    @Override
-
-    @GetMapping("/current/sameLeve")
-    @Operation(summary = "当前用户部门同级部门")
-    public Result<List<DepartmentAO>> currentSameLeveDept(@RequestParam("userFlag") boolean userFlag) {
-        List<DepartmentDTO> dtos = departmentService.getSameLevelDepartment(ExtendInfoUtil.getDepartmentId(), userFlag, false);
-        return Result.ok(DepartmentConvert.INSTANCE.toAOS(dtos));
-    }
-
 
     @Override
     @GetMapping("/getDepartmentName")
@@ -139,8 +100,6 @@ public class DepartmentAPI implements ApiDepartment {
             return Result.fail("部门查询失败：" + e.getMessage());
         }
     }
-
-
 
     @Override
     @GetMapping("/getDepartmentList")
@@ -223,15 +182,6 @@ public class DepartmentAPI implements ApiDepartment {
     }
 
     @Override
-    @GetMapping("/listAll")
-    @Operation(summary = "获取所有部门")
-    public Result<List<DepartmentAO>> allDepartment() {
-        List<DepartmentDTO> departments = departmentService.getDepartments();
-        return Result.ok(DepartmentConvert.INSTANCE.toAOS(departments));
-    }
-
-
-    @Override
 
     @GetMapping("user/deptById")
     @Operation(summary = "部门所有用户")
@@ -259,27 +209,10 @@ public class DepartmentAPI implements ApiDepartment {
     }
 
     @Override
-    @GetMapping("all/subDept/{id}")
-    @Operation(summary = "下级部门code")
-    public Result<Set<String>> allSubDepartmentCode(@PathVariable final String id, boolean addSelf) {
-        Set<String> codes = departmentService.allSubDepartmentCode(id, addSelf);
-        return Result.ok((codes));
-    }
-
-    @Override
     @GetMapping("all/subDept/deptCode")
     @Operation(summary = "deptCode下级部门code")
     public Result<Set<String>> allSubDeptCodeByDeptCode(String deptCode) {
         String id = departmentService.getDepartmentByCode(deptCode).getId();
-        Set<String> codes = departmentService.allSubDepartmentCode(id, true);
-        return Result.ok((codes));
-    }
-
-    @Override
-    @GetMapping("all/subDept/regionCode")
-    @Operation(summary = "regionCode下级部门code")
-    public Result<Set<String>> allSubDeptCodeByReginCode(String regionCode) {
-        String id = departmentService.getDepartmentByRegionCode(regionCode).getId();
         Set<String> codes = departmentService.allSubDepartmentCode(id, true);
         return Result.ok((codes));
     }
@@ -300,14 +233,6 @@ public class DepartmentAPI implements ApiDepartment {
         List<DepartmentAO> departmentAOS = DepartmentConvert.INSTANCE.toAOS(departmentdepartments);
 
         return Result.ok(departmentAOS);
-    }
-
-    @Override
-    @GetMapping("/getSubDepartmentByTypeLike")
-    @Operation(summary = "根据机构类型获取部门（模糊匹配，左like）")
-    public Result<List<DepartmentAO>> getSubDepartmentByTypeLike(@RequestParam String deptTypeListStr) {
-        List<DepartmentDTO> departments = departmentManager.getSubDepartmentByTypeLike(deptTypeListStr);
-        return Result.ok(DepartmentConvert.INSTANCE.toAOS(departments));
     }
 
     @Override
@@ -344,57 +269,6 @@ public class DepartmentAPI implements ApiDepartment {
     }
 
     @Override
-    @GetMapping("/treeMianYang")
-    public Result<List<DepartmentAO>> treeMianYang(String departmentId, boolean userFlag) {
-        long start = System.currentTimeMillis();
-        // List<DepartmentDTO> dtos = departmentService.departmentTreeMianYang(departmentId, userFlag);
-        List<DepartmentDTO> dtos = this.departmentService.autoDispatchDept();
-        if (log.isDebugEnabled()) {
-            log.debug("method departmentTree time:{}", DateUtil.formatBetween(DateUtil.spendMs(start)));
-        }
-
-        return Result.ok(DepartmentConvert.INSTANCE.toAOS(dtos));
-    }
-
-    @Override
-    @GetMapping("listByThirdIds")
-    @Operation(summary = "根据三方id获取部门")
-    public Result<List<DepartmentBaseAO>> listByThirdIds(@RequestParam("thirdIds") Set<String> thirdIds) {
-        List<DepartmentDTO> dtos = departmentService.listByThirdIds(thirdIds);
-        return Result.ok(DepartmentConvert.INSTANCE.toBaseAOS(dtos));
-    }
-
-    @Override
-    @GetMapping("listThirdInfoByIds")
-    @Operation(summary = "根据id获取三方部门信息")
-    public Result<List<DepartmentBaseAO>> listThirdInfoByIds(@RequestParam("ids") Set<String> ids) {
-        List<DepartmentDTO> dtos = departmentService.listThirdInfoByIds(ids);
-        return Result.ok(DepartmentConvert.INSTANCE.toBaseAOS(dtos));
-    }
-
-    @Override
-    @PostMapping("getUserPageByDeptId")
-    @Operation(summary = "分页获取部门下用户")
-    public Result<Paging<DepartmentUserAO>> getUserPageByDeptId(@RequestBody TaskExecutorPageMianYangParam param) {
-        Paging<UserDepartmentDTO> users = departmentService.getUserPageByDeptId(param);
-        List<DepartmentUserAO> userAOS = DepartmentConvert.INSTANCE.toUserAO(users.getRecords());
-        Paging<DepartmentUserAO> paging = new Paging<>();
-        paging.setRecords(userAOS);
-        paging.setSize(param.getSize());
-        paging.setTotal(users.getTotal());
-        paging.setCurrent(param.getCurrent());
-        return Result.ok(paging);
-    }
-
-    @Override
-    @GetMapping("listByRegionCode")
-    @Operation(summary = "根据区域id获取部门")
-    public Result<List<DepartmentAO>> listDepartmentByRegionCode(@RequestParam("regionCode") String regionCode) {
-        List<DepartmentDTO> depts = departmentManager.listDepartmentByRegionCode(regionCode);
-        return Result.ok(DepartmentConvert.INSTANCE.toAOS(depts));
-    }
-
-    @Override
     public Result<List<DepartmentAO>> getAllSubDepartment(String deptCode) {
         List<DepartmentDTO> dtos = departmentService.getAllSubDepartment(deptCode);
         return Result.ok(DepartmentConvert.INSTANCE.toAOS(dtos));
@@ -419,28 +293,4 @@ public class DepartmentAPI implements ApiDepartment {
         return Result.ok(departmentVOS);
     }
 
-    @Override
-    public Result<String> add(DepartmentCreateOrUpdateParam param) {
-        departmentService.saveOrUpdateForThird(DepartmentConvert.INSTANCE.paramToDTO(param));
-        return  Result.ok(param.getDeptId());
-    }
-
-    @Override
-    public Result<Integer> batchAdd(Set<DepartmentCreateOrUpdateParam> param) {
-        if(ObjectUtil.isEmpty(param)){
-            return Result.fail("部门不能为空");
-        }
-        departmentService.batchSaveOrUpdateForThird(param);
-        return Result.ok(param.size());
-    }
-
-    @Override
-    public void update(DepartmentCreateOrUpdateParam param) {
-        departmentService.saveOrUpdateForThird(DepartmentConvert.INSTANCE.paramToDTO(param));
-    }
-
-    @Override
-    public void delete(DepartmentDeleteParam param) {
-        departmentService.deleteForThird(param.getDeptId());
-    }
 }

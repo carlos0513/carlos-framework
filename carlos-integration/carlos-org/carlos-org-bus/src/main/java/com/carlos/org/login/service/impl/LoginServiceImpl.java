@@ -296,7 +296,6 @@ public class LoginServiceImpl implements LoginService {
 //            缓存中获取token信息
 //            设置用户部门信息 刷新缓存
             user.setDepartmentInfo(dto);
-            user.setRegionCode(dto.getRegionCode());
             userContext.setDepartmentId(departmentId);
             UserDepartmentManager userDepartmentManager = SpringUtil.getBean(UserDepartmentManager.class);
             UserDepartmentDTO userDepartmentDTO = userDepartmentManager.getByUserIdAndDeptId(user.getId(), departmentId);

@@ -23,7 +23,7 @@ public class SysRegionUpdateParam {
 
     @NotNull(message = "自增ID不能为空")
     @Schema(description = "自增ID")
-    private String id;
+    private Long id;
     @Schema(description = "行政区域编码")
     private String regionCode;
     @Schema(description = "行政区域名称")

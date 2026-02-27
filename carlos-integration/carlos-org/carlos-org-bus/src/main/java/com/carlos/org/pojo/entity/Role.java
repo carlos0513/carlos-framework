@@ -28,8 +28,8 @@ public class Role extends Model<Role> implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 角色名称
      */
@@ -66,7 +66,7 @@ public class Role extends Model<Role> implements Serializable {
      * 创建者
      */
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -76,7 +76,7 @@ public class Role extends Model<Role> implements Serializable {
      * 修改者
      */
     @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */

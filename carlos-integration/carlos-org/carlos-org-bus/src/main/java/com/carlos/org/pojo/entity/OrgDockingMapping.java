@@ -27,8 +27,8 @@ public class OrgDockingMapping implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 系统数据id
      */
@@ -59,7 +59,7 @@ public class OrgDockingMapping implements Serializable {
      * 创建者编号
      */
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -69,7 +69,7 @@ public class OrgDockingMapping implements Serializable {
      * 更新者编号
      */
     @TableField(value = "update_by", fill = FieldFill.UPDATE)
-    private String updateBy;
+    private Long updateBy;
     /**
      * 更新时间
      */

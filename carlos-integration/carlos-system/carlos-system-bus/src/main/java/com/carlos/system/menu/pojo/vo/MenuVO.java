@@ -24,7 +24,7 @@ public class MenuVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "父级ID")
     private String parentId;
     @Schema(description = "controller名称")

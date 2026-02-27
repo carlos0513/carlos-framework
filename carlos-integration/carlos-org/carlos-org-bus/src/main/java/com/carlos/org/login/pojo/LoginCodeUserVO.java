@@ -20,7 +20,7 @@ public class LoginCodeUserVO implements Serializable {
 
     private static final long serialVersionUID = 1125713819389425229L;
     @Schema(description = "id")
-    private String id;
+    private Long id;
 
     @Schema(description = "账号")
     private String account;

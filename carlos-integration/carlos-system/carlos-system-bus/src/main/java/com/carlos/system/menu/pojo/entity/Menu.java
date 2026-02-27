@@ -28,8 +28,8 @@ public class Menu implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 父级ID
      */

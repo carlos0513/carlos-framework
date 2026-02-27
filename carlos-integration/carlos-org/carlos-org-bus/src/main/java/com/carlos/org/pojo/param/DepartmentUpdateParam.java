@@ -22,7 +22,7 @@ public class DepartmentUpdateParam {
 
     @NotBlank(message = "主键不能为空")
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "上级机构")
     private String parentId;
     @NotBlank(message = "部门名称不能为空")

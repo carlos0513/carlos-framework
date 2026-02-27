@@ -24,7 +24,7 @@ public class DepartmentTreeVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "上级id")
     private String parentId;
     @Schema(description = "部门名称")
@@ -35,12 +35,6 @@ public class DepartmentTreeVO implements Serializable {
     private int sort;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
-    @Schema(description = "部门层级")
-    private String departmentLevelCode;
-    @Schema(description = "部门区域")
-    private String regionCode;
-    @Schema(description = "组织机构类型")
-    private String departmentType;
     @Schema(description = "子部门信息")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     List<DepartmentTreeVO> children;
@@ -65,7 +59,7 @@ public class DepartmentTreeVO implements Serializable {
     @Data
     public static class User {
         @Schema(description = "主键")
-        private String id;
+        private Long id;
         @Schema(description = "用户id")
         private String userId;
         @Schema(description = "用户名")

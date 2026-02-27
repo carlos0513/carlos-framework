@@ -96,7 +96,7 @@ public class DepartmentRoleServiceImpl implements DepartmentRoleService {
     @Override
     public boolean existRelation(String departmentLevelCode, String roleId) {
         List<DepartmentRole> list = departmentRoleManager.list(new LambdaQueryWrapper<>(DepartmentRole.class).select(DepartmentRole::getId)
-                .eq(DepartmentRole::getDepartmentType, departmentLevelCode).eq(DepartmentRole::getRoleId, roleId));
+                .eq(DepartmentRole::getDepartmentId, departmentLevelCode).eq(DepartmentRole::getRoleId, roleId));
         return CollUtil.isNotEmpty(list);
 
     }
@@ -104,7 +104,7 @@ public class DepartmentRoleServiceImpl implements DepartmentRoleService {
     @Override
     public List<DepartmentRoleDTO> listAll() {
         return DepartmentRoleConvert.INSTANCE.toDTO(departmentRoleManager.list(new LambdaQueryWrapper<>(DepartmentRole.class)
-                .select(DepartmentRole::getRoleId, DepartmentRole::getDepartmentType)));
+                .select(DepartmentRole::getRoleId, DepartmentRole::getDepartmentId)));
     }
 
     @Override

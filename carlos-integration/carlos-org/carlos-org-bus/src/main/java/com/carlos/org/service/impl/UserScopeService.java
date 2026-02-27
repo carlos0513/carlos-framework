@@ -1,7 +1,6 @@
 package com.carlos.org.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
 import com.carlos.boot.util.ExtendInfoUtil;
 import com.carlos.core.exception.ServiceException;
 import com.carlos.core.response.Result;
@@ -111,10 +110,10 @@ public class UserScopeService {
     public Set<String> getCurrentRegionTreeIds() {
         Serializable userId = ExtendInfoUtil.getUserId();
         UserDTO user = this.userManager.getDtoById(userId);
-        String regionCode = user.getDepartmentInfo().getRegionCode();
-        if (StrUtil.isBlank(regionCode)) {
-            return null;
-        }
+        // String regionCode = user.getDepartmentInfo().getRegionCode();
+        // if (StrUtil.isBlank(regionCode)) {
+        //     return null;
+        // }
         // Result<Set<String>> result = this.feignRegion.getSubRegionCodes(regionCode);
         Result<Set<String>> result = null;
         if (Boolean.FALSE.equals(result.getSuccess())) {

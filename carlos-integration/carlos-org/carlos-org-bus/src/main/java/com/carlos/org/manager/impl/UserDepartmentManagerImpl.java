@@ -5,7 +5,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseServiceImpl;
@@ -13,10 +12,8 @@ import com.carlos.datasource.pagination.MybatisPage;
 import com.carlos.datasource.pagination.PageInfo;
 import com.carlos.org.convert.UserDepartmentConvert;
 import com.carlos.org.manager.UserDepartmentManager;
-import com.carlos.org.manager.UserManager;
 import com.carlos.org.mapper.UserDepartmentMapper;
 import com.carlos.org.pojo.dto.DepartmentDTO;
-import com.carlos.org.pojo.dto.UserDTO;
 import com.carlos.org.pojo.dto.UserDepartmentDTO;
 import com.carlos.org.pojo.entity.Department;
 import com.carlos.org.pojo.entity.User;
@@ -145,7 +142,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
         for (UserDepartmentDTO dto : dtos) {
             boolean success = lambdaUpdate()
                     .eq(UserDepartment::getUserId, dto.getUserId())
-                    .eq(Objects.nonNull(dto.getRoleId()), UserDepartment::getRoleId, dto.getRoleId())
                     .eq(UserDepartment::getDepartmentId, dto.getDepartmentId())
                     .remove();
             if (!success) {
@@ -200,14 +196,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
 
     }
 
-    @Override
-    public Set<String> getRoleIdsByUserId(String userId) {
-        List<UserDepartment> list = lambdaQuery().select(UserDepartment::getRoleId).eq(UserDepartment::getUserId, userId).list();
-        if (list == null) {
-            return null;
-        }
-        return list.stream().filter(Objects::nonNull).map(UserDepartment::getRoleId).filter(Objects::nonNull).collect(Collectors.toSet());
-    }
 
     @Override
     public Set<Serializable> getUserIdByDepartmentId(Set<Serializable> departmentIds) {
@@ -230,10 +218,8 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
                         .selectAs(User::getState, UserDepartmentDTO::getState)
                         .selectAs(User::getSort, UserDepartmentDTO::getSort)
                         .selectAs(User::getCreateTime, UserDepartmentDTO::getCreateTime)
-                        .selectAs(Department::getDepartmentLevelCode, UserDepartmentDTO::getDepartmentLevelCode)
                         .selectAs(Department::getDeptCode, UserDepartmentDTO::getDeptCode)
                         .selectAs(Department::getDeptCode, UserDepartmentDTO::getDepartmentCode)
-                        .selectAs(Department::getRegionCode, UserDepartmentDTO::getRegionCode)
                         .leftJoin(User.class, User::getId, UserDepartment::getUserId)
                         .leftJoin(Department.class, Department::getId, UserDepartment::getDepartmentId)
                         .eq(UserDepartment::getDepartmentId, id)
@@ -267,15 +253,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
                         id).eq(UserDepartment::getIsAdmin, true));
     }
 
-    @Override
-    public List<UserDepartmentDTO> listAdminByDepartmentIds(List<String> deptIds) {
-        return getBaseMapper().selectJoinList(UserDepartmentDTO.class,
-                new MPJLambdaWrapper<UserDepartment>().selectAll(UserDepartment.class).selectAs(User::getAccount,
-                        UserDepartmentDTO::getAccount).selectAs(User::getId, UserDepartmentDTO::getUserId).selectAs(User::getRealname,
-                        UserDepartmentDTO::getRealname).selectAs(User::getPhone, UserDepartmentDTO::getPhone).selectAs(User::getState,
-                        UserDepartmentDTO::getState).leftJoin(User.class, User::getId, UserDepartment::getUserId).in(UserDepartment::getDepartmentId,
-                        deptIds).eq(UserDepartment :: getIsAdmin, true));
-    }
 
     @Override
     public List<UserDepartmentDTO> listAllRef() {
@@ -289,7 +266,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
                         .selectAs(User::getState, UserDepartmentDTO::getState)
                         .selectAs(User::getSort, UserDepartmentDTO::getSort)
                         .selectAs(User::getCreateTime, UserDepartmentDTO::getCreateTime)
-                        .selectAs(Department::getDepartmentLevelCode, UserDepartmentDTO::getDepartmentLevelCode)
                         .selectAs(Department::getDeptCode, UserDepartmentDTO::getDepartmentCode)
                         .selectAs(Department::getDeptName, UserDepartmentDTO::getDepartmentName)
                         .leftJoin(User.class, User::getId, UserDepartment::getUserId)
@@ -342,7 +318,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
                         .selectAs(User::getState, UserDepartmentDTO::getState)
                         .selectAs(User::getSort, UserDepartmentDTO::getSort)
                         .selectAs(User::getCreateTime, UserDepartmentDTO::getCreateTime)
-                        .selectAs(Department::getDepartmentLevelCode, UserDepartmentDTO::getDepartmentLevelCode)
                         .selectAs(Department::getDeptCode, UserDepartmentDTO::getDepartmentCode)
                         .selectAs(Department::getDeptName, UserDepartmentDTO::getDepartmentName)
                         .leftJoin(User.class, User::getId, UserDepartment::getUserId)
@@ -372,7 +347,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
                 .selectAs(User::getPhone, UserDepartmentDTO::getPhone)
                 .selectAs(User::getState, UserDepartmentDTO::getState)
                 .selectAs(User :: getIsAdmin, UserDepartmentDTO :: getIsAdmin)
-                .selectAs(Department::getDepartmentLevelCode, UserDepartmentDTO::getDepartmentLevelCode)
                 .selectAs(Department::getDeptCode, UserDepartmentDTO::getDepartmentCode)
                 .selectAs(Department::getDeptCode, UserDepartmentDTO::getDeptCode)
                 .selectAs(Department::getDeptName, UserDepartmentDTO::getDepartmentName)
@@ -408,61 +382,17 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
             log.warn("roelId can't be null");
             return false;
         }
-        boolean success = lambdaUpdate().eq(UserDepartment::getRoleId, roelId).remove();
-        if (!success) {
-            log.warn("Remove 'UserDepartment' data fail, roelId:{}", roelId);
-            return false;
-        }
-        // 删除缓存
-        RedisUtil.deletePattern(String.format(DEPARTMENT_USER_ROLE, RedisUtil.ALL, RedisUtil.ALL, roelId));
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'UserDepartment' data by roelId:{}", roelId);
-        }
+        // boolean success = lambdaUpdate().eq(UserDepartment::getRoleId, roelId).remove();
+        // if (!success) {
+        //     log.warn("Remove 'UserDepartment' data fail, roelId:{}", roelId);
+        //     return false;
+        // }
+        // // 删除缓存
+        // RedisUtil.deletePattern(String.format(DEPARTMENT_USER_ROLE, RedisUtil.ALL, RedisUtil.ALL, roelId));
+        // if (log.isDebugEnabled()) {
+        //     log.debug("Remove 'UserDepartment' data by roelId:{}", roelId);
+        // }
         return true;
-    }
-
-    @Override
-    public List<UserDepartmentDTO> getByLevels(Set<String> deptLevels) {
-        return getBaseMapper().selectJoinList(UserDepartmentDTO.class,
-                new MPJLambdaWrapper<UserDepartment>()
-                        .selectAll(UserDepartment.class)
-                        .selectAs(Department::getDeptName, UserDepartmentDTO::getDepartmentName)
-                        .leftJoin(Department.class, Department::getId, UserDepartment::getDepartmentId)
-                        .and(CollectionUtil.isNotEmpty(deptLevels), w -> w.in(UserDepartment::getDepartmentLevelCode, deptLevels))
-        );
-    }
-
-
-    @Override
-    public boolean isYxUser(String userId) {
-
-        // 先判断用户id
-        List<UserDepartmentDTO> yxUser = userDepartmentMapper.isYxUser(userId);
-        if (!yxUser.isEmpty()) {
-            return true;
-        } else {
-            // 再判断部门id
-            List<UserDepartmentDTO> yxDept = userDepartmentMapper.isYxDept(userId);
-            if (!yxDept.isEmpty()) {
-                return true;
-            } else {
-                // 以下两位领导不进行任何钉钉有关的操作
-                // 李栋（市委常委，市长） 账号：lidong；
-                // 余青根（市秘书长）账号：yuqinggen；
-                // wangxiao 王肖-绵阳市政府办公室
-                // xushufeng 胥树锋-绵阳市政府办公室
-                UserManager userManager = SpringUtil.getBean(UserManager.class);
-                UserDTO userDTO = userManager.getDtoById(userId);
-                if (Objects.nonNull(userDTO)) {
-                    if ("lidong".equals(userDTO.getAccount()) || "yuqinggen".equals(userDTO.getAccount())
-                            || "wangxiao".equals(userDTO.getAccount()) || "xushufeng".equals(userDTO.getAccount())) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-        }
     }
 
     /**
@@ -481,7 +411,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
                         .selectAs(User::getState, UserDepartmentDTO::getState)
                         .selectAs(User::getSort, UserDepartmentDTO::getSort)
                         .selectAs(User::getCreateTime, UserDepartmentDTO::getCreateTime)
-                        .selectAs(Department::getDepartmentLevelCode, UserDepartmentDTO::getDepartmentLevelCode)
                         .selectAs(Department::getDeptCode, UserDepartmentDTO::getDepartmentCode)
                         .selectAs(Department::getDeptName, UserDepartmentDTO::getDepartmentName)
                         .leftJoin(User.class, User::getId, UserDepartment::getUserId)
@@ -501,7 +430,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
                 .selectAs(User::getRealname, UserDepartmentDTO::getRealname)
                 .selectAs(User::getPhone, UserDepartmentDTO::getPhone)
                 .selectAs(User::getState, UserDepartmentDTO::getState)
-                .selectAs(Department::getDepartmentLevelCode, UserDepartmentDTO::getDepartmentLevelCode)
                 .selectAs(Department::getDeptCode, UserDepartmentDTO::getDepartmentCode)
                 .selectAs(Department::getDeptCode, UserDepartmentDTO::getDeptCode)
                 .selectAs(Department::getDeptName, UserDepartmentDTO::getDepartmentName)
@@ -544,27 +472,6 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
     }
 
     @Override
-    public List<UserDepartmentDTO> getUserDeptInfoByRoleId(String roleId) {
-        MPJLambdaWrapper<UserDepartment> wrapper = new MPJLambdaWrapper<UserDepartment>()
-                .selectAs(User::getAccount, UserDepartmentDTO::getAccount)
-                .selectAs(User::getId, UserDepartmentDTO::getId)
-                .selectAs(User::getRealname, UserDepartmentDTO::getRealname)
-                .selectAs(User::getPhone, UserDepartmentDTO::getPhone)
-                .selectAs(User::getCreateTime, UserDepartmentDTO::getCreateTime)
-                .selectAs(Department::getDeptName, UserDepartmentDTO::getDepartmentName)
-                .selectAs(UserDepartment::getId, UserDepartmentDTO::getDepartmentId)
-                .selectAs(Department::getDepartmentLevelCode, UserDepartmentDTO::getDepartmentLevelCode)
-                .selectAs(User::getCreateBy, UserDepartmentDTO::getCreateBy);
-
-        wrapper.leftJoin(Department.class, Department::getId, UserDepartment::getDepartmentId)
-                .leftJoin(User.class, User::getId, UserDepartment::getUserId)
-                .eq(UserDepartment::getRoleId, roleId)
-                .orderByAsc(User::getSort)
-                .orderByDesc(User::getCreateTime);
-        return baseMapper.selectJoinList(UserDepartmentDTO.class, wrapper);
-    }
-
-    @Override
     public Paging<UserDepartmentDTO> getUserDeptInfoByRoleIdPage(String roleId, Integer current, Integer size, String keyword) {
         MPJLambdaWrapper<UserDepartment> wrapper = new MPJLambdaWrapper<UserDepartment>()
                 .selectAs(User::getAccount, UserDepartmentDTO::getAccount)
@@ -575,12 +482,10 @@ public class UserDepartmentManagerImpl extends BaseServiceImpl<UserDepartmentMap
                 .selectAs(User::getCreateTime, UserDepartmentDTO::getCreateTime)
                 .selectAs(Department::getDeptName, UserDepartmentDTO::getDepartmentName)
                 .selectAs(UserDepartment::getDepartmentId, UserDepartmentDTO::getDepartmentId)
-                .selectAs(Department::getDepartmentLevelCode, UserDepartmentDTO::getDepartmentLevelCode)
                 .selectAs(User::getCreateBy, UserDepartmentDTO::getCreateBy);
 
         wrapper.leftJoin(Department.class, Department::getId, UserDepartment::getDepartmentId)
                 .leftJoin(User.class, User::getId, UserDepartment::getUserId)
-                .eq(UserDepartment::getRoleId, roleId)
                 .and(StrUtil.isNotBlank(keyword), w -> w
                         .like(User::getRealname, keyword)
                         .or()

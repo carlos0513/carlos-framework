@@ -32,11 +32,11 @@ public class MsgMessageTemplateDTO {
     /** 是否启用 */
     private Boolean active;
     /** 创建者编号 */
-    private String createBy;
+    private Long createBy;
     /** 创建时间 */
     private LocalDateTime createTime;
     /** 更新者编号 */
-    private String updateBy;
+    private Long updateBy;
     /** 更新时间 */
     private LocalDateTime updateTime;
 }

@@ -26,7 +26,7 @@ public class RolePageVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "角色名称")
     private String name;
     @Schema(description = "角色唯一编码")
@@ -41,7 +41,7 @@ public class RolePageVO implements Serializable {
     private LocalDateTime updateTime;
     @UserIdField(type = SerializerType.REALNAME)
     @Schema(description = "创建者 ")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "修改者 ")
-    private String updateBy;
+    private Long updateBy;
 }

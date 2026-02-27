@@ -38,7 +38,7 @@ public class MsgMessageSendRecordVO implements Serializable {
     @Schema(description = "是否发送成功 0 失败 1 成功")
     private Boolean success;
     @Schema(description = "创建人")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 

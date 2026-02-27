@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 public class MenuOperateVO implements Serializable {
         private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-        private String id;
+    private Long id;
     @Schema(description = "资源名称")
         private String operateName;
     @Schema(description = "资源编码")

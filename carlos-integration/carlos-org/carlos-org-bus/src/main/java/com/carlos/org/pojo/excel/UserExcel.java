@@ -22,7 +22,7 @@ public class UserExcel implements Serializable {
      * 主键
      */
     @ExcelProperty(value = "主键")
-    private String id;
+    private Long id;
     /**
      * 用户名
      */

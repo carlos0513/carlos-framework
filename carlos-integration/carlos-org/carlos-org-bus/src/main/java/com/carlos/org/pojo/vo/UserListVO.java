@@ -23,7 +23,7 @@ public class UserListVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "用户名")
     private String account;
     @Schema(description = "真实姓名")
@@ -37,7 +37,7 @@ public class UserListVO implements Serializable {
     @Schema(description = "部门层级")
     private String departmentLevelCode;
     @Schema(description = "创建者")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Schema(description = "用户排序")

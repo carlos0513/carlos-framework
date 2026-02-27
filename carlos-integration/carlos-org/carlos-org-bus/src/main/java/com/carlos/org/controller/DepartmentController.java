@@ -1,7 +1,6 @@
 package com.carlos.org.controller;
 
 
-import com.carlos.boot.util.ExtendInfoUtil;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.log.annotation.Log;
@@ -11,8 +10,6 @@ import com.carlos.org.config.AuthorConstant;
 import com.carlos.org.convert.DepartmentConvert;
 import com.carlos.org.enums.DeptRelationEnum;
 import com.carlos.org.manager.DepartmentManager;
-import com.carlos.org.param.DepartmentCreateOrUpdateParam;
-import com.carlos.org.param.DepartmentDeleteParam;
 import com.carlos.org.pojo.dto.DepartmentDTO;
 import com.carlos.org.pojo.dto.UserDTO;
 import com.carlos.org.pojo.dto.UserDepartmentDTO;
@@ -34,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -164,19 +160,6 @@ public class DepartmentController {
         return DepartmentConvert.INSTANCE.toTreeVO(departmentDTOS);
     }
 
-    /**
-     * 查询本部门以及下级部门、平级部门以及平级部门的下级部门
-     * @param departmentId
-     * @return
-     */
-    @GetMapping("tree/with-children")
-    @Operation(summary = "部门树形列表", description = "所有部门")
-    public List<DepartmentTreeVO> getDepartmentTreeWithChildren(
-            @RequestParam(required = false) String departmentId
-    ) {
-        List<DepartmentDTO> departmentDTOS = this.departmentService.getFullDepartment(departmentId);
-        return DepartmentConvert.INSTANCE.toTreeVO(departmentDTOS);
-    }
 
     @GetMapping("subtree")
     @Operation(summary = "子级部门树形列表", description = "当前用户下级部门树（不包括当前部门）")
@@ -186,19 +169,6 @@ public class DepartmentController {
     }
 
 
-    @GetMapping("/current/sameLeve")
-    @Operation(summary = "当前用户部门同级部门")
-    public List<DepartmentTreeVO> currentSameLeveDept() {
-        List<DepartmentDTO> dtos = this.departmentService.getSameLevelDepartment(ExtendInfoUtil.getDepartmentId(), false, false);
-        return DepartmentConvert.INSTANCE.toTreeVO(dtos);
-    }
-
-    @GetMapping("/current/peerLeve")
-    @Operation(summary = "当前用户部门同级部门")
-    public List<DepartmentTreeVO> currentPeerLeveDept() {
-        List<DepartmentDTO> dtos = this.departmentService.getPeerLevelDepartment(ExtendInfoUtil.getDepartmentId());
-        return DepartmentConvert.INSTANCE.toTreeVO(dtos);
-    }
 
     @PostMapping("/setAdmin")
     @Operation(summary = "设置部门管理员权限")
@@ -227,13 +197,6 @@ public class DepartmentController {
             dtos = filterDepartmentsByKeyword(dtos, keyword);
         }
         
-        return DepartmentConvert.INSTANCE.toTreeVO(dtos);
-    }
-
-    @GetMapping("/currentAndAllSubset")
-    @Operation(summary = "查询部门树-获取本级及下级全量部门数据")
-    public List<DepartmentTreeVO> currentAndAllSubset() {
-        List<DepartmentDTO> dtos = this.departmentService.getCurrentAndAllSubset();
         return DepartmentConvert.INSTANCE.toTreeVO(dtos);
     }
 
@@ -273,19 +236,6 @@ public class DepartmentController {
     }
 
 
-    @GetMapping("/sameAndSuperiorDept")
-    @Operation(summary = "当前层级及同层级上级部门树")
-    public List<DepartmentTreeVO> sameAndSuperiorDept() {
-        List<DepartmentDTO> dtos = this.departmentService.sameAndSuperiorDept();
-        return DepartmentConvert.INSTANCE.toTreeVO(dtos);
-    }
-
-    @PostMapping("regionUpdate")
-    @Operation(summary = "批量修改用户区域")
-    public void regionUpdate(String regionName) {
-        this.departmentService.changeRegion(regionName);
-    }
-
     @PostMapping("initCache")
     @Operation(summary = "初始化缓存")
     public void initCache() {
@@ -299,52 +249,7 @@ public class DepartmentController {
         this.departmentRoleService.initRoles(deptId);
     }
 
-    @GetMapping("getMeToFourthLevelDept")
-    @Operation(summary = "获取当前用户下所有的四级部门")
-    public List<DepartmentTreeVO> getMeToFourthLevelDept() {
-        List<DepartmentDTO> meToFourthLevelDept = this.departmentService.getMeToFourthLevelDept();
-        return DepartmentConvert.INSTANCE.toTreeVO(meToFourthLevelDept);
-    }
 
-    @PostMapping("/third/add")
-    @Operation(summary = "第三方调用-新增部门")
-    public String add(@RequestBody @Validated DepartmentCreateOrUpdateParam param) {
-        departmentService.saveOrUpdateForThird(DepartmentConvert.INSTANCE.paramToDTO(param));
-        return param.getDeptId();
-    }
 
-    @PostMapping("/third/batchAdd")
-    @Operation(summary = "第三方调用-批量新增部门")
-    public Integer batchAdd(@RequestBody @Validated Set<DepartmentCreateOrUpdateParam> param) {
-        departmentService.batchSaveOrUpdateForThird(param);
-        return param.size();
-    }
-
-    @PostMapping("/third/update")
-    @Operation(summary = "第三方调用-更新部门")
-    public void update(@RequestBody @Validated DepartmentCreateOrUpdateParam param) {
-        departmentService.saveOrUpdateForThird(DepartmentConvert.INSTANCE.paramToDTO(param));
-    }
-
-    @PostMapping("/third/delete")
-    @Operation(summary = "第三方调用-删除部门")
-    public void delete(@RequestBody @Validated DepartmentDeleteParam param) {
-        departmentService.deleteForThird(param.getDeptId());
-    }
-
-    //加签部门（同级以及上级部门查询）
-    @PostMapping("/subscribing/department")
-    @Operation(summary = "加签部门")
-    public List<DepartmentDTO> subscribingDepartment() {
-        return departmentService.subscribingDepartment();
-    }
-
-    @GetMapping("/getAllParentDepartments")
-    @Operation(summary = "根据code，获取上级部门,传入C,并按照A、B、C有序返回")
-    public List<DepartmentTreeVO> getAllParentDepartments(@RequestParam(required = false) String deptCode,
-                                                          @RequestParam(required = false) String deptId) {
-        List<DepartmentDTO> dto = departmentService.getAllParentDepartments(deptCode, deptId);
-        return DepartmentConvert.INSTANCE.toTreeVO(dto);
-    }
 
 }

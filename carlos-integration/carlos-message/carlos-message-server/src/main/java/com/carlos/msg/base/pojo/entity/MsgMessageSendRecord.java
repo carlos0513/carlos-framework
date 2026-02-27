@@ -29,7 +29,7 @@ public class MsgMessageSendRecord implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
     private Long id;
     /**
      * 消息id
@@ -70,7 +70,7 @@ public class MsgMessageSendRecord implements Serializable {
      * 创建人
      */
     @TableField(value = "create_by")
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */

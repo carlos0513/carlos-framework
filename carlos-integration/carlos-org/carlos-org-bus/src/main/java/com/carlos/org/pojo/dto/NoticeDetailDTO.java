@@ -12,7 +12,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class NoticeDetailDTO extends AbstractMessageDetailDTO {
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "标题")
     private String title;
     @Schema(description = "来源")
@@ -31,11 +31,11 @@ public class NoticeDetailDTO extends AbstractMessageDetailDTO {
     private Boolean isRead;
     @UserIdField(type = UserIdField.SerializerType.REALNAME)
     @Schema(description = "创建者")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Schema(description = "修改者")
-    private String updateBy;
+    private Long updateBy;
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
     @Schema(description = "租户id")

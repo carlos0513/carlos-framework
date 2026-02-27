@@ -22,7 +22,7 @@ public class RoleMenuVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "角色id")
     private String roleId;
     @Schema(description = "菜单id")

@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserMenu {
-    private String id;
+    private Long id;
 
     private String path;
 

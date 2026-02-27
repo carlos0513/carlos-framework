@@ -16,7 +16,7 @@ public class UserInfoUpdateParam {
 
     @Schema(description = "主键")
     @Hidden
-    private String id;
+    private Long id;
     @Schema(description = "真实姓名")
     private String realname;
     @Schema(description = "账号")
@@ -43,7 +43,7 @@ public class UserInfoUpdateParam {
         /**
          * 主键
          */
-        private String id;
+        private Long id;
         /**
          * 文件分组
          */

@@ -20,7 +20,7 @@ public class RegionExcel implements Serializable {
      * 主键
      */
     @ExcelProperty(value = "主键")
-    private String id;
+    private Long id;
     /**
      * 行政区域编码
      */

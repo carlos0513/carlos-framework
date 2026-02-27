@@ -26,7 +26,7 @@ public class RoleUpdateParam {
 
     @NotBlank(message = "主键不能为空")
     @Schema(description = "主键")
-    private String id;
+    private Long id;
 
 //    @Schema(description = "用户部门权限列表")
 //    private List<UserDeptRoleDTO> userDeptRoles;

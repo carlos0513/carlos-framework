@@ -22,7 +22,7 @@ public class DepartmentBaseInfoVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "上级Id")
     private String parentId;
     @Schema(description = "上级名称")

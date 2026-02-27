@@ -150,12 +150,10 @@ public interface UserConvert {
     @Mapping(source = "gender", target = "gender", qualifiedByName = "toGender")
     UserDTO toDTO(UserExcel userExcel);
 
-    @Mapping(target = "role", source = "roleNames")
     UserPageVO toPage(User item);
 
     UserBaseInfoVO toBaseVO(UserDTO user);
 
-    List<UserDeptRoleVO> toListVO2(List<UserDeptRoleAO> list);
 
     UserDTO toDTO(UserForgetPwdParam param);
 
@@ -164,7 +162,6 @@ public interface UserConvert {
     UserDetailVO toDetailVO(UserDTO userById);
 
     @Mapping(target = "department", source = "departmentInfo")
-    @Mapping(target = "regionCode", source = "departmentInfo.regionCode")
     UserLoginAO dtoToAo(UserDTO user);
 
     List<UserInfo> dtoToAos(List<UserDTO> users);

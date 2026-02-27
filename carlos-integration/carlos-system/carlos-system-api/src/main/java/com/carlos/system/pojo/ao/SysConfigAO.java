@@ -22,7 +22,7 @@ public class SysConfigAO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "参数Id")
-    private String id;
+    private Long id;
     @Schema(description = "参数名称")
     private String configName;
     @Schema(description = "参数编码")

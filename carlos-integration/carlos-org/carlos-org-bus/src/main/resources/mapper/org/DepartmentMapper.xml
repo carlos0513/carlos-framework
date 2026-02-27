@@ -5,7 +5,6 @@
         <id column="id" property="id"/>
         <result column="dept_name" property="deptName"/>
         <result column="dept_code" property="deptCode"/>
-        <result column="region_code" property="regionCode"/>
         <result column="address" property="address"/>
         <result column="tel" property="tel"/>
         <result column="parent_id" property="parentId"/>
@@ -22,49 +21,6 @@
     </resultMap>
 
 
-    <select id="getDeptCodeCountWithDeleted" resultType="java.lang.Long">
-        SELECT
-        <!-- 数据库适配 -->
-        <choose>
-            <!-- 达梦 -->
-            <when test="_databaseId == 'dm'">
-                CAST(RIGHT(dept_code, 3) AS INTEGER)
-            </when>
-            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
-            <otherwise>
-                CAST( right(dept_code,3) as SIGNED)
-            </otherwise>
-        </choose>
-        FROM org_department
-        WHERE LENGTH(dept_code) = #{level}
-        AND SUBSTR(dept_code,1,#{level}-4) = #{parentCode}
-        ORDER BY dept_code DESC
-        LIMIT 1
-    </select>
-
-    <select id="getAllParentDeptCodeByRecursive" parameterType="java.lang.String" resultType="java.lang.String">
-        <choose>
-            <!-- 达梦 -->
-            <when test="_databaseId == 'dm'">
-                WITH ParentHierarchy AS (
-            </when>
-            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
-            <otherwise>
-                WITH RECURSIVE ParentHierarchy AS (
-            </otherwise>
-        </choose>
-            SELECT id, parent_id, dept_code
-            FROM org_department
-            WHERE dept_code = #{deptCode, jdbcType=VARCHAR} -- 替换为你要查询的 ID
-
-            UNION ALL
-
-            SELECT ft.id, ft.parent_id, ft.dept_code
-            FROM org_department ft
-                     INNER JOIN ParentHierarchy ph ON ft.id = ph.parent_id
-        )
-        SELECT dept_code FROM ParentHierarchy WHERE parent_id IS NOT NULL;
-    </select>
 
     <select id="selectAllSubDepartmentsByCodes" resultMap="baseMap">
         SELECT DISTINCT d.*
@@ -114,28 +70,4 @@
          OR o.department_id = ''
     </select>
 
-    <select id="getAllDepartCodes" parameterType="java.lang.String" resultType="java.lang.String">
-        SELECT o.dept_code FROM org_department o
-        WHERE o.id IN (
-        <choose>
-            <!-- 达梦 -->
-            <when test="_databaseId == 'dm'">
-                WITH
-            </when>
-            <!-- 其他（MySQL、MariaDB、H2 …）统一走这里 -->
-            <otherwise>
-                WITH RECURSIVE
-            </otherwise>
-        </choose>
-                dept_tree AS (SELECT id, parent_id  FROM org_department
-                                                    WHERE id = #{parentId}
-                                                    UNION ALL
-                                                    SELECT d.id, d.parent_id
-                                                    FROM org_department d
-                                                    INNER JOIN dept_tree dt ON d.parent_id = dt.id)
-                                                    SELECT id
-                                                    FROM dept_tree
-                              )
-        ORDER BY o.dept_code  <!-- 添加排序，保证结果一致性 -->
-    </select>
 </mapper>

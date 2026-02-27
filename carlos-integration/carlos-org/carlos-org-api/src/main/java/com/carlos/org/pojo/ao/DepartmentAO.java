@@ -19,7 +19,7 @@ public class DepartmentAO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 部门名称
      */
@@ -75,7 +75,7 @@ public class DepartmentAO {
     /**
      * 创建者
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -83,7 +83,7 @@ public class DepartmentAO {
     /**
      * 修改者
      */
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */
@@ -98,12 +98,4 @@ public class DepartmentAO {
      * 用户信息
      */
     private List<UserDepartmentAO> users;
-    /**
-     * 机构类型对应层级
-     */
-    private String departmentLevelCode;
-    /*
-     * 组织机构类型
-     */
-    private String departmentType;
 }

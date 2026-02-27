@@ -20,7 +20,7 @@ public class ResourceGroupAO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 资源组code
      */

@@ -24,7 +24,7 @@ public class SysDictUpdateParam {
 
     @NotNull(message = "主键不能为空")
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "字典名称")
     private String dictName;
     @Schema(description = "描述")
@@ -40,7 +40,7 @@ public class SysDictUpdateParam {
     public static class Item {
 
         @Schema(description = "id")
-        private String id;
+        private Long id;
         @NotBlank(message = "字典项值不能为空")
         @Schema(description = "字典项值")
         private String itemName;

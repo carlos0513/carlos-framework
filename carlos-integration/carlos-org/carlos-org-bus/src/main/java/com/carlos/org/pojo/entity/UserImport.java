@@ -29,8 +29,8 @@ public class UserImport implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 用户名
      */
@@ -76,10 +76,4 @@ public class UserImport implements Serializable {
      */
     @TableField(value = "email")
     private String email;
-
-    @TableField(value = "department_type")
-    private String departmentType;
-
-    @TableField(value = "department_type_name")
-    private String departmentTypeName;
 }

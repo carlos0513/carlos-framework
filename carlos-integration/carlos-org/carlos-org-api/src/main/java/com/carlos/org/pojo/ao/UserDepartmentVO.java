@@ -25,7 +25,7 @@ public class UserDepartmentVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "用户id")
     private String userId;
     @Schema(description = "部门id")

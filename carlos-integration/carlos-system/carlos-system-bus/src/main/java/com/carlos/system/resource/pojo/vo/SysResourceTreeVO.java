@@ -22,7 +22,7 @@ import java.util.List;
 public class SysResourceTreeVO {
 
     @Schema(description = "菜单id")
-    private String id;
+    private Long id;
 
     @Schema(description = "菜单标题")
     private String title;

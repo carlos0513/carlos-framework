@@ -21,7 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class UserMenuDTO {
 
-    private String id;
+    private Long id;
 
     private String path;
 

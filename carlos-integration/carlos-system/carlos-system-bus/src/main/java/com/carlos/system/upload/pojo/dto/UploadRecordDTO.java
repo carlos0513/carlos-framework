@@ -21,7 +21,7 @@ public class UploadRecordDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 文件分组
      */
@@ -49,7 +49,7 @@ public class UploadRecordDTO {
     /**
      * 上传人
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 上传时间
      */

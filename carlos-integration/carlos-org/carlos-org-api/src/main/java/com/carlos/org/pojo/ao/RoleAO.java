@@ -21,7 +21,7 @@ public class RoleAO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 角色名称
      */
@@ -45,7 +45,7 @@ public class RoleAO {
     /**
      * 创建者
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -53,7 +53,7 @@ public class RoleAO {
     /**
      * 修改者
      */
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */
@@ -107,7 +107,7 @@ public class RoleAO {
         /**
          * 主键
          */
-        private String id;
+        private Long id;
         /**
          * 用户名
          */
@@ -127,7 +127,7 @@ public class RoleAO {
         /**
          * 创建者
          */
-        private String createBy;
+        private Long createBy;
         /**
          * 创建时间
          */
@@ -153,7 +153,7 @@ public class RoleAO {
         /**
          * 主键ID
          */
-        private String id;
+        private Long id;
         /**
          * 数据表名
          */

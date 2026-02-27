@@ -19,7 +19,7 @@ public class ResourceCategoryDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 父级ID
      */

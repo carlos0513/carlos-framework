@@ -27,8 +27,8 @@ public class SysConfig implements Serializable {
     /**
      * 参数Id
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 参数名称
      */
@@ -63,7 +63,7 @@ public class SysConfig implements Serializable {
      * 创建者
      */
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -73,7 +73,7 @@ public class SysConfig implements Serializable {
      * 更新者
      */
     @TableField(value = "update_by", fill = FieldFill.UPDATE)
-    private String updateBy;
+    private Long updateBy;
     /**
      * 更新时间
      */

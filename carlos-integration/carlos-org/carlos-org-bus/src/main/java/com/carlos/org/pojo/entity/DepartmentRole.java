@@ -2,7 +2,6 @@ package com.carlos.org.pojo.entity;
 
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -22,19 +21,19 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @TableName("org_department_role")
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class DepartmentRole extends Model<DepartmentRole> implements Serializable {
+public class DepartmentRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 部门id
      */
-    @TableField(value = "department_type")
-    private String departmentType;
+    @TableField(value = "department_id")
+    private String departmentId;
     /**
      * 角色id
      */
@@ -50,7 +49,7 @@ public class DepartmentRole extends Model<DepartmentRole> implements Serializabl
      * 创建者
      */
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */

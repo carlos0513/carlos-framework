@@ -26,7 +26,7 @@ public class RoleDetailVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
 
     @Schema(description = "角色名称")
     private String name;
@@ -59,7 +59,7 @@ public class RoleDetailVO implements Serializable {
 
         private static final long serialVersionUID = 1L;
         @Schema(description = "主键")
-        private String id;
+        private Long id;
         @Schema(description = "用户名")
         private String account;
         @Schema(description = "真实姓名")
@@ -74,7 +74,7 @@ public class RoleDetailVO implements Serializable {
         private String departmentLevelCode;
         @Schema(description = "创建者")
         @UserIdField(type = UserIdField.SerializerType.REALNAME)
-        private String createBy;
+        private Long createBy;
         @Schema(description = "创建时间")
         private LocalDateTime createTime;
     }
@@ -94,7 +94,7 @@ public class RoleDetailVO implements Serializable {
     @JsonInclude(JsonInclude.Include.ALWAYS)
     public static class FormTable implements Serializable {
         @Schema(description = "主键ID")
-        private String id;
+        private Long id;
         @Schema(description = "数据表名")
         private String tableName;
         @Schema(description = "数据表中文名")

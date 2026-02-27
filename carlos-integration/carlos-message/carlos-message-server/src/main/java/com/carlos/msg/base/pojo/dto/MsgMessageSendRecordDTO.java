@@ -34,7 +34,7 @@ public class MsgMessageSendRecordDTO {
     /** 是否发送成功 0 失败 1 成功 */
     private Boolean success;
     /** 创建人 */
-    private String createBy;
+    private Long createBy;
     /** 创建时间 */
     private LocalDateTime createTime;
 }

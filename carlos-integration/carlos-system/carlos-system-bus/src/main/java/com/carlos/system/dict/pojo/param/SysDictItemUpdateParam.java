@@ -21,7 +21,7 @@ public class SysDictItemUpdateParam {
 
     @NotNull(message = "主键不能为空")
     @Schema(description = "主键")
-    private String id;
+    private Long id;
 
     @Schema(description = "字典项值")
     private String itemName;

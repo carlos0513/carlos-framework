@@ -7,7 +7,6 @@ import com.carlos.org.pojo.dto.UserDepartmentDTO;
 import com.carlos.org.pojo.entity.Department;
 import com.carlos.org.pojo.param.DepartmentPageParam;
 import com.carlos.org.pojo.vo.DepartmentVO;
-import com.carlos.org.pojo.vo.ThirdDepartmentVO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -84,14 +83,6 @@ public interface DepartmentManager extends BaseService<Department> {
      */
     Paging<DepartmentVO> getPage(DepartmentPageParam param);
 
-    /**
-     * 分页列表
-     *
-     * @param param 分页参数
-     * @author carlos
-     * @date 2022-11-11 18:19:17
-     */
-    Paging<ThirdDepartmentVO> getThirdPage(DepartmentPageParam param,Set<String> ids);
 
     /**
      * 根据部门名称获取部门信息
@@ -294,14 +285,6 @@ public interface DepartmentManager extends BaseService<Department> {
     List<DepartmentDTO> listAllByName(String name);
 
     /**
-     * 根据机构类型获取部门（模糊匹配，左like）
-     *
-     * @param deptTypeListStr 机构类型查询串
-     * @return List<DepartmentDTO>
-     */
-    List<DepartmentDTO> getSubDepartmentByTypeLike(String deptTypeListStr);
-
-    /**
      * 获取多个层级的部门
      *
      * @param level
@@ -383,12 +366,6 @@ public interface DepartmentManager extends BaseService<Department> {
      */
     Map<String, List<DepartmentDTO>> getParentMapByCodes(Set<String> deptCodes, Integer limit);
 
-    /**
-     * 根据顶级父部门code获取该部门及所有子部门的层级编码
-     * @param deptCode
-     * @return
-     */
-    Set<String> listLevelCodeByTopParentDeptCode(String deptCode);
 
     /**
      * 获取当前传入部门，获取所有父部门id，并按照A、B、C有序返回

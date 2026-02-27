@@ -24,7 +24,7 @@ public class UserDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 用户名
      */
@@ -104,7 +104,7 @@ public class UserDTO {
     /**
      * 创建者
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -112,7 +112,7 @@ public class UserDTO {
     /**
      * 修改者
      */
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */

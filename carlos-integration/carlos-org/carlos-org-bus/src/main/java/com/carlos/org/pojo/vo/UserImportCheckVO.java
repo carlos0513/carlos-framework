@@ -32,7 +32,7 @@ public class UserImportCheckVO implements Serializable {
     public static class FileInfo implements Serializable {
         private static final long serialVersionUID = 1L;
         @Schema(description = "文件id")
-        private String id;
+        private Long id;
         @Schema(description = "文件组id")
         private String groupId;
         @Schema(description = "文件名")

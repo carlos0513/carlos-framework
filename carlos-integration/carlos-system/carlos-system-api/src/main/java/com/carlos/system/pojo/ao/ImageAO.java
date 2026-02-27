@@ -20,7 +20,7 @@ public class ImageAO {
     /**
      * 文件Id
      */
-    private String id;
+    private Long id;
 
     /**
      * 文件名称

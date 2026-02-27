@@ -46,7 +46,7 @@ public class MsgMessageDTO {
     /** 推送渠道(短信、站内信、钉钉等) */
     private String pushChannel;
     /** 创建人 */
-    private String createBy;
+    private Long createBy;
     /** 创建时间 */
     private LocalDateTime createTime;
 }

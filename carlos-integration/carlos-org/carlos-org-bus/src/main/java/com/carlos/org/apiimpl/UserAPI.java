@@ -228,7 +228,7 @@ public class UserAPI implements ApiUser {
             if (user == null) {
                 throw new ServiceException("认证已过期，请重新登录");
             }
-            return Result.ok(user.getDepartmentInfo().getRegionCode());
+            return Result.ok(user.getRegionCode());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Result.fail("用户区域信息获取失败：" + e.getMessage());

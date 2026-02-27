@@ -53,7 +53,7 @@ public class DepartmentRoleManagerImpl extends BaseServiceImpl<DepartmentRoleMap
     @Override
     public List<DepartmentRoleDTO> listByDeptType(String departmentType) {
         LambdaQueryWrapper<DepartmentRole> wrapper = queryWrapper();
-        wrapper.eq(DepartmentRole::getDepartmentType, departmentType);
+        wrapper.eq(DepartmentRole::getDepartmentId, departmentType);
         List<DepartmentRole> list = list(wrapper);
         return DepartmentRoleConvert.INSTANCE.toDTO(list);
     }
@@ -70,7 +70,7 @@ public class DepartmentRoleManagerImpl extends BaseServiceImpl<DepartmentRoleMap
         if (CollectionUtils.isEmpty(deptTypes)) {
             return null;
         }
-        List<DepartmentRole> list = lambdaQuery().select(DepartmentRole::getRoleId).in(DepartmentRole::getDepartmentType, deptTypes).list();
+        List<DepartmentRole> list = lambdaQuery().select(DepartmentRole::getRoleId).in(DepartmentRole::getDepartmentId, deptTypes).list();
         if (CollectionUtils.isEmpty(list)) {
             return null;
         }
@@ -82,11 +82,11 @@ public class DepartmentRoleManagerImpl extends BaseServiceImpl<DepartmentRoleMap
         if (CollectionUtils.isEmpty(roleIds)) {
             return null;
         }
-        List<DepartmentRole> list = lambdaQuery().select(DepartmentRole::getDepartmentType).in(DepartmentRole::getRoleId, roleIds).list();
+        List<DepartmentRole> list = lambdaQuery().select(DepartmentRole::getDepartmentId).in(DepartmentRole::getRoleId, roleIds).list();
         if (CollectionUtils.isEmpty(list)) {
             return null;
         }
-        return list.stream().map(DepartmentRole::getDepartmentType).collect(Collectors.toSet());
+        return list.stream().map(DepartmentRole::getDepartmentId).collect(Collectors.toSet());
     }
 
     @Override
@@ -100,17 +100,16 @@ public class DepartmentRoleManagerImpl extends BaseServiceImpl<DepartmentRoleMap
     @Override
     public Set<Serializable> listRoleIdByParentDeptCode(String deptCode) {
         //由ids查code
-        Set<String> deptTypes = departmentManager.listLevelCodeByTopParentDeptCode(deptCode);
-        if (CollUtil.isNotEmpty(deptTypes)) {
-            return listRoleIdByDeptType(deptTypes);
-        }
+        // Set<String> deptTypes = departmentManager.listLevelCodeByTopParentDeptCode(deptCode);
+        // if (CollUtil.isNotEmpty(deptTypes)) {
+        //     return listRoleIdByDeptType(deptTypes);
+        // }
         return null;
     }
 
     @Override
     public DepartmentRoleDTO getDto(DepartmentRoleDTO dto) {
         DepartmentRole entity = lambdaQuery()
-                .eq(StrUtil.isNotBlank(dto.getDepartmentType()), DepartmentRole::getDepartmentType, dto.getDepartmentType())
                 .eq(StrUtil.isNotBlank(dto.getRoleId()), DepartmentRole::getRoleId, dto.getRoleId())
                 .one();
         return DepartmentRoleConvert.INSTANCE.toDTO(entity);
@@ -123,6 +122,6 @@ public class DepartmentRoleManagerImpl extends BaseServiceImpl<DepartmentRoleMap
 
     @Override
     public void deleteByDepartmentType(Serializable deptId) {
-        lambdaUpdate().eq(DepartmentRole::getDepartmentType, deptId).remove();
+        lambdaUpdate().eq(DepartmentRole::getDepartmentId, deptId).remove();
     }
 }

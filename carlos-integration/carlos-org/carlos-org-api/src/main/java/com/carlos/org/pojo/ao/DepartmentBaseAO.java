@@ -16,7 +16,7 @@ public class DepartmentBaseAO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 部门名称
      */
@@ -69,15 +69,6 @@ public class DepartmentBaseAO {
      * 版本
      */
     private Long version;
-
-    /**
-     * 机构类型对应层级
-     */
-    private String departmentLevelCode;
-    /*
-     * 组织机构类型
-     */
-    private String departmentType;
 
     /**
      * 对方系统数据code

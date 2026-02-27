@@ -28,8 +28,6 @@ public class UserDeptRoleDTO {
     @Schema(description = "部门id")
     @NotBlank(message = "部门不能为空")
     private String departmentId;
-    @Schema(description = "部门层级")
-    private String departmentType;
     @Schema(description = "角色id")
     @NotBlank(message = "角色id不能为空")
     private String roleId;

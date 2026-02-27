@@ -27,8 +27,8 @@ public class UploadRecord implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 文件分组
      */
@@ -63,7 +63,7 @@ public class UploadRecord implements Serializable {
      * 上传人
      */
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
     /**
      * 上传时间
      */

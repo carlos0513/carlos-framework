@@ -17,14 +17,12 @@ import com.carlos.datasource.pagination.MybatisPage;
 import com.carlos.datasource.pagination.PageInfo;
 import com.carlos.org.convert.DepartmentConvert;
 import com.carlos.org.manager.DepartmentManager;
-import com.carlos.org.manager.OrgDockingMappingManager;
 import com.carlos.org.mapper.DepartmentMapper;
 import com.carlos.org.pojo.dto.DepartmentDTO;
 import com.carlos.org.pojo.dto.UserDepartmentDTO;
 import com.carlos.org.pojo.entity.Department;
 import com.carlos.org.pojo.param.DepartmentPageParam;
 import com.carlos.org.pojo.vo.DepartmentVO;
-import com.carlos.org.pojo.vo.ThirdDepartmentVO;
 import com.carlos.redis.ICacheManager;
 import com.carlos.redis.util.RedisUtil;
 import com.google.common.collect.Lists;
@@ -54,7 +52,6 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
 
     private final DepartmentMapper departmentMapper;
 
-    private final OrgDockingMappingManager orgDockingMappingManager;
 
     @Override
     public boolean addOrUpdate(DepartmentDTO dto) {
@@ -149,7 +146,6 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
                 Department::getId,
                 Department::getDeptName,
                 Department::getDeptCode,
-                Department::getRegionCode,
                 Department::getAddress,
                 Department::getTel,
                 Department::getParentId,
@@ -164,31 +160,6 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
         ).orderByAsc(Department::getSort).orderByDesc(Department::getCreateTime);
         PageInfo<Department> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, DepartmentConvert.INSTANCE::toVO);
-    }
-
-    @Override
-    public Paging<ThirdDepartmentVO> getThirdPage(DepartmentPageParam param, Set<String> ids) {
-        LambdaQueryWrapper<Department> wrapper = queryWrapper();
-        wrapper.select(
-                        Department::getId,
-                        Department::getDeptName,
-                        Department::getDeptCode,
-                        Department::getRegionCode,
-                        Department::getAddress,
-                        Department::getDepartmentType,
-                        Department::getDepartmentLevelCode,
-                        Department::getParentId,
-                        Department::getLevel,
-                        Department::getSort,
-                        Department::getDescription
-                ).in(Department::getId, ids)
-                .and(StrUtil.isNotBlank(param.getKeyword()), w -> w
-                        .like(Department::getDeptName, param.getKeyword())
-                        .or()
-                        .like(Department::getDeptCode, param.getKeyword())
-                ).orderByAsc(Department::getSort).orderByDesc(Department::getCreateTime);
-        PageInfo<Department> page = page(pageInfo(param), wrapper);
-        return MybatisPage.convert(page, DepartmentConvert.INSTANCE::toThirdDeptVO);
     }
 
     @Override
@@ -683,7 +654,6 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
     @Override
     public DepartmentDTO getDepartmentByRegionCode(String regionCode) {
         Department department2 = baseMapper.selectOne(queryWrapper()
-                .eq(Department::getRegionCode, regionCode)
         );
         return DepartmentConvert.INSTANCE.toDTO(department2);
     }
@@ -696,14 +666,7 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
         return dtos;
     }
 
-    @Override
-    public List<DepartmentDTO> getSubDepartmentByTypeLike(String deptTypeListStr) {
-        if (StrUtil.isEmpty(deptTypeListStr)) {
-            return Collections.emptyList();
-        }
-        LambdaQueryWrapper<Department> like = queryWrapper().likeLeft(Department::getDepartmentType, deptTypeListStr);
-        return DepartmentConvert.INSTANCE.toDTO(list(like));
-    }
+
 
     @Override
     public List<DepartmentDTO> listByLevels(List<Integer> level) {
@@ -748,10 +711,8 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
                         Department::getDeptName,
                         Department::getDeptCode,
                         Department::getParentId,
-                        Department::getSort,
-                        Department::getDepartmentType,
-                        Department::getDepartmentLevelCode)
-                .eq(Department::getRegionCode, regionCode).list();
+                        Department::getSort)
+                .list();
         return DepartmentConvert.INSTANCE.toDTO(list);
 
     }
@@ -772,7 +733,7 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
     @Override
     public List<DepartmentDTO> getDepartmentsByParentId(String parentId, String regionCode, Integer level) {
         LambdaQueryWrapper<Department> queryWrapper = queryWrapper();
-        queryWrapper.eq(Department::getParentId, parentId == null ? "0" : parentId).eq(Department::getRegionCode, regionCode)
+        queryWrapper.eq(Department::getParentId, parentId == null ? "0" : parentId)
                 .eq(level != null, Department::getLevel, level)
                 .orderByAsc(Department::getSort).orderByDesc(Department::getCreateTime);
         List<Department> list = list(queryWrapper);
@@ -897,16 +858,6 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
         }
 
         return resultMap;
-    }
-
-    @Override
-    public Set<String> listLevelCodeByTopParentDeptCode(String deptCode) {
-        LambdaQueryWrapper<Department> wrapper = new LambdaQueryWrapper<>();
-        wrapper.likeRight(Department::getDeptCode, deptCode)
-                .select(Department::getDepartmentLevelCode);
-        return this.list(wrapper).stream()
-                .map(Department::getDepartmentLevelCode)
-                .collect(Collectors.toSet());
     }
 
     private List<DepartmentDTO> getByCodes(Set<String> deptCodes) {
@@ -1068,7 +1019,6 @@ public class DepartmentManagerImpl extends BaseServiceImpl<DepartmentMapper, Dep
         do {
             // 查询当前层级的子部门
             List<Department> departments = lambdaQuery()
-                    .eq(Department::getRegionCode, regionCode)
                     .in(Department::getParentId, currentLevelParentIds)
                     .list();
             

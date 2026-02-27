@@ -24,7 +24,7 @@ public class DepartmentUserNotInVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "用户id")
-    private String id;
+    private Long id;
     @Schema(description = "用户名")
     private String account;
     @Schema(description = "真实姓名")
@@ -36,7 +36,7 @@ public class DepartmentUserNotInVO implements Serializable {
     @Schema(description = "归属机构")
     private String department;
     @Schema(description = "创建者")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Schema(description = "用户排序")

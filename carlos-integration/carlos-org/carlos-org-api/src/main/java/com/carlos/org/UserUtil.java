@@ -1,19 +1,17 @@
 package com.carlos.org;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import com.carlos.core.exception.ServiceException;
 import com.carlos.core.response.Result;
 import com.carlos.org.api.ApiDepartment;
 import com.carlos.org.api.ApiUser;
-import com.carlos.org.pojo.ao.DepartmentAO;
 import com.carlos.org.pojo.ao.UserLoginAO;
 import com.carlos.org.pojo.ao.UserLoginAO.Department;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -44,7 +42,7 @@ public class UserUtil {
      * @author Carlos
      * @date 2023/7/16 23:42
      */
-    public static String getId () {
+    public static Serializable getId() {
         UserLoginAO user = getUser ();
         return user.getId ();
     }
@@ -71,14 +69,6 @@ public class UserUtil {
     public static String getPhone () {
         UserLoginAO user = getUser ();
         return user.getPhone ();
-    }
-
-    /**
-     * 获取用户真实姓名
-     */
-    public static String getRealName () {
-        UserLoginAO user = getUser ();
-        return user.getRealname ();
     }
 
     /**
@@ -150,75 +140,6 @@ public class UserUtil {
     public static boolean isAdmin () {
         UserLoginAO user = getUser ();
         return user.getAdmin ();
-    }
-
-    /**
-     * @Description: 白名单接口获取当前用户信息
-     * @Date: 2023/12/21 18:13
-     */
-
-    public static UserLoginAO getUserByWhiteList () {
-        Result<UserLoginAO> result = apiUser.getCurrentUserByWhiteList ();
-
-        if (!result.getSuccess ()) {
-            log.error ("Api request failed, message: {}, detail message:{}", result.getMessage (), result.getStack ());
-            throw new ServiceException (result.getMessage ());
-        }
-        return result.getData ();
-    }
-
-    /**
-     * 获取用户id
-     *
-     * @return java.lang.String
-     * @author Carlos
-     * @date 2023/7/16 23:42
-     */
-    public static String getIdByWhiteList () {
-        UserLoginAO user = getUserByWhiteList ();
-        return user.getId ();
-    }
-
-    /**
-     * 根据部门id获取所有子级部门code
-     *
-     * @return
-     */
-    public static Set<String> allSubDepartmentCodeByParentId (String deptId, boolean addSelf) {
-        ApiDepartment apiDepartment = SpringUtil.getBean (ApiDepartment.class);
-        Result<Set<String>> result = apiDepartment.allSubDepartmentCode (deptId, addSelf);
-        if (!result.getSuccess ()) {
-            log.error ("Api request failed, message: {}, detail message:{}", result.getMessage (), result.getStack ());
-            throw new ServiceException (result.getMessage ());
-        }
-        return result.getData ();
-
-    }
-
-    /**
-     * 获取当前用户所属顶级机构及其下级部门code集合
-     * 系统管理员使用此方法获取顶级机构及其所有下级部门的编码
-     *
-     * @return 顶级机构及其下级部门编码集合
-     */
-    public static Set<String> getTopDeptAndSubCodes() {
-        UserLoginAO.Department currentDept = getDepartment();
-        ApiDepartment apiDepartment = SpringUtil.getBean(ApiDepartment.class);
-
-        // 获取当前部门的顶级部门
-        Result<DepartmentAO> result = apiDepartment.parentDepartment(currentDept.getDeptCode());
-        if (!result.getSuccess()) {
-            log.error("获取顶级部门失败: {}", result.getMessage());
-            return Collections.emptySet();
-        }
-
-        DepartmentAO topDept = result.getData();
-        if (topDept == null) {
-            return Collections.emptySet();
-        }
-
-        // 获取顶级部门的所有下级部门编码（包括自己）
-        return allSubDepartmentCodeByParentId(topDept.getId(), true);
     }
 
 

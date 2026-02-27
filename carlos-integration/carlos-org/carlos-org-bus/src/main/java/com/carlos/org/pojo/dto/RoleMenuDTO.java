@@ -21,7 +21,7 @@ public class RoleMenuDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 角色id
      */

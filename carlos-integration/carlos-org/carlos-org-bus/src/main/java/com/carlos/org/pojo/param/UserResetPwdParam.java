@@ -21,7 +21,7 @@ public class UserResetPwdParam {
 
     @NotBlank(message = "主键不能为空")
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @NotBlank(message = "密码不能为空")
     @Schema(description = "密码")
     private String pwd;

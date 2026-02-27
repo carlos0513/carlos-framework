@@ -24,7 +24,7 @@ public class UserBaseVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "用户id")
-    private String id;
+    private Long id;
     @Schema(description = "用户名")
     private String account;
     @Schema(description = "真实姓名")

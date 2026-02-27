@@ -21,11 +21,11 @@ public class DepartmentRoleDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 部门id
      */
-    private String departmentType;
+    private String departmentId;
     /**
      * 角色id
      */
@@ -37,7 +37,7 @@ public class DepartmentRoleDTO {
     /**
      * 创建者
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */

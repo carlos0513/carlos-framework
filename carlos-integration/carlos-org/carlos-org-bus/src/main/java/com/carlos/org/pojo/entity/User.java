@@ -30,8 +30,8 @@ public class User extends Model<User> implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 用户名
      */
@@ -63,11 +63,6 @@ public class User extends Model<User> implements Serializable {
     @TableField(value = "phone")
     private String phone;
     /**
-     * 行政区域编码
-     */
-    @TableField(value = "region_code")
-    private String regionCode;
-    /**
      * 详细地址
      */
     @TableField(value = "address")
@@ -87,11 +82,6 @@ public class User extends Model<User> implements Serializable {
      */
     @TableField(value = "head")
     private String head;
-    /**
-     * 电子签名
-     */
-    @TableField(value = "signature")
-    private String signature;
     /**
      * 备注
      */
@@ -133,7 +123,7 @@ public class User extends Model<User> implements Serializable {
      * 创建者
      */
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -143,7 +133,7 @@ public class User extends Model<User> implements Serializable {
      * 修改者
      */
     @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */
@@ -159,14 +149,6 @@ public class User extends Model<User> implements Serializable {
      */
     @TableField(value = "sort")
     private Integer sort;
-
-    @TableField(value = "is_push")
-    private Integer isPush;
-    /**
-     * 角色名称
-     */
-    @TableField(exist = false)
-    private String roleNames;
     /**
      * 密码创建时间
      */

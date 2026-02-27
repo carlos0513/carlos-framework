@@ -12,7 +12,7 @@ public class UserChangePwdParam {
 
     @Schema(description = "主键")
     @Hidden
-    private String id;
+    private Long id;
     @Schema(description = "用户账号")
     private String account;
     @Schema(description = "旧密码")

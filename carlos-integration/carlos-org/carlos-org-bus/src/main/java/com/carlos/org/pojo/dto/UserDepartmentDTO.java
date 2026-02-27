@@ -22,7 +22,7 @@ public class UserDepartmentDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 用户id
      */
@@ -97,5 +97,5 @@ public class UserDepartmentDTO {
     /**
      * 用户创建人
      */
-    private String createBy;
+    private Long createBy;
 }

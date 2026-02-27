@@ -28,8 +28,8 @@ public class SysRegion implements Serializable {
     /**
      * 自增ID
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 行政区域编码
      */
@@ -130,7 +130,7 @@ public class SysRegion implements Serializable {
      * 创建人
      */
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -140,7 +140,7 @@ public class SysRegion implements Serializable {
      * 更新人
      */
     @TableField(value = "update_by", fill = FieldFill.UPDATE)
-    private String updateBy;
+    private Long updateBy;
     /**
      * 更新时间
      */

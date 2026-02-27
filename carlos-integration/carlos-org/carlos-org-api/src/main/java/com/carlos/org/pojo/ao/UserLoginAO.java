@@ -20,7 +20,7 @@ public class UserLoginAO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 用户名
      */
@@ -72,7 +72,7 @@ public class UserLoginAO {
         /**
          * 主键
          */
-        private String id;
+        private Long id;
         /**
          * 父id
          */
@@ -104,7 +104,7 @@ public class UserLoginAO {
         /**
          * 创建者
          */
-        private String createBy;
+        private Long createBy;
         /**
          * 创建时间
          */
@@ -112,23 +112,11 @@ public class UserLoginAO {
         /**
          * 修改者
          */
-        private String updateBy;
+        private Long updateBy;
         /**
          * 修改时间
          */
         private LocalDateTime updateTime;
-        /**
-         * 部门层级
-         */
-        private Integer level;
-        /**
-         * 组织机构类型
-         */
-        private String departmentType;
-        /**
-         * 组织机构层级类型
-         */
-        private String departmentLevelCode;
 
     }
 

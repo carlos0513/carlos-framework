@@ -26,7 +26,7 @@ public class UserFloatCardInfoVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "用户名")
     private String account;
     @Schema(description = "真实姓名")

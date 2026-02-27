@@ -76,8 +76,6 @@ public interface UserDepartmentManager extends BaseService<UserDepartment> {
     Map<String, Set<String>> getDepartmentIdsByUserIds(Set<String> userIds);
 
 
-    Set<String> getRoleIdsByUserId(String userId);
-
     /**
      * 获取部门下关联用户id
      *
@@ -116,8 +114,6 @@ public interface UserDepartmentManager extends BaseService<UserDepartment> {
 
 
     List<UserDepartmentDTO> listAdminByDepartmentId(String id);
-
-    List<UserDepartmentDTO> listAdminByDepartmentIds(List<String> deptIds);
 
     /**
      * 批量删除
@@ -163,13 +159,6 @@ public interface UserDepartmentManager extends BaseService<UserDepartment> {
     UserDepartmentDTO getByUserIdAndDeptId(String userId, String deptId);
 
     Paging<UserDepartmentDTO> listCurDept(CurDeptExecutorPageParam param);
-
-    List<UserDepartmentDTO> getByLevels(Set<String> deptLevels);
-
-    boolean isYxUser(String userId);
-
-
-    List<UserDepartmentDTO> getUserDeptInfoByRoleId(String roleId);
 
     // 分页版本
     Paging<UserDepartmentDTO> getUserDeptInfoByRoleIdPage(String roleId, Integer current, Integer size, String keyWord);

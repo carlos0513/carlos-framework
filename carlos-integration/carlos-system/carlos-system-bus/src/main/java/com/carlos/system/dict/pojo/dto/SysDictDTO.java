@@ -22,7 +22,7 @@ public class SysDictDTO {
     /**
      * 字典id
      */
-    private String id;
+    private Long id;
     /**
      * 字典名称
      */

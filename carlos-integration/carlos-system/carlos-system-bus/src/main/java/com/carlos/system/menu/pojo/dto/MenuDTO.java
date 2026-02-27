@@ -21,7 +21,7 @@ public class MenuDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 父级ID
      */

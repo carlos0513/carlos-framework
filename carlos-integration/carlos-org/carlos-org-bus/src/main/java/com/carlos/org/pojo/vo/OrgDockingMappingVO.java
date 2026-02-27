@@ -22,7 +22,7 @@ import java.io.Serializable;
 public class OrgDockingMappingVO implements Serializable {
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键ID")
-    private String id;
+    private Long id;
     @Schema(description = "系统数据id")
     private String systemId;
     @Schema(description = "目标系统id")

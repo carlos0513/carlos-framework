@@ -21,7 +21,7 @@ public class SysConfigUpdateParam {
 
     @NotNull(message = "参数Id不能为空")
     @Schema(description = "参数Id")
-    private String id;
+    private Long id;
     @Schema(description = "参数名称")
     private String configName;
     @Schema(description = "参数键值")

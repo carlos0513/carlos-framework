@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 public class DepartmentCreateParam {
 
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "上级机构")
     private String parentId;
     @NotBlank(message = "部门名称不能为空")
@@ -30,10 +30,6 @@ public class DepartmentCreateParam {
     private String address;
     @Schema(description = "机构排序")
     private int sort;
-    @Schema(description = "组织机构类型")
-    private String departmentType;
-    @Schema(description = "管辖区域")
-    private String regionCode;
     @Schema(description = "对方系统数据id")
     private String targetId;
     @Schema(description = "对方系统数据code")

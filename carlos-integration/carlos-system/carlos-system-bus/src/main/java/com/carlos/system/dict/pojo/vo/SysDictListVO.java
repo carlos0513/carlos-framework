@@ -24,7 +24,7 @@ public class SysDictListVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "主键")
-    private String id;
+    private Long id;
 
     @Schema(description = "字典code")
     private String dictCode;
@@ -46,7 +46,7 @@ public class SysDictListVO implements Serializable {
         /**
          * 字典选项id
          */
-        private String id;
+        private Long id;
         /**
          * 字典项值
          */

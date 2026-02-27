@@ -23,7 +23,7 @@ public class RoleVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "角色名称")
     private String name;
     @Schema(description = "角色唯一编码")
@@ -37,7 +37,7 @@ public class RoleVO implements Serializable {
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
     @Schema(description = "创建者 ")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "修改者 ")
-    private String updateBy;
+    private Long updateBy;
 }

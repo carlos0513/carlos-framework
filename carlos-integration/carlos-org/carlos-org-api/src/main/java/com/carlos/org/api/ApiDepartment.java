@@ -5,15 +5,13 @@ import com.carlos.core.pagination.Paging;
 import com.carlos.core.response.Result;
 import com.carlos.org.ServiceNameConstant;
 import com.carlos.org.fallback.FeignDepartmentFallbackFactory;
-import com.carlos.org.param.DepartmentCreateOrUpdateParam;
-import com.carlos.org.param.DepartmentDeleteParam;
-import com.carlos.org.pojo.ao.*;
+import com.carlos.org.pojo.ao.DepartmentAO;
+import com.carlos.org.pojo.ao.DepartmentUserAO;
+import com.carlos.org.pojo.ao.UserDepartmentVO;
 import com.carlos.org.pojo.param.CurDeptExecutorPageParam;
 import com.carlos.org.pojo.param.CurSubExecutorPageParam;
-import com.carlos.org.pojo.param.TaskExecutorPageMianYangParam;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -31,32 +29,10 @@ import java.util.Set;
  */
 @FeignClient(value = ServiceNameConstant.USER, path = "/api/org/department", contextId = "department", fallbackFactory = FeignDepartmentFallbackFactory.class)
 public interface ApiDepartment {
-    @GetMapping("/getAactivityRatio")
-    @Operation(summary = "根据部门ID获取一段时间内部门用户活跃度列表")
-    Result<List<CommonCustomAO>> getAactivityRatio(@RequestParam("startTime") String startTime,
-                                                   @RequestParam("endTime") String endTime,
-                                                   @RequestParam("deptCode") List<String> deptIds);
 
-    @GetMapping("/getDepyByUserId")
+    @GetMapping("/getDeptByUserId")
     @Operation(summary = "根据用户ID获取部门列表")
-    Result<List<DepartmentAO>> getDepyByUserId(@RequestParam("userId") String userId);
-
-    @GetMapping("/deptCountStatistic")
-    @Operation(summary = "获取所有部门数量")
-    Result<Integer> deptCountStatistic();
-
-
-    @GetMapping("/tree")
-    @Operation(summary = "部门树形列表")
-    Result<List<DepartmentAO>> tree(@RequestParam("departmentId") String departmentId, @RequestParam("userFlag") boolean userFlag);
-
-    @GetMapping("/listAll")
-    @Operation(summary = "获取所有部门")
-    Result<List<DepartmentAO>> allDepartment();
-
-    @GetMapping("/current/sameLeve")
-    @Operation(summary = "当前用户部门同级部门")
-    Result<List<DepartmentAO>> currentSameLeveDept(@RequestParam("userFlag") boolean userFlag);
+    Result<List<DepartmentAO>> getDeptByUserId(@RequestParam("userId") String userId);
 
     @GetMapping("/getDepartmentName")
     @Operation(summary = "根据部门id获取上级部门名称")
@@ -124,17 +100,9 @@ public interface ApiDepartment {
     @Operation(summary = "上级部门")
     Result<DepartmentAO> parentDepartment(@PathVariable final String deptCode);
 
-    @GetMapping(value = "all/subDept/{id}", headers = {"content-type:application/x-www-form-urlencoded"})
-    @Operation(summary = "下级部门code")
-    Result<Set<String>> allSubDepartmentCode(@PathVariable final String id, @RequestParam("addSelf") boolean addSelf);
-
     @GetMapping("all/subDept/deptCode")
     @Operation(summary = "deptCode下级部门codes")
     Result<Set<String>> allSubDeptCodeByDeptCode(@RequestParam("deptCode") String deptCode);
-
-    @GetMapping("all/subDept/regionCode")
-    @Operation(summary = "regionCode下级部门codes")
-    Result<Set<String>> allSubDeptCodeByReginCode(@RequestParam("regionCode") String regionCode);
 
     @GetMapping("/listAllByDeptName")
     @Operation(summary = "根据部门名称模糊查询获取所有部门")
@@ -143,10 +111,6 @@ public interface ApiDepartment {
     @GetMapping("/getDepartmentByCodes")
     @Operation(summary = "根据code获取部门s")
     Result<List<DepartmentAO>> getDepartmentByCodes(@RequestParam("codes") List<String> codes);
-
-    @GetMapping("/getSubDepartmentByTypeLike")
-    @Operation(summary = "根据机构类型获取部门（模糊匹配，左like）")
-    Result<List<DepartmentAO>> getSubDepartmentByTypeLike(@RequestParam String deptTypeListStr);
 
     @PostMapping("/getCurSubUser")
     @Operation(summary = "根据code获取当前部门以及下级部门的所有用户")
@@ -160,42 +124,6 @@ public interface ApiDepartment {
     @Operation(summary = "递归获取上级部门code列表")
     Result<List<String>> getAllParentDeptCodeByRecursive(@RequestParam("deptCode") String deptCode);
 
-    //绵阳定开 获取部门树形列表包含用户 速度更快
-    @GetMapping("/treeMianYang")
-    @Operation(summary = "部门树形列表")
-    Result<List<DepartmentAO>> treeMianYang(@RequestParam("departmentId") String departmentId, @RequestParam("userFlag") boolean userFlag);
-
-    @GetMapping("listByThirdIds")
-    @Operation(summary = "根据三方id获取部门")
-    Result<List<DepartmentBaseAO>> listByThirdIds(@RequestParam("thirdIds") Set<String> thirdIds);
-
-    @GetMapping("listThirdInfoByIds")
-    @Operation(summary = "根据id获取三方部门信息")
-    Result<List<DepartmentBaseAO>> listThirdInfoByIds(@RequestParam("ids") Set<String> ids);
-
-    @PostMapping("getUserPageByDeptId")
-    @Operation(summary = "分页获取部门下用户")
-    Result<Paging<DepartmentUserAO>> getUserPageByDeptId(@RequestBody TaskExecutorPageMianYangParam param);
-
-    @PostMapping("/third/add")
-    @Operation(summary = "第三方调用-新增部门")
-    Result<String> add(@RequestBody @Validated DepartmentCreateOrUpdateParam param);
-
-    @PostMapping("/third/batchAdd")
-    @Operation(summary = "第三方调用-批量新增部门")
-    Result<Integer> batchAdd(@RequestBody @Validated Set<DepartmentCreateOrUpdateParam> param);
-
-    @PostMapping("/third/update")
-    @Operation(summary = "第三方调用-更新部门")
-    void update(@RequestBody @Validated DepartmentCreateOrUpdateParam param);
-
-    @PostMapping("/third/delete")
-    @Operation(summary = "第三方调用-删除部门")
-    void delete(@RequestBody @Validated DepartmentDeleteParam param);
-
-    @GetMapping("listByRegionCode")
-    @Operation(summary = "根据区域id获取部门")
-    Result<List<DepartmentAO>> listDepartmentByRegionCode(@RequestParam("regionCode") String regionCode);
 
     @GetMapping("getAllSubDepartment")
     @Operation(summary = "获取当前部门的所有子部门")

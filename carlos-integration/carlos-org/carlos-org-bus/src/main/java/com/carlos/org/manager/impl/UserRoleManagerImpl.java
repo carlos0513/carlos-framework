@@ -17,7 +17,6 @@ import com.carlos.org.mapper.UserRoleMapper;
 import com.carlos.org.pojo.dto.RoleDTO;
 import com.carlos.org.pojo.dto.UserRoleDTO;
 import com.carlos.org.pojo.entity.Role;
-import com.carlos.org.pojo.entity.UserDepartment;
 import com.carlos.org.pojo.entity.UserRole;
 import com.carlos.org.pojo.param.UserRolePageParam;
 import com.carlos.org.pojo.vo.UserRoleVO;
@@ -197,9 +196,7 @@ public class UserRoleManagerImpl extends BaseServiceImpl<UserRoleMapper, UserRol
         if (CollectionUtils.isEmpty(roleIds)) {
             return null;
         }
-        return userDepartmentManager.list(new LambdaQueryWrapper<>(UserDepartment.class)
-                        .select(UserDepartment::getUserId).in(UserDepartment::getRoleId, roleIds))
-                .stream().map(UserDepartment::getUserId).collect(Collectors.toSet());
+        return this.lambdaQuery().in(UserRole::getRoleId, roleIds).list().stream().map(UserRole::getUserId).collect(Collectors.toSet());
     }
 
     @Override

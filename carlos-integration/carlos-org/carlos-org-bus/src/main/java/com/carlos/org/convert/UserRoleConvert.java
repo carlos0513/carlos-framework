@@ -2,7 +2,6 @@ package com.carlos.org.convert;
 
 import com.carlos.org.pojo.ao.UserRoleAO;
 import com.carlos.org.pojo.dto.UserRoleDTO;
-import com.carlos.org.pojo.entity.UserDepartment;
 import com.carlos.org.pojo.entity.UserRole;
 import com.carlos.org.pojo.vo.UserRoleVO;
 import org.mapstruct.Mapper;
@@ -88,5 +87,5 @@ public interface UserRoleConvert {
 
     List<UserRoleAO> toAO(List<UserRoleDTO> userRoles);
 
-    List<UserRoleAO> userDeptRoleToAO(List<UserDepartment> userRoles);
+    List<UserRoleAO> userDeptRoleToAO(List<UserRole> userRoles);
 }

@@ -1,7 +1,5 @@
 package com.carlos.auth.provider;
 
-import com.carlos.auth.pojo.dto.UserInfo;
-
 import java.util.List;
 
 /**

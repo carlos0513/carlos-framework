@@ -73,7 +73,7 @@ public class ApiMsgSendParam implements Serializable {
         /**
          * 接受者id
          */
-        private String id;
+        private Long id;
         /**
          * 接受者名称
          */

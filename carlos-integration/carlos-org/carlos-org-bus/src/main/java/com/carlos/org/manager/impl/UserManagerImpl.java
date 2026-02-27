@@ -10,7 +10,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.carlos.core.pagination.Paging;
-import com.carlos.core.response.Result;
 import com.carlos.datasource.base.BaseServiceImpl;
 import com.carlos.datasource.pagination.MybatisPage;
 import com.carlos.datasource.pagination.PageInfo;
@@ -206,25 +205,6 @@ public class UserManagerImpl extends BaseServiceImpl<UserMapper, User> implement
             parentDepartmentMap.put(deptId, parentDepts);
         }
 
-        // 批量获取区域信息
-        Set<String> regionCodes = departmentMap.values().stream()
-                .map(DepartmentDTO::getRegionCode)
-                .filter(CharSequenceUtil::isNotBlank)
-                .collect(Collectors.toSet());
-
-        Map<String, String> regionNameMap = new HashMap<>();
-        for (String regionCode : regionCodes) {
-            try {
-                Result<List<String>> result = api.previewRegionName(regionCode, null);
-                String regionName = result.getSuccess() && result.getData() != null
-                        ? CharSequenceUtil.join(StrPool.DASHED, result.getData())
-                        : "未知区域";
-                regionNameMap.put(regionCode, regionName);
-            } catch (Exception e) {
-                regionNameMap.put(regionCode, "区域不存在");
-            }
-        }
-
         // 转换用户数据
         List<UserPageVO> result = new ArrayList<>();
         for (User item : items) {
@@ -250,13 +230,6 @@ public class UserManagerImpl extends BaseServiceImpl<UserMapper, User> implement
                             })
                             .collect(Collectors.toList());
                     vo.setDepartment(CharSequenceUtil.join(StrPool.COMMA, deptNames));
-
-                    List<String> regionNames = departments.stream()
-                            .filter(dept -> CharSequenceUtil.isNotBlank(dept.getRegionCode()))
-                            .map(dept -> regionNameMap.get(dept.getRegionCode()))
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList());
-                    vo.setRegion(CharSequenceUtil.join(StrPool.COMMA, regionNames));
                 }
             }
 
@@ -296,24 +269,7 @@ public class UserManagerImpl extends BaseServiceImpl<UserMapper, User> implement
                 parentDepartmentMap.put(deptId, parentDepts);
             });
         }
-        // 收集所有区域代码
-        Set<String> regionCodes = allDepartments.stream().map(DepartmentDTO::getRegionCode).filter(CharSequenceUtil::isNotBlank).collect(Collectors.toSet());
-        // 批量获取区域名称
-        Map<String, String> regionNameMap = new ConcurrentHashMap<>();
-        if (CollUtil.isNotEmpty(regionCodes)) {
-            regionCodes.parallelStream().forEach(regionCode -> {
-                try {
-                    Result<List<String>> result = api.previewRegionName(regionCode, null);
-                    if (result.getSuccess() && result.getData() != null) {
-                        regionNameMap.put(regionCode, CharSequenceUtil.join(StrPool.DASHED, result.getData()));
-                    } else {
-                        regionNameMap.put(regionCode, "未知区域");
-                    }
-                } catch (Exception e) {
-                    regionNameMap.put(regionCode, "区域不存在");
-                }
-            });
-        }
+
 
         // 并行处理每个用户的数据
         List<UserPageExcel> excelList = users.parallelStream().map(user -> {
@@ -341,13 +297,6 @@ public class UserManagerImpl extends BaseServiceImpl<UserMapper, User> implement
                             .map(DepartmentDTO::getDeptName)
                             .collect(Collectors.toList());
                     deptNames.add(StrUtil.join(StrUtil.DASHED, names));
-                    // 处理区域信息
-                    if (CharSequenceUtil.isNotBlank(dept.getRegionCode())) {
-                        String regionName = regionNameMap.get(dept.getRegionCode());
-                        if (regionName != null) {
-                            regionNames.add(regionName);
-                        }
-                    }
                 }
                 excel.setDeptName(CharSequenceUtil.join(StrPool.COMMA, deptNames));
                 excel.setRegionName(CharSequenceUtil.join(StrPool.COMMA, regionNames));
@@ -479,7 +428,7 @@ public class UserManagerImpl extends BaseServiceImpl<UserMapper, User> implement
                 .in(CollUtil.isNotEmpty(param.getRoleIds()), Role::getId, param.getRoleIds())
                 .in(CollUtil.isNotEmpty(param.getRoleNames()), Role::getName, param.getRoleNames());
 
-        wrapper.leftJoin(UserDepartment.class, UserDepartment::getRoleId, Role::getId)
+        wrapper.leftJoin(UserRole.class, UserRole::getRoleId, Role::getId)
                 .leftJoin(User.class, User::getId, UserDepartment::getUserId)
                 .selectAs(User::getId, UserDeptRoleDTO::getUserId)
                 .selectAs(User::getRealname, UserDeptRoleDTO::getUserName)
@@ -556,11 +505,9 @@ public class UserManagerImpl extends BaseServiceImpl<UserMapper, User> implement
                         .selectAs(User::getCreateTime, UserListVO::getCreateTime)
                         .selectAs(Department::getDeptName, UserListVO::getDepartmentName)
                         .selectAs(Department::getId, UserListVO::getDepartmentId)
-                        .selectAs(Department::getDepartmentLevelCode, UserListVO::getDepartmentLevelCode)
                         .selectAs(Role::getName, UserListVO::getRoleName)
                         .leftJoin(UserDepartment.class, UserDepartment::getUserId, User::getId)
                         .leftJoin(Department.class, Department::getId, UserDepartment::getDepartmentId)
-                        .leftJoin(Role.class, Role::getId, UserDepartment::getRoleId)
                         .leftJoin(User.class, User::getId, User::getCreateBy, ext -> ext
                                 .selectAs(User::getRealname, UserListVO::getCreateBy))
                         .ne(User::getState, UserStateEnum.DELETE)
@@ -570,7 +517,7 @@ public class UserManagerImpl extends BaseServiceImpl<UserMapper, User> implement
                                 .like(User::getAccount, keyword)
                                 .or()
                                 .like(User::getPhone, keyword)
-                        ).and(CollectionUtil.isNotEmpty(deptLevels), w -> w.in(UserDepartment::getDepartmentLevelCode, deptLevels)));
+                        ));
         return userDTOPageInfo;
     }
 
@@ -601,7 +548,7 @@ public class UserManagerImpl extends BaseServiceImpl<UserMapper, User> implement
                 .selectAs(User::getGender, UserFloatCardInfoVO::getGender);
         wrapper.leftJoin(UserDepartment.class, UserDepartment::getUserId, User::getId)
                 .leftJoin(Department.class, Department::getId, UserDepartment::getDepartmentId)
-                .leftJoin(Role.class, Role::getId, UserDepartment::getRoleId)
+                .leftJoin(Role.class, Role::getId, UserRole::getRoleId)
                 .selectCollection(UserFloatCardInfoVO::getDepts, map ->
                         map.result(Department::getDeptCode, UserFloatCardInfoVO.DepartmentRole::getDeptCode)
                                 .result(Department::getDeptName, UserFloatCardInfoVO.DepartmentRole::getDeptName)

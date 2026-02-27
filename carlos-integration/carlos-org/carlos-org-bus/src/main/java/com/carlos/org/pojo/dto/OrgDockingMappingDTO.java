@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class OrgDockingMappingDTO {
     /** 主键ID */
-    private String id;
+    private Long id;
     /** 系统数据id */
     private String systemId;
     /** 目标系统id */

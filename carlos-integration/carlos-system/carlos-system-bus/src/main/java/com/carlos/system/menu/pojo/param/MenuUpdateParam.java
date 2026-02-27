@@ -21,7 +21,7 @@ public class MenuUpdateParam {
 
     @NotNull(message = "主键不能为空")
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "父级ID")
     private String parentId;
     @Schema(description = "controller名称")

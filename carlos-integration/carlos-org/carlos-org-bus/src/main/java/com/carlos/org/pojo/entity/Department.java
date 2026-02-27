@@ -28,8 +28,8 @@ public class Department extends Model<Department> implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.ASSIGN_UUID, value = "id")
-    private String id;
+    @TableId(type = IdType.ASSIGN_ID, value = "id")
+    private Long id;
     /**
      * 部门名称
      */
@@ -41,20 +41,10 @@ public class Department extends Model<Department> implements Serializable {
     @TableField(value = "dept_code")
     private String deptCode;
     /**
-     * 行政区域编码
-     */
-    @TableField(value = "region_code")
-    private String regionCode;
-    /**
      * 详细地址
      */
     @TableField(value = "address")
     private String address;
-    /**
-     * 详细地址
-     */
-    @TableField(value = "admin_id")
-    private String adminId;
     /**
      * 联系方式
      */
@@ -101,7 +91,7 @@ public class Department extends Model<Department> implements Serializable {
      * 创建者
      */
     @TableField(value = "create_by", fill = FieldFill.INSERT)
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -111,7 +101,7 @@ public class Department extends Model<Department> implements Serializable {
      * 修改者
      */
     @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */
@@ -122,15 +112,5 @@ public class Department extends Model<Department> implements Serializable {
      */
     @TableField(value = "tenant_id")
     private String tenantId;
-    /**
-     * 组织机构类型
-     */
-    @TableField(value = "department_type")
-    private String departmentType;
-    /**
-     * 对应层级
-     */
-    @TableField(value = "department_level_code")
-    private String departmentLevelCode;
 
 }

@@ -19,7 +19,7 @@ public class MenuOperateAO implements Serializable {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 资源名称
      */

@@ -20,7 +20,7 @@ public class UserRegionInitExcel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ExcelProperty(value = "主键")
-    private String id;
+    private Long id;
 
     @ExcelProperty(value = "用户名")
     private String account;

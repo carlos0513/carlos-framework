@@ -1,6 +1,5 @@
 package com.carlos.org.pojo.dto;
 
-import com.carlos.datasource.pagination.PageInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ public class DepartmentDTO {
     /**
      * 主键
      */
-    private String id;
+    private Long id;
     /**
      * 部门名称
      */
@@ -40,10 +39,6 @@ public class DepartmentDTO {
      */
     private String deptCode;
     /**
-     * 行政区域编码
-     */
-    private String regionCode;
-    /**
      * 管理员id
      */
     private String adminId;
@@ -59,10 +54,6 @@ public class DepartmentDTO {
      * 父id
      */
     private String parentId;
-    /**
-     * 部门层级
-     */
-    private Integer level;
     /**
      * 状态，0：禁用，1：启用
      */
@@ -82,7 +73,7 @@ public class DepartmentDTO {
     /**
      * 创建者
      */
-    private String createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -91,7 +82,7 @@ public class DepartmentDTO {
     /**
      * 修改者
      */
-    private String updateBy;
+    private Long updateBy;
     /**
      * 修改时间
      */
@@ -106,33 +97,6 @@ public class DepartmentDTO {
      * 用户信息
      */
     private List<UserDepartmentDTO> users;
-
-    private PageInfo<UserDepartmentDTO> userPages;
-
-    /**
-     * 组织机构类型
-     */
-    private String departmentType;
-    /**
-     * 对应层级
-     */
-    private String departmentLevelCode;
-
-    /**
-     * 对方系统数据id
-     */
-    private String targetId;
-    /**
-     * 当前部门管理员id
-     */
-    private String operatorId;
-    /**
-     * 对方系统数据code
-     */
-    private String targetCode;
-
-    // 第三方部门系统id
-    private String thirdDeptId;
 
     /** 子级数目 */
     private Integer childNum;

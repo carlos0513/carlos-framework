@@ -35,5 +35,5 @@ public class SysRegionConvertParam {
     private String pid;
     @NotBlank(message = "id字段key不能为空")
     @Schema(description = "id字段")
-    private String id;
+    private Long id;
 }

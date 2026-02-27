@@ -22,7 +22,7 @@ public class UserImportExcel implements Serializable {
      * 主键
      */
     @ExcelProperty(value = {"主键"})
-    private String id;
+    private Long id;
     /**
      * 用户名
      */
@@ -84,27 +84,6 @@ public class UserImportExcel implements Serializable {
      */
     //@ExcelProperty(value = {"部门编码"})
     //private String departmentCode;
-    /**
-     * 组织机构类型
-     */
-    @ExcelProperty(value = {"组织机构类型"})
-    private String departmentType;
-    /**
-     * 组织机构类型名称
-     */
-    @ExcelProperty(value = {"组织机构类型名称"})
-    private String departmentTypeName;
-
-    /**
-     * 是否是机构管理员
-     */
-    //@ExcelProperty(value = {"机构管理员(是/否)"})
-    //private String admin;
-    /**
-     * 行政区域编码
-     */
-    @ExcelProperty(value = {"行政区域编码"})
-    private String regionCode;
     /**
      * 排序
      */

@@ -23,13 +23,13 @@ public class DepartmentRoleVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "部门id")
     private String departmentId;
     @Schema(description = "角色id")
     private String roleId;
     @Schema(description = "创建者")
-    private String createBy;
+    private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Schema(description = "修改时间")

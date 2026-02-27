@@ -20,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserMenuDTO {
-    private String id;
+    private Long id;
 
     private String path;
 

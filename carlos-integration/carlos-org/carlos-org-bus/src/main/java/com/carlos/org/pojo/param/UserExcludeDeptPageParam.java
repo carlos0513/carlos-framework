@@ -26,5 +26,5 @@ public class UserExcludeDeptPageParam extends ParamPage {
     private String keyword;
 
     @Schema(description = "部门id列表")
-    private String id;
+    private Long id;
 }

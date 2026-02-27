@@ -67,16 +67,7 @@ public class UserExcelListener<T> implements ReadListener<UserImportExcel> {
     @Override
     public void invoke(UserImportExcel userImport, AnalysisContext context) {
         // 参数校验
-        // 设置department_type
-        String departmentTypeName = userImport.getDepartmentTypeName();
-        String departmentType = getTypeMap().get(departmentTypeName);
-        if (StrUtil.isBlank(userImport.getDepartmentType())) {
-            userImport.setDepartmentType(departmentType);
-        } else {
-            if (StrUtil.isNotBlank(departmentType)) {
-                userImport.setDepartmentType(departmentType);
-            }
-        }
+
         StringBuilder errorMsg = new StringBuilder();
         if (StrUtil.isBlank(userImport.getPhone())) {
             errorMsg.append("手机号码缺失;");
@@ -99,31 +90,9 @@ public class UserExcelListener<T> implements ReadListener<UserImportExcel> {
             errorMsg.append("真实姓名缺失;");
             // throw new ServiceException("用户名缺失，异常行信息：" + userImport);
         }
-        if (StrUtil.isBlank(userImport.getDepartmentTypeName())) {
-            errorMsg.append("部门分类名缺失（department_type_name）;");
-            // throw new ServiceException("部门分类名缺失（department_type_name），异常行信息：" + userImport);
-        }
         if (StrUtil.isBlank(userImport.getDepartment())) {
             errorMsg.append("部门名缺失（department）;");
             // throw new ServiceException("部门名缺失（department），异常行信息：" + userImport);
-        }
-        if (StrUtil.isBlank(userImport.getRegionCode())) {
-            errorMsg.append("区域编码缺失（region_code）;");
-            // throw new ServiceException("区域编码缺失（region_code），异常行信息：" + userImport);
-        }
-        if (StrUtil.isBlank(userImport.getDepartmentType())) {
-            errorMsg.append("部门类型映射失败(department_type_name查department_type);");
-            // throw new ServiceException("部门类型映射失败(department_type_name查department_type)，异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
-        }
-        Set<String> deptTypeSet = new HashSet<>(getTypeMap().values());
-        if (!deptTypeSet.contains(userImport.getDepartmentType())) {
-            errorMsg.append("未知部门类型（department_type）;");
-            // throw new ServiceException("未知部门类型（department_type），异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
-        }
-        String regionCode = userImport.getRegionCode();
-        if (!getRegionMap().containsKey(regionCode)) {
-            errorMsg.append("未知区域编码;");
-            // throw new ServiceException("未知区域编码，异常行id：" + userImport.getId() + ",对应部门：" + userImport.getDepartment());
         }
         userImport.setErrorMsg(errorMsg.toString());
         if (CharSequenceUtil.isNotBlank(errorMsg)) {

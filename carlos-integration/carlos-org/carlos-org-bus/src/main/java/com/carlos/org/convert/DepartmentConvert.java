@@ -3,14 +3,12 @@ package com.carlos.org.convert;
 import com.carlos.core.pagination.Paging;
 import com.carlos.org.param.DepartmentCreateOrUpdateParam;
 import com.carlos.org.pojo.ao.DepartmentAO;
-import com.carlos.org.pojo.ao.DepartmentBaseAO;
 import com.carlos.org.pojo.ao.DepartmentUserAO;
 import com.carlos.org.pojo.ao.UserDepartmentVO;
 import com.carlos.org.pojo.dto.DepartmentDTO;
 import com.carlos.org.pojo.dto.UserDTO;
 import com.carlos.org.pojo.dto.UserDepartmentDTO;
 import com.carlos.org.pojo.entity.Department;
-import com.carlos.org.pojo.excel.DepartmentExcel;
 import com.carlos.org.pojo.param.DepartmentCreateParam;
 import com.carlos.org.pojo.param.DepartmentUpdateParam;
 import com.carlos.org.pojo.vo.*;
@@ -108,30 +106,11 @@ public interface DepartmentConvert {
      */
     List<DepartmentVO> toVO(List<Department> dos);
 
-    /**
-     * 数据持久对象转数据显示对象
-     *
-     * @param dos 数据传输对象
-     * @return 数据显示对象
-     * @author carlos
-     * @date 2022-11-11 18:19:17
-     */
-    List<ThirdDepartmentVO> toThirdDeptVO(List<Department> dos);
-
     DepartmentVO toVO(Department dos);
 
-    List<DepartmentVO> dto2vo(List<DepartmentDTO> dtos);
 
     List<DepartmentTreeVO> toTreeVO(List<DepartmentDTO> departments);
 
-    /**
-     * @Title: excelToDTOS
-     * @Description: 导入数据对象转数据传输对象
-     * @Date: 2023/2/21 15:46
-     * @Parameters: [cachedDataList]
-     * @Return java.util.List<com.carlos.org.dto.user.DepartmentDTO>
-     */
-    List<DepartmentDTO> excelToDTOS(List<DepartmentExcel> cachedDataList);
 
     /**
      * @Title: toDOS
@@ -145,15 +124,6 @@ public interface DepartmentConvert {
     List<Department> toDOS(Set<DepartmentDTO> departments);
 
     /**
-     * @Title: dtoToexcel
-     * @Description: 数据传输对象转数据导入导出对象
-     * @Date: 2023/2/22 10:36
-     * @Parameters: [list]
-     * @Return java.util.List<com.carlos.org.pojo.excel.UserExcel>
-     */
-    List<DepartmentExcel> dtoToexcel(List<DepartmentDTO> list);
-
-    /**
      * 部门基本信息转换
      *
      * @param dto 参数0
@@ -163,8 +133,6 @@ public interface DepartmentConvert {
      */
     DepartmentBaseVO toBaseVO(DepartmentDTO dto);
 
-    @Mapping(source = "userPages", target = "userPages", qualifiedByName = "toUserVO")
-    DepartmentDetailVO toDetailVO(DepartmentDTO departmentDetail);
 
     List<UserDepartmentVO> toDetailVO(List<UserDepartmentDTO> departmentDetail);
 
@@ -172,28 +140,21 @@ public interface DepartmentConvert {
 
     Paging<DepartmentUserNotInVO> toDepartmentUserVO(Paging<UserDTO> users);
 
-    DepartmentBaseInfoVO toBaseInfoVO(DepartmentDTO detail);
-
     List<DepartmentAO> toAOS(List<DepartmentDTO> dtos);
 
     DepartmentAO toAO(DepartmentDTO department);
 
-    @Mapping(target = "admin", source = "isAdmin")
     List<DepartmentUserAO> toUserAO(List<UserDepartmentDTO> users);
 
-
-    DepartmentTreeVO toTreeVO(DepartmentDTO dto);
-
     @Mappings({
-            @Mapping(source = "deptId", target = "thirdDeptId"),
             @Mapping(source = "name", target = "deptName"),
             @Mapping(source = "order", target = "sort"),
             @Mapping(source = "parentId", target = "parentId"),
-            @Mapping(source = "areaValue", target = "regionCode"),
     })
     DepartmentDTO paramToDTO(DepartmentCreateOrUpdateParam param);
 
-    List<DepartmentBaseAO> toBaseAOS(List<DepartmentDTO> dtos);
 
     Map<String, List<DepartmentAO>> toAOS(Map<String, List<DepartmentDTO>> superDepartmentName);
+
+    DepartmentDetailVO toDetailVO(DepartmentDTO departmentDetail);
 }

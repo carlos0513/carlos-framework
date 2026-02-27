@@ -22,7 +22,7 @@ public class TaskExecutorPageMianYangParam extends CurSubExecutorPageParam {
 
     @Schema(description = "部门id")
     @NotNull(message = "部门id不能为空！")
-    private String id;
+    private Long id;
 
     @Schema(description = "是否包含下级部门")
     @NotNull(message = "是否包含下级部门不能为空！")

@@ -24,7 +24,7 @@ public class SysResourceVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @Schema(description = "分类id")
     private Long categoryId;
     @Schema(description = "菜单名称")

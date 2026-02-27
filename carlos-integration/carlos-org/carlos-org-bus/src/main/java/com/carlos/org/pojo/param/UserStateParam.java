@@ -23,7 +23,7 @@ public class UserStateParam {
 
     @NotBlank(message = "用户id不能为空")
     @Schema(description = "主键")
-    private String id;
+    private Long id;
     @NotNull(message = "状态不能为空")
     @Schema(description = "状态")
     private UserStateEnum state;

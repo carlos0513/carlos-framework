@@ -1,10 +1,9 @@
 package com.carlos.auth.config;
 
-import com.carlos.auth.repository.RedisOAuth2AuthorizationConsentService;
-import com.carlos.auth.repository.RedisOAuth2AuthorizationService;
+import com.carlos.auth.config.repository.RedisOAuth2AuthorizationConsentService;
+import com.carlos.auth.config.repository.RedisOAuth2AuthorizationService;
 import com.carlos.auth.security.KeyPairManager;
 import com.carlos.auth.service.ExtendUserDetailsService;
-import com.carlos.auth.token.CarlosJwtTokenCustomizer;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -581,7 +580,7 @@ public class OAuth2AuthorizationServerConfig {
 
         if (oauth2Properties.getJwt().isIncludeUserInfo()) {
             log.info("JWT token customizer enabled with user info inclusion");
-            return new CarlosJwtTokenCustomizer(userDetailsService);
+            return new Oauth2JwtTokenCustomizer(userDetailsService);
         }
 
         log.info("JWT token customizer enabled without user info");
