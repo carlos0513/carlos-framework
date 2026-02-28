@@ -1,6 +1,8 @@
 package com.carlos.system.menu.service;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.carlos.core.constant.CoreConstant;
 import com.carlos.core.exception.ServiceException;
 import com.carlos.system.enums.MenuType;
 import com.carlos.system.menu.manager.MenuManager;
@@ -39,8 +41,8 @@ public class MenuService {
      */
 
     public void addMenu(MenuDTO dto) {
-        if (StrUtil.isBlank(dto.getParentId())) {
-            dto.setParentId("0");
+        if (ObjectUtil.isEmpty(dto.getParentId())) {
+            dto.setParentId(CoreConstant.PARENT_LONG_0);
         }
         Optional.ofNullable(dto.getMeta()).ifPresent(i -> {
             if (StrUtil.isBlank(i)) {
@@ -96,8 +98,8 @@ public class MenuService {
      */
 
     public void updateMenu(MenuDTO dto) {
-        if (StrUtil.isBlank(dto.getParentId())) {
-            dto.setParentId("0");
+        if (ObjectUtil.isEmpty(dto.getParentId())) {
+            dto.setParentId(CoreConstant.PARENT_LONG_0);
         }
         Optional.ofNullable(dto.getMeta()).ifPresent(i -> {
             if (StrUtil.isBlank(i)) {
@@ -121,7 +123,7 @@ public class MenuService {
      * @date 2021/12/28 16:08
      */
 
-    public Integer getMenuLevel(String parentId) {
+    public Integer getMenuLevel(Serializable parentId) {
 
         if (parentId == null || "0".equals(parentId)) {
             return 1;

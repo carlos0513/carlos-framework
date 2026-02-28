@@ -89,7 +89,7 @@ public class SysDictItemManagerImpl extends ServiceImpl<SysDictItemMapper, SysDi
     }
 
     @Override
-    public String getDictIdById(String id) {
+    public Serializable getDictIdById(Serializable id) {
         SysDictItem entity = this.getOne(Wrappers.lambdaQuery(SysDictItem.class).eq(SysDictItem::getId, id).select(SysDictItem::getDictId));
         if (entity == null) {
             throw new ServiceException("字典选项不存在！");
@@ -127,7 +127,7 @@ public class SysDictItemManagerImpl extends ServiceImpl<SysDictItemMapper, SysDi
     }
 
     @Override
-    public List<SysDictItemDTO> listByItemIds(Set<String> ids) {
+    public List<SysDictItemDTO> listByItemIds(Set<Serializable> ids) {
         List<SysDictItem> list = lambdaQuery().in(SysDictItem::getId, ids)
                 .select(SysDictItem::getId,
                         SysDictItem::getDictId,

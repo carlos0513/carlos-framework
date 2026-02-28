@@ -96,7 +96,7 @@ public class AuditLogin implements Serializable {
      * 会话ID
      */
     @TableField(value = "session_id")
-    private Long sessionId;
+    private String sessionId;
 
     /**
      * 创建时间（分区字段）

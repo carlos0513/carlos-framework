@@ -33,7 +33,7 @@ public class UploadRecord implements Serializable {
      * 文件分组
      */
     @TableField(value = "group_id")
-    private Long groupId;
+    private String groupId;
     /**
      * 文件库名称
      */

@@ -1,6 +1,7 @@
 package com.carlos.system.dict.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -64,7 +65,7 @@ public class SysDictItemService {
             return;
         }
         for (SysDictItemDTO dto : items) {
-            dto.setDictId(dictId.toString());
+            dto.setDictId(Convert.toLong(dictId));
             if (dictItemManager.count(dictId, null, null, dto.getItemCode()) > 0) {
                 throw new ServiceException("字典选项编码已存在!");
             }
@@ -124,7 +125,7 @@ public class SysDictItemService {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean updateDictItem(final SysDictItemDTO dto) {
-        final String dictId = dictItemManager.getDictIdById(dto.getId());
+        final Serializable dictId = dictItemManager.getDictIdById(dto.getId());
         if (dictItemManager.count(dictId, dto.getId(), dto.getItemName(), null) > 0) {
             throw new ServiceException("字典选项名称已存在!");
         }
@@ -137,14 +138,14 @@ public class SysDictItemService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteDictItem(Set<String> ids) {
+    public boolean deleteDictItem(Set<Serializable> ids) {
         List<SysDictItemDTO> items = dictItemManager.listByItemIds(ids);
         if (CollUtil.isEmpty(items)) {
             return false;
         }
-        Map<String, List<SysDictItemDTO>> map = items.stream().collect(Collectors.groupingBy(SysDictItemDTO::getDictId));
-        for (Map.Entry<String, List<SysDictItemDTO>> entry : map.entrySet()) {
-            final String dictId = entry.getKey();
+        Map<Serializable, List<SysDictItemDTO>> map = items.stream().collect(Collectors.groupingBy(SysDictItemDTO::getDictId));
+        for (Map.Entry<Serializable, List<SysDictItemDTO>> entry : map.entrySet()) {
+            final Serializable dictId = entry.getKey();
             SysDictDTO dict = dictManager.getDictById(dictId);
             final List<SysDictItemDTO> value = entry.getValue();
             deleteDictItem(dict, value.stream().map(SysDictItemDTO::getId).collect(Collectors.toSet()));
@@ -161,7 +162,7 @@ public class SysDictItemService {
      * @date 2021/12/2 13:50
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteDictItem(SysDictDTO dict, Set<String> ids) {
+    public boolean deleteDictItem(SysDictDTO dict, Set<Serializable> ids) {
         dictItemManager.removeByIds(ids);
         cacheManager.deleteItems(dict, ids);
         return true;
@@ -176,7 +177,7 @@ public class SysDictItemService {
      */
     public void deleteByDict(SysDictDTO dict) {
         List<SysDictItemDTO> items = dictItemManager.listItems(Sets.newHashSet(dict.getId()), null, false);
-        Set<String> itemIds = items.stream().map(SysDictItemDTO::getId).collect(Collectors.toSet());
+        Set<Serializable> itemIds = items.stream().map(SysDictItemDTO::getId).collect(Collectors.toSet());
         deleteDictItem(dict, itemIds);
     }
 

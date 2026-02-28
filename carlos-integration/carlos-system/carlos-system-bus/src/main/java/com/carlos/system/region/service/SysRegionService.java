@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -123,7 +124,7 @@ public class SysRegionService {
         }
         SysRegionDTO dtoByRegionCode = this.regionManager.getByRegionCode(dto.getRegionCode());
         if (dtoByRegionCode != null) {
-            if (!StrUtil.equalsIgnoreCase(dto.getId(), dtoByRegionCode.getId())) {
+            if (!ObjectUtil.equals(dto.getId(), dtoByRegionCode.getId())) {
                 throw new ServiceException("更新失败，行政区域编码" + dto.getRegionCode() + "已存在！");
             }
         }

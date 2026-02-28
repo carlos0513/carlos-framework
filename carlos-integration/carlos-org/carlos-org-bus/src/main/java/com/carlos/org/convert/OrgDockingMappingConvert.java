@@ -1,6 +1,5 @@
 package com.carlos.org.convert;
 
-import com.carlos.org.pojo.ao.OrgDockingMappingAO;
 import com.carlos.org.pojo.dto.OrgDockingMappingDTO;
 import com.carlos.org.pojo.entity.OrgDockingMapping;
 import com.carlos.org.pojo.vo.OrgDockingMappingVO;
@@ -83,5 +82,5 @@ public interface OrgDockingMappingConvert {
      */
     OrgDockingMappingVO toVO(OrgDockingMapping entity);
 
-    OrgDockingMappingAO toAO(OrgDockingMappingDTO dockingMapping);
+    // OrgDockingMappingAO toAO(OrgDockingMappingDTO dockingMapping);
 }

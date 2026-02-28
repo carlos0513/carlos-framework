@@ -82,7 +82,7 @@ public class SysDictService {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean update(SysDictDTO dto, List<SysDictUpdateParam.Item> items) {
-        String dictId = dto.getId();
+        Serializable dictId = dto.getId();
         SysDictDTO dict = dictManager.getDictById(dictId);
         if (dict == null) {
             throw new ServiceException("字典不存在!");

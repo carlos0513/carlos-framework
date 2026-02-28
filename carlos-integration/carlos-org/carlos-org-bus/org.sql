@@ -8,18 +8,19 @@ CREATE TABLE `org_user`
 (
     `id`              BIGINT       NOT NULL COMMENT '主键',
     `account`         VARCHAR(20)  NOT NULL COMMENT '用户名',
-    `realname`        VARCHAR(20)  NOT NULL COMMENT '真实姓名',
+    `nickname`   VARCHAR(20)  NOT NULL COMMENT '昵称',
     `pwd`             VARCHAR(64)  NOT NULL COMMENT '密码',
     `identify`        VARCHAR(18)  NULL     DEFAULT NULL COMMENT '证件号码',
     `phone`           VARCHAR(11)  NULL     DEFAULT NULL COMMENT '手机号码',
     `address`         VARCHAR(100) NULL     DEFAULT NULL COMMENT '详细地址',
     `gender`          TINYINT(2)   NULL     DEFAULT NULL COMMENT '性别，0：保密, 1：男，2：女，默认0',
     `email`           VARCHAR(30)  NULL     DEFAULT NULL COMMENT '邮箱',
-    `head`            VARCHAR(200) NULL     DEFAULT NULL COMMENT '头像',
+    `avatar`     VARCHAR(200) NULL     DEFAULT NULL COMMENT '头像',
     `description`     VARCHAR(200) NULL     DEFAULT NULL COMMENT '备注',
     `state`           TINYINT(2)   NULL     DEFAULT NULL COMMENT '状态，0：禁用，1：启用，2：锁定',
     `main_dept_id`    BIGINT       NULL     DEFAULT NULL COMMENT '主部门id',
-    `last_login`      DATETIME     NULL     DEFAULT NULL COMMENT '最后登录时间',
+    `login_time` DATETIME     NULL     DEFAULT NULL COMMENT '最后登录时间',
+    `login_ip`   VARCHAR(50)  NOT NULL DEFAULT 0 COMMENT '最后登录ip',
     `login_count`     INT          NOT NULL DEFAULT 0 COMMENT '登录次数',
     `version`         INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '版本',
     `pwd_last_modify` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '密码最后修改时间',
@@ -101,17 +102,17 @@ CREATE TABLE `org_role`
 DROP TABLE IF EXISTS `org_user_department`;
 CREATE TABLE `org_user_department`
 (
-    `id`            BIGINT      NOT NULL COMMENT '主键',
-    `user_id`       BIGINT      NOT NULL COMMENT '用户id',
-    `department_id` BIGINT      NOT NULL COMMENT '部门id',
-    `is_main`       TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '是否为主部门',
-    `position`      VARCHAR(50) NULL     DEFAULT NULL COMMENT '该部门职位',
-    `create_by`     BIGINT      NULL     DEFAULT NULL COMMENT '创建者',
-    `create_time`   DATETIME    NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `id`          BIGINT      NOT NULL COMMENT '主键',
+    `user_id`     BIGINT      NOT NULL COMMENT '用户id',
+    `dept_id`     BIGINT      NOT NULL COMMENT '部门id',
+    `is_main`     TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '是否为主部门',
+    `position`    VARCHAR(50) NULL     DEFAULT NULL COMMENT '该部门职位',
+    `create_by`   BIGINT      NULL     DEFAULT NULL COMMENT '创建者',
+    `create_time` DATETIME    NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE `uk_user_id_department_id` (`user_id` ASC, `department_id` ASC) USING BTREE,
+    UNIQUE `uk_user_id_dept_id` (`user_id` ASC, `dept_id` ASC) USING BTREE,
     INDEX `idx_user_id` (`user_id` ASC) USING BTREE,
-    INDEX `idx_department_id` (`department_id` ASC) USING BTREE
+    INDEX `idx_dept_id` (`dept_id` ASC) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_general_ci COMMENT = '用户部门'
@@ -138,17 +139,17 @@ CREATE TABLE `org_role_permission`
 DROP TABLE IF EXISTS `org_user_import`;
 CREATE TABLE `org_user_import`
 (
-    `id`              BIGINT       NOT NULL COMMENT '主键',
-    `account`         VARCHAR(20)  NOT NULL COMMENT '用户名',
-    `realname`        VARCHAR(20)  NOT NULL COMMENT '真实姓名',
-    `identify`        VARCHAR(18)  NULL DEFAULT NULL COMMENT '证件号码',
-    `phone`           VARCHAR(11)  NOT NULL COMMENT '手机号码',
-    `role`            VARCHAR(16)  NULL DEFAULT NULL COMMENT '角色名称',
-    `department`      VARCHAR(200) NULL DEFAULT NULL COMMENT '部门完整信息，以”-“分割部门级别',
-    `department_type` VARCHAR(255) NULL DEFAULT NULL COMMENT '部门类型',
-    `region_code`     VARCHAR(50)  NULL DEFAULT NULL COMMENT '行政区域编码',
-    `gender`          VARCHAR(10)  NULL DEFAULT NULL COMMENT '性别，0：保密, 1：男，2：女，默认0',
-    `email`           VARCHAR(30)  NULL DEFAULT NULL COMMENT '邮箱',
+    `id`          BIGINT       NOT NULL COMMENT '主键',
+    `account`     VARCHAR(20)  NOT NULL COMMENT '用户名',
+    `realname`    VARCHAR(20)  NOT NULL COMMENT '真实姓名',
+    `identify`    VARCHAR(18)  NULL DEFAULT NULL COMMENT '证件号码',
+    `phone`       VARCHAR(11)  NOT NULL COMMENT '手机号码',
+    `role`        VARCHAR(16)  NULL DEFAULT NULL COMMENT '角色名称',
+    `dept`        VARCHAR(200) NULL DEFAULT NULL COMMENT '部门完整信息，以”-“分割部门级别',
+    `dept_type`   VARCHAR(255) NULL DEFAULT NULL COMMENT '部门类型',
+    `region_code` VARCHAR(50)  NULL DEFAULT NULL COMMENT '行政区域编码',
+    `gender`      VARCHAR(10)  NULL DEFAULT NULL COMMENT '性别，0：保密, 1：男，2：女，默认0',
+    `email`       VARCHAR(30)  NULL DEFAULT NULL COMMENT '邮箱',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -184,17 +185,17 @@ CREATE TABLE `org_user_role`
 DROP TABLE IF EXISTS `org_department_role`;
 CREATE TABLE `org_department_role`
 (
-    `id`            BIGINT     NOT NULL COMMENT '主键',
-    `department_id` BIGINT     NOT NULL COMMENT '部门id',
-    `role_id`       BIGINT     NOT NULL COMMENT '角色id',
-    `version`       INT        NOT NULL DEFAULT 0 COMMENT '版本',
-    `is_default`    TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否为默认角色',
-    `create_by`     BIGINT     NULL     DEFAULT NULL COMMENT '创建者',
-    `create_time`   TIMESTAMP  NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`   TIMESTAMP  NULL     DEFAULT NULL COMMENT '修改时间',
-    `tenant_id`     BIGINT     NULL     DEFAULT NULL COMMENT '租户id',
+    `id`          BIGINT     NOT NULL COMMENT '主键',
+    `dept_id`     BIGINT     NOT NULL COMMENT '部门id',
+    `role_id`     BIGINT     NOT NULL COMMENT '角色id',
+    `version`     INT        NOT NULL DEFAULT 0 COMMENT '版本',
+    `is_default`  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否为默认角色',
+    `create_by`   BIGINT     NULL     DEFAULT NULL COMMENT '创建者',
+    `create_time` TIMESTAMP  NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` TIMESTAMP  NULL     DEFAULT NULL COMMENT '修改时间',
+    `tenant_id`   BIGINT     NULL     DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE KEY `uk_dept_role` (`department_id`, `role_id`)
+    UNIQUE KEY `uk_dept_role` (`dept_id`, `role_id`)
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_general_ci COMMENT = '部门角色'

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -55,7 +56,7 @@ public class OperationAuditAspect {
 
         String operationType = auditLog.operationType();
         String resourceType = auditLog.resourceType();
-        String resourceId = getResourceId(joinPoint, auditLog);
+        Serializable resourceId = getResourceId(joinPoint, auditLog);
 
         UserInfo currentUser = getCurrentUser();
         if (currentUser == null) {
@@ -152,7 +153,7 @@ public class OperationAuditAspect {
      * 记录审计日志
      */
     private void recordAuditLog(UserInfo user, String operationType, String resourceType,
-                                String resourceId, String beforeValue, String afterValue,
+                                Serializable resourceId, String beforeValue, String afterValue,
                                 HttpServletRequest request) {
         try {
             AuditOperation audit = new AuditOperation();
@@ -160,7 +161,7 @@ public class OperationAuditAspect {
             audit.setUsername(user.getUsername());
             audit.setOperationType(operationType);
             audit.setResourceType(resourceType);
-            audit.setResourceId(resourceId);
+            audit.setResourceId((String) resourceId);
             audit.setBeforeValue(beforeValue);
             audit.setAfterValue(afterValue);
 

@@ -1,5 +1,6 @@
 package com.carlos.system.resource.manager.impl;
 
+import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseServiceImpl;
@@ -91,7 +92,7 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
     }
 
     @Override
-    public SysResourceDTO getDtoById(String id) {
+    public SysResourceDTO getDtoById(Serializable id) {
         SysResource entity = getBaseMapper().selectById(id);
         return SysResourceConvert.INSTANCE.toDTO(entity);
     }
@@ -130,7 +131,7 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
     }
 
     @Override
-    public List<SysResourceDTO> getResourceByCategoryId(String categoryId) {
+    public List<SysResourceDTO> getResourceByCategoryId(Serializable categoryId) {
         if (categoryId == null) {
             log.error("菜单ID为：[{}]", categoryId);
             return null;
@@ -141,15 +142,15 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
     }
 
     @Override
-    public List<SysResourceTreeDTO> getResourceTree(String categoryId) {
+    public List<SysResourceTreeDTO> getResourceTree(Serializable categoryId) {
         List<ResourceCategoryDTO> categories = categoryManager.getCategoryByParentId(categoryId, false);
         List<SysResourceTreeDTO> list = new LinkedList<>();
         for (ResourceCategoryDTO category : categories) {
-            String id = category.getId();
+            Serializable id = category.getId();
             List<SysResourceTreeDTO> children = getResourceTree(id);
             List<SysResourceDTO> resources = getResourceByCategoryId(id);
             list.add(new SysResourceTreeDTO()
-                    .setId(id)
+                    .setId(Convert.toLong(id))
                     .setName(category.getName())
                     .setChildren(children)
                     .setResources(resources)
@@ -170,7 +171,7 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
     }
 
     @Override
-    public String getIdByDto(SysResourceDTO dto) {
+    public Serializable getIdByDto(SysResourceDTO dto) {
         SysResource entity = lambdaQuery()
                 .eq(SysResource::getCategoryId, dto.getCategoryId())
                 .eq(SysResource::getPath, dto.getPath())

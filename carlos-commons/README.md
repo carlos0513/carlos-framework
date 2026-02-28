@@ -69,13 +69,13 @@ public class UserController {
     @GetMapping("/user/{id}")
     public Result<User> getUser(@PathVariable Long id) {
         User user = userService.getById(id);
-        return Result.success(user);
+        return Result.ok(user);
     }
 
     @PostMapping("/user")
     public Result<Void> createUser(@RequestBody User user) {
         userService.save(user);
-        return Result.success();
+        return Result.ok();
     }
 }
 ```
@@ -248,7 +248,7 @@ Commons 模块使用统一的版本号，由 `carlos-spring-boot-parent` 管理�
 // ✅ 推荐
 @GetMapping("/users")
 public Result<List<User>> listUsers() {
-    return Result.success(userService.list());
+    return Result.ok(userService.list());
 }
 
 // ❌ 不推荐

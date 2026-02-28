@@ -1,6 +1,6 @@
 package com.carlos.org.pojo.vo;
 
-import com.carlos.org.pojo.enums.OrgDockingTypeEnum;
+import com.carlos.org.pojo.emuns.OrgDockingTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

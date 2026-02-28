@@ -2,6 +2,7 @@ package com.carlos.system.menu.controller;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.carlos.core.constant.CoreConstant;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.log.annotation.Log;
@@ -95,7 +96,7 @@ public class MenuController {
     @Operation(summary = "菜单树形下拉列表", description = "菜单树形列表，包含详情信息")
     @Log(title = "菜单树形下拉列表", businessType = BusinessType.QUERY)
     public List<MenuTreeVO> select(@RequestParam(value = "menuType", required = false) MenuType menuType) {
-        List<MenuDTO> menuTree = this.menuManager.getMenuTree(0L, false, menuType);
+        List<MenuDTO> menuTree = this.menuManager.getMenuTree(CoreConstant.PARENT_LONG_0, false, menuType);
         return MenuConvert.INSTANCE.toTreeListVO(menuTree);
     }
 

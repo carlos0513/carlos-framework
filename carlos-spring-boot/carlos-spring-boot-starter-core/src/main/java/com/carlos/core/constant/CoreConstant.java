@@ -36,4 +36,12 @@ public interface CoreConstant {
      * http
      */
     String BASE_HTTP = "http";
+    /**
+     * 0
+     */
+    String PARENT_STRING_0 = "0";
+    /**
+     * 1
+     */
+    Long PARENT_LONG_0 = 0L;
 }

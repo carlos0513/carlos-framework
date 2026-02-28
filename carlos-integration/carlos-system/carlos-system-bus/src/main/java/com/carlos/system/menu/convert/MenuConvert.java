@@ -37,7 +37,7 @@ public interface MenuConvert {
      * @date 2021-12-28 15:26:57
      */
 
-    @Mapping(target = "parentId", source = "parentId", defaultValue = "0")
+    @Mapping(target = "parentId", source = "parentId", defaultValue = "0L")
     MenuDTO toDTO(MenuCreateParam param);
 
     /**

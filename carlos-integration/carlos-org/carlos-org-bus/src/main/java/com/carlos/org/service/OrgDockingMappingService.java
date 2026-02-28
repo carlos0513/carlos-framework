@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.carlos.core.exception.ServiceException;
 import com.carlos.org.manager.OrgDockingMappingManager;
 import com.carlos.org.pojo.dto.OrgDockingMappingDTO;
-import com.carlos.org.pojo.enums.OrgDockingTypeEnum;
+import com.carlos.org.pojo.emuns.OrgDockingTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

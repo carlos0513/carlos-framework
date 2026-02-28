@@ -159,7 +159,7 @@ public class MenuManagerImpl extends BaseServiceImpl<MenuMapper, Menu> implement
         // 获取一级菜单 根据顺序排序
         List<MenuDTO> menus = this.getMenusByParentId(menuId, detail, menuType);
         for (MenuDTO menu : menus) {
-            String id = menu.getId();
+            Serializable id = menu.getId();
             List<MenuDTO> children = this.getMenuTree(id, detail, menuType);
             menu.setChildren(children);
         }

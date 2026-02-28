@@ -1,9 +1,11 @@
 package com.carlos.system.resource.config;
 
+import cn.hutool.core.convert.Convert;
 import com.carlos.boot.resource.ResourceStore;
 import com.carlos.boot.resource.bean.ApplicationResource;
 import com.carlos.boot.resource.bean.Resource;
 import com.carlos.boot.resource.bean.ResourceCategory;
+import com.carlos.core.constant.CoreConstant;
 import com.carlos.core.dict.DictEnum;
 import com.carlos.system.dict.SysResourceMethod;
 import com.carlos.system.dict.SysResourceState;
@@ -16,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -38,18 +41,18 @@ public class SysResourceStore implements ResourceStore {
     public void save(ApplicationResource resource) {
         // 系统名称作为一级类型
         String appName = resource.getAppName();
-        ResourceCategoryDTO root = new ResourceCategoryDTO().setName(appName).setParentId("0");
+        ResourceCategoryDTO root = new ResourceCategoryDTO().setName(appName).setParentId(CoreConstant.PARENT_LONG_0);
         categoryService.addResourceCategory(root);
 
         List<ResourceCategory> subCategories = resource.getCategories();
         for (ResourceCategory sub : subCategories) {
             ResourceCategoryDTO subCategory = new ResourceCategoryDTO().setName(sub.getName()).setParentId(root.getId());
             categoryService.addResourceCategory(subCategory);
-            String categoryId = subCategory.getId();
+            Serializable categoryId = subCategory.getId();
             List<Resource> resources = sub.getResources();
             for (Resource item : resources) {
                 SysResourceDTO dto = new SysResourceDTO();
-                dto.setCategoryId(categoryId);
+                dto.setCategoryId(Convert.toLong(categoryId));
                 dto.setName(item.getName());
                 dto.setPathPrefix(item.getPathPrefix());
                 dto.setPath(item.getPath());

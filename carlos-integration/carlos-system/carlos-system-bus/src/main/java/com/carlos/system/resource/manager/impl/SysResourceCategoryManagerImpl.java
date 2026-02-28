@@ -82,7 +82,7 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
     }
 
     @Override
-    public ResourceCategoryDTO getDtoById(String id) {
+    public ResourceCategoryDTO getDtoById(Serializable id) {
         if (id == null) {
             log.warn("id is null");
             return null;
@@ -115,10 +115,10 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
     }
 
     @Override
-    public List<ResourceCategoryDTO> getCategoryTree(String categoryId, boolean detail) {
+    public List<ResourceCategoryDTO> getCategoryTree(Serializable categoryId, boolean detail) {
         List<ResourceCategoryDTO> categories = getCategoryByParentId(categoryId, detail);
         for (ResourceCategoryDTO category : categories) {
-            String id = category.getId();
+            Serializable id = category.getId();
             List<ResourceCategoryDTO> children = getCategoryTree(id, detail);
             category.setChildren(children);
         }
@@ -126,7 +126,7 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
     }
 
     @Override
-    public List<ResourceCategoryDTO> getCategoryByParentId(String parentId, boolean detail) {
+    public List<ResourceCategoryDTO> getCategoryByParentId(Serializable parentId, boolean detail) {
         LambdaQueryWrapper<SysResourceCategory> wrapper = queryWrapper()
                 .eq(SysResourceCategory::getParentId, parentId == null ? 0 : parentId);
         if (detail) {
@@ -163,7 +163,7 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
     }
 
     @Override
-    public String getIdByName(String parentId, String name) {
+    public Serializable getIdByName(Serializable parentId, String name) {
         SysResourceCategory entity = lambdaQuery().eq(SysResourceCategory::getParentId, parentId).eq(SysResourceCategory::getName, name).one();
         if (entity == null) {
             return null;

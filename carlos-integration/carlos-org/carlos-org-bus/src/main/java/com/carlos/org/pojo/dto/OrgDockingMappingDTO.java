@@ -1,7 +1,7 @@
 package com.carlos.org.pojo.dto;
 
 
-import com.carlos.org.pojo.enums.OrgDockingTypeEnum;
+import com.carlos.org.pojo.emuns.OrgDockingTypeEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

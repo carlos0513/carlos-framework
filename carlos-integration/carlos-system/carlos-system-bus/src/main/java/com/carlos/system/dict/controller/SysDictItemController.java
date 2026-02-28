@@ -58,8 +58,8 @@ public class SysDictItemController {
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
     @Log(title = "系统字典选项", businessType = BusinessType.DELETE)
-    public boolean delete(@RequestBody ParamIdSet<String> param) {
-        return this.dictItemService.deleteDictItem(param.getIds());
+    public boolean delete(@RequestBody ParamIdSet<Long> param) {
+        return this.dictItemService.deleteDictItem(Sets.newHashSet(param.getIds()));
     }
 
 

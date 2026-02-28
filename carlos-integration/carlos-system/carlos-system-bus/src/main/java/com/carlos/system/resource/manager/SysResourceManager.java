@@ -60,7 +60,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      * @author carlos
      * @date 2021-12-28 15:26:57
      */
-    SysResourceDTO getDtoById(String id);
+    SysResourceDTO getDtoById(Serializable id);
 
     /**
      * 分页列表
@@ -78,7 +78,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      * @return java.util.List<com.carlos.user.pojo.dto.ResourceDTO>
      * @date 2021/12/27 17:31
      */
-    List<SysResourceDTO> getResourceByCategoryId(String categoryId);
+    List<SysResourceDTO> getResourceByCategoryId(Serializable categoryId);
 
     /**
      * 获取菜单下的资源数目
@@ -98,7 +98,7 @@ public interface SysResourceManager extends BaseService<SysResource> {
      * @author carlos
      * @date 2022/1/4 14:49
      */
-    List<SysResourceTreeDTO> getResourceTree(String menuId);
+    List<SysResourceTreeDTO> getResourceTree(Serializable menuId);
 
     /**
      * 根据id批量获取资源
@@ -118,5 +118,5 @@ public interface SysResourceManager extends BaseService<SysResource> {
      * @author carlos
      * @date 2022/1/12 17:44
      */
-    String getIdByDto(SysResourceDTO dto);
+    Serializable getIdByDto(SysResourceDTO dto);
 }

@@ -26,7 +26,7 @@ public class UploadResultVO implements Serializable {
     /**
      * 文件分组
      */
-    private Long groupId;
+    private String groupId;
     /**
      * 文件信息
      */

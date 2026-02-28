@@ -25,7 +25,7 @@ public class UploadRecordVO implements Serializable {
     @Schema(description = "主键")
     private Long id;
     @Schema(description = "文件分组")
-    private Long groupId;
+    private String groupId;
     @Schema(description = "文件库名称")
     private String repositoryName;
     @Schema(description = "文件库地址")

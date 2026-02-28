@@ -4,7 +4,7 @@ package com.carlos.org.service;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.core.exception.ServiceException;
-import com.carlos.org.login.pojo.enums.SmsCodeTypeEnum;
+import com.carlos.org.pojo.emuns.SmsCodeTypeEnum;
 import com.carlos.redis.util.RedisUtil;
 import com.carlos.sms.SmsUtil;
 import lombok.RequiredArgsConstructor;

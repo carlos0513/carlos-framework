@@ -83,19 +83,19 @@ public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
                     continue;
                 }
                 // 分组
-                Map<String, List<SysDictItemDTO>> dictItemMap = items.stream().collect(Collectors.groupingBy(SysDictItemDTO::getDictId));
+                Map<Serializable, List<SysDictItemDTO>> dictItemMap = items.stream().collect(Collectors.groupingBy(SysDictItemDTO::getDictId));
 
                 RedisUtil.executePipelined(new SessionCallback<Object>() {
                     @Override
                     public Object execute(RedisOperations ops) throws DataAccessException {
                         dicts.forEach(item -> {
-                            String dictId = item.getId();
+                            Serializable dictId = item.getId();
                             String dictCode = item.getDictCode();
                             String keyDictItem = keyDictItem(dictCode);
                             List<SysDictItemDTO> dictItems = dictItemMap.get(dictId);
                             if (CollUtil.isNotEmpty(dictItems)) {
                                 dictItems.forEach(i -> {
-                                    String itemId = i.getId();
+                                    Serializable itemId = i.getId();
                                     ops.opsForHash().putAll(keyItemHash(itemId), BeanUtil.beanToMap(i, false, true));
                                     ops.opsForSet().add(keyDictItem, itemId);
                                 });
@@ -200,7 +200,7 @@ public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
     /**
      * 字典选项缓存key
      */
-    private String keyItemHash(String itemId) {
+    private String keyItemHash(Serializable itemId) {
         return String.format(DICT_ITEM_HASH_KEY, itemId);
     }
 
@@ -208,7 +208,7 @@ public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
     }
 
     @SuppressWarnings("unchecked")
-    public void deleteItems(SysDictDTO dict, Set<String> ids) {
+    public void deleteItems(SysDictDTO dict, Set<Serializable> ids) {
         String dictItemKey = keyDictItem(dict.getDictCode());
         RedisUtil.execute(new SessionCallback<List<Object>>() {
             @Override
@@ -243,7 +243,7 @@ public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
             public List<Object> execute(@NotNull RedisOperations ops) throws DataAccessException {
                 ops.multi();
                 items.forEach(i -> {
-                    String itemId = i.getId();
+                    Serializable itemId = i.getId();
                     ops.opsForHash().putAll(keyItemHash(itemId), BeanUtil.beanToMap(i, false, true));
                     ops.opsForSet().add(keyDictItem, itemId);
                 });
@@ -275,7 +275,7 @@ public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
                 ops.delete(keyDictItem);
                 oldIds.forEach(id -> ops.delete(keyItemHash(id.toString())));
                 items.forEach(i -> {
-                    String itemId = i.getId();
+                    Serializable itemId = i.getId();
                     ops.opsForHash().putAll(keyItemHash(itemId), BeanUtil.beanToMap(i, false, true));
                     ops.opsForSet().add(keyDictItem, itemId);
                 });

@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -227,7 +228,7 @@ public class FileService {
      * @author Carlos
      * @date 2024/1/5 13:43
      */
-    public String getDownloadUrl(String id) {
+    public String getDownloadUrl(Serializable id) {
         String baseUrl = systemFileProperties.getBaseUrl();
         String downloadPath = systemFileProperties.getDownloadPath();
         return baseUrl + downloadPath + id;

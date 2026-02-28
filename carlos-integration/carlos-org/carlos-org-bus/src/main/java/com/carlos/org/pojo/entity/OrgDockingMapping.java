@@ -2,7 +2,7 @@ package com.carlos.org.pojo.entity;
 
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.carlos.org.pojo.enums.OrgDockingTypeEnum;
+import com.carlos.org.pojo.emuns.OrgDockingTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;

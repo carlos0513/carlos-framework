@@ -48,7 +48,7 @@ public class SysResourceService {
      * @date 2021-12-28 15:26:57
      */
     public void addResource(final SysResourceDTO dto) {
-        final String id = resourceManager.getIdByDto(dto);
+        final Serializable id = resourceManager.getIdByDto(dto);
         if (id != null) {
             log.warn("资源已存在：id:{}", id);
             return;
@@ -106,11 +106,11 @@ public class SysResourceService {
      */
     public List<SysResourceGroupDTO> getResourceGroup() {
         final List<SysResource> resources = resourceManager.list();
-        final Map<String, List<SysResource>> collect = resources.stream().collect(Collectors.groupingBy(SysResource::getCategoryId));
+        final Map<Serializable, List<SysResource>> collect = resources.stream().collect(Collectors.groupingBy(SysResource::getCategoryId));
         final List<SysResourceGroupDTO> list = new LinkedList<>();
-        final Set<Map.Entry<String, List<SysResource>>> entries = collect.entrySet();
-        for (final Map.Entry<String, List<SysResource>> entry : entries) {
-            final String categoryId = entry.getKey();
+        final Set<Map.Entry<Serializable, List<SysResource>>> entries = collect.entrySet();
+        for (final Map.Entry<Serializable, List<SysResource>> entry : entries) {
+            final Serializable categoryId = entry.getKey();
             final String categoryName = categoryService.getParentName(categoryId);
             list.add(new SysResourceGroupDTO().setName(categoryName).setResources(SysResourceConvert.INSTANCE.toDTO(entry.getValue())));
         }

@@ -38,7 +38,10 @@
       "Bash(xargs cat:*)",
       "Bash(xargs file:*)",
       "Bash(do)",
-      "Bash(if file \"$file\")"
+      "Bash(if file \"$file\")",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(test -f D:/ide_project/carlos/carlos-framework/carlos-integration/carlos-auth/carlos-auth-service/src/main/java/com/carlos/auth/security/KeyPairManager.java)"
     ],
     "deny": [
       "Read(**/test-classes/**)",

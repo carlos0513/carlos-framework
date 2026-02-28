@@ -58,7 +58,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      * @author carlos
      * @date 2022-1-5 17:23:27
      */
-    ResourceCategoryDTO getDtoById(String id);
+    ResourceCategoryDTO getDtoById(Serializable id);
 
     /**
      * 分页列表
@@ -78,7 +78,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      * @author carlos
      * @date 2022/1/5 16:46
      */
-    List<ResourceCategoryDTO> getCategoryTree(String categoryId, boolean detail);
+    List<ResourceCategoryDTO> getCategoryTree(Serializable categoryId, boolean detail);
 
     /**
      * 获取子类型
@@ -89,7 +89,7 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      * @author carlos
      * @date 2022/1/5 17:47
      */
-    List<ResourceCategoryDTO> getCategoryByParentId(String parentId, boolean detail);
+    List<ResourceCategoryDTO> getCategoryByParentId(Serializable parentId, boolean detail);
 
     /**
      * 通过id获取名称
@@ -120,5 +120,5 @@ public interface SysResourceCategoryManager extends BaseService<SysResourceCateg
      * @author carlos
      * @date 2022/1/12 16:48
      */
-    String getIdByName(String parentId, String name);
+    Serializable getIdByName(Serializable parentId, String name);
 }

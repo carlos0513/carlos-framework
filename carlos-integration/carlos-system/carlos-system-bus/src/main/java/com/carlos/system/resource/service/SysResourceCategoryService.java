@@ -1,6 +1,8 @@
 package com.carlos.system.resource.service;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
+import com.carlos.core.constant.CoreConstant;
 import com.carlos.core.exception.ServiceException;
 import com.carlos.system.resource.manager.SysResourceCategoryManager;
 import com.carlos.system.resource.pojo.dto.ResourceCategoryDTO;
@@ -37,9 +39,9 @@ public class SysResourceCategoryService {
      */
     public void addResourceCategory(final ResourceCategoryDTO dto) {
         // 检查名称资源类型是否已经存在
-        final String id = resourceCategoryManager.getIdByName(dto.getParentId(), dto.getName());
+        final Serializable id = resourceCategoryManager.getIdByName(dto.getParentId(), dto.getName());
         if (id != null) {
-            dto.setId(id);
+            dto.setId(Convert.toLong(id));
             log.warn("资源已存在：  parentId：{}  name:{}", dto.getParentId(), dto.getName());
             return;
         }
@@ -94,13 +96,13 @@ public class SysResourceCategoryService {
      * @author carlos
      * @date 2022/1/13 13:47
      */
-    public String getParentName(final String categoryId) {
+    public String getParentName(final Serializable categoryId) {
         final ResourceCategoryDTO dto = resourceCategoryManager.getDtoById(categoryId);
         if (dto == null) {
             log.error("资源类型不存在: id：{}", categoryId);
             throw new ServiceException("资源类型不存在！");
         }
-        if (dto.getParentId() == "0") {
+        if (dto.getParentId().equals(CoreConstant.PARENT_LONG_0)) {
             return dto.getName();
         } else {
             final String parentName = getParentName(dto.getParentId());

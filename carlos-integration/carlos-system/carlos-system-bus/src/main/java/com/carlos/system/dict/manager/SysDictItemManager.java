@@ -68,10 +68,8 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      *
      * @param id 字典选项id
      * @return java.lang.Long
-     * @author carlos
-     * @date 2021/11/25 16:39
      */
-    String getDictIdById(String id);
+    Serializable getDictIdById(Serializable id);
 
     /**
      * 获取下拉列表
@@ -103,5 +101,5 @@ public interface SysDictItemManager extends IService<SysDictItem> {
      * @author carlos
      * @date 2022/1/4 11:13
      */
-    List<SysDictItemDTO> listByItemIds(Set<String> ids);
+    List<SysDictItemDTO> listByItemIds(Set<Serializable> ids);
 }
