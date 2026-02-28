@@ -188,6 +188,145 @@ carlos-framework/                          # 根聚合 POM
 | Druid                | 1.2.27     | 数据库连接池                 |
 | SkyWalking           | 9.5.0      | APM 追踪                 |
 
+### 应用分层架构
+
+服务采用六层分层架构，职责清晰分离：
+
+```
+                        外部服务调用
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  API 接口层 (api)   │  Feign 接口定义，对外暴露服务              │
+│  - ApiXxx.java      │  提供熔断降级工厂 (fallback)              │
+│  - AO/Param         │  用于微服务间调用                         │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+                        HTTP 请求
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  API 实现层 (apiimpl)│  Feign 接口的 REST 实现                  │
+│  - ApiXxxImpl.java  │  同时暴露给三方服务的 HTTP 端点            │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  Controller 层    │  接收 Web 请求，完成基本参数校验           │
+│  (controller/)    │  Param → DTO 转换，调用 Service           │
+│                   │  避免在 Controller 中加入任何复杂逻辑      │
+│                   │  使用 MapStruct Convert 进行对象转换       │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  Service 层       │  业务逻辑服务层，纯粹的进行业务串联        │
+│  (service/)       │  处理业务流程，避免直接数据操作            │
+│                   │  通过 Manager 层进行数据获取               │
+│                   │  作为 Controller 和 Manager 的桥梁         │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  Manager 层       │  数据查询封装层，继承 BaseService          │
+│  (manager/)       │  实现增删改查等原子操作                    │
+│                   │  与 Mapper 层交互，处理数据持久化          │
+│                   │  接口在 manager/，实现在 manager/impl/     │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  Mapper/Repository│  数据访问层，使用 MyBatis 实现             │
+│  (mapper/)        │  与 MySQL、ES、MongoDB、Oracle 等交互      │
+│  (resources/mapper/)│ XML 映射文件                            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**分层领域模型：**
+
+| 模型         | 名称       | 所在包           | 说明                                                                |
+|------------|----------|---------------|-------------------------------------------------------------------|
+| **Param**  | 参数对象     | `pojo.param`  | 前端参数接收对象，按操作细分：`XxxCreateParam`, `XxxUpdateParam`, `XxxPageParam` |
+| **DTO**    | 数据传输对象   | `pojo.dto`    | 服务层与数据层之间传输的对象                                                    |
+| **VO**     | 视图对象     | `pojo.vo`     | 显示层对象，响应给前端，需标注 Swagger 注解                                        |
+| **AO**     | API 对象   | `pojo.ao`     | API 接口响应对象，用于 Feign 调用方                                           |
+| **Entity** | 实体对象     | `pojo.entity` | 与数据库表结构一一对应，DO（Data Object）                                       |
+| **Excel**  | Excel 对象 | `pojo.excel`  | 导入导出专用对象                                                          |
+| **Enum**   | 枚举       | `pojo.emuns`  | 业务枚举类型                                                            |
+
+**Param 细分规范：**
+
+- `XxxCreateParam` - 创建操作参数
+- `XxxUpdateParam` - 更新操作参数
+- `XxxPageParam` - 分页查询参数
+- 禁止超过 2 个参数的查询使用 Map 传输
+
+**VO 规范：**
+
+- VO 对象需标明 Swagger 属性描述注解（`@Schema`）
+- 属性名称规范命名，字段不多不少（多余字段后期无法随意删除）
+- 不同接口返回内容有差异的，建议创建多个 VO 对象进行字段封装
+- VO 对象尽量避免出现在 Service/Manager 层
+
+### 模块结构说明
+
+#### API 模块 (`{service}-api`)
+
+```
+src/main/java/com/carlos/{service}/
+├── api/                           # Feign 接口定义
+│   ├── ApiXxx.java               # 对外暴露的 Feign 接口
+│   └── fallback/                 # 熔断降级工厂
+│       └── ApiXxxFallbackFactory.java
+└── pojo/
+    ├── ao/                       # API 响应对象（供调用方使用）
+    │   └── XxxAO.java
+    └── param/                    # API 请求参数（供调用方使用）
+        └── ApiXxxParam.java
+```
+
+#### Business 模块 (`{service}-bus`)
+
+```
+src/main/java/com/carlos/{service}/
+├── apiimpl/                       # Feign 接口实现（REST 端点）
+│   └── ApiXxxImpl.java
+├── config/                        # 配置类
+│   ├── XxxConfig.java            # 业务配置
+│   ├── XxxConstant.java          # 常量定义
+│   ├── XxxProperties.java        # 配置属性
+│   └── ...
+├── controller/                    # Web 控制器层
+│   └── XxxController.java
+├── convert/                       # MapStruct 对象转换
+│   ├── XxxConvert.java           # 转换接口（@Mapper）
+│   └── CommonConvert.java        # 公共转换
+├── exception/                     # 自定义异常
+│   └── XxxException.java
+├── manager/                       # 数据查询封装层
+│   ├── XxxManager.java           # Manager 接口
+│   └── impl/                     # Manager 实现
+│       └── XxxManagerImpl.java
+├── mapper/                        # MyBatis Mapper 接口
+│   └── XxxMapper.java
+├── pojo/                          # 领域对象
+│   ├── dto/                      # DTO（数据传输对象）
+│   │   └── XxxDTO.java
+│   ├── emuns/                    # 枚举类型
+│   │   └── XxxStatusEnum.java
+│   ├── entity/                   # Entity（数据库实体）
+│   │   └── Xxx.java
+│   ├── excel/                    # Excel 导入导出对象
+│   │   └── XxxExcel.java
+│   ├── param/                    # 请求参数（按操作细分）
+│   │   ├── XxxCreateParam.java
+│   │   ├── XxxPageParam.java
+│   │   └── XxxUpdateParam.java
+│   └── vo/                       # VO（视图对象）
+│       └── XxxVO.java
+└── service/                       # Service 层（业务逻辑）
+    └── XxxService.java           # 只有接口，无 impl 目录
+
+src/main/resources/
+└── mapper/                        # MyBatis XML 映射文件
+    └── {service}/
+        └── XxxMapper.xml
+```
+
 ### 依赖版本管理
 
 框架采用集中式依赖管理方案：
@@ -275,7 +414,24 @@ carlos:
 
 ## 开发规范
 
-### 代码规范
+### 编程规约
+
+#### 命名风格
+
+| 类型           | 规范                                                | 示例                                               |
+|--------------|---------------------------------------------------|--------------------------------------------------|
+| 类名           | UpperCamelCase，抽象类以 Abstract 开头，异常类以 Exception 结尾 | `UserService`, `AbstractService`, `BizException` |
+| 方法名/参数名/成员变量 | lowerCamelCase                                    | `getUserById()`, `userName`, `localValue`        |
+| 常量           | 全大写，下划线分隔                                         | `MAX_STOCK_COUNT`, `CACHE_EXPIRED_TIME`          |
+| 包名           | 全小写，单数形式，点分隔符间仅一个单词                               | `com.carlos.user.service`                        |
+| 布尔变量         | 不加 is 前缀（POJO 类）                                  | `deleted`（非 `isDeleted`）                         |
+
+**强制规定：**
+
+- 代码命名严禁以下划线或美元符号开始/结束（如 `_name`, `name$`）
+- 严禁使用拼音与英文混合方式命名
+- 类型与中括号紧挨相连表示数组：`int[] arrayDemo`
+- 枚举类名带 Enum 后缀，成员全大写：`ProcessStatusEnum.SUCCESS`
 
 #### 不可变性 (Immutability) - **至关重要**
 
@@ -298,6 +454,90 @@ public User updateUserName(User user, String name) {
 }
 ```
 
+#### 代码格式
+
+1. **大括号规范**：
+    - 左大括号前不换行，后换行
+    - 右大括号前换行，后还有 else 等代码则不换行
+    - 终止的右大括号后必须换行
+
+2. **空格规范**：
+    - 左小括号和右边字符之间无空格，右小括号和左边字符之间无空格
+    - `if/for/while/switch/do` 等保留字与括号之间必须加空格
+    - 任何二目、三目运算符的左右两边都需要加一个空格
+
+3. **缩进**：采用 4 个空格缩进，禁止使用 tab 字符
+
+4. **注释**：
+    - 双斜线与注释内容之间有且仅有一个空格：`// 这是注释`
+    - 类、类属性、类方法必须使用 Javadoc 规范 `/**内容*/`
+    - 方法内部单行注释使用 `//`，多行注释使用 `/* */`
+
+5. **行长度**：单行字符数限制不超过 120 个，超出需要换行
+
+6. **方法行数**：单个方法的总行数不超过 80 行
+
+#### OOP 规约
+
+1. **静态访问**：避免通过对象引用访问静态变量/方法，直接用类名访问
+2. **覆写注解**：所有覆写方法必须加 `@Override` 注解
+3. **equals 使用**：使用常量或确定有值的对象调用 `equals`，推荐使用 `Objects.equals()`
+4. **包装类型**：所有 POJO 类属性、RPC 方法返回值和参数必须使用包装数据类型
+5. **BigDecimal**：
+    - 禁止使用 `BigDecimal(double)` 构造方法，使用 `BigDecimal(String)` 或 `BigDecimal.valueOf()`
+    - 任何货币金额，均以最小货币单位且整型类型进行存储
+6. **toString**：POJO 类必须写 `toString` 方法，继承类需调用 `super.toString()`
+7. **final 使用**：
+    - 不允许被继承的类、不允许修改引用的域对象、不允许被覆写的方法
+    - 避免上下文重复使用一个变量
+
+#### 日期时间
+
+1. **日期格式化**：
+    - 年份统一使用小写 `y`：`yyyy-MM-dd HH:mm:ss`
+    - 月份大写 `M`，分钟小写 `m`，24小时制大写 `H`，12小时制小写 `h`
+
+2. **获取当前毫秒数**：使用 `System.currentTimeMillis()` 而非 `new Date().getTime()`
+
+3. **禁止使用**：`java.sql.Date`, `java.sql.Time`, `java.sql.Timestamp`
+
+4. **JDK8 推荐**：使用 `Instant` 代替 `Date`，`LocalDateTime` 代替 `Calendar`，`DateTimeFormatter` 代替 `SimpleDateFormat`
+
+#### 集合处理
+
+1. **hashCode 和 equals**：只要重写 `equals`，就必须重写 `hashCode`
+2. **空判断**：使用 `isEmpty()` 方法而非 `size() == 0`
+3. **toMap 转换**：使用 `Collectors.toMap()` 时必须处理 key 重复和 value 为 null 的情况
+4. **subList**：不可强转成 `ArrayList`，对父集合的修改会导致子列表异常
+5. **foreach**：不要在 foreach 循环里进行元素的 remove/add 操作，使用 `Iterator`
+6. **初始化**：集合初始化时指定初始值大小
+
+#### 并发处理
+
+1. **线程名称**：创建线程或线程池时指定有意义的线程名称
+2. **线程池**：
+    - 线程资源必须通过线程池提供，不允许显式创建线程
+    - 不允许使用 `Executors` 创建，必须通过 `ThreadPoolExecutor` 方式
+3. **ThreadLocal**：必须回收自定义的 ThreadLocal 变量，使用 try-finally 块
+4. **锁**：
+    - 能用无锁数据结构，就不要用锁
+    - 能锁区块，就不要锁整个方法体
+    - 高并发时，避免使用"等于"判断作为中断或退出条件
+5. **SimpleDateFormat**：线程不安全，不要定义为 static，或使用 `DateTimeFormatter`
+
+#### 控制语句
+
+1. **switch**：
+    - 每个 case 必须通过 break/return 终止，或注释说明继续执行到哪个 case
+    - 必须包含 default 语句放在最后
+    - String 类型的 switch 变量必须先进行 null 判断
+
+2. **大括号**：`if/else/for/while/do` 语句中必须使用大括号，即使只有一行代码
+
+3. **三目运算符**：注意表达式 1 和 2 类型对齐时可能抛出 NPE 异常
+
+4. **嵌套层数**：避免超过 3 层的 if-else 嵌套，可使用卫语句、策略模式等重构
+
 #### 文件组织
 
 提倡"多而小"的文件，而非"少而大"的文件：
@@ -306,13 +546,6 @@ public User updateUserName(User user, String name) {
 - 建议每文件 200-400 行，最大不超过 800 行
 - 从大型组件中提取工具函数 (Utilities)
 - 按功能/领域 (Feature/Domain) 组织，而非按类型 (Type) 组织
-
-#### 命名规范
-
-- **类名**: 使用 UpperCamelCase，名词形式 (如: `UserService`, `OrderController`)
-- **方法名**: 使用 lowerCamelCase，动词开头 (如: `getUser()`, `createOrder()`)
-- **常量**: 使用 UPPER_SNAKE_CASE (如: `MAX_RETRY_COUNT`, `DEFAULT_TIMEOUT`)
-- **包名**: 全小写，多层嵌套 (如: `com.carlos.auth.service.impl`)
 
 #### 错误处理
 
@@ -374,6 +607,73 @@ public class UserCreateParam {
 - [ ] 所有用户输入均已验证
 - [ ] 日志级别使用正确
 
+### 对象转换规范（MapStruct）
+
+1. **Convert 接口定义**：
+    - 使用 `@Mapper` 注解，配置 `componentModel = "spring"`
+    - 单例模式：`XxxConvert.INSTANCE` 方式调用
+    - 转换接口位于 `convert/` 目录
+
+2. **转换规则**：
+    - Controller 层：Param → DTO（入参）、DTO → VO（出参）
+    - 相同属性名自动映射，不同属性名使用 `@Mapping` 注解指定
+    - 复杂转换使用自定义 default 方法
+
+3. **示例**：
+   ```java
+   @Mapper(componentModel = "spring")
+   public interface OrgUserConvert {
+       OrgUserConvert INSTANCE = Mappers.getMapper(OrgUserConvert.class);
+       
+       OrgUserDTO toDTO(OrgUserCreateParam param);
+       
+       OrgUserVO toVO(OrgUserDTO dto);
+       
+       List<OrgUserVO> toVOList(List<OrgUserDTO> dtoList);
+   }
+   ```
+
+### 编码实践规范
+
+1. **Controller 编码规范**：
+    - 使用 `@RequiredArgsConstructor` 进行依赖注入
+    - 使用 `BASE_NAME` 常量定义模块名称，用于接口文档
+    - 增删改操作调用 Service 层，查询操作可直接调用 Manager 层
+    - 分页查询返回 `Paging<VO>` 对象
+
+2. **Service 编码规范**：
+    - 使用 `@Slf4j` 记录业务日志
+    - 业务方法命名：`addXxx()`, `deleteXxx()`, `updateXxx()`
+    - 处理业务异常和成功后的后续操作（如发送消息）
+
+3. **Manager 编码规范**：
+    - 继承 `BaseService<Entity>` 获取基础 CRUD 能力
+    - 方法命名：`add()`, `delete()`, `modify()`, `getDtoById()`, `getPage()`
+    - 返回值为 boolean 表示操作是否成功
+
+4. **Param 细分规范**：
+   ```
+   XxxCreateParam   - 新增操作（@Validated 校验）
+   XxxUpdateParam   - 更新操作（包含 ID 字段）
+   XxxPageParam     - 分页查询（继承分页基类）
+   ```
+
+### Feign 接口规范
+
+1. **接口定义**（API 模块）：
+    - 使用 `@FeignClient` 注解，配置 `contextId` 避免 Bean 名称冲突
+    - `path` 属性以 `/api` 开头，如 `/api/org/user`
+    - 配置 `fallbackFactory` 实现熔断降级
+
+2. **接口实现**（BUS 模块）：
+    - 实现 Feign 接口，使用 `@RestController` 暴露 REST 端点
+    - `RequestMapping` 路径与 Feign 接口 `path` 保持一致
+    - 使用 `@Tag` 标注 Swagger 文档名称
+
+3. **熔断降级**：
+    - 每个 Feign 接口都有对应的 FallbackFactory
+    - Fallback 实现中返回降级后的默认数据或抛出异常
+
 ### 添加新模块
 
 **Spring Boot Starters：**
@@ -383,6 +683,16 @@ public class UserCreateParam {
 3. 设置父项目为 `carlos-spring-boot`，版本为 `${revision}`
 4. 遵循命名约定: `carlos-spring-boot-starter-{function}`
 5. 在 `carlos-dependencies/pom.xml` 中添加依赖管理条目
+
+**微服务模块：**
+
+1. 在 `carlos-integration/` 下创建目录 `{service-name}`
+2. 创建三个子模块：
+    - `{service-name}-api`: Feign 接口定义，供其他服务调用
+    - `{service-name}-bus`: 业务逻辑实现
+    - `{service-name}-boot`: 启动模块（可选，用于本地开发）
+    - `{service-name}-cloud`: 云原生启动模块（可选，用于 Kubernetes 部署）
+3. 参考 `carlos-org` 模块结构进行配置
 
 **公共工具类：**
 
@@ -479,6 +789,21 @@ feat: 添加用户登录功能
 
 ### 测试要求
 
+#### 基本原则（AIR）
+
+- **A**：Automatic（自动化）
+- **I**：Independent（独立性）
+- **R**：Repeatable（可重复）
+
+#### 强制要求
+
+1. 单元测试应该是全自动执行的，并且非交互式的，必须使用 `assert` 来验证
+2. 单元测试用例之间决不能互相调用，也不能依赖执行的先后次序
+3. 单元测试是可以重复执行的，不能受到外界环境的影响
+4. 测试粒度至多是类级别，一般是方法级别
+5. 核心业务、核心应用、核心模块的增量代码确保单元测试通过
+6. 单元测试代码必须写在 `src/test/java`，不允许写在业务代码目录下
+
 #### 最低测试覆盖率: 80%
 
 测试类型（全部必选）：
@@ -512,6 +837,15 @@ void should_create_user_successfully_when_params_valid() {
 }
 ```
 
+#### BCDE 原则
+
+编写单元测试遵守 BCDE 原则：
+
+- **B**：Border，边界值测试，包括循环边界、特殊取值、特殊时间点、数据顺序等
+- **C**：Correct，正确的输入，并得到预期的结果
+- **D**：Design，与设计文档相结合，来编写单元测试
+- **E**：Error，强制错误信息输入（如：非法数据、异常流程、业务允许外等），并得到预期的结果
+
 #### Mock 使用规范
 
 - 使用 `@Mock` 和 `@InjectMocks` 创建 Mock 对象
@@ -519,18 +853,35 @@ void should_create_user_successfully_when_params_valid() {
 - 明确验证 Mock 对象的交互行为
 - 避免过度 Mock，只 Mock 外部依赖
 
-### 安全规范
+#### 数据库测试
+
+- 对于数据库相关的查询，更新，删除等操作，不能假设数据库里的数据是存在的
+- 和数据库相关的单元测试，可以设定自动回滚机制，不给数据库造成脏数据
+- 或者对单元测试产生的数据有明确的前后缀标识
+
+### 安全规约
 
 #### 强制安全检查 (提交前必须检查)
 
 - [ ] 无硬编码凭据（API 密钥、密码、令牌/Tokens）
 - [ ] 所有用户输入均已验证
-- [ ] 预防 SQL 注入（使用参数化查询/MyBatis-Plus）
+- [ ] 预防 SQL 注入（使用参数化查询/MyBatis-Plus，使用 `#{ }` 而非 `${ }`）
 - [ ] 预防 XSS（对 HTML 进行净化处理/Sanitized）
 - [ ] 已启用 CSRF 保护
 - [ ] 身份验证/授权已验证
 - [ ] 所有端点均已设置速率限制（Rate limiting）
 - [ ] 错误消息不泄露敏感数据
+
+#### 安全规范详情
+
+1. **权限控制**：隶属于用户个人的页面或者功能必须进行权限控制校验
+2. **数据脱敏**：用户敏感数据禁止直接展示，必须对展示数据进行脱敏（如手机号 `137****0969`）
+3. **SQL 注入**：用户输入的 SQL 参数严格使用参数绑定或 `#{ }`，禁止 `${ }` 拼接 SQL
+4. **参数校验**：用户请求传入的任何参数必须做有效性验证（page size 限制、order by 校验等）
+5. **XSS 防护**：禁止向 HTML 页面输出未经安全过滤或未正确转义的用户数据
+6. **CSRF**：表单、AJAX 提交必须执行 CSRF 安全验证
+7. **防重放**：使用平台资源（短信、邮件、电话、下单、支付）必须实现防重放机制
+8. **防刷策略**：发贴、评论、发送即时消息等场景必须实现防刷、文本内容违禁词过滤
 
 #### 凭据管理
 
@@ -551,11 +902,45 @@ public void init() {
 }
 ```
 
-### 日志规范
+### 分层异常处理规约
 
-- 使用 SLF4J + Logback 日志框架
-- 使用占位符而不是字符串拼接
-- 合理使用日志级别：
+| 层级           | 异常处理方式                                                                |
+|--------------|-----------------------------------------------------------------------|
+| DAO/Mapper 层 | 产生的异常使用 `catch(Exception e)` 方式，并 `throw new DAOException(e)`，不需要打印日志 |
+| Manager 层    | 与 Service 同机部署时异常处理方式与 DAO 层一致；单独部署时采用与 Service 一致的处理方式               |
+| Service 层    | 出现异常时必须记录出错日志到磁盘，尽可能带上参数信息，相当于保护案发现场                                  |
+| Controller 层 | 绝不应该继续往上抛异常，应转换成用户可以理解的错误提示，跳转到友好错误页面                                 |
+| API 实现层      | 将异常处理成错误码和错误信息方式返回                                                    |
+
+### 错误码规约
+
+1. **格式**：字符串类型，共 5 位（错误产生来源 + 四位数字编号）
+    - A 开头：错误来源于用户（参数错误等）
+    - B 开头：错误来源于当前系统（业务逻辑错误）
+    - C 开头：错误来源于第三方服务
+
+2. **成功码**：`00000`
+
+3. **使用**：错误码不能直接输出给用户作为提示信息使用
+
+### 日志规约
+
+1. **日志框架**：应用中不可直接使用日志系统（Log4j2、Logback）的 API，应依赖使用日志框架（SLF4J）的 API，推荐使用 Lombok 的 `@Slf4j` 注解
+
+2. **日志输出**：
+    - 使用占位符方式：`logger.debug("Processing trade with id: {}", id)`
+    - 对 trace/debug/info 级别的日志输出，必须进行日志级别的开关判断
+
+3. **生产环境**：
+    - 禁止直接使用 `System.out` 或 `System.err` 输出日志
+    - 禁止直接使用 `e.printStackTrace()` 打印异常堆栈
+    - 生产环境禁止输出 debug 日志，有选择地输出 info 日志
+
+4. **异常日志**：异常信息应该包括案发现场信息和异常堆栈信息：`logger.error("参数:{}_{}", param, e.getMessage(), e)`
+
+5. **日志保留**：所有日志文件至少保存 15 天
+
+6. **日志级别**：
     - **ERROR**: 系统错误，需要立即处理
     - **WARN**: 潜在问题，不影响系统运行
     - **INFO**: 重要业务流程
@@ -571,6 +956,57 @@ log.debug("订单创建参数: {}", JSON.toJSONString(orderParam));
 log.info("用户 " + username + " 登录成功");  // 性能差
 System.out.println("调试信息");  // 生产环境无法关闭
 ```
+
+### MySQL 数据库规约
+
+#### 建表规约
+
+1. **命名**：
+    - 表达是与否概念的字段，使用 `is_xxx` 的方式命名，数据类型 `tinyint unsigned`（1 表示是，0 表示否）
+    - 表名、字段名必须使用**小写字母或数字**，禁止出现数字开头
+    - 表名不使用复数名词
+    - 禁用保留字（desc、range、match、delayed 等）
+
+2. **索引命名**：
+    - 主键索引：`pk_字段名`
+    - 唯一索引：`uk_字段名`
+    - 普通索引：`idx_字段名`
+
+3. **数据类型**：
+    - 小数类型为 `decimal`，禁止使用 `float` 和 `double`
+    - 如果存储的字符串长度几乎相等，使用 `char` 定长字符串类型
+    - `varchar` 长度不要超过 5000，超过则使用 `text`，独立出来一张表
+
+4. **必备字段**：`id`, `create_by`, `create_time`, `update_by`, `update_time`, `is_deleted`
+    - `id` 为主键，类型 `char(32)`，生成方式 `IdUtils.date32Id()`
+
+5. **分库分表**：单表行数超过 500 万行或单表容量超过 2GB，才推荐进行分库分表
+
+#### 索引规约
+
+1. **唯一索引**：业务上具有唯一特性的字段，即使是组合字段，也必须建成唯一索引
+2. **join 限制**：超过三个表禁止 join，需要 join 的字段数据类型保持绝对一致
+3. **索引长度**：在 `varchar` 字段上建立索引时，必须指定索引长度（一般 20 长度区分度达 90% 以上）
+4. **模糊查询**：页面搜索严禁左模糊或者全模糊，需要请走搜索引擎
+5. **order by**：利用索引的有序性，order by 最后的字段是组合索引的一部分，放在索引组合顺序的最后
+
+#### SQL 语句
+
+1. **count**：不要使用 `count(列名)` 或 `count(常量)` 来替代 `count(*)`
+2. **NULL 判断**：使用 `ISNULL()` 来判断是否为 NULL 值
+3. **分页**：代码中写分页查询逻辑时，若 count 为 0 应直接返回
+4. **外键**：不得使用外键与级联，一切外键概念必须在应用层解决
+5. **存储过程**：禁止使用存储过程，存储过程难以调试和扩展，更没有移植性
+6. **数据订正**：数据订正时，要先 select，避免出现误删除
+7. **别名**：多表查询时，需要在列名前加表的别名（或表名）进行限定
+
+#### ORM 映射
+
+1. **查询字段**：在表查询中，一律不要使用 `*` 作为查询的字段列表，需要哪些字段必须明确写明
+2. **布尔映射**：POJO 类的布尔属性不能加 is，而数据库字段必须加 `is_`，要求在 resultMap 中进行映射
+3. **resultMap**：不要用 `resultClass` 当返回参数，即使所有类属性名与数据库字段一一对应，也需要定义 `<resultMap>`
+4. **参数**：`sql.xml` 配置参数使用 `#{ }`，不要使用 `${ }` 防止 SQL 注入
+5. **更新数据**：更新数据表记录时，必须同时更新记录对应的 `update_time` 字段值为当前时间
 
 ### 代码生成工具
 
