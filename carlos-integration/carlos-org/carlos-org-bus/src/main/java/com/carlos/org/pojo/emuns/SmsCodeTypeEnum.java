@@ -26,8 +26,6 @@ public enum SmsCodeTypeEnum implements BaseEnum {
     UPDATE_PWD(2, "修改密码");
 
 
-
-
     private final Integer code;
 
     private final String desc;

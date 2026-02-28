@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 public class CacheInitRunnerWorker implements ApplicationRunner, Ordered {
 
 
-
     @Override
     public void run(ApplicationArguments args) {
         // this.userDepartmentManager.initCache();

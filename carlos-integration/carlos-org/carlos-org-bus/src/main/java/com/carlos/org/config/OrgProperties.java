@@ -27,12 +27,12 @@ public class OrgProperties implements InitializingBean {
     /**
      * 密码过期时间
      */
-    private Duration passwordExpire = Duration.ofDays (90);
+    private Duration passwordExpire = Duration.ofDays(90);
 
     /**
      * 登录属性
      */
-    private OrgLoginProperties login = new OrgLoginProperties ();
+    private OrgLoginProperties login = new OrgLoginProperties();
 
 
     /**
@@ -60,9 +60,9 @@ public class OrgProperties implements InitializingBean {
 
 
     @Override
-    public void afterPropertiesSet () throws Exception {
-        if (log.isDebugEnabled ()) {
-            log.debug ("org config:{}", JSONUtil.toJsonPrettyStr (this));
+    public void afterPropertiesSet() throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("org config:{}", JSONUtil.toJsonPrettyStr(this));
         }
     }
 }

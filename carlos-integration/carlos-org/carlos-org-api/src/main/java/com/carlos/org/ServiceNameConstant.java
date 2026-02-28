@@ -12,6 +12,6 @@ public interface ServiceNameConstant {
     /**
      * 用户管理服务
      */
-    String USER = "carlos-org";
+    String SERVICE_NAME = "carlos-org";
 
 }

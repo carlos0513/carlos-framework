@@ -16,11 +16,13 @@ spec:
         app: #APP_NAME
     spec:
       containers:
-        - name: #APP_NAME
+        -
+          name: #APP_NAME
           image: #APP_IMAGE_NAME
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: #SERVER_PORT
+            -
+              containerPort: #SERVER_PORT
               protocol: TCP
           resources:
             requests:
@@ -30,19 +32,26 @@ spec:
               cpu: "1000m"
               memory: "5Gi"
           env:
-            - name: TZ
+            -
+              name: TZ
               value: Asia/Shanghai
-            - name: NACOS_ADDR
+            -
+              name: NACOS_ADDR
               value: 192.168.1.169:18848
-            - name: SERVER_PORT
+            -
+              name: SERVER_PORT
               value: '#SERVER_PORT'
-            - name: NACOS_NAMESPACE
+            -
+              name: NACOS_NAMESPACE
               value: carlos--feature
-            - name: NACOS_USERNAME
+            -
+              name: NACOS_USERNAME
               value: bbt
-            - name: NACOS_PASSWORD
+            -
+              name: NACOS_PASSWORD
               value: bbt@123456
-            - name: NACOS_GROUP
+            -
+              name: NACOS_GROUP
               value: DEFAULT_GROUP
 ---
 apiVersion: v1
@@ -55,7 +64,8 @@ spec:
     app: #APP_NAME
   type: NodePort
   ports:
-    - name: #APP_NAME
+    -
+      name: #APP_NAME
       port: #SERVER_PORT
       nodePort: #NODE_PORT
 

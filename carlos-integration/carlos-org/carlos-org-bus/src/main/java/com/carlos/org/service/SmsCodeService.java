@@ -84,9 +84,9 @@ public class SmsCodeService {
      * @date 2024/5/22 17:29
      */
     public void sendCode(String phone, SmsCodeTypeEnum type) {
-        //生成随机6位数字验证码
+        // 生成随机6位数字验证码
         String smsCode = RandomUtil.randomNumbers(6);
-        //变量map
+        // 变量map
         LinkedHashMap<String, String> map = new LinkedHashMap();
         map.put("code", smsCode);
         map.put("minutes", "5");
@@ -96,7 +96,7 @@ public class SmsCodeService {
             log.error("send sms failed. phone:{}, verifyType:{}", phone, type, e);
             throw new ServiceException("发送验证码失败");
         }
-        //设置验证码缓存 有效期5分钟
+        // 设置验证码缓存 有效期5分钟
         RedisUtil.setValue(String.format(SMS_CODE, phone, type), smsCode, 5, TimeUnit.MINUTES);
     }
 }

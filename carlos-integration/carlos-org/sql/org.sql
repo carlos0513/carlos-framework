@@ -102,13 +102,12 @@ CREATE TABLE `org_role`
 DROP TABLE IF EXISTS `org_user_department`;
 CREATE TABLE `org_user_department`
 (
-    `id`          BIGINT      NOT NULL COMMENT '主键',
-    `user_id`     BIGINT      NOT NULL COMMENT '用户id',
-    `dept_id`     BIGINT      NOT NULL COMMENT '部门id',
-    `is_main`     TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '是否为主部门',
-    `position`    VARCHAR(50) NULL     DEFAULT NULL COMMENT '该部门职位',
-    `create_by`   BIGINT      NULL     DEFAULT NULL COMMENT '创建者',
-    `create_time` DATETIME    NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `id`           BIGINT     NOT NULL COMMENT '主键',
+    `user_id`      BIGINT     NOT NULL COMMENT '用户id',
+    `dept_id`      BIGINT     NOT NULL COMMENT '部门id',
+    `is_main_dept` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否为主部门',
+    `create_by`    BIGINT     NULL     DEFAULT NULL COMMENT '创建者',
+    `create_time`  DATETIME   NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE `uk_user_id_dept_id` (`user_id` ASC, `dept_id` ASC) USING BTREE,
     INDEX `idx_user_id` (`user_id` ASC) USING BTREE,
@@ -185,15 +184,15 @@ CREATE TABLE `org_user_role`
 DROP TABLE IF EXISTS `org_department_role`;
 CREATE TABLE `org_department_role`
 (
-    `id`          BIGINT     NOT NULL COMMENT '主键',
-    `dept_id`     BIGINT     NOT NULL COMMENT '部门id',
-    `role_id`     BIGINT     NOT NULL COMMENT '角色id',
-    `version`     INT        NOT NULL DEFAULT 0 COMMENT '版本',
-    `is_default`  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否为默认角色',
-    `create_by`   BIGINT     NULL     DEFAULT NULL COMMENT '创建者',
-    `create_time` TIMESTAMP  NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` TIMESTAMP  NULL     DEFAULT NULL COMMENT '修改时间',
-    `tenant_id`   BIGINT     NULL     DEFAULT NULL COMMENT '租户id',
+    `id`              BIGINT     NOT NULL COMMENT '主键',
+    `dept_id`         BIGINT     NOT NULL COMMENT '部门id',
+    `role_id`         BIGINT     NOT NULL COMMENT '角色id',
+    `version`         INT        NOT NULL DEFAULT 0 COMMENT '版本',
+    `is_default_role` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否为默认角色',
+    `create_by`       BIGINT     NULL     DEFAULT NULL COMMENT '创建者',
+    `create_time`     TIMESTAMP  NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`     TIMESTAMP  NULL     DEFAULT NULL COMMENT '修改时间',
+    `tenant_id`       BIGINT     NULL     DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE KEY `uk_dept_role` (`dept_id`, `role_id`)
 ) ENGINE = InnoDB
