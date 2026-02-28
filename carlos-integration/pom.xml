@@ -26,6 +26,7 @@
         <module>carlos-message</module>
         <module>carlos-system</module>
         <module>carlos-org</module>
+        <module>carlos-audit</module>
 
     </modules>
 
@@ -63,6 +64,24 @@
             <dependency>
                 <groupId>com.carlos.org</groupId>
                 <artifactId>carlos-org-bus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <!-- carlos-audit 模块 -->
+            <dependency>
+                <groupId>com.carlos.audit</groupId>
+                <artifactId>carlos-audit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos.audit</groupId>
+                <artifactId>carlos-audit-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.carlos.audit</groupId>
+                <artifactId>carlos-audit-bus</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
