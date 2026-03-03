@@ -12,7 +12,6 @@
     <groupId>com.carlos.audit</groupId>
     <artifactId>carlos-audit</artifactId>
     <name>carlos-audit</name>
-    <description></description>
 
 
     <modules>
@@ -24,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <revision>carlos-audit</revision>
+        <!--<revision>carlos-audit</revision>-->
     </properties>
 
 

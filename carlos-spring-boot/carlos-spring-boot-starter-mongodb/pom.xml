@@ -22,6 +22,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.anwen-mp</groupId>
+            <artifactId>mongo-plus-boot-starter</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
