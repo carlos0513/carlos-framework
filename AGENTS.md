@@ -469,13 +469,14 @@ app:
 
 ### 领域模型命名
 
-| 模型类型                       | 命名规约       | 说明                             |
-|----------------------------|------------|--------------------------------|
-| DO (Data Object)           | `xxx`      | 与数据库表结构一一对应，位于 `entity` 包      |
-| DTO (Data Transfer Object) | `xxxDTO`   | 服务层向外传输的对象，位于 `dto` 包          |
-| VO (View Object)           | `xxxVO`    | 显示层对象，位于 `vo` 包，需标注 Swagger 注解 |
-| Param                      | `xxxParam` | 前端参数接收对象，位于 `param` 包          |
-| AO (Api Object)            | `xxxAO`    | API 接口响应对象                     |
+| 模型类型                       | 命名规约       | 说明                               |
+|----------------------------|------------|----------------------------------|
+| DO (Data Object)           | `xxx`      | 与数据库表结构一一对应，位于 `entity` 包        |
+| DTO (Data Transfer Object) | `xxxDTO`   | 服务层向外传输的对象，位于 `dto` 包            |
+| VO (View Object)           | `xxxVO`    | 显示层对象，位于 `vo` 包，需标注 Swagger 注解   |
+| Param                      | `xxxParam` | 前端参数接收对象，位于 `param` 包            |
+| AO (Api Object)            | `xxxAO`    | API 接口响应对象                       |
+| Enum                       | `xxxEnum`  | 枚举类型，位于 `enums` 包，需实现 `BaseEnum` |
 
 ### 常量定义
 
@@ -483,6 +484,117 @@ app:
 2. **long/Long 赋值**：数值后使用大写 `L`（如 `2L` 而非 `2l`）
 3. **常量归类**：按功能分开维护（`CacheConsts`, `ConfigConsts`）
 4. **枚举使用**：固定范围内变化的值使用 enum 类型定义
+
+### 枚举类规范
+
+所有业务枚举类必须遵循以下统一规范：
+
+#### 1. 命名规范
+
+- **类名**：使用 `XxxEnum` 格式，以 `Enum` 后缀结尾
+- **包路径**：位于 `com.carlos.{module}.pojo.enums` 包下
+- **枚举值**：全大写，下划线分隔（如 `NUMBER`, `STRING_TYPE`）
+
+#### 2. 标准模板
+
+```java
+package com.carlos.{module}.pojo.enums;
+
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.carlos.core.enums.AppEnum;
+import com.carlos.core.enums.BaseEnum;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * <p>
+ * {功能描述}枚举
+ * </p>
+ *
+ * @author {author}
+ * @date {date}
+ */
+@AppEnum(code = "{EnumCode}")
+@Getter
+@AllArgsConstructor
+public enum {EnumName}Enum implements BaseEnum {
+
+    /**
+     * {描述1}
+     */
+    VALUE_ONE(1, "{描述1}"),
+    /**
+     * {描述2}
+     */
+    VALUE_TWO(2, "{描述2}");
+
+    @EnumValue
+    private final Integer code;
+
+    private final String desc;
+
+    @Override
+    public Integer getCode() {
+        return code;
+    }
+
+    @Override
+    public String getDesc() {
+        return desc;
+    }
+}
+```
+
+#### 3. 必备注解说明
+
+| 注解                       | 说明                           | 必填 |
+|--------------------------|------------------------------|----|
+| `@AppEnum(code = "xxx")` | 标记为应用枚举，用于反射扫描，code 作为字典唯一标识 | 是  |
+| `@Getter`                | Lombok 自动生成 getter 方法        | 是  |
+| `@AllArgsConstructor`    | Lombok 生成全参构造器               | 是  |
+| `@EnumValue`             | MyBatis-Plus 注解，标记数据库存储字段    | 是  |
+
+#### 4. 必须实现的接口
+
+- **实现 `BaseEnum` 接口**：提供 `getCode()` 和 `getDesc()` 方法
+- **code 字段**：使用 `@EnumValue` 注解，类型为 `Integer`，用于数据库存储
+- **desc 字段**：类型为 `String`，表示枚举描述
+
+#### 5. 示例参考
+
+```java
+@AppEnum(code = "DictType")
+@Getter
+@AllArgsConstructor
+public enum DictTypeEnum implements BaseEnum {
+
+    NUMBER(1, "数值类型"),
+    STRING(2, "字符串类型");
+
+    @EnumValue
+    private final Integer code;
+
+    private final String desc;
+
+    @Override
+    public Integer getCode() {
+        return code;
+    }
+
+    @Override
+    public String getDesc() {
+        return desc;
+    }
+}
+```
+
+#### 6. 注意事项
+
+- 枚举类必须实现 `BaseEnum` 接口，确保框架能正确处理枚举序列化/反序列化
+- `@AppEnum` 的 `code` 属性值在同一应用中必须唯一，用于前端字典接口识别
+- `@EnumValue` 注解的字段将用于 MyBatis-Plus 的数据库存储和读取
+- 禁止在枚举类中添加与业务无关的字段或方法
+- 如需扩展枚举属性，请先与团队确认并更新本规范
 
 ### 代码格式
 

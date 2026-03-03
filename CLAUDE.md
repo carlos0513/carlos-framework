@@ -246,7 +246,7 @@ carlos-framework/                          # 根聚合 POM
 | **AO**     | API 对象   | `pojo.ao`     | API 接口响应对象，用于 Feign 调用方                                           |
 | **Entity** | 实体对象     | `pojo.entity` | 与数据库表结构一一对应，DO（Data Object）                                       |
 | **Excel**  | Excel 对象 | `pojo.excel`  | 导入导出专用对象                                                          |
-| **Enum**   | 枚举       | `pojo.emuns`  | 业务枚举类型                                                            |
+| **Enum**   | 枚举       | `pojo.enums`  | 业务枚举类型，需实现 `BaseEnum` 接口，使用 `@AppEnum` 注解标记                       |
 
 **Param 细分规范：**
 
@@ -261,6 +261,46 @@ carlos-framework/                          # 根聚合 POM
 - 属性名称规范命名，字段不多不少（多余字段后期无法随意删除）
 - 不同接口返回内容有差异的，建议创建多个 VO 对象进行字段封装
 - VO 对象尽量避免出现在 Service/Manager 层
+
+**枚举类规范：**
+
+所有业务枚举类必须遵循统一规范，以 `DictTypeEnum` 为标准模板：
+
+```java
+@AppEnum(code = "DictType")
+@Getter
+@AllArgsConstructor
+public enum DictTypeEnum implements BaseEnum {
+
+    NUMBER(1, "数值类型"),
+    STRING(2, "字符串类型");
+
+    @EnumValue
+    private final Integer code;
+
+    private final String desc;
+
+    @Override
+    public Integer getCode() {
+        return code;
+    }
+
+    @Override
+    public String getDesc() {
+        return desc;
+    }
+}
+```
+
+**必备要素：**
+
+- 类名以 `Enum` 结尾（如 `DictTypeEnum`），位于 `pojo.enums` 包下
+- 必须实现 `BaseEnum` 接口，提供 `getCode()` 和 `getDesc()` 方法
+- 必须添加 `@AppEnum(code = "xxx")` 注解，code 值在同一应用中唯一，用于前端字典接口
+- 必须添加 `@Getter` 和 `@AllArgsConstructor` Lombok 注解
+- `code` 字段必须标注 `@EnumValue` 注解，类型为 `Integer`，用于 MyBatis-Plus 数据库存储
+- `desc` 字段类型为 `String`，表示枚举描述
+- 枚举值全大写，下划线分隔（如 `NUMBER`, `STRING_TYPE`）
 
 ### 模块结构说明
 
@@ -306,7 +346,7 @@ src/main/java/com/carlos/{service}/
 ├── pojo/                          # 领域对象
 │   ├── dto/                      # DTO（数据传输对象）
 │   │   └── XxxDTO.java
-│   ├── emuns/                    # 枚举类型
+│   ├── enums/                    # 枚举类型（需实现 BaseEnum 接口）
 │   │   └── XxxStatusEnum.java
 │   ├── entity/                   # Entity（数据库实体）
 │   │   └── Xxx.java
