@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  -
+    name: GitHub Discussions
+    url: https://github.com/yourusername/carlos-framework/discussions
+    about: Please ask and answer questions here
+  -
+    name: Security Vulnerability
+    url: https://github.com/yourusername/carlos-framework/security/policy
+    about: Please report security vulnerabilities here (DO NOT create public issues)
+  -
+    name: Documentation
+    url: https://github.com/yourusername/carlos-framework/tree/main/docs
+    about: Check the documentation for answers
