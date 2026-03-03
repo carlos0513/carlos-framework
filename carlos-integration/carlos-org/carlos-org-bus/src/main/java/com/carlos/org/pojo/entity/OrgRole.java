@@ -3,6 +3,9 @@ package com.carlos.org.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.carlos.org.pojo.enums.OrgDataScopeEnum;
+import com.carlos.org.pojo.enums.OrgRoleStateEnum;
+import com.carlos.org.pojo.enums.OrgRoleTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -43,17 +46,17 @@ public class OrgRole extends Model<OrgRole> implements Serializable {
      * 角色类型， 1：系统角色, 2: 自定义角色
      */
     @TableField(value = "role_type")
-    private Integer roleType;
+    private OrgRoleTypeEnum roleType;
     /**
      * 数据范围， 1：全部, 2: 本部及子部门, 3:仅本部门, 4:仅本人, 5:自定义规则
      */
     @TableField(value = "data_scope")
-    private Integer dataScope;
+    private OrgDataScopeEnum dataScope;
     /**
      * 角色状态， 0：禁用, 1: 启用
      */
     @TableField(value = "state")
-    private Integer state;
+    private OrgRoleStateEnum state;
     /**
      * 备注
      */

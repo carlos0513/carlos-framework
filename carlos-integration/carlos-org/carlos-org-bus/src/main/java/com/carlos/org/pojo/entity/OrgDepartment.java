@@ -3,6 +3,7 @@ package com.carlos.org.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.carlos.org.pojo.enums.OrgDepartmentStateEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -58,7 +59,7 @@ public class OrgDepartment extends Model<OrgDepartment> implements Serializable 
      * 状态，0：禁用，1：启用
      */
     @TableField(value = "state")
-    private Integer state;
+    private OrgDepartmentStateEnum state;
     /**
      * 排序
      */

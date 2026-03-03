@@ -1,105 +1,80 @@
 package com.carlos.org.convert;
 
+
 import com.carlos.org.pojo.dto.OrgRoleDTO;
 import com.carlos.org.pojo.entity.OrgRole;
 import com.carlos.org.pojo.param.OrgRoleCreateParam;
 import com.carlos.org.pojo.param.OrgRoleUpdateParam;
+import com.carlos.org.pojo.vo.OrgRoleDetailVO;
 import com.carlos.org.pojo.vo.OrgRoleVO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
+
 /**
  * <p>
- * 系统角色 转换器
+ * 角色 mapstruct
  * </p>
  *
  * @author Carlos
  * @date 2026年2月28日 下午1:25:36
  */
-@Mapper(uses = {CommonConvert.class})
+@Mapper(componentModel = "spring")
 public interface OrgRoleConvert {
 
     OrgRoleConvert INSTANCE = Mappers.getMapper(OrgRoleConvert.class);
 
-    /**
-     * 接口新增参数对象转数据传输对象
-     *
-     * @param param 新增参数
-     * @return 数据传输对象
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
-     */
-    OrgRoleDTO toDTO(OrgRoleCreateParam param);
+    // ==================== Entity ↔ DTO ====================
 
     /**
-     * 接口修改参数对象转数据传输对象
-     *
-     * @param param 修改参数
-     * @return 数据传输对象
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
-     */
-    OrgRoleDTO toDTO(OrgRoleUpdateParam param);
-
-    /**
-     * 持久化对象列表转数据传输对象列表
-     *
-     * @param dos 数据持久化对象列表
-     * @return 数据传输对象列表
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
-     */
-    List<OrgRoleDTO> toDTO(List<OrgRole> dos);
-
-    /**
-     * 持久化对象转数据传输对象
-     *
-     * @param entity 数据持久化对象
-     * @return 数据传输对象列表
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
-     */
-    OrgRoleDTO toDTO(OrgRole entity);
-
-    /**
-     * 数据传输对象转数据持久化对象
-     *
-     * @param dto 数据传输对象
-     * @return 数据持久化对象
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 转 do
      */
     OrgRole toDO(OrgRoleDTO dto);
 
     /**
-     * 数据传输对象转数据显示对象
-     *
-     * @param dto 数据传输对象
-     * @return 数据显示对象
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 转 DTO
      */
+    OrgRoleDTO toDTO(OrgRole entity);
+
+    // ==================== Param ↔ DTO ====================
+
+    /**
+     * Param to DTO
+     */
+    OrgRoleDTO toDTO(OrgRoleCreateParam param);
+
+    /**
+     * UpdateParam to DTO
+     */
+    OrgRoleDTO toDTO(OrgRoleUpdateParam param);
+
+    // ==================== DTO ↔ VO ====================
+
+    /**
+     * DTO to VO
+     */
+    @Mappings({
+            @Mapping(target = "roleType", expression = "java(dto.getRoleType() != null ? dto.getRoleType().getCode() : null)"),
+            @Mapping(target = "roleTypeName", expression = "java(dto.getRoleType() != null ? dto.getRoleType().getDesc() : null)"),
+            @Mapping(target = "dataScope", expression = "java(dto.getDataScope() != null ? dto.getDataScope().getCode() : null)"),
+            @Mapping(target = "dataScopeName", expression = "java(dto.getDataScope() != null ? dto.getDataScope().getDesc() : null)"),
+            @Mapping(target = "state", expression = "java(dto.getState() != null ? dto.getState().getCode() : null)"),
+            @Mapping(target = "stateName", expression = "java(dto.getState() != null ? dto.getState().getDesc() : null)")
+    })
     OrgRoleVO toVO(OrgRoleDTO dto);
 
     /**
-     * 数据持久对象转数据显示对象
-     *
-     * @param dos 数据传输对象
-     * @return 数据显示对象
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * DTO List to VO List
      */
-    List<OrgRoleVO> toVO(List<OrgRole> dos);
+    List<OrgRoleVO> toVOList(List<OrgRoleDTO> dtoList);
 
     /**
-     * 数据持久对象转数据显示对象
-     *
-     * @param entity 数据传输对象
-     * @return 数据显示对象
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * DTO to DetailVO
      */
-    OrgRoleVO toVO(OrgRole entity);
+    OrgRoleDetailVO toDetailVO(OrgRoleDTO dto);
+
 }

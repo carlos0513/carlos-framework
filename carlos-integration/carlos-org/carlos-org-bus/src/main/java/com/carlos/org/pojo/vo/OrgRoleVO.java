@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 系统角色 显示层对象，向页面传输的对象
+ * 角色 VO
  * </p>
+ * <p>RM-001 角色列表, RM-002 角色详情</p>
  *
  * @author Carlos
  * @date 2026年2月28日 下午1:25:36
@@ -20,30 +21,91 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrgRoleVO implements Serializable {
+
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键
+     */
     @Schema(description = "主键")
     private Long id;
+
+    /**
+     * 角色名称
+     */
     @Schema(description = "角色名称")
     private String roleName;
-    @Schema(description = "角色唯一编码")
+
+    /**
+     * 角色唯一编码
+     */
+    @Schema(description = "角色编码")
     private String roleCode;
+
+    /**
+     * 角色类型， 1：系统角色, 2: 自定义角色
+     */
     @Schema(description = "角色类型， 1：系统角色, 2: 自定义角色")
     private Integer roleType;
-    @Schema(description = "数据范围， 1：全部, 2: 本部及子部门, 3:仅本部门, 4:仅本人, 5:自定义规则")
+
+    /**
+     * 角色类型名称
+     */
+    @Schema(description = "角色类型名称")
+    private String roleTypeName;
+
+    /**
+     * 数据范围， 1：全部, 2: 本部及子部门, 3:仅本部门, 4:仅本人, 5:自定义规则
+     */
+    @Schema(description = "数据范围")
     private Integer dataScope;
+
+    /**
+     * 数据范围名称
+     */
+    @Schema(description = "数据范围名称")
+    private String dataScopeName;
+
+    /**
+     * 角色状态， 0：禁用, 1: 启用
+     */
     @Schema(description = "角色状态， 0：禁用, 1: 启用")
     private Integer state;
+
+    /**
+     * 状态名称
+     */
+    @Schema(description = "状态名称")
+    private String stateName;
+
+    /**
+     * 备注
+     */
     @Schema(description = "备注")
     private String description;
+
+    /**
+     * 用户数量
+     */
+    @Schema(description = "用户数量")
+    private Integer userCount;
+
+    /**
+     * 创建者
+     */
     @Schema(description = "创建者")
     private Long createBy;
+
+    /**
+     * 创建时间
+     */
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
-    @Schema(description = "修改者")
-    private Long updateBy;
+
+    /**
+     * 修改时间
+     */
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
-    @Schema(description = "租户id")
-    private Long tenantId;
 
 }

@@ -1,6 +1,9 @@
 package com.carlos.org.pojo.dto;
 
 
+import com.carlos.org.pojo.enums.OrgDataScopeEnum;
+import com.carlos.org.pojo.enums.OrgRoleStateEnum;
+import com.carlos.org.pojo.enums.OrgRoleTypeEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -24,11 +27,11 @@ public class OrgRoleDTO {
     /** 角色唯一编码 */
     private String roleCode;
     /** 角色类型， 1：系统角色, 2: 自定义角色 */
-    private Integer roleType;
+    private OrgRoleTypeEnum roleType;
     /** 数据范围， 1：全部, 2: 本部及子部门, 3:仅本部门, 4:仅本人, 5:自定义规则 */
-    private Integer dataScope;
+    private OrgDataScopeEnum dataScope;
     /** 角色状态， 0：禁用, 1: 启用 */
-    private Integer state;
+    private OrgRoleStateEnum state;
     /** 备注 */
     private String description;
     /** 版本 */
@@ -43,4 +46,8 @@ public class OrgRoleDTO {
     private LocalDateTime updateTime;
     /** 租户id */
     private Long tenantId;
+    /** 权限ID列表（用于详情查询） */
+    private java.util.List<Long> permissionIds;
+    /** 用户数量（用于列表展示） */
+    private Integer userCount;
 }

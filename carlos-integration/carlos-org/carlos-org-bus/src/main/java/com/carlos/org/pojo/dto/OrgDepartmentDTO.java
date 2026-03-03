@@ -1,6 +1,7 @@
 package com.carlos.org.pojo.dto;
 
 
+import com.carlos.org.pojo.enums.OrgDepartmentStateEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -30,7 +31,7 @@ public class OrgDepartmentDTO {
     /** 负责人id */
     private Long leaderId;
     /** 状态，0：禁用，1：启用 */
-    private Integer state;
+    private OrgDepartmentStateEnum state;
     /** 排序 */
     private Integer sort;
     /** 层级 */

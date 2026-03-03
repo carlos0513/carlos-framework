@@ -1,19 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.carlos.org.mapper.OrgRoleMapper">
-    <resultMap type="com.carlos.org.pojo.entity.OrgRole" id="baseMap">
-        <id column="id" property="id"/>
-        <result column="role_name" property="roleName"/>
-        <result column="role_code" property="roleCode"/>
-        <result column="role_type" property="roleType"/>
-        <result column="data_scope" property="dataScope"/>
-        <result column="state" property="state"/>
-        <result column="description" property="description"/>
-        <result column="version" property="version"/>
-        <result column="create_by" property="createBy"/>
-        <result column="create_time" property="createTime"/>
-        <result column="update_by" property="updateBy"/>
-        <result column="update_time" property="updateTime"/>
-        <result column="tenant_id" property="tenantId"/>
-    </resultMap>
+
+    <!-- 获取角色的权限ID列表 -->
+    <select id="getPermissionIdsByRoleId" resultType="java.lang.Long">
+        SELECT permission_id
+        FROM org_role_permission
+        WHERE role_id = #{roleId}
+          AND deleted = 0
+    </select>
+
+    <!-- 获取使用某角色的用户数量 -->
+    <select id="getUserCountByRoleId" resultType="int">
+        SELECT COUNT(*)
+        FROM org_user_role
+        WHERE role_id = #{roleId}
+          AND deleted = 0
+    </select>
+
+    <!-- 删除角色的权限关联 -->
+    <update id="deleteRolePermissions">
+        UPDATE org_role_permission
+        SET deleted = 1,
+            update_time = NOW()
+        WHERE role_id = #{roleId}
+          AND deleted = 0
+    </update>
+
+    <!-- 批量插入角色权限关联 -->
+    <insert id="insertRolePermissions">
+        INSERT INTO org_role_permission (role_id, permission_id, create_time, update_time, deleted)
+        VALUES
+        <foreach collection="permissionIds" item="permissionId" separator=",">
+            (#{roleId}, #{permissionId}, NOW(), NOW(), 0)
+        </foreach>
+    </insert>
+
+    <!-- 获取角色用户列表 -->
+    <select id="getRoleUsers" resultType="com.carlos.org.pojo.dto.OrgRoleUserDTO">
+        SELECT 
+            u.id as userId,
+            u.account,
+            u.name,
+            u.phone,
+            d.dept_name as mainDeptName,
+            ur.create_time
+        FROM org_user u
+        INNER JOIN org_user_role ur ON u.id = ur.user_id
+        LEFT JOIN org_department d ON u.main_dept_id = d.id
+        WHERE ur.role_id = #{roleId}
+          AND u.deleted = 0
+          AND ur.deleted = 0
+        ORDER BY ur.create_time DESC
+    </select>
+
 </mapper>

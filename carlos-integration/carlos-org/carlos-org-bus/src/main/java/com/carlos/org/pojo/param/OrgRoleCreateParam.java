@@ -10,32 +10,42 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 系统角色 新增参数封装
+ * 角色 新增参数封装
  * </p>
+ * <p>RM-003 新增角色</p>
  *
  * @author Carlos
  * @date 2026年2月28日 下午1:25:36
  */
 @Data
 @Accessors(chain = true)
-@Schema(description = "系统角色新增参数")
+@Schema(description = "角色新增参数")
 public class OrgRoleCreateParam {
+
+    /**
+     * 角色名称
+     */
     @NotBlank(message = "角色名称不能为空")
-    @Schema(description = "角色名称")
+    @Schema(description = "角色名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String roleName;
-    @Schema(description = "角色唯一编码")
+
+    /**
+     * 角色编码
+     */
+    @Schema(description = "角色编码")
     private String roleCode;
-    @NotNull(message = "角色类型， 1：系统角色, 2: 自定义角色不能为空")
-    @Schema(description = "角色类型， 1：系统角色, 2: 自定义角色")
-    private Integer roleType;
-    @NotNull(message = "数据范围， 1：全部, 2: 本部及子部门, 3:仅本部门, 4:仅本人, 5:自定义规则不能为空")
-    @Schema(description = "数据范围， 1：全部, 2: 本部及子部门, 3:仅本部门, 4:仅本人, 5:自定义规则")
+
+    /**
+     * 数据范围，1：全部, 2: 本部及子部门, 3:仅本部门, 4:仅本人, 5:自定义规则
+     */
+    @NotNull(message = "数据范围不能为空")
+    @Schema(description = "数据范围，1：全部, 2: 本部及子部门, 3:仅本部门, 4:仅本人, 5:自定义规则", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer dataScope;
-    @NotNull(message = "角色状态， 0：禁用, 1: 启用不能为空")
-    @Schema(description = "角色状态， 0：禁用, 1: 启用")
-    private Integer state;
+
+    /**
+     * 备注
+     */
     @Schema(description = "备注")
     private String description;
-    @Schema(description = "租户id")
-    private Long tenantId;
+
 }

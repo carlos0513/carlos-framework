@@ -9,14 +9,18 @@ import com.carlos.org.convert.OrgDepartmentConvert;
 import com.carlos.org.manager.OrgDepartmentManager;
 import com.carlos.org.mapper.OrgDepartmentMapper;
 import com.carlos.org.pojo.dto.OrgDepartmentDTO;
+import com.carlos.org.pojo.dto.OrgDepartmentUserDTO;
+import com.carlos.org.pojo.dto.OrgUserDTO;
 import com.carlos.org.pojo.entity.OrgDepartment;
 import com.carlos.org.pojo.param.OrgDepartmentPageParam;
-import com.carlos.org.pojo.vo.OrgDepartmentVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -40,7 +44,6 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
             return false;
         }
         dto.setId(entity.getId());
-        // 保存完成的后续
         if (log.isDebugEnabled()) {
             log.debug("Insert 'OrgDepartment' data: id:{}", entity.getId());
         }
@@ -72,7 +75,6 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
             log.warn("Update 'OrgDepartment' data fail, entity:{}", entity);
             return false;
         }
-        // 修改成功的后续操作
         if (log.isDebugEnabled()) {
             log.debug("Update 'OrgDepartment' data by id:{}", dto.getId());
         }
@@ -90,28 +92,73 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
     }
 
     @Override
-    public Paging<OrgDepartmentVO> getPage(OrgDepartmentPageParam param) {
-        LambdaQueryWrapper<OrgDepartment> wrapper = queryWrapper();
-        wrapper.select(
-
-                OrgDepartment::getId,
-                OrgDepartment::getParentId,
-                OrgDepartment::getDeptName,
-                OrgDepartment::getDeptCode,
-                OrgDepartment::getPath,
-                OrgDepartment::getLeaderId,
-                OrgDepartment::getState,
-                OrgDepartment::getSort,
-                OrgDepartment::getLevel,
-                OrgDepartment::getDescription,
-                OrgDepartment::getCreateBy,
-                OrgDepartment::getCreateTime,
-                OrgDepartment::getUpdateBy,
-                OrgDepartment::getUpdateTime,
-                OrgDepartment::getTenantId
-        );
+    public Paging<OrgDepartmentDTO> getPage(OrgDepartmentPageParam param) {
+        LambdaQueryWrapper<OrgDepartment> wrapper = new LambdaQueryWrapper<>();
+        if (param.getParentId() != null) {
+            wrapper.eq(OrgDepartment::getParentId, param.getParentId());
+        }
+        wrapper.orderByAsc(OrgDepartment::getSort);
         PageInfo<OrgDepartment> page = page(pageInfo(param), wrapper);
-        return MybatisPage.convert(page, OrgDepartmentConvert.INSTANCE::toVO);
+        return MybatisPage.convert(page, entities -> entities.stream()
+                .map(OrgDepartmentConvert.INSTANCE::toDTO)
+                .collect(java.util.stream.Collectors.toList()));
+    }
+
+    @Override
+    public List<OrgDepartmentDTO> listAll() {
+        LambdaQueryWrapper<OrgDepartment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(OrgDepartment::getSort);
+        List<OrgDepartment> list = list(wrapper);
+        return list.stream()
+                .map(entity -> OrgDepartmentConvert.INSTANCE.toDTO(entity))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public OrgDepartmentDTO getByDeptCode(String deptCode) {
+        LambdaQueryWrapper<OrgDepartment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgDepartment::getDeptCode, deptCode);
+        wrapper.last("LIMIT 1");
+        OrgDepartment entity = getBaseMapper().selectOne(wrapper);
+        return OrgDepartmentConvert.INSTANCE.toDTO(entity);
+    }
+
+    @Override
+    public List<OrgDepartmentDTO> getChildrenByParentId(Serializable parentId) {
+        LambdaQueryWrapper<OrgDepartment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgDepartment::getParentId, parentId);
+        List<OrgDepartment> list = list(wrapper);
+        return list.stream()
+                .map(OrgDepartmentConvert.INSTANCE::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrgUserDTO> getUsersByDeptId(Serializable deptId) {
+        List<OrgDepartmentUserDTO> users = getBaseMapper().getUsersByDeptId(deptId);
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Paging<OrgDepartmentUserDTO> getUsersByDeptId(Serializable deptId, OrgDepartmentPageParam param) {
+        List<OrgDepartmentUserDTO> allUsers = getBaseMapper().getUsersByDeptId(deptId);
+
+        int total = allUsers.size();
+        int pages = (int) Math.ceil((double) total / param.getSize());
+        int fromIndex = (param.getCurrent() - 1) * param.getSize();
+        int toIndex = Math.min(fromIndex + param.getSize(), total);
+
+        List<OrgDepartmentUserDTO> records = fromIndex < total
+                ? allUsers.subList(fromIndex, toIndex)
+                : Collections.emptyList();
+
+        Paging<OrgDepartmentUserDTO> paging = new Paging<>();
+        paging.setCurrent(param.getCurrent());
+        paging.setSize(param.getSize());
+        paging.setTotal(total);
+        paging.setPages(pages);
+        paging.setRecords(records);
+        return paging;
     }
 
 }
