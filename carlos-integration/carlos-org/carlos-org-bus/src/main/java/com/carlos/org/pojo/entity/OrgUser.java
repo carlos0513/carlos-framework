@@ -3,6 +3,8 @@ package com.carlos.org.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.carlos.org.pojo.enums.OrgUserGenderEnum;
+import com.carlos.org.pojo.enums.OrgUserStateEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -63,7 +65,7 @@ public class OrgUser extends Model<OrgUser> implements Serializable {
      * 性别，0：保密, 1：男，2：女，默认0
      */
     @TableField(value = "gender")
-    private Integer gender;
+    private OrgUserGenderEnum gender;
     /**
      * 邮箱
      */
@@ -83,7 +85,7 @@ public class OrgUser extends Model<OrgUser> implements Serializable {
      * 状态，0：禁用，1：启用，2：锁定
      */
     @TableField(value = "state")
-    private Integer state;
+    private OrgUserStateEnum state;
     /**
      * 主部门id
      */

@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 用户角色 数据传输对象，service和manager向外传输对象
+ * 用户角色DTO
  * </p>
  *
- * @author Carlos
- * @date 2026年2月28日 下午1:25:36
+ * @author carlos
+ * @date 2026-03-03
  */
 @Data
 @Accessors(chain = true)

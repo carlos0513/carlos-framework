@@ -1,4 +1,4 @@
-package com.carlos.org.pojo.emuns;
+package com.carlos.org.pojo.enums;
 
 import com.carlos.core.enums.AppEnum;
 import com.carlos.core.enums.BaseEnum;

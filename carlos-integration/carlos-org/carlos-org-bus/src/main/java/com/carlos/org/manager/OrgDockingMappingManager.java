@@ -2,8 +2,8 @@ package com.carlos.org.manager;
 
 import com.carlos.datasource.base.BaseService;
 import com.carlos.org.pojo.dto.OrgDockingMappingDTO;
-import com.carlos.org.pojo.emuns.OrgDockingTypeEnum;
 import com.carlos.org.pojo.entity.OrgDockingMapping;
+import com.carlos.org.pojo.enums.OrgDockingTypeEnum;
 
 import java.io.Serializable;
 import java.util.List;

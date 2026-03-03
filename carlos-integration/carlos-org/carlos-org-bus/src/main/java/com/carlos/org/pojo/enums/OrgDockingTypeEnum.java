@@ -1,4 +1,4 @@
-package com.carlos.org.pojo.emuns;
+package com.carlos.org.pojo.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.carlos.core.enums.AppEnum;

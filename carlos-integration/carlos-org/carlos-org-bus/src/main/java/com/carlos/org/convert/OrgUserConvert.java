@@ -1,9 +1,15 @@
 package com.carlos.org.convert;
 
 import com.carlos.org.pojo.dto.OrgUserDTO;
+import com.carlos.org.pojo.dto.OrgUserDeptDTO;
+import com.carlos.org.pojo.dto.OrgUserPositionDTO;
+import com.carlos.org.pojo.dto.OrgUserRoleDTO;
 import com.carlos.org.pojo.entity.OrgUser;
 import com.carlos.org.pojo.param.OrgUserCreateParam;
 import com.carlos.org.pojo.param.OrgUserUpdateParam;
+import com.carlos.org.pojo.vo.OrgUserDeptVO;
+import com.carlos.org.pojo.vo.OrgUserPositionVO;
+import com.carlos.org.pojo.vo.OrgUserRoleVO;
 import com.carlos.org.pojo.vo.OrgUserVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -102,4 +108,34 @@ public interface OrgUserConvert {
      * @date 2026年2月28日 下午1:25:36
      */
     OrgUserVO toVO(OrgUser entity);
+
+    /**
+     * 用户部门DTO转VO
+     */
+    OrgUserDeptVO toDeptVO(OrgUserDeptDTO dto);
+
+    /**
+     * 用户部门DTO列表转VO列表
+     */
+    List<OrgUserDeptVO> toDeptVOList(List<OrgUserDeptDTO> dtoList);
+
+    /**
+     * 用户角色DTO转VO
+     */
+    OrgUserRoleVO toRoleVO(OrgUserRoleDTO dto);
+
+    /**
+     * 用户角色DTO列表转VO列表
+     */
+    List<OrgUserRoleVO> toRoleVOList(List<OrgUserRoleDTO> dtoList);
+
+    /**
+     * 用户岗位DTO转VO
+     */
+    OrgUserPositionVO toPositionVO(OrgUserPositionDTO dto);
+
+    /**
+     * 用户岗位DTO列表转VO列表
+     */
+    List<OrgUserPositionVO> toPositionVOList(List<OrgUserPositionDTO> dtoList);
 }

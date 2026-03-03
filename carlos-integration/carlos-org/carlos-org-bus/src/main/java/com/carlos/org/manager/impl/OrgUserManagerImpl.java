@@ -121,4 +121,30 @@ public class OrgUserManagerImpl extends BaseServiceImpl<OrgUserMapper, OrgUser> 
         return MybatisPage.convert(page, OrgUserConvert.INSTANCE::toVO);
     }
 
+    @Override
+    public OrgUserDTO getUserByAccount(String account) {
+        if (account == null) {
+            return null;
+        }
+        LambdaQueryWrapper<OrgUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgUser::getAccount, account)
+                .eq(OrgUser::getDeleted, false)
+                .last("LIMIT 1");
+        OrgUser entity = getOne(wrapper);
+        return OrgUserConvert.INSTANCE.toDTO(entity);
+    }
+
+    @Override
+    public OrgUserDTO getUserByPhone(String phone) {
+        if (phone == null) {
+            return null;
+        }
+        LambdaQueryWrapper<OrgUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgUser::getPhone, phone)
+                .eq(OrgUser::getDeleted, false)
+                .last("LIMIT 1");
+        OrgUser entity = getOne(wrapper);
+        return OrgUserConvert.INSTANCE.toDTO(entity);
+    }
+
 }

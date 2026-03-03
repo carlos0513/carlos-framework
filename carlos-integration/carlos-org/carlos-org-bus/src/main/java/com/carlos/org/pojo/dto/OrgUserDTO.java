@@ -1,6 +1,8 @@
 package com.carlos.org.pojo.dto;
 
 
+import com.carlos.org.pojo.enums.OrgUserGenderEnum;
+import com.carlos.org.pojo.enums.OrgUserStateEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -32,7 +34,7 @@ public class OrgUserDTO {
     /** 详细地址 */
     private String address;
     /** 性别，0：保密, 1：男，2：女，默认0 */
-    private Integer gender;
+    private OrgUserGenderEnum gender;
     /** 邮箱 */
     private String email;
     /** 头像 */
@@ -40,7 +42,7 @@ public class OrgUserDTO {
     /** 备注 */
     private String description;
     /** 状态，0：禁用，1：启用，2：锁定 */
-    private Integer state;
+    private OrgUserStateEnum state;
     /** 主部门id */
     private Long mainDeptId;
     /** 最后登录时间 */

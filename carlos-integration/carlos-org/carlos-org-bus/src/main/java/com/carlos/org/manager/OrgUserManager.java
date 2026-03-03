@@ -67,4 +67,22 @@ public interface OrgUserManager extends BaseService<OrgUser> {
      * @date 2026年2月28日 下午1:25:36
      */
     Paging<OrgUserVO> getPage(OrgUserPageParam param);
+
+    // 逻辑删除由框架自动处理，使用removeById即可
+
+    /**
+     * 根据账号查询用户
+     *
+     * @param account 账号
+     * @return OrgUserDTO
+     */
+    OrgUserDTO getUserByAccount(String account);
+
+    /**
+     * 根据手机号查询用户
+     *
+     * @param phone 手机号
+     * @return OrgUserDTO
+     */
+    OrgUserDTO getUserByPhone(String phone);
 }

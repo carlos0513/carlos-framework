@@ -680,6 +680,205 @@ public enum DictTypeEnum implements BaseEnum {
 
 4. **嵌套层数**：避免超过 3 层的 if-else 嵌套，可使用卫语句、策略模式等重构
 
+## 异常处理规范
+
+### 异常类使用规范（强制）
+
+**严禁在业务代码中直接使用 `RuntimeException` 或 `Exception` 抛出异常！**
+
+必须使用框架定义的异常类或模块自定义异常：
+
+#### 1. Core 模块异常类（位于 `com.carlos.core.exception` 包）
+
+| 异常类                  | 使用场景               | 示例                                        |
+|----------------------|--------------------|-------------------------------------------|
+| `GlobalException`    | 全局异常基类，一般不直接使用     | 继承使用                                      |
+| `ServiceException`   | **业务层异常，最常用的业务异常** | `throw new ServiceException("用户不存在")`     |
+| `DaoException`       | DAO/Mapper 层异常     | `throw new DaoException(e)`               |
+| `RestException`      | REST 接口层异常         | `throw new RestException("请求参数错误")`       |
+| `ComponentException` | 组件异常               | `throw new ComponentException("组件初始化失败")` |
+
+#### 2. 模块自定义异常（推荐按业务场景定义）
+
+各业务模块应在 `com.carlos.{module}.exception` 包下根据**具体业务场景**定义异常类，继承 `GlobalException`：
+
+**推荐做法：按业务场景定义具体异常类**
+
+```java
+// ✅ 推荐：为不同业务场景定义具体异常类
+package com.carlos.org.exception;
+
+// 用户不存在异常
+public class UserNotFoundException extends GlobalException {
+    public UserNotFoundException(String userId) {
+        super("用户不存在：" + userId);
+    }
+}
+
+// 账号已存在异常
+public class AccountExistsException extends GlobalException {
+    public AccountExistsException(String account) {
+        super("账号已存在：" + account);
+    }
+}
+
+// 密码异常
+public class PasswordException extends GlobalException {
+    public PasswordException(String message) {
+        super(message);
+    }
+}
+
+// 用户状态异常
+public class InvalidUserStateException extends GlobalException {
+    public InvalidUserStateException(String message) {
+        super(message);
+    }
+}
+```
+
+**不推荐：一个模块只有一个通用异常类**
+
+```java
+// ❌ 不推荐：所有业务都用同一个异常类
+throw new OrgModuleException("用户不存在");
+throw new OrgModuleException("账号已存在");
+throw new OrgModuleException("密码错误");
+```
+
+**使用示例：**
+
+```java
+// ✅ 正确：根据业务场景抛出具体异常
+throw new UserNotFoundException(userId);
+throw new AccountExistsException(account);
+throw new PasswordException("旧密码不正确");
+throw new InvalidUserStateException("用户已锁定");
+```
+
+#### 3. 使用示例
+
+```java
+// ✅ 正确：使用 ServiceException
+throw new ServiceException("用户不存在");
+
+// ✅ 正确：使用模块自定义异常
+throw new OrgModuleException("部门不存在");
+
+// ❌ 错误：严禁使用 RuntimeException
+throw new RuntimeException("用户不存在");
+```
+
+#### 4. 分层异常抛出规范
+
+| 层级         | 推荐异常类型                            |
+|------------|-----------------------------------|
+| Controller | 不捕获异常，统一由全局异常处理                   |
+| Service    | `ServiceException` 或模块自定义异常       |
+| Manager    | `ServiceException`、`DaoException` |
+| Mapper/DAO | `DaoException`                    |
+
+### Service 层与 Controller 层数据转换规范
+
+#### 1. Service 层禁止返回 VO 类（强制）
+
+**Service 层只能返回 DTO 或 Entity，Controller 层使用 Convert 进行 DTO 到 VO 的转换。**
+
+```java
+// ❌ 错误：Service 层返回 VO
+@Service
+public class OrgUserService {
+    public OrgUserVO getUser(Long id) {  // 错误！
+        // ...
+    }
+}
+
+// ✅ 正确：Service 层返回 DTO，Controller 层转换
+@Service
+public class OrgUserService {
+    public OrgUserDTO getUser(Long id) {  // 正确！
+        // ...
+    }
+}
+
+@RestController
+public class OrgUserController {
+    public OrgUserVO getUser(Long id) {
+        OrgUserDTO dto = userService.getUser(id);
+        return OrgUserConvert.INSTANCE.toVO(dto);  // Controller 层转换
+    }
+}
+```
+
+#### 2. 主键类型规范（强制）
+
+**主键在 Entity 和 DTO 中使用 `Long` 类型，方法签名中使用 `Serializable` 类型，需要转换时使用 `cn.hutool.core.convert.Convert` 类。**
+
+```java
+// Entity 中使用 Long
+public class OrgUser {
+    private Long id;  // Long 类型
+}
+
+// Controller/Service 方法签名使用 Serializable
+public OrgUserDTO getById(Serializable id) {  // 方法签名使用 Serializable
+    // 如需转换
+    Long userId = Convert.toLong(id);
+    // ...
+}
+```
+
+#### 3. 枚举类型规范（强制）
+
+**字段值为枚举类型的，必须定义枚举类，DTO 和 Entity 中必须使用枚举类。**
+
+```java
+// 1. 定义枚举类
+@AppEnum(code = "OrgUserState")
+@Getter
+@AllArgsConstructor
+public enum OrgUserStateEnum implements BaseEnum {
+    DISABLE(0, "禁用"),
+    ENABLE(1, "启用"),
+    LOCK(2, "锁定");
+
+    @EnumValue
+    private final Integer code;
+    private final String desc;
+}
+
+// 2. Entity 中使用枚举
+public class OrgUser {
+    private OrgUserStateEnum state;  // 使用枚举类
+    private OrgUserGenderEnum gender;
+}
+
+// 3. DTO 中使用枚举
+public class OrgUserDTO {
+    private OrgUserStateEnum state;  // 使用枚举类
+    private OrgUserGenderEnum gender;
+}
+```
+
+#### 4. 逻辑删除规范（强制）
+
+**Manager 中逻辑删除不需要显式设置 deleted 字段，框架会自动处理。**
+
+```java
+// ❌ 错误：显式设置 deleted 字段
+public boolean logicDelete(Serializable id) {
+    OrgUser entity = new OrgUser();
+    entity.setId(Convert.toLong(id));
+    entity.setDeleted(true);  // 不需要显式设置！
+    return updateById(entity);
+}
+
+// ✅ 正确：直接使用 removeById，框架自动处理逻辑删除
+public boolean delete(Serializable id) {
+    return removeById(id);  // 框架自动处理逻辑删除
+}
+```
+
 ## 异常日志
 
 ### 错误码规约
