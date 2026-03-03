@@ -1,7 +1,8 @@
-package ${project.packageName}.api;
+package ${project.packageName}.apiimpl;
 
-import com.carlos.core.annotation.ClientApi;
+
 import lombok.RequiredArgsConstructor;
+import ${project.packageName}.api.Api${table.classPrefix};
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,12 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @author  ${project.author}
  * @date    ${.now}
  */
-@ClientApi
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/${table.apiPath}")
 @Tag(name = "${table.comment}Feign接口")
-public class ${table.classPrefix}API {
+public class Api${table.classPrefix}Impl implements Api${table.classPrefix}{
 
 
 }

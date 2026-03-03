@@ -1,8 +1,7 @@
 package ${project.packageName}.controller;
 
-
+import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
-
 import ${project.packageName}.convert.${table.classPrefix}Convert;
 import ${project.packageName}.pojo.param.${table.classPrefix}CreateParam;
 import ${project.packageName}.pojo.param.${table.classPrefix}UpdateParam;
@@ -13,12 +12,12 @@ import ${project.packageName}.service.${table.classPrefix}Service;
 import ${project.packageName}.manager.${table.classPrefix}Manager;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
+
 
 /**
  * <p>
@@ -31,7 +30,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${table.apiPath}")
-@Tag(name = "${table.comment}相关API")
+@Tag(name = "${table.comment}")
 public class ${table.classPrefix}Controller {
 
     public static final String BASE_NAME = "${table.comment}";
@@ -41,31 +40,41 @@ public class ${table.classPrefix}Controller {
     private final ${table.classPrefix}Manager ${table.classMainPrefix}Manager;
 
 
-    @PostMapping
+@PostMapping("add")
 @Operation(summary = "新增" + BASE_NAME)
-    public boolean add(@RequestBody @Validated ${table.classPrefix}CreateParam param) {
+public void add(@RequestBody @Validated ${table.classPrefix}CreateParam param) {
         ${table.classPrefix}DTO dto = ${table.classPrefix}Convert.INSTANCE.toDTO(param);
-        return ${table.classMainPrefix}Service.add${table.classPrefix}(dto);
+${table.classMainPrefix}Service.add${table.classPrefix}(dto);
     }
 
-    @PostMapping("delete")
+
+@PostMapping("delete")
 @Operation(summary = "删除" + BASE_NAME)
-    public boolean delete(@RequestBody ParamIdSet<String> param) {
-        return ${table.classMainPrefix}Service.delete${table.classPrefix}(param.getIds());
+public void delete(@RequestBody ParamIdSet
+<Serializable> param) {
+    ${table.classMainPrefix}Service.delete${table.classPrefix}(param.getIds());
     }
 
 
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
-    public boolean update(@RequestBody @Validated ${table.classPrefix}UpdateParam param) {
+    public void update(@RequestBody @Validated ${table.classPrefix}UpdateParam param) {
         ${table.classPrefix}DTO dto = ${table.classPrefix}Convert.INSTANCE.toDTO(param);
-        return ${table.classMainPrefix}Service.update${table.classPrefix}(dto);
+    ${table.classMainPrefix}Service.update${table.classPrefix}(dto);
     }
 
-    @GetMapping("{id}")
+
+    @GetMapping("detail")
     @Operation(summary = BASE_NAME + "详情")
-    public ${table.classPrefix}VO detail(@PathVariable String id) {
+    public ${table.classPrefix}VO detail(String id) {
         return ${table.classPrefix}Convert.INSTANCE.toVO(${table.classMainPrefix}Manager.getDtoById(id));
     }
 
+
+    @GetMapping("page")
+    @Operation(summary = BASE_NAME + "分页列表")
+    public Paging
+    <${table.classPrefix}VO> page(${table.classPrefix}PageParam param) {
+        return ${table.classMainPrefix}Manager.getPage(param);
+        }
 }

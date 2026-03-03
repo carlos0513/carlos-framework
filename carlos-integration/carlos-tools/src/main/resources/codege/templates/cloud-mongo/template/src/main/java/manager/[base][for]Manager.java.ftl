@@ -1,12 +1,13 @@
 package ${project.packageName}.manager;
 
 import com.carlos.core.pagination.Paging;
+import com.carlos.datasource.base.BaseService;
+import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
+import ${project.packageName}.pojo.entity.${table.classPrefix};
 import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
 import ${project.packageName}.pojo.param.${table.classPrefix}PageParam;
-import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
 
 import java.io.Serializable;
-
 /**
  * <p>
  * ${table.comment} 查询封装接口
@@ -15,7 +16,7 @@ import java.io.Serializable;
  * @author  ${project.author}
  * @date    ${.now}
  */
-public interface ${table.classPrefix}Manager {
+public interface ${table.classPrefix}Manager extends BaseService<${table.classPrefix}>{
 
     /**
      * 新增${table.comment}
@@ -55,8 +56,7 @@ public interface ${table.classPrefix}Manager {
      * @author ${project.author}
      * @date   ${.now}
      */
-    ${table.classPrefix}DTO getDtoById(String id);
-
+${table.classPrefix}DTO getDtoById(Serializable id);
 
     /**
      * 分页列表

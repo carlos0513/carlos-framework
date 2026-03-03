@@ -22,15 +22,15 @@ import jakarta.validation.constraints.NotNull;
  */
 @Data
 @Accessors(chain = true)
-@Schema(description =  "${table.comment}新增参数", description = "${table.comment}新增参数")
+@Schema(description =  "${table.comment}新增参数")
 public class ${table.classPrefix}CreateParam {
 <#list table.columns as column>
     <#if !column.commonField && !column.primaryKey && !column.logicField  && !column.versionField>
         <#if !column.nullable>
             <#if column.javaType == 'String'>
-        @NotBlank(message = "${column.columnComment}不能为空")
+                @NotBlank(message = "${column.columnComment}不能为空")
             <#else>
-        @NotNull(message = "${column.columnComment}不能为空")
+                @NotNull(message = "${column.columnComment}不能为空")
             </#if>
         </#if>
         @Schema(description = "${column.columnComment}")

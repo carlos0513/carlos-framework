@@ -92,4 +92,14 @@ public interface ${table.classPrefix}Convert {
      * @date ${.now}
      */
     List<${table.classPrefix}VO> toVO(List<${table.classPrefix}> dos);
+
+        /**
+        * 数据持久对象转数据显示对象
+        *
+        * @param entity 数据传输对象
+        * @return 数据显示对象
+        * @author ${project.author}
+        * @date ${.now}
+        */
+        ${table.classPrefix}VO toVO(${table.classPrefix} entity);
 }

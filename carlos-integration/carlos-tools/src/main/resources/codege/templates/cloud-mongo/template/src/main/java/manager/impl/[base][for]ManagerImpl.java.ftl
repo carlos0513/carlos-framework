@@ -1,23 +1,23 @@
 package ${project.packageName}.manager.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.carlos.core.pagination.Paging;
-import com.carlos.mongodb.page.MongoPage;
+import com.carlos.datasource.base.BaseServiceImpl;
+import com.carlos.datasource.pagination.MybatisPage;
+import com.carlos.datasource.pagination.PageInfo;
 import ${project.packageName}.convert.${table.classPrefix}Convert;
-import ${project.packageName}.manager.${table.classPrefix}Manager;
+import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
 import ${project.packageName}.pojo.dto.${table.classPrefix}DTO;
 import ${project.packageName}.pojo.entity.${table.classPrefix};
+import ${project.packageName}.manager.${table.classPrefix}Manager;
+import ${project.packageName}.mapper.${table.classPrefix}Mapper;
 import ${project.packageName}.pojo.param.${table.classPrefix}PageParam;
-import ${project.packageName}.pojo.vo.${table.classPrefix}VO;
-import ${project.packageName}.repository.${table.classPrefix}Repository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-
 /**
  * <p>
  * ${table.comment} 查询封装实现类
@@ -29,15 +29,19 @@ import java.io.Serializable;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class ${table.classPrefix}ManagerImpl implements ${table.classPrefix}Manager {
-
-    private final ${table.classPrefix}Repository ${table.classMainPrefix}Repository;
+public class ${table.classPrefix}ManagerImpl  extends BaseServiceImpl
+<${table.classPrefix}Mapper, ${table.classPrefix}> implements ${table.classPrefix}Manager {
 
     @Override
     public boolean add(${table.classPrefix}DTO dto) {
         ${table.classPrefix} entity = ${table.classPrefix}Convert.INSTANCE.toDO(dto);
-        entity = ${table.classMainPrefix}Repository.save(entity);
+boolean success = save(entity);
+if (!success) {
+log.warn("Insert '${table.classPrefix}' data fail, entity:{}", entity);
+return false;
+}
         dto.setId(entity.getId());
+// 保存完成的后续
         if (log.isDebugEnabled()) {
             log.debug("Insert '${table.classPrefix}' data: id:{}", entity.getId());
         }
@@ -50,7 +54,11 @@ public class ${table.classPrefix}ManagerImpl implements ${table.classPrefix}Mana
             log.warn("id can't be null");
             return false;
         }
-       ${table.classMainPrefix}Repository.deleteById(String.valueOf(id));
+boolean success = removeById(id);
+if (!success) {
+log.warn("Remove '${table.classPrefix}' data fail, id:{}", id);
+return false;
+}
         if (log.isDebugEnabled()) {
             log.debug("Remove '${table.classPrefix}' data by id:{}", id);
         }
@@ -60,25 +68,45 @@ public class ${table.classPrefix}ManagerImpl implements ${table.classPrefix}Mana
     @Override
     public boolean modify(${table.classPrefix}DTO dto) {
         ${table.classPrefix} entity = ${table.classPrefix}Convert.INSTANCE.toDO(dto);
-        ${table.classMainPrefix}Repository.save(entity);
+boolean success = updateById(entity);
+if (!success) {
+log.warn("Update '${table.classPrefix}' data fail, entity:{}", entity);
+return false;
+}
+// 修改成功的后续操作
         if (log.isDebugEnabled()) {
-            log.debug("Update '${table.classPrefix}' data, {}", entity);
+log.debug("Update '${table.classPrefix}' data by id:{}", dto.getId());
         }
         return true;
     }
 
     @Override
-    public ${table.classPrefix}DTO getDtoById(String id) {
-        ${table.classPrefix} entity = ${table.classMainPrefix}Repository.findById(id).get();
+public ${table.classPrefix}DTO getDtoById(Serializable id) {
+if (id == null) {
+log.warn("id is null");
+return null;
+}
+${table.classPrefix} entity = getBaseMapper().selectById(id);
         return ${table.classPrefix}Convert.INSTANCE.toDTO(entity);
     }
 
     @Override
     public Paging<${table.classPrefix}VO> getPage(${table.classPrefix}PageParam param){
-        Pageable pageable = MongoPage.page(param);
-        Example<${table.classPrefix}> example = null;
-        Page<${table.classPrefix}> page =${table.classMainPrefix}Repository.findAll(example, pageable);
-        return MongoPage.convert(page, ${table.classPrefix}Convert.INSTANCE::toVO);
+    LambdaQueryWrapper<${table.classPrefix}> wrapper = queryWrapper();
+    wrapper.select(
+    <#assign validColumns = []>
+    <#list table.columns as column>
+        <#if !column.logicField && !column.versionField>
+            <#assign validColumns = validColumns + [column]>
+        </#if>
+    </#list>
+
+    <#list validColumns as column>
+        ${table.classPrefix}::get${column.propertyNameUp}<#if column_has_next>,</#if>
+    </#list>
+    );
+    PageInfo<${table.classPrefix}> page = page(pageInfo(param), wrapper);
+    return MybatisPage.convert(page, ${table.classPrefix}Convert.INSTANCE::toVO);
     }
 
 }

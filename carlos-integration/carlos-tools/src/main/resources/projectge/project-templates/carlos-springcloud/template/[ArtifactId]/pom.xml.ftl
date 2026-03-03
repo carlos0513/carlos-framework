@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <revision>${project.artifactId}</revision>
+        <revision>${project.version}</revision>
     </properties>
 
 

@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@Schema(description =  "${table.comment}列表查询参数", description = "${table.comment}列表查询参数")
+@Schema(description =  "${table.comment}列表查询参数")
 public class ${table.classPrefix}PageParam extends ParamPage {
 <#list table.columns as column>
     <#if !column.commonField && !column.primaryKey && !column.logicField  && !column.versionField>

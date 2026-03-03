@@ -1,12 +1,13 @@
 package ${project.packageName}.config;
 
-import com.carlos.boot.request.RequestUtil;
-import com.carlos.core.auth.UserContext;
 import com.carlos.core.interfaces.ApplicationExtend;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
+import com.carlos.boot.request.RequestUtil;
+import com.carlos.core.auth.UserContext;
+import java.io.Serializable;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 /**
 * <p>
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @AllArgsConstructor
+@ConditionalOnMissingBean(ApplicationExtend.class)
 public class ApplicationExtendImpl implements ApplicationExtend {
 
 

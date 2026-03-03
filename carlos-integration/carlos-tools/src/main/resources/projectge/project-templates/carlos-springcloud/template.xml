@@ -5,6 +5,6 @@
 
 -->
 <templates>
-    <name>carlos-spring-cloud-starter</name>
+    <name>carlos-spring-cloud</name>
     <describe>基于carlos自行封装的 Spring Cloud Alibaba 的微服务架构模板，包含api接口模块，bus业务模块，boot单体启动模块，cloud微服务启动模块</describe>
 </templates>
