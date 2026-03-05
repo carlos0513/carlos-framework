@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carlos.audit.mapper.AuditLogTechnicalMapper">
+  <resultMap type="com.carlos.audit.pojo.entity.AuditLogTechnical" id="baseMap">
+    <id column="id" property="id"/>
+    <result column="audit_log_id" property="auditLogId"/>
+    <result column="trace_id" property="traceId"/>
+    <result column="span_id" property="spanId"/>
+    <result column="parent_span_id" property="parentSpanId"/>
+    <result column="trace_path" property="tracePath"/>
+    <result column="db_query_count" property="dbQueryCount"/>
+    <result column="db_query_time_ms" property="dbQueryTimeMs"/>
+    <result column="external_call_count" property="externalCallCount"/>
+    <result column="external_call_time_ms" property="externalCallTimeMs"/>
+    <result column="custom_metrics" property="customMetrics"/>
+    <result column="request_payload_ref" property="requestPayloadRef"/>
+    <result column="response_payload_ref" property="responsePayloadRef"/>
+    <result column="payload_storage_type" property="payloadStorageType"/>
+    <result column="app_name" property="appName"/>
+    <result column="app_version" property="appVersion"/>
+    <result column="cluster" property="cluster"/>
+    <result column="host_name" property="hostName"/>
+    <result column="created_time" property="createdTime"/>
+  </resultMap>
+</mapper>

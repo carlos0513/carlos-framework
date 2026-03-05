@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carlos.audit.mapper.AuditLogAttachmentsMapper">
+  <resultMap type="com.carlos.audit.pojo.entity.AuditLogAttachments" id="baseMap">
+    <id column="id" property="id"/>
+    <result column="audit_log_id" property="auditLogId"/>
+    <result column="attachment_type" property="attachmentType"/>
+    <result column="storage_type" property="storageType"/>
+    <result column="bucket_name" property="bucketName"/>
+    <result column="object_key" property="objectKey"/>
+    <result column="file_name" property="fileName"/>
+    <result column="file_size" property="fileSize"/>
+    <result column="content_type" property="contentType"/>
+    <result column="created_time" property="createdTime"/>
+  </resultMap>
+</mapper>

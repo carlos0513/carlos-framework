@@ -1,7 +1,7 @@
 -- ============================================
 -- 审计日志主表 (覆盖 90% 查询场景)
 -- ============================================
-CREATE TABLE `audit_log_core`
+CREATE TABLE `audit_log_main`
 (
     -- 主键与分类 (4个字段)
     `id`                   BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -22,6 +22,7 @@ CREATE TABLE `audit_log_core`
     `principal_name`       VARCHAR(100)     NULL COMMENT '主体名称(冗余)',
     `tenant_id`            VARCHAR(64)      NOT NULL DEFAULT '0' COMMENT '租户ID(SaaS隔离)',
     `dept_id`              VARCHAR(64)      NULL COMMENT '部门ID',
+    `dept_name`    VARCHAR(64) NULL COMMENT '部门名称',
     `dept_path`            VARCHAR(500)     NULL COMMENT '部门层级路径, 如: 1/12/156/',
 
     -- 目标对象体系 (4个字段)
@@ -85,7 +86,7 @@ CREATE TABLE `audit_log_core`
     `technical_context_id` BIGINT UNSIGNED  NULL COMMENT '关联技术上下文表ID',
 
     -- 动态扩展 (JSON存储)
-    `dynamic_tags`         JSON             NULL COMMENT '业务标签, 如: {"vipLevel": "GOLD"}',
+    `dynamic_tags` JSON        NULL COMMENT '业务标签',
     `dynamic_extras`       JSON             NULL COMMENT '业务扩展字段',
 
     -- 系统字段
@@ -160,13 +161,13 @@ CREATE TABLE `audit_log_field_change`
 
     `field_name`     VARCHAR(100)    NOT NULL COMMENT '字段名',
     `field_desc`     VARCHAR(100)    NULL COMMENT '字段中文描述',
-    `change_type`    VARCHAR(20)     NOT NULL COMMENT 'ADDED/MODIFIED/REMOVED',
+    `change_type`    TINYINT(2) NOT NULL COMMENT 'ADDED/MODIFIED/REMOVED',
 
     -- 值存储 (支持大文本)
     `old_value`      TEXT            NULL COMMENT '旧值',
-    `old_value_type` VARCHAR(20)     NULL COMMENT '值类型: STRING/NUMBER/JSON',
+    `old_value_type` TINYINT(2) NULL COMMENT '值类型: STRING/NUMBER/JSON',
     `new_value`      TEXT            NULL COMMENT '新值',
-    `new_value_type` VARCHAR(20)     NULL COMMENT '值类型',
+    `new_value_type` TINYINT(2) NULL COMMENT '值类型',
 
     `is_sensitive`   TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '是否敏感字段',
 
@@ -205,7 +206,7 @@ CREATE TABLE `audit_log_technical`
     -- 原始数据 (大对象，可存对象存储，此处存引用)
     `request_payload_ref`   VARCHAR(500)    NULL COMMENT '请求数据存储引用(OSS/MinIO)',
     `response_payload_ref`  VARCHAR(500)    NULL COMMENT '响应数据存储引用',
-    `payload_storage_type`  VARCHAR(20)     NULL COMMENT '存储类型: OSS/S3/MINIO/DB',
+    `payload_storage_type` TINYINT(2) NULL COMMENT '存储类型: OSS/S3/MINIO/DB',
 
     -- 环境信息
     `app_name`              VARCHAR(50)     NULL COMMENT '应用名',
@@ -258,7 +259,6 @@ CREATE TABLE `audit_log_attachments`
     `file_name`       VARCHAR(200)    NULL COMMENT '原始文件名',
     `file_size`       BIGINT UNSIGNED NULL COMMENT '文件大小(字节)',
     `content_type`    VARCHAR(100)    NULL COMMENT 'MIME类型',
-
     `created_time`    DATETIME(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`),
@@ -267,6 +267,7 @@ CREATE TABLE `audit_log_attachments`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci COMMENT ='审计日志-附件引用';
+
 
 
 -- ============================================
@@ -287,7 +288,7 @@ CREATE TABLE `audit_log_archive_record`
     `storage_type`    VARCHAR(20)     NOT NULL COMMENT '存储类型: OSS/S3/LOCAL',
 
     `verify_checksum` VARCHAR(64)     NULL COMMENT '校验和',
-    `state`           VARCHAR(20)     NOT NULL DEFAULT 'SUCCESS' COMMENT '状态',
+    `state` VARCHAR(32) NOT NULL DEFAULT 'SUCCESS' COMMENT '状态',
 
     `created_time`    DATETIME(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -312,13 +313,11 @@ CREATE TABLE `audit_log_config`
     `store_data_change` TINYINT(1)      NOT NULL DEFAULT 1 COMMENT '是否存储数据变更',
     `store_technical`   TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '是否存储技术上下文',
     is_deleted          TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '逻辑删除，0：未删除，1：已删除',
-    create_by           CHAR(32)                 DEFAULT NULL COMMENT '创建者编号',
-    create_time         DATETIME                 DEFAULT NULL COMMENT '创建时间',
-    update_by           CHAR(32)                 DEFAULT NULL COMMENT '更新者编号',
-    update_time         DATETIME                 DEFAULT NULL COMMENT '更新时间',
-    `created_time`      DATETIME(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_time`      DATETIME(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-    `tenant_id`         VARCHAR(64)     NOT NULL DEFAULT '0',
+    create_by   BIGINT               DEFAULT NULL COMMENT '创建者编号',
+    create_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+    update_by   BIGINT               DEFAULT NULL COMMENT '更新者编号',
+    update_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
+    `tenant_id` VARCHAR(64) NOT NULL DEFAULT '0' COMMENT '租户ID，0表示系统级',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_tenant_type` (`tenant_id`, `log_type`)
 

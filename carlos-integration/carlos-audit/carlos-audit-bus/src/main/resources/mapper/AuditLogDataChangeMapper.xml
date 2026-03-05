@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carlos.audit.mapper.AuditLogDataChangeMapper">
+  <resultMap type="com.carlos.audit.pojo.entity.AuditLogDataChange" id="baseMap">
+    <id column="id" property="id"/>
+    <result column="audit_log_id" property="auditLogId"/>
+    <result column="old_data" property="oldData"/>
+    <result column="old_data_compressed" property="oldDataCompressed"/>
+    <result column="new_data" property="newData"/>
+    <result column="new_data_compressed" property="newDataCompressed"/>
+    <result column="changed_field_count" property="changedFieldCount"/>
+    <result column="created_time" property="createdTime"/>
+  </resultMap>
+</mapper>
