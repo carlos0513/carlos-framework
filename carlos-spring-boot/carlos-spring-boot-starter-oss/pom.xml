@@ -42,6 +42,30 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>
         </dependency>
+      <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-extra</artifactId>
+      </dependency>
+
+      <!-- Spring Web MVC -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+      </dependency>
+
+      <!-- Servlet API -->
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- Swagger -->
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <optional>true</optional>
+      </dependency>
 
         <!-- Lombok -->
         <dependency>

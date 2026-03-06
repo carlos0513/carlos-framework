@@ -1,11 +1,13 @@
 package com.carlos.oss.core;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.carlos.oss.config.OssProperties;
 import com.carlos.oss.exception.OssException;
 import com.carlos.oss.model.OssFile;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -108,5 +110,22 @@ public abstract class AbstractOssTemplate implements OssTemplate {
             objectName = objectName.substring(1);
         }
         return objectName;
+    }
+
+    @Override
+    public OssFile putObjectFromUrl(String objectName, String url) {
+        return putObjectFromUrl(getDefaultBucket(), objectName, url);
+    }
+
+    @Override
+    public OssFile putObjectFromUrl(String bucketName, String objectName, String url) {
+        try {
+            byte[] bytes = HttpUtil.downloadBytes(url);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+            String contentType = HttpUtil.getMimeType(url);
+            return putObject(bucketName, objectName, inputStream, contentType);
+        } catch (Exception e) {
+            throw new OssException("Failed to download file from URL: " + url, e);
+        }
     }
 }

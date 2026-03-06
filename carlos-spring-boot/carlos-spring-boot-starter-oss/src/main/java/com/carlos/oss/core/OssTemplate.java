@@ -186,4 +186,23 @@ public interface OssTemplate {
      * @return 是否存在
      */
     boolean objectExists(String bucketName, String objectName);
+
+    /**
+     * 从 URL 上传文件
+     *
+     * @param bucketName 桶名称
+     * @param objectName 对象名称
+     * @param url        文件 URL
+     * @return 文件信息
+     */
+    OssFile putObjectFromUrl(String bucketName, String objectName, String url);
+
+    /**
+     * 从 URL 上传文件（使用默认桶）
+     *
+     * @param objectName 对象名称
+     * @param url        文件 URL
+     * @return 文件信息
+     */
+    OssFile putObjectFromUrl(String objectName, String url);
 }
