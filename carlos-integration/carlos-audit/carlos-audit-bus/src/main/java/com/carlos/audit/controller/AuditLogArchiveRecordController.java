@@ -21,19 +21,19 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 审计日志归档记录 rest服务接口
+ * 审计日志归档记录（管理冷数据归档） rest服务接口
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("audit/log/archive/record")
-@Tag(name = "审计日志归档记录")
+@Tag(name = "审计日志归档记录（管理冷数据归档）")
 public class AuditLogArchiveRecordController {
 
-    public static final String BASE_NAME = "审计日志归档记录";
+    public static final String BASE_NAME = "审计日志归档记录（管理冷数据归档）";
 
     private final AuditLogArchiveRecordService logArchiveRecordService;
 

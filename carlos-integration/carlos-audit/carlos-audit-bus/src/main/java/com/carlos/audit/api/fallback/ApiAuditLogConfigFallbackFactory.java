@@ -7,11 +7,11 @@ import org.springframework.cloud.openfeign.FallbackFactory;
 
 /**
  * <p>
- * 审计日志配置 api 降级
+ * 审计日志配置（动态TTL与采样策略） api 降级
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:53
+ * @date 2026年3月6日 下午9:31:12
  */
 @Slf4j
 public class ApiAuditLogConfigFallbackFactory implements FallbackFactory<ApiAuditLogConfig> {
@@ -19,7 +19,7 @@ public class ApiAuditLogConfigFallbackFactory implements FallbackFactory<ApiAudi
     @Override
     public ApiAuditLogConfig create(Throwable throwable) {
         String message = throwable.getMessage();
-        log.error("审计日志配置服务调用失败: message:{}", message);
+        log.error("审计日志配置（动态TTL与采样策略）服务调用失败: message:{}", message);
         return new ApiAuditLogConfig() {
 
         };

@@ -3,6 +3,7 @@ package com.carlos.audit.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.carlos.audit.pojo.enums.AuditLogTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,11 +15,11 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 审计日志配置 数据源对象
+ * 审计日志配置（动态TTL与采样策略） 数据源对象
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -28,46 +29,51 @@ import java.time.LocalDateTime;
 public class AuditLogConfig extends Model<AuditLogConfig> implements Serializable {
     private static final long serialVersionUID = 1L;
     /**
-     *
+     * 主键
      */
     @TableId(type = IdType.ASSIGN_ID, value = "id")
     private Long id;
     /**
-     * 日志类型
+     * 日志类型，如：USER_LOGIN
      */
     @TableField(value = "log_type")
-    private String logType;
+    private AuditLogTypeEnum logType;
     /**
      * 保留天数
      */
     @TableField(value = "retention_days")
     private Integer retentionDays;
     /**
-     * 采样率 0.00-1.00
+     * 采样率 0.00-1.00，1.00为全量
      */
     @TableField(value = "sampling_rate")
     private BigDecimal samplingRate;
     /**
-     * 是否异步写入
+     * 是否异步写入：0-同步/1-异步
      */
     @TableField(value = "async_write")
     private Boolean asyncWrite;
     /**
-     * 是否存储数据变更
+     * 是否存储数据变更：0-否/1-是
      */
     @TableField(value = "store_data_change")
     private Boolean storeDataChange;
     /**
-     * 是否存储技术上下文
+     * 是否存储技术上下文：0-否/1-是
      */
     @TableField(value = "store_technical")
     private Boolean storeTechnical;
     /**
-     * 逻辑删除，0：未删除，1：已删除
+     * 逻辑删除：0-未删除/1-已删除
      */
     @TableLogic
-    @TableField(value = "is_deleted")
+    @TableField(value = "deleted")
     private Boolean deleted;
+    /**
+     * 租户ID，0表示系统级配置
+     */
+    @TableField(value = "tenant_id")
+    private String tenantId;
     /**
      * 创建者编号
      */
@@ -88,10 +94,5 @@ public class AuditLogConfig extends Model<AuditLogConfig> implements Serializabl
      */
     @TableField(value = "update_time")
     private LocalDateTime updateTime;
-    /**
-     * 租户ID，0表示系统级
-     */
-    @TableField(value = "tenant_id")
-    private String tenantId;
 
 }

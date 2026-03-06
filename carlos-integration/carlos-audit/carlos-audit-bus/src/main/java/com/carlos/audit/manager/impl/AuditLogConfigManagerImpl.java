@@ -17,14 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-
 /**
  * <p>
- * 审计日志配置 查询封装实现类
+ * 审计日志配置（动态TTL与采样策略） 查询封装实现类
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -101,11 +100,11 @@ public class AuditLogConfigManagerImpl extends BaseServiceImpl<AuditLogConfigMap
             AuditLogConfig::getAsyncWrite,
             AuditLogConfig::getStoreDataChange,
             AuditLogConfig::getStoreTechnical,
+            AuditLogConfig::getTenantId,
             AuditLogConfig::getCreateBy,
             AuditLogConfig::getCreateTime,
             AuditLogConfig::getUpdateBy,
-            AuditLogConfig::getUpdateTime,
-            AuditLogConfig::getTenantId
+            AuditLogConfig::getUpdateTime
         );
         PageInfo<AuditLogConfig> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, AuditLogConfigConvert.INSTANCE::toVO);

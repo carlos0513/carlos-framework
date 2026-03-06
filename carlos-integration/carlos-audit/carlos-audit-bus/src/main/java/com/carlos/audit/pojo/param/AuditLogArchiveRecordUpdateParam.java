@@ -11,20 +11,20 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 审计日志归档记录 更新参数封装
+ * 审计日志归档记录（管理冷数据归档） 更新参数封装
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Data
 @Accessors(chain = true)
-@Schema(description = "审计日志归档记录修改参数")
+@Schema(description = "审计日志归档记录（管理冷数据归档）修改参数")
 public class AuditLogArchiveRecordUpdateParam {
-    @NotNull(message = "不能为空")
-    @Schema(description = "")
+    @NotNull(message = "主键不能为空")
+    @Schema(description = "主键")
     private Long id;
-    @Schema(description = "归档批次ID")
+    @Schema(description = "归档批次ID，UUID")
     private String archiveId;
     @Schema(description = "归档日期")
     private LocalDate archiveDate;
@@ -34,16 +34,16 @@ public class AuditLogArchiveRecordUpdateParam {
     private LocalDateTime endTime;
     @Schema(description = "归档记录数")
     private Long recordCount;
-    @Schema(description = "归档文件大小")
+    @Schema(description = "归档文件大小，字节")
     private Long fileSizeBytes;
     @Schema(description = "存储路径")
     private String storagePath;
-    @Schema(description = "存储类型: OSS/S3/LOCAL")
+    @Schema(description = "存储类型：OSS/S3/LOCAL")
     private String storageType;
-    @Schema(description = "校验和")
+    @Schema(description = "校验和，MD5或SHA256")
     private String verifyChecksum;
-    @Schema(description = "状态")
+    @Schema(description = "状态：SUCCESS-成功/FAILED-失败/PROCESSING-处理中")
     private String state;
-    @Schema(description = "")
+    @Schema(description = "创建时间")
     private LocalDateTime createdTime;
 }

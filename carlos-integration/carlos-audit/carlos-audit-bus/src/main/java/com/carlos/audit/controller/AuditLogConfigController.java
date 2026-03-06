@@ -21,19 +21,19 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 审计日志配置 rest服务接口
+ * 审计日志配置（动态TTL与采样策略） rest服务接口
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("audit/log/config")
-@Tag(name = "审计日志配置")
+@Tag(name = "审计日志配置（动态TTL与采样策略）")
 public class AuditLogConfigController {
 
-    public static final String BASE_NAME = "审计日志配置";
+    public static final String BASE_NAME = "审计日志配置（动态TTL与采样策略）";
 
     private final AuditLogConfigService logConfigService;
 

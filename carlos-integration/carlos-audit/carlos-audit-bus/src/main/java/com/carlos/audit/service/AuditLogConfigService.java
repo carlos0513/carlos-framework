@@ -12,11 +12,11 @@ import java.util.Set;
 
 /**
  * <p>
- * 审计日志配置 业务
+ * 审计日志配置（动态TTL与采样策略） 业务
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Slf4j
 @Service
@@ -26,11 +26,11 @@ public class AuditLogConfigService {
     private final AuditLogConfigManager logConfigManager;
 
     /**
-     * 新增审计日志配置
+     * 新增审计日志配置（动态TTL与采样策略）
      *
-     * @param dto 审计日志配置数据
+     * @param dto 审计日志配置（动态TTL与采样策略）数据
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void addAuditLogConfig(AuditLogConfigDTO dto) {
         boolean success = logConfigManager.add(dto);
@@ -44,11 +44,11 @@ public class AuditLogConfigService {
     }
 
     /**
-     * 删除审计日志配置
+     * 删除审计日志配置（动态TTL与采样策略）
      *
-     * @param ids 审计日志配置id
+     * @param ids 审计日志配置（动态TTL与采样策略）id
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void deleteAuditLogConfig(Set<Serializable> ids) {
         for (Serializable id : ids) {
@@ -62,11 +62,11 @@ public class AuditLogConfigService {
     }
 
     /**
-     * 修改审计日志配置信息
+     * 修改审计日志配置（动态TTL与采样策略）信息
      *
      * @param dto 对象信息
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void updateAuditLogConfig(AuditLogConfigDTO dto) {
         boolean success = logConfigManager.modify(dto);

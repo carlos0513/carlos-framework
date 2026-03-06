@@ -12,11 +12,11 @@ import java.util.Set;
 
 /**
  * <p>
- * 审计日志主表 业务
+ * 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据） 业务
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Slf4j
 @Service
@@ -26,11 +26,11 @@ public class AuditLogMainService {
     private final AuditLogMainManager logMainManager;
 
     /**
-     * 新增审计日志主表
+     * 新增审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）
      *
-     * @param dto 审计日志主表数据
+     * @param dto 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）数据
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void addAuditLogMain(AuditLogMainDTO dto) {
         boolean success = logMainManager.add(dto);
@@ -44,11 +44,11 @@ public class AuditLogMainService {
     }
 
     /**
-     * 删除审计日志主表
+     * 删除审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）
      *
-     * @param ids 审计日志主表id
+     * @param ids 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）id
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void deleteAuditLogMain(Set<Serializable> ids) {
         for (Serializable id : ids) {
@@ -62,11 +62,11 @@ public class AuditLogMainService {
     }
 
     /**
-     * 修改审计日志主表信息
+     * 修改审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）信息
      *
      * @param dto 对象信息
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void updateAuditLogMain(AuditLogMainDTO dto) {
         boolean success = logMainManager.modify(dto);

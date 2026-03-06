@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.carlos.audit.pojo.enums.AuditLogArchiveStateEnum;
+import com.carlos.audit.pojo.enums.AuditLogStorageTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,11 +19,11 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 审计日志归档记录 数据源对象
+ * 审计日志归档记录（管理冷数据归档） 数据源对象
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -31,12 +33,12 @@ import java.time.LocalDateTime;
 public class AuditLogArchiveRecord extends Model<AuditLogArchiveRecord> implements Serializable {
     private static final long serialVersionUID = 1L;
     /**
-     *
+     * 主键
      */
     @TableId(type = IdType.ASSIGN_ID, value = "id")
     private Long id;
     /**
-     * 归档批次ID
+     * 归档批次ID，UUID
      */
     @TableField(value = "archive_id")
     private String archiveId;
@@ -61,7 +63,7 @@ public class AuditLogArchiveRecord extends Model<AuditLogArchiveRecord> implemen
     @TableField(value = "record_count")
     private Long recordCount;
     /**
-     * 归档文件大小
+     * 归档文件大小，字节
      */
     @TableField(value = "file_size_bytes")
     private Long fileSizeBytes;
@@ -71,22 +73,22 @@ public class AuditLogArchiveRecord extends Model<AuditLogArchiveRecord> implemen
     @TableField(value = "storage_path")
     private String storagePath;
     /**
-     * 存储类型: OSS/S3/LOCAL
+     * 存储类型：OSS/S3/LOCAL
      */
     @TableField(value = "storage_type")
-    private String storageType;
+    private AuditLogStorageTypeEnum storageType;
     /**
-     * 校验和
+     * 校验和，MD5或SHA256
      */
     @TableField(value = "verify_checksum")
     private String verifyChecksum;
     /**
-     * 状态
+     * 状态：SUCCESS-成功/FAILED-失败/PROCESSING-处理中
      */
     @TableField(value = "state")
-    private String state;
+    private AuditLogArchiveStateEnum state;
     /**
-     *
+     * 创建时间
      */
     @TableField(value = "created_time")
     private LocalDateTime createdTime;

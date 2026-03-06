@@ -7,11 +7,11 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
- * 审计日志配置 查询接口
+ * 审计日志配置（动态TTL与采样策略） 查询接口
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Mapper
 public interface AuditLogConfigMapper extends MPJBaseMapper<AuditLogConfig> {

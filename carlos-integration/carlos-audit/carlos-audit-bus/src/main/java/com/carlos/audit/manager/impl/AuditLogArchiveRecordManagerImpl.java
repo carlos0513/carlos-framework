@@ -17,14 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-
 /**
  * <p>
- * 审计日志归档记录 查询封装实现类
+ * 审计日志归档记录（管理冷数据归档） 查询封装实现类
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Slf4j
 @RequiredArgsConstructor

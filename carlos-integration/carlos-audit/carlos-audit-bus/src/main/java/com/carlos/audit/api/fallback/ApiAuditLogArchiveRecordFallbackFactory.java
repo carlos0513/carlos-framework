@@ -7,11 +7,11 @@ import org.springframework.cloud.openfeign.FallbackFactory;
 
 /**
  * <p>
- * 审计日志归档记录 api 降级
+ * 审计日志归档记录（管理冷数据归档） api 降级
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:53
+ * @date 2026年3月6日 下午9:31:12
  */
 @Slf4j
 public class ApiAuditLogArchiveRecordFallbackFactory implements FallbackFactory<ApiAuditLogArchiveRecord> {
@@ -19,7 +19,7 @@ public class ApiAuditLogArchiveRecordFallbackFactory implements FallbackFactory<
     @Override
     public ApiAuditLogArchiveRecord create(Throwable throwable) {
         String message = throwable.getMessage();
-        log.error("审计日志归档记录服务调用失败: message:{}", message);
+        log.error("审计日志归档记录（管理冷数据归档）服务调用失败: message:{}", message);
         return new ApiAuditLogArchiveRecord() {
 
         };

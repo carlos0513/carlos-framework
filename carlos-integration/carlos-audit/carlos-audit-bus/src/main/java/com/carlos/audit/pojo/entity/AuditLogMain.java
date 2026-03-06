@@ -1,11 +1,9 @@
 package com.carlos.audit.pojo.entity;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.carlos.audit.pojo.enums.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,11 +16,11 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 审计日志主表 数据源对象
+ * 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据） 数据源对象
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -32,30 +30,20 @@ import java.time.LocalDateTime;
 public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
     private static final long serialVersionUID = 1L;
     /**
-     * 主键
+     * 主键，雪花ID
      */
     @TableId(type = IdType.ASSIGN_ID, value = "id")
     private Long id;
     /**
-     * 日志Schema版本
-     */
-    @TableField(value = "log_schema_version")
-    private Integer logSchemaVersion;
-    /**
-     * 大类: SECURITY/BUSINESS/SYSTEM/AUDIT
-     */
-    @TableField(value = "category")
-    private String category;
-    /**
-     * 细类: USER_LOGIN/ORDER_PAY等
-     */
-    @TableField(value = "log_type")
-    private String logType;
-    /**
-     * 服务器时间(毫秒精度)
+     * 服务器时间，毫秒精度，CK分区键
      */
     @TableField(value = "server_time")
     private LocalDateTime serverTime;
+    /**
+     * 事件日期，冗余字段，方便分区
+     */
+    @TableField(value = "event_date")
+    private LocalDate eventDate;
     /**
      * 客户端时间
      */
@@ -67,32 +55,52 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
     @TableField(value = "event_time")
     private LocalDateTime eventTime;
     /**
-     * 操作耗时(毫秒)
+     * 操作耗时，毫秒
      */
     @TableField(value = "duration_ms")
     private Integer durationMs;
     /**
-     * 数据保留截止日期(TTL)
+     * 数据保留截止日期，TTL删除用
      */
     @TableField(value = "retention_deadline")
     private LocalDate retentionDeadline;
     /**
-     * 操作主体ID
+     * 日志Schema版本，用于兼容性处理
+     */
+    @TableField(value = "log_schema_version")
+    private Integer logSchemaVersion;
+    /**
+     * 大类：SECURITY-安全/BUSINESS-业务/SYSTEM-系统/AUDIT-审计
+     */
+    @TableField(value = "category")
+    private AuditLogCategoryEnum category;
+    /**
+     * 细类：USER_LOGIN-登录/ORDER_PAY-支付/DATA_EXPORT-数据导出等
+     */
+    @TableField(value = "log_type")
+    private AuditLogTypeEnum logType;
+    /**
+     * 风险等级 0-100，0为无风险，100为极高风险
+     */
+    @TableField(value = "risk_level")
+    private Integer riskLevel;
+    /**
+     * 操作主体ID，用户ID或服务账号
      */
     @TableField(value = "principal_id")
     private String principalId;
     /**
-     * 主体类型: USER/SERVICE/SYSTEM/ANONYMOUS
+     * 主体类型：USER-用户/SERVICE-服务/SYSTEM-系统/ANONYMOUS-匿名
      */
     @TableField(value = "principal_type")
-    private String principalType;
+    private AuditLogPrincipalTypeEnum principalType;
     /**
-     * 主体名称(冗余)
+     * 主体名称，冗余存储避免关联查询
      */
     @TableField(value = "principal_name")
     private String principalName;
     /**
-     * 租户ID(SaaS隔离)
+     * 租户ID，SaaS多租户隔离字段
      */
     @TableField(value = "tenant_id")
     private String tenantId;
@@ -102,62 +110,62 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
     @TableField(value = "dept_id")
     private String deptId;
     /**
-     * 部门名称
+     * 部门名称，冗余存储
      */
     @TableField(value = "dept_name")
     private String deptName;
     /**
-     * 部门层级路径, 如: 1/12/156/
+     * 部门层级路径，如：1/12/156/，方便层级查询
      */
     @TableField(value = "dept_path")
     private String deptPath;
     /**
-     * 对象类型: ORDER/USER/CONFIG
+     * 对象类型：ORDER-订单/USER-用户/CONFIG-配置/DATA-数据
      */
     @TableField(value = "target_type")
-    private String targetType;
+    private AuditLogTargetTypeEnum targetType;
     /**
      * 对象唯一标识
      */
     @TableField(value = "target_id")
     private String targetId;
     /**
-     * 对象显示名称
+     * 对象显示名称，冗余存储
      */
     @TableField(value = "target_name")
     private String targetName;
     /**
-     * 对象关键信息摘要
+     * 对象关键信息摘要，JSON格式存储关键字段
      */
     @TableField(value = "target_snapshot")
     private String targetSnapshot;
     /**
-     * 状态: SUCCESS/FAIL/PENDING/TIMEOUT/PARTIAL_SUCCESS
+     * 状态：SUCCESS-成功/FAIL-失败/PENDING-处理中/TIMEOUT-超时/PARTIAL_SUCCESS-部分成功
      */
     @TableField(value = "state")
-    private String state;
+    private AuditLogStateEnum state;
     /**
-     * 业务结果码
+     * 业务结果码，用于细分错误类型
      */
     @TableField(value = "result_code")
     private String resultCode;
     /**
-     * 结果描述
+     * 结果描述，前500字符
      */
     @TableField(value = "result_message")
     private String resultMessage;
     /**
-     * 操作描述(人工可读)
+     * 操作描述，人工可读的操作说明
      */
     @TableField(value = "operation")
     private String operation;
     /**
-     * 风险等级 0-100
+     * 审批意见，工作流用
      */
-    @TableField(value = "risk_level")
-    private Integer riskLevel;
+    @TableField(value = "approval_comment")
+    private String approvalComment;
     /**
-     * 客户端IP(支持IPv6)
+     * 客户端IP，支持IPv6
      */
     @TableField(value = "client_ip")
     private String clientIp;
@@ -172,12 +180,12 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
     @TableField(value = "server_ip")
     private String serverIp;
     /**
-     * 浏览器UA
+     * 浏览器UA，用于设备识别
      */
     @TableField(value = "user_agent")
     private String userAgent;
     /**
-     * 设备指纹
+     * 设备指纹，唯一标识设备
      */
     @TableField(value = "device_fingerprint")
     private String deviceFingerprint;
@@ -207,57 +215,62 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
     @TableField(value = "location_lon")
     private BigDecimal locationLon;
     /**
-     * 认证方式: PASSWORD/SMS/OAUTH2/LDAP/CERT
+     * 认证方式：PASSWORD-密码/SMS-短信/OAUTH2-OAuth2/LDAP-LDAP/CERT-证书
      */
     @TableField(value = "auth_type")
-    private String authType;
+    private AuditLogAuthTypeEnum authType;
     /**
-     * 认证源: LOCAL/WECHAT/DINGTALK
+     * 认证源：LOCAL-本地/WECHAT-微信/DINGTALK-钉钉
      */
     @TableField(value = "auth_provider")
-    private String authProvider;
+    private AuditLogAuthProviderEnum authProvider;
     /**
-     * 当前角色列表
+     * 当前角色列表，JSON数组
      */
     @TableField(value = "roles")
     private String roles;
     /**
-     * 当前权限列表
+     * 当前权限列表，JSON数组
      */
     @TableField(value = "permissions")
     private String permissions;
     /**
-     * 业务渠道: WEB/APP/MINI_PROGRAM/OPEN_API
+     * 业务渠道：WEB-网页/APP-移动应用/MINI_PROGRAM-小程序/OPEN_API-开放接口
      */
     @TableField(value = "biz_channel")
-    private String bizChannel;
+    private AuditLogBizChannelEnum bizChannel;
     /**
-     * 业务场景
+     * 业务场景，如：订单创建-ORDER_CREATE
      */
     @TableField(value = "biz_scene")
     private String bizScene;
     /**
-     * 业务订单号
+     * 业务订单号，用于关联订单
      */
     @TableField(value = "biz_order_no")
     private String bizOrderNo;
     /**
-     * 关联业务ID列表
+     * 关联业务ID列表，JSON数组
      */
     @TableField(value = "related_biz_ids")
     private String relatedBizIds;
     /**
-     * 涉及金额
+     * 涉及金额，精确到分
      */
     @TableField(value = "monetary_amount")
     private BigDecimal monetaryAmount;
     /**
-     * 批量操作批次号
+     * 流程实例ID，工作流引擎生成
+     */
+    @TableField(value = "process_id")
+    private String processId;
+    /**
+     * 批量操作批次号，UUID
      */
     @TableField(value = "batch_id")
     private String batchId;
     /**
-     * 批次内序号
+     * 批次内序号，从0开始
      */
     @TableField(value = "batch_index")
     private Integer batchIndex;
@@ -266,11 +279,6 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
      */
     @TableField(value = "batch_total")
     private Integer batchTotal;
-    /**
-     * 流程实例ID
-     */
-    @TableField(value = "process_id")
-    private String processId;
     /**
      * 任务ID
      */
@@ -282,54 +290,205 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
     @TableField(value = "approver_id")
     private String approverId;
     /**
-     * 审批意见
-     */
-    @TableField(value = "approval_comment")
-    private String approvalComment;
-    /**
-     * 是否有数据变更详情(0=否,1=是)
+     * 是否有数据变更详情：0-否/1-是
      */
     @TableField(value = "has_data_change")
     private Boolean hasDataChange;
     /**
-     * 实体类名
+     * 实体类名，如：com.example.Order
      */
     @TableField(value = "entity_class")
     private String entityClass;
     /**
-     * 数据库表名
+     * 数据库表名，如：t_order
      */
     @TableField(value = "table_name")
     private String tableName;
     /**
-     * 变更摘要
+     * 变更摘要，人工可读的变更说明
      */
     @TableField(value = "change_summary")
     private String changeSummary;
     /**
-     * 关联技术上下文表ID
+     * 变更字段数量
      */
-    @TableField(value = "technical_context_id")
-    private Long technicalContextId;
+    @TableField(value = "changed_field_count")
+    private Integer changedFieldCount;
     /**
-     * 业务标签
+     * 变更前完整数据，JSON格式
+     */
+    @TableField(value = "old_data")
+    private String oldData;
+    /**
+     * 变更后完整数据，JSON格式
+     */
+    @TableField(value = "new_data")
+    private String newData;
+    /**
+     * 旧数据是否压缩：0-否/1-是
+     */
+    @TableField(value = "old_data_compressed")
+    private Boolean oldDataCompressed;
+    /**
+     * 新数据是否压缩：0-否/1-是
+     */
+    @TableField(value = "new_data_compressed")
+    private Boolean newDataCompressed;
+    /**
+     * 变更字段1名称
+     */
+    @TableField(value = "change_field_1_name")
+    private String changeField1Name;
+    /**
+     * 变更字段1旧值，前500字符
+     */
+    @TableField(value = "change_field_1_old")
+    private String changeField1Old;
+    /**
+     * 变更字段1新值，前500字符
+     */
+    @TableField(value = "change_field_1_new")
+    private String changeField1New;
+    /**
+     * 全链路追踪ID，如SkyWalking TraceId
+     */
+    @TableField(value = "trace_id")
+    private String traceId;
+    /**
+     * 当前Span ID
+     */
+    @TableField(value = "span_id")
+    private String spanId;
+    /**
+     * 父Span ID
+     */
+    @TableField(value = "parent_span_id")
+    private String parentSpanId;
+    /**
+     * 调用链路节点，JSON数组
+     */
+    @TableField(value = "trace_path")
+    private String tracePath;
+    /**
+     * 数据库查询次数
+     */
+    @TableField(value = "db_query_count")
+    private Integer dbQueryCount;
+    /**
+     * 数据库查询耗时，毫秒
+     */
+    @TableField(value = "db_query_time_ms")
+    private Integer dbQueryTimeMs;
+    /**
+     * 外部接口调用次数
+     */
+    @TableField(value = "external_call_count")
+    private Integer externalCallCount;
+    /**
+     * 外部接口耗时，毫秒
+     */
+    @TableField(value = "external_call_time_ms")
+    private Integer externalCallTimeMs;
+    /**
+     * 自定义指标，JSON格式
+     */
+    @TableField(value = "custom_metrics")
+    private String customMetrics;
+    /**
+     * 请求数据OSS引用
+     */
+    @TableField(value = "request_payload_ref")
+    private String requestPayloadRef;
+    /**
+     * 响应数据OSS引用
+     */
+    @TableField(value = "response_payload_ref")
+    private String responsePayloadRef;
+    /**
+     * 存储类型：OSS/S3/MINIO/DB
+     */
+    @TableField(value = "payload_storage_type")
+    private AuditLogPayloadStorageTypeEnum payloadStorageType;
+    /**
+     * 应用名，如：order-service
+     */
+    @TableField(value = "app_name")
+    private String appName;
+    /**
+     * 应用版本，如：1.2.3
+     */
+    @TableField(value = "app_version")
+    private String appVersion;
+    /**
+     * 集群标识，如：prod-cluster-1
+     */
+    @TableField(value = "cluster")
+    private String cluster;
+    /**
+     * 主机名
+     */
+    @TableField(value = "host_name")
+    private String hostName;
+    /**
+     * 标签键数组，如：['env','module']
+     */
+    @TableField(value = "tag_keys")
+    private String tagKeys;
+    /**
+     * 标签值数组，如：['prod','order']
+     */
+    @TableField(value = "tag_values")
+    private String tagValues;
+    /**
+     * 附件数量
+     */
+    @TableField(value = "attachment_count")
+    private Integer attachmentCount;
+    /**
+     * 附件类型数组，如：['IMAGE','PDF']
+     */
+    @TableField(value = "attachment_types")
+    private String attachmentTypes;
+    /**
+     * 附件总大小，字节
+     */
+    @TableField(value = "attachment_total_size")
+    private Long attachmentTotalSize;
+    /**
+     * 第一个附件的OSS引用，快速预览
+     */
+    @TableField(value = "first_attachment_ref")
+    private String firstAttachmentRef;
+    /**
+     * 所有附件引用数组，JSON格式
+     */
+    @TableField(value = "attachment_refs")
+    private String attachmentRefs;
+    /**
+     * 业务标签，JSON格式
      */
     @TableField(value = "dynamic_tags")
     private String dynamicTags;
     /**
-     * 业务扩展字段
+     * 业务扩展字段，JSON格式
      */
     @TableField(value = "dynamic_extras")
     private String dynamicExtras;
     /**
-     *
+     * 记录创建时间
      */
     @TableField(value = "created_time")
     private LocalDateTime createdTime;
     /**
-     *
+     * 记录更新时间
      */
     @TableField(value = "updated_time")
     private LocalDateTime updatedTime;
+    /**
+     * 逻辑删除：0-未删除/1-已删除
+     */
+    @TableLogic
+    @TableField(value = "deleted")
+    private Boolean deleted;
 
 }

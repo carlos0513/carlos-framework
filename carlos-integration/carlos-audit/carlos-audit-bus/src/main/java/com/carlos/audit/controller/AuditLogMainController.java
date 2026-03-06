@@ -21,19 +21,19 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 审计日志主表 rest服务接口
+ * 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据） rest服务接口
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("audit/log/main")
-@Tag(name = "审计日志主表")
+@Tag(name = "审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）")
 public class AuditLogMainController {
 
-    public static final String BASE_NAME = "审计日志主表";
+    public static final String BASE_NAME = "审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）";
 
     private final AuditLogMainService logMainService;
 

@@ -17,14 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-
 /**
  * <p>
- * 审计日志主表 查询封装实现类
+ * 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据） 查询封装实现类
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -95,14 +94,16 @@ public class AuditLogMainManagerImpl extends BaseServiceImpl<AuditLogMainMapper,
         wrapper.select(
 
             AuditLogMain::getId,
-            AuditLogMain::getLogSchemaVersion,
-            AuditLogMain::getCategory,
-            AuditLogMain::getLogType,
             AuditLogMain::getServerTime,
+            AuditLogMain::getEventDate,
             AuditLogMain::getClientTime,
             AuditLogMain::getEventTime,
             AuditLogMain::getDurationMs,
             AuditLogMain::getRetentionDeadline,
+            AuditLogMain::getLogSchemaVersion,
+            AuditLogMain::getCategory,
+            AuditLogMain::getLogType,
+            AuditLogMain::getRiskLevel,
             AuditLogMain::getPrincipalId,
             AuditLogMain::getPrincipalType,
             AuditLogMain::getPrincipalName,
@@ -118,7 +119,7 @@ public class AuditLogMainManagerImpl extends BaseServiceImpl<AuditLogMainMapper,
             AuditLogMain::getResultCode,
             AuditLogMain::getResultMessage,
             AuditLogMain::getOperation,
-            AuditLogMain::getRiskLevel,
+            AuditLogMain::getApprovalComment,
             AuditLogMain::getClientIp,
             AuditLogMain::getClientPort,
             AuditLogMain::getServerIp,
@@ -138,18 +139,47 @@ public class AuditLogMainManagerImpl extends BaseServiceImpl<AuditLogMainMapper,
             AuditLogMain::getBizOrderNo,
             AuditLogMain::getRelatedBizIds,
             AuditLogMain::getMonetaryAmount,
+            AuditLogMain::getProcessId,
             AuditLogMain::getBatchId,
             AuditLogMain::getBatchIndex,
             AuditLogMain::getBatchTotal,
-            AuditLogMain::getProcessId,
             AuditLogMain::getTaskId,
             AuditLogMain::getApproverId,
-            AuditLogMain::getApprovalComment,
             AuditLogMain::getHasDataChange,
             AuditLogMain::getEntityClass,
             AuditLogMain::getTableName,
             AuditLogMain::getChangeSummary,
-            AuditLogMain::getTechnicalContextId,
+            AuditLogMain::getChangedFieldCount,
+            AuditLogMain::getOldData,
+            AuditLogMain::getNewData,
+            AuditLogMain::getOldDataCompressed,
+            AuditLogMain::getNewDataCompressed,
+            AuditLogMain::getChangeField1Name,
+            AuditLogMain::getChangeField1Old,
+            AuditLogMain::getChangeField1New,
+            AuditLogMain::getTraceId,
+            AuditLogMain::getSpanId,
+            AuditLogMain::getParentSpanId,
+            AuditLogMain::getTracePath,
+            AuditLogMain::getDbQueryCount,
+            AuditLogMain::getDbQueryTimeMs,
+            AuditLogMain::getExternalCallCount,
+            AuditLogMain::getExternalCallTimeMs,
+            AuditLogMain::getCustomMetrics,
+            AuditLogMain::getRequestPayloadRef,
+            AuditLogMain::getResponsePayloadRef,
+            AuditLogMain::getPayloadStorageType,
+            AuditLogMain::getAppName,
+            AuditLogMain::getAppVersion,
+            AuditLogMain::getCluster,
+            AuditLogMain::getHostName,
+            AuditLogMain::getTagKeys,
+            AuditLogMain::getTagValues,
+            AuditLogMain::getAttachmentCount,
+            AuditLogMain::getAttachmentTypes,
+            AuditLogMain::getAttachmentTotalSize,
+            AuditLogMain::getFirstAttachmentRef,
+            AuditLogMain::getAttachmentRefs,
             AuditLogMain::getDynamicTags,
             AuditLogMain::getDynamicExtras,
             AuditLogMain::getCreatedTime,

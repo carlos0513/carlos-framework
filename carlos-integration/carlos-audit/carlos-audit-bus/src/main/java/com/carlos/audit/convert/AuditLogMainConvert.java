@@ -12,11 +12,11 @@ import java.util.List;
 
 /**
  * <p>
- * 审计日志主表 转换器
+ * 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据） 转换器
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Mapper(uses = {CommonConvert.class})
 public interface AuditLogMainConvert {
@@ -29,7 +29,7 @@ public interface AuditLogMainConvert {
      * @param param 新增参数
      * @return 数据传输对象
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     AuditLogMainDTO toDTO(AuditLogMainCreateParam param);
 
@@ -39,7 +39,7 @@ public interface AuditLogMainConvert {
      * @param param 修改参数
      * @return 数据传输对象
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     AuditLogMainDTO toDTO(AuditLogMainUpdateParam param);
 
@@ -49,7 +49,7 @@ public interface AuditLogMainConvert {
      * @param dos 数据持久化对象列表
      * @return 数据传输对象列表
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     List<AuditLogMainDTO> toDTO(List<AuditLogMain> dos);
 
@@ -59,7 +59,7 @@ public interface AuditLogMainConvert {
      * @param entity 数据持久化对象
      * @return 数据传输对象列表
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     AuditLogMainDTO toDTO(AuditLogMain entity);
 
@@ -69,7 +69,7 @@ public interface AuditLogMainConvert {
      * @param dto 数据传输对象
      * @return 数据持久化对象
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     AuditLogMain toDO(AuditLogMainDTO dto);
 
@@ -79,7 +79,7 @@ public interface AuditLogMainConvert {
      * @param dto 数据传输对象
      * @return 数据显示对象
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     AuditLogMainVO toVO(AuditLogMainDTO dto);
 
@@ -89,7 +89,7 @@ public interface AuditLogMainConvert {
      * @param dos 数据传输对象
      * @return 数据显示对象
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     List<AuditLogMainVO> toVO(List<AuditLogMain> dos);
 
@@ -99,7 +99,7 @@ public interface AuditLogMainConvert {
      * @param entity 数据传输对象
      * @return 数据显示对象
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     AuditLogMainVO toVO(AuditLogMain entity);
 }

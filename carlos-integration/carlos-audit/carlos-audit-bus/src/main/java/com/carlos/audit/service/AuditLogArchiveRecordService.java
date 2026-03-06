@@ -12,11 +12,11 @@ import java.util.Set;
 
 /**
  * <p>
- * 审计日志归档记录 业务
+ * 审计日志归档记录（管理冷数据归档） 业务
  * </p>
  *
  * @author Carlos
- * @date 2026年3月5日 下午11:36:54
+ * @date 2026年3月6日 下午9:31:12
  */
 @Slf4j
 @Service
@@ -26,11 +26,11 @@ public class AuditLogArchiveRecordService {
     private final AuditLogArchiveRecordManager logArchiveRecordManager;
 
     /**
-     * 新增审计日志归档记录
+     * 新增审计日志归档记录（管理冷数据归档）
      *
-     * @param dto 审计日志归档记录数据
+     * @param dto 审计日志归档记录（管理冷数据归档）数据
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void addAuditLogArchiveRecord(AuditLogArchiveRecordDTO dto) {
         boolean success = logArchiveRecordManager.add(dto);
@@ -44,11 +44,11 @@ public class AuditLogArchiveRecordService {
     }
 
     /**
-     * 删除审计日志归档记录
+     * 删除审计日志归档记录（管理冷数据归档）
      *
-     * @param ids 审计日志归档记录id
+     * @param ids 审计日志归档记录（管理冷数据归档）id
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void deleteAuditLogArchiveRecord(Set<Serializable> ids) {
         for (Serializable id : ids) {
@@ -62,11 +62,11 @@ public class AuditLogArchiveRecordService {
     }
 
     /**
-     * 修改审计日志归档记录信息
+     * 修改审计日志归档记录（管理冷数据归档）信息
      *
      * @param dto 对象信息
      * @author Carlos
-     * @date 2026年3月5日 下午11:36:54
+     * @date 2026年3月6日 下午9:31:12
      */
     public void updateAuditLogArchiveRecord(AuditLogArchiveRecordDTO dto) {
         boolean success = logArchiveRecordManager.modify(dto);
