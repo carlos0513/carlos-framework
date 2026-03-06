@@ -335,21 +335,6 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
     @TableField(value = "new_data_compressed")
     private Boolean newDataCompressed;
     /**
-     * 变更字段1名称
-     */
-    @TableField(value = "change_field_1_name")
-    private String changeField1Name;
-    /**
-     * 变更字段1旧值，前500字符
-     */
-    @TableField(value = "change_field_1_old")
-    private String changeField1Old;
-    /**
-     * 变更字段1新值，前500字符
-     */
-    @TableField(value = "change_field_1_new")
-    private String changeField1New;
-    /**
      * 全链路追踪ID，如SkyWalking TraceId
      */
     @TableField(value = "trace_id")

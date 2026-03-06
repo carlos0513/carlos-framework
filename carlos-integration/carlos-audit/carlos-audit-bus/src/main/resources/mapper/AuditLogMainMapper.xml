@@ -63,9 +63,6 @@
                 <result column="new_data" property="newData"/>
                 <result column="old_data_compressed" property="oldDataCompressed"/>
                 <result column="new_data_compressed" property="newDataCompressed"/>
-                <result column="change_field_1_name" property="changeField1Name"/>
-                <result column="change_field_1_old" property="changeField1Old"/>
-                <result column="change_field_1_new" property="changeField1New"/>
                 <result column="trace_id" property="traceId"/>
                 <result column="span_id" property="spanId"/>
                 <result column="parent_span_id" property="parentSpanId"/>

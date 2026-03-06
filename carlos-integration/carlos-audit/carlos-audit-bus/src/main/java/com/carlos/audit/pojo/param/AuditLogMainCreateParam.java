@@ -159,12 +159,6 @@ public class AuditLogMainCreateParam {
     @NotNull(message = "新数据是否压缩：0-否/1-是不能为空")
     @Schema(description = "新数据是否压缩：0-否/1-是")
     private Boolean newDataCompressed;
-    @Schema(description = "变更字段1名称")
-    private String changeField1Name;
-    @Schema(description = "变更字段1旧值，前500字符")
-    private String changeField1Old;
-    @Schema(description = "变更字段1新值，前500字符")
-    private String changeField1New;
     @Schema(description = "全链路追踪ID，如SkyWalking TraceId")
     private String traceId;
     @Schema(description = "当前Span ID")

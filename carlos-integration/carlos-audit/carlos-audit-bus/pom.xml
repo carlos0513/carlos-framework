@@ -28,6 +28,39 @@
       <groupId>com.carlos.audit</groupId>
       <artifactId>carlos-audit-api</artifactId>
     </dependency>
+
+    <!-- Disruptor 高性能队列 -->
+    <dependency>
+      <groupId>com.lmax</groupId>
+      <artifactId>disruptor</artifactId>
+      <version>3.4.4</version>
+    </dependency>
+
+    <!-- ClickHouse 客户端 -->
+    <dependency>
+      <groupId>com.clickhouse</groupId>
+      <artifactId>clickhouse-http-client</artifactId>
+      <version>0.7.0</version>
+    </dependency>
+
+    <!-- Spring AOP -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+    <!-- Spring Expression (SpEL) -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+    </dependency>
+
+    <!-- Micrometer 监控 -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+    </dependency>
+
   </dependencies>
 
 

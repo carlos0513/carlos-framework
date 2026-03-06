@@ -1,5 +1,6 @@
 package com.carlos.audit.service;
 
+import com.carlos.audit.disruptor.AuditLogEventProducer;
 import com.carlos.audit.manager.AuditLogMainManager;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.Set;
-
 
 /**
  * <p>
@@ -24,29 +24,46 @@ import java.util.Set;
 public class AuditLogMainService {
 
     private final AuditLogMainManager logMainManager;
+    private final AuditLogEventProducer eventProducer;
 
     /**
-     * 新增审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）
+     * 新增审计日志（通过 Disruptor 异步写入）
      *
-     * @param dto 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）数据
+     * @param dto 审计日志数据
      * @author Carlos
      * @date 2026年3月6日 下午9:31:12
      */
     public void addAuditLogMain(AuditLogMainDTO dto) {
-        boolean success = logMainManager.add(dto);
-        if (!success) {
-            // 保存失败的应对措施
-            return;
-        }
-        Serializable id = dto.getId();
-        log.info("Insert 'AuditLogMain' data: id:{}", id);
-        // 保存完成的后续业务
+        // 使用 Disruptor 异步写入
+        eventProducer.publish(dto);
+        log.debug("AuditLogMain has been published to Disruptor");
     }
 
     /**
-     * 删除审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）
+     * 同步新增审计日志（重要日志使用）
      *
-     * @param ids 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）id
+     * @param dto 审计日志数据
+     * @param timeoutMs 超时时间（毫秒）
+     * @return 是否写入成功
+     */
+    public boolean addAuditLogMainSync(AuditLogMainDTO dto, long timeoutMs) {
+        return eventProducer.publishSync(dto, timeoutMs);
+    }
+
+    /**
+     * 批量新增审计日志
+     *
+     * @param dtos 审计日志数据列表
+     */
+    public void batchAddAuditLogMain(Iterable<AuditLogMainDTO> dtos) {
+        eventProducer.publishBatch(dtos);
+        log.debug("Batch AuditLogMain has been published to Disruptor");
+    }
+
+    /**
+     * 删除审计日志（仅供管理后台使用，业务层一般不删除）
+     *
+     * @param ids 审计日志id集合
      * @author Carlos
      * @date 2026年3月6日 下午9:31:12
      */
@@ -54,15 +71,15 @@ public class AuditLogMainService {
         for (Serializable id : ids) {
             boolean success = logMainManager.delete(id);
             if (!success) {
-                // 删除失败的措施
+                log.warn("Delete AuditLogMain failed, id: {}", id);
                 continue;
             }
-            // 删除成功的后续业务
+            log.info("Delete 'AuditLogMain' data: id:{}", id);
         }
     }
 
     /**
-     * 修改审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）信息
+     * 修改审计日志信息（仅供管理后台使用）
      *
      * @param dto 对象信息
      * @author Carlos
@@ -71,11 +88,18 @@ public class AuditLogMainService {
     public void updateAuditLogMain(AuditLogMainDTO dto) {
         boolean success = logMainManager.modify(dto);
         if (!success) {
-            // 修改失败操作
+            log.warn("Update AuditLogMain failed, id: {}", dto.getId());
             return;
         }
-        // 修改成功的后续操作
         log.info("Update 'AuditLogMain' data: id:{}", dto.getId());
     }
 
+    /**
+     * 获取 Disruptor 队列状态
+     *
+     * @return 队列剩余容量
+     */
+    public long getQueueRemainingCapacity() {
+        return eventProducer.remainingCapacity();
+    }
 }

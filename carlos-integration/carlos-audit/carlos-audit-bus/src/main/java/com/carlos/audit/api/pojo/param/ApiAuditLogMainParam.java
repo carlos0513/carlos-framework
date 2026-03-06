@@ -142,12 +142,6 @@ public class ApiAuditLogMainParam implements Serializable {
     private Boolean oldDataCompressed;
     /** 新数据是否压缩：0-否/1-是 */
     private Boolean newDataCompressed;
-    /** 变更字段1名称 */
-    private String changeField1Name;
-    /** 变更字段1旧值，前500字符 */
-    private String changeField1Old;
-    /** 变更字段1新值，前500字符 */
-    private String changeField1New;
     /** 全链路追踪ID，如SkyWalking TraceId */
     private String traceId;
     /** 当前Span ID */
