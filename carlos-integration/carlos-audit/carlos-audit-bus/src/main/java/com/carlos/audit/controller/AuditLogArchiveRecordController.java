@@ -30,10 +30,10 @@ import java.io.Serializable;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("audit/log/archive/record")
-@Tag(name = "审计日志归档记录（管理冷数据归档）")
+@Tag(name = "审计日志-归档记录")
 public class AuditLogArchiveRecordController {
 
-    public static final String BASE_NAME = "审计日志归档记录（管理冷数据归档）";
+    public static final String BASE_NAME = "归档记录";
 
     private final AuditLogArchiveRecordService logArchiveRecordService;
 

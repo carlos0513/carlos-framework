@@ -30,10 +30,10 @@ import java.io.Serializable;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("audit/log/main")
-@Tag(name = "审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）")
+@Tag(name = "审计日志")
 public class AuditLogMainController {
 
-    public static final String BASE_NAME = "审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）";
+    public static final String BASE_NAME = "审计日志";
 
     private final AuditLogMainService logMainService;
 

@@ -30,10 +30,10 @@ import java.io.Serializable;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("audit/log/config")
-@Tag(name = "审计日志配置（动态TTL与采样策略）")
+@Tag(name = "审计日志-配置")
 public class AuditLogConfigController {
 
-    public static final String BASE_NAME = "审计日志配置（动态TTL与采样策略）";
+    public static final String BASE_NAME = "配置";
 
     private final AuditLogConfigService logConfigService;
 
