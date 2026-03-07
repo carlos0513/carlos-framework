@@ -1,5 +1,6 @@
 package com.carlos.oss.utils;
 
+import com.carlos.oss.config.OssProperties;
 import com.carlos.oss.core.OssTemplate;
 import com.carlos.oss.exception.OssException;
 import com.carlos.oss.model.OssFile;
@@ -32,7 +33,7 @@ public class OssUtil {
     private OssTemplate templateBean;
 
     @Autowired
-    private com.carlos.oss.config.OssProperties ossProperties;
+    private OssProperties ossProperties;
 
     @PostConstruct
     private void init() {
