@@ -1,6 +1,7 @@
 package com.carlos.audit.disruptor;
 
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
+import lombok.Data;
 
 /**
  * <p>
@@ -10,6 +11,7 @@ import com.carlos.audit.pojo.dto.AuditLogMainDTO;
  * @author Carlos
  * @date 2026-03-06
  */
+@Data
 public class AuditLogEvent {
 
     /**
@@ -53,45 +55,6 @@ public class AuditLogEvent {
         DISCARDED
     }
 
-    public long getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(long sequence) {
-        this.sequence = sequence;
-    }
-
-    public AuditLogMainDTO getAuditLog() {
-        return auditLog;
-    }
-
-    public void setAuditLog(AuditLogMainDTO auditLog) {
-        this.auditLog = auditLog;
-    }
-
-    public EventState getState() {
-        return state;
-    }
-
-    public void setState(EventState state) {
-        this.state = state;
-    }
-
-    public int getRetryCount() {
-        return retryCount;
-    }
-
-    public void setRetryCount(int retryCount) {
-        this.retryCount = retryCount;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
 
     /**
      * 重置事件（对象池复用）

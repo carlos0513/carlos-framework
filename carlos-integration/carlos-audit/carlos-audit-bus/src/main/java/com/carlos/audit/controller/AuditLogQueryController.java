@@ -24,7 +24,7 @@ import java.util.List;
  * @date 2026-03-06
  */
 @RestController
-@RequestMapping("/api/audit")
+@RequestMapping("/audit/log/query")
 @RequiredArgsConstructor
 @Tag(name = "审计日志查询", description = "审计日志查询接口")
 public class AuditLogQueryController {

@@ -1,11 +1,11 @@
 package com.carlos.audit.annotation;
 
+import cn.hutool.json.JSONUtil;
 import com.carlos.audit.disruptor.AuditLogEventProducer;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
 import com.carlos.audit.pojo.enums.AuditLogBizChannelEnum;
 import com.carlos.audit.pojo.enums.AuditLogPrincipalTypeEnum;
 import com.carlos.audit.pojo.enums.AuditLogStateEnum;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,6 @@ import java.time.LocalDateTime;
 public class AuditLogAspect {
 
     private final AuditLogEventProducer producer;
-    private final ObjectMapper objectMapper;
 
     // SpEL 表达式解析器
     private final SpelExpressionParser parser = new SpelExpressionParser();
@@ -66,7 +65,7 @@ public class AuditLogAspect {
             String operation = parser.parseExpression(auditLog.operation()).getValue(context, String.class);
             auditLogDTO.setOperation(operation);
         } else {
-            auditLogDTO.setOperation(auditLog.type().getDesc());
+            auditLogDTO.setOperation(auditLog.type());
         }
 
         // 目标对象ID
@@ -100,7 +99,7 @@ public class AuditLogAspect {
         // 记录请求参数
         if (auditLog.recordParams()) {
             try {
-                String params = objectMapper.writeValueAsString(point.getArgs());
+                String params = JSONUtil.toJsonStr(point.getArgs());
                 // 限制长度，避免过大
                 if (params.length() > 4000) {
                     params = params.substring(0, 4000) + "...(truncated)";
@@ -123,7 +122,7 @@ public class AuditLogAspect {
             // 记录返回值
             if (auditLog.recordResult() && result != null) {
                 try {
-                    String resultStr = objectMapper.writeValueAsString(result);
+                    String resultStr = JSONUtil.toJsonStr(result);
                     if (resultStr.length() > 4000) {
                         resultStr = resultStr.substring(0, 4000) + "...(truncated)";
                     }

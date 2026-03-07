@@ -2,7 +2,6 @@ package com.carlos.audit.annotation;
 
 import com.carlos.audit.pojo.enums.AuditLogCategoryEnum;
 import com.carlos.audit.pojo.enums.AuditLogTargetTypeEnum;
-import com.carlos.audit.pojo.enums.AuditLogTypeEnum;
 
 import java.lang.annotation.*;
 
@@ -21,9 +20,10 @@ import java.lang.annotation.*;
 public @interface AuditLog {
 
     /**
-     * 日志类型（必填）
+     * 日志类型（必填），如 "USER_LOGIN"、"ORDER_PAY"、"DATA_EXPORT"
+     * 建议格式：业务域_操作，如 ORDER_CREATE、INVOICE_DELETE
      */
-    AuditLogTypeEnum type();
+    String type();
 
     /**
      * 日志大类

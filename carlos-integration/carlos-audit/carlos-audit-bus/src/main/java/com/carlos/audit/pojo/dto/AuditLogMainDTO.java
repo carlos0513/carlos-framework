@@ -33,8 +33,8 @@ public class AuditLogMainDTO {
     private Integer logSchemaVersion;
     /** 大类：SECURITY-安全/BUSINESS-业务/SYSTEM-系统/AUDIT-审计 */
     private AuditLogCategoryEnum category;
-    /** 细类：USER_LOGIN-登录/ORDER_PAY-支付/DATA_EXPORT-数据导出等 */
-    private AuditLogTypeEnum logType;
+    /** 细类：自定义日志类型，如 USER_LOGIN、ORDER_PAY、DATA_EXPORT 等 */
+    private String logType;
     /** 风险等级 0-100，0为无风险，100为极高风险 */
     private Integer riskLevel;
     /** 操作主体ID，用户ID或服务账号 */
@@ -265,11 +265,11 @@ public class AuditLogMainDTO {
         this.category = category;
     }
 
-    public AuditLogTypeEnum getLogType() {
+    public String getLogType() {
         return logType;
     }
 
-    public void setLogType(AuditLogTypeEnum logType) {
+    public void setLogType(String logType) {
         this.logType = logType;
     }
 

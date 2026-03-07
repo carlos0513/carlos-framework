@@ -75,10 +75,11 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
     @TableField(value = "category")
     private AuditLogCategoryEnum category;
     /**
-     * 细类：USER_LOGIN-登录/ORDER_PAY-支付/DATA_EXPORT-数据导出等
+     * 细类：自定义日志类型，如 USER_LOGIN、ORDER_PAY、DATA_EXPORT 等
+     * 建议格式：业务域_操作，如 ORDER_CREATE、INVOICE_DELETE
      */
     @TableField(value = "log_type")
-    private AuditLogTypeEnum logType;
+    private String logType;
     /**
      * 风险等级 0-100，0为无风险，100为极高风险
      */

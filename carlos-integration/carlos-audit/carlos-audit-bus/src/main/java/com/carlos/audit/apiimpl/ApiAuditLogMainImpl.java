@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/audit/log/main")
-@Tag(name = "审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据）Feign接口")
+@RequestMapping("api/audit/log")
+@Tag(name = "审计日志Feign接口")
 public class ApiAuditLogMainImpl implements ApiAuditLogMain {
 
 

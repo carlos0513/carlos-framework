@@ -3,7 +3,6 @@ package com.carlos.audit.controller;
 import com.carlos.audit.annotation.AuditLog;
 import com.carlos.audit.pojo.enums.AuditLogCategoryEnum;
 import com.carlos.audit.pojo.enums.AuditLogTargetTypeEnum;
-import com.carlos.audit.pojo.enums.AuditLogTypeEnum;
 import com.carlos.core.response.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +29,7 @@ public class AuditLogDemoController {
      * 示例1: 用户登录（基础用法）
      */
     @AuditLog(
-        type = AuditLogTypeEnum.USER_LOGIN,
+            type = "USER_LOGIN",
         category = AuditLogCategoryEnum.SECURITY,
         operation = "'用户登录: ' + #param.username",
         riskLevel = 30
@@ -49,7 +48,7 @@ public class AuditLogDemoController {
      * 示例2: 订单支付（完整用法，带目标对象）
      */
     @AuditLog(
-        type = AuditLogTypeEnum.ORDER_PAY,
+            type = "ORDER_PAY",
         category = AuditLogCategoryEnum.BUSINESS,
         operation = "'订单支付: ' + #param.orderNo + ', 金额: ' + #param.amount",
         targetId = "#param.orderNo",
@@ -72,7 +71,7 @@ public class AuditLogDemoController {
      * 示例3: 数据导出（高风险操作）
      */
     @AuditLog(
-        type = AuditLogTypeEnum.DATA_EXPORT,
+            type = "DATA_EXPORT",
         category = AuditLogCategoryEnum.SECURITY,
         operation = "'数据导出: ' + #tableName + ', 条件: ' + #condition",
         targetType = AuditLogTargetTypeEnum.CONFIG,
@@ -91,7 +90,7 @@ public class AuditLogDemoController {
      * 示例4: 同步记录审计日志（重要操作）
      */
     @AuditLog(
-        type = AuditLogTypeEnum.CONFIG_CHANGE,
+            type = "CONFIG_CHANGE",
         category = AuditLogCategoryEnum.SYSTEM,
         operation = "'配置变更: ' + #param.configKey",
         targetType = AuditLogTargetTypeEnum.CONFIG,
@@ -109,7 +108,7 @@ public class AuditLogDemoController {
      * 示例5: 带业务渠道的审计日志
      */
     @AuditLog(
-        type = AuditLogTypeEnum.FILE_UPLOAD,
+            type = "FILE_UPLOAD",
         category = AuditLogCategoryEnum.BUSINESS,
         operation = "'文件上传: ' + #fileName",
         targetType = AuditLogTargetTypeEnum.FILE,

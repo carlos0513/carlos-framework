@@ -2,13 +2,9 @@ package com.carlos.audit.config;
 
 import com.carlos.audit.clickhouse.ClickHouseBatchWriter;
 import com.carlos.audit.clickhouse.ClickHouseHealthIndicator;
-import com.carlos.audit.service.AuditLogQueryService;
-import com.carlos.audit.service.impl.AuditLogQueryServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,17 +27,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ConditionalOnProperty(prefix = "carlos.audit", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class AuditAutoConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public AuditLogQueryService auditLogQueryService() {
-        return new AuditLogQueryServiceImpl();
-    }
 
     @Bean
     @ConditionalOnProperty(prefix = "carlos.audit.clickhouse", name = "enabled", havingValue = "true", matchIfMissing = true)

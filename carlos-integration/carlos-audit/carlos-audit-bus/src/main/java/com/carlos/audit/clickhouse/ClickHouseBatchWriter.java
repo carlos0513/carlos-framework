@@ -216,7 +216,7 @@ public class ClickHouseBatchWriter {
         // category
         sb.append(formatEnum(log.getCategory())).append(", ");
         // log_type
-        sb.append(formatEnum(log.getLogType())).append(", ");
+        sb.append(log.getLogType()).append(", ");
         // risk_level
         sb.append(log.getRiskLevel() != null ? log.getRiskLevel() : 0).append(", ");
         // principal_id

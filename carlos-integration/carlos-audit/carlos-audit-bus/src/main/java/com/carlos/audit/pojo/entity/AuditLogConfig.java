@@ -3,7 +3,6 @@ package com.carlos.audit.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.carlos.audit.pojo.enums.AuditLogTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,10 +33,11 @@ public class AuditLogConfig extends Model<AuditLogConfig> implements Serializabl
     @TableId(type = IdType.ASSIGN_ID, value = "id")
     private Long id;
     /**
-     * 日志类型，如：USER_LOGIN
+     * 日志类型，如：USER_LOGIN、ORDER_PAY 等
+     * 支持业务系统自定义类型值
      */
     @TableField(value = "log_type")
-    private AuditLogTypeEnum logType;
+    private String logType;
     /**
      * 保留天数
      */
