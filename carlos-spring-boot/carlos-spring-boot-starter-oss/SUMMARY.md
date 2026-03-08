@@ -107,7 +107,7 @@ carlos-spring-boot-starter-oss/
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-spring-boot-starter-core</artifactId>
+    <artifactId>carlos-spring-boot-core</artifactId>
 </dependency>
 ```
 
