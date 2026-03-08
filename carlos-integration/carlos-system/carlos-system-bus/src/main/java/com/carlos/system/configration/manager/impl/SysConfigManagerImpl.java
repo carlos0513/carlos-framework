@@ -98,17 +98,17 @@ public class SysConfigManagerImpl extends BaseServiceImpl<SysConfigMapper, SysCo
     public Paging<SysConfigVO> getPage(SysConfigPageParam param) {
         LambdaQueryWrapper<SysConfig> wrapper = queryWrapper();
         wrapper.select(
-                SysConfig::getId,
-                SysConfig::getConfigName,
-                SysConfig::getConfigCode,
-                SysConfig::getConfigValue,
-                SysConfig::getValueType,
-                SysConfig::getState,
-                SysConfig::getRemark,
-                SysConfig::getCreateBy,
-                SysConfig::getCreateTime,
-                SysConfig::getUpdateBy,
-                SysConfig::getUpdateTime
+            SysConfig::getId,
+            SysConfig::getConfigName,
+            SysConfig::getConfigCode,
+            SysConfig::getConfigValue,
+            SysConfig::getValueType,
+            SysConfig::getState,
+            SysConfig::getRemark,
+            SysConfig::getCreateBy,
+            SysConfig::getCreateTime,
+            SysConfig::getUpdateBy,
+            SysConfig::getUpdateTime
         );
         wrapper.orderByDesc(SysConfig::getCreateTime);
         if (StrUtil.isNotBlank(param.getConfigName())) {
@@ -123,13 +123,13 @@ public class SysConfigManagerImpl extends BaseServiceImpl<SysConfigMapper, SysCo
     @Override
     public List<SysConfigDTO> getAllConfig(Set<String> excludes) {
         List<SysConfig> list = lambdaQuery()
-                .select(
-                        SysConfig::getConfigName,
-                        SysConfig::getConfigCode,
-                        SysConfig::getConfigValue
-                ).eq(SysConfig::getState, true)
-                .notIn(CollUtil.isNotEmpty(excludes), SysConfig::getConfigCode, excludes)
-                .list();
+            .select(
+                SysConfig::getConfigName,
+                SysConfig::getConfigCode,
+                SysConfig::getConfigValue
+            ).eq(SysConfig::getState, true)
+            .notIn(CollUtil.isNotEmpty(excludes), SysConfig::getConfigCode, excludes)
+            .list();
         return SysConfigConvert.INSTANCE.toDTO(list);
     }
 
@@ -139,11 +139,11 @@ public class SysConfigManagerImpl extends BaseServiceImpl<SysConfigMapper, SysCo
             return null;
         }
         return SysConfigConvert.INSTANCE.toDTO(lambdaQuery().select(
-                SysConfig::getConfigName,
-                SysConfig::getConfigCode,
-                SysConfig::getConfigValue,
-                SysConfig::getValueType,
-                SysConfig::getState
+            SysConfig::getConfigName,
+            SysConfig::getConfigCode,
+            SysConfig::getConfigValue,
+            SysConfig::getValueType,
+            SysConfig::getState
         ).in(SysConfig::getConfigCode, codes).list());
     }
 }

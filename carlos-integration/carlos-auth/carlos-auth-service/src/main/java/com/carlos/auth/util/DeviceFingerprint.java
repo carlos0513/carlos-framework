@@ -36,10 +36,10 @@ public class DeviceFingerprint {
 
         // 组合设备特征字符串
         String fingerprintData = String.format("%s|%s|%s|%s",
-                userAgent != null ? userAgent : "",
-                accept != null ? accept : "",
-                acceptLanguage != null ? acceptLanguage : "",
-                acceptEncoding != null ? acceptEncoding : ""
+            userAgent != null ? userAgent : "",
+            accept != null ? accept : "",
+            acceptLanguage != null ? acceptLanguage : "",
+            acceptEncoding != null ? acceptEncoding : ""
         );
 
         // 生成MD5指纹
@@ -63,11 +63,11 @@ public class DeviceFingerprint {
                                    String platform) {
         String basicFingerprint = generate(request);
         String enhancedData = String.format("%s|%s|%s|%s|%s",
-                basicFingerprint,
-                screenWidth != null ? screenWidth : "",
-                screenHeight != null ? screenHeight : "",
-                timezone != null ? timezone : "",
-                platform != null ? platform : ""
+            basicFingerprint,
+            screenWidth != null ? screenWidth : "",
+            screenHeight != null ? screenHeight : "",
+            timezone != null ? timezone : "",
+            platform != null ? platform : ""
         );
 
         return SecureUtil.md5(enhancedData);
@@ -95,9 +95,9 @@ public class DeviceFingerprint {
         }
         String lowerUserAgent = userAgent.toLowerCase();
         return lowerUserAgent.contains("mobile") ||
-                lowerUserAgent.contains("android") ||
-                lowerUserAgent.contains("iphone") ||
-                lowerUserAgent.contains("ipad");
+            lowerUserAgent.contains("android") ||
+            lowerUserAgent.contains("iphone") ||
+            lowerUserAgent.contains("ipad");
     }
 
     /**

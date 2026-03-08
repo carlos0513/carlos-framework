@@ -51,7 +51,7 @@ public class RedisLettuceConnectionConfiguration extends RedisConnectionConfigur
                                         ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
                                         RedisConnectionDetails connectionDetails) {
         super(properties, connectionDetails, standaloneConfigurationProvider, sentinelConfigurationProvider,
-                clusterConfigurationProvider);
+            clusterConfigurationProvider);
     }
 
     /** 主从模式下读取规则 */
@@ -127,7 +127,7 @@ public class RedisLettuceConnectionConfiguration extends RedisConnectionConfigur
     }
 
     private LettuceClientConfigurationBuilder applyProperties(
-            LettuceClientConfigurationBuilder builder) {
+        LettuceClientConfigurationBuilder builder) {
         if (getProperties().getSsl().isEnabled()) {
             builder.useSsl();
         }
@@ -160,7 +160,7 @@ public class RedisLettuceConnectionConfiguration extends RedisConnectionConfigur
             ClusterClientOptions.Builder builder = ClusterClientOptions.builder();
             Refresh refreshProperties = getProperties().getLettuce().getCluster().getRefresh();
             Builder refreshBuilder = ClusterTopologyRefreshOptions.builder()
-                    .dynamicRefreshSources(refreshProperties.isDynamicRefreshSources());
+                .dynamicRefreshSources(refreshProperties.isDynamicRefreshSources());
             if (refreshProperties.getPeriod() != null) {
                 refreshBuilder.enablePeriodicRefresh(refreshProperties.getPeriod());
             }

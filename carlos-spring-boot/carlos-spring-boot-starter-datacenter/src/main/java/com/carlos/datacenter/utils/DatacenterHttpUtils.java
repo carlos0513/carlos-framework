@@ -31,9 +31,9 @@ public class DatacenterHttpUtils {
      */
     public JSONObject postJson(String url, Map<String, String> headers, String body) {
         try (HttpResponse response = HttpRequest.post(url)
-                .addHeaders(headers)
-                .body(body)
-                .execute()) {
+            .addHeaders(headers)
+            .body(body)
+            .execute()) {
             return JSONUtil.parseObj(response.body());
         } catch (Exception e) {
             throw new DatacenterInstanceException(e.getMessage());
@@ -62,9 +62,9 @@ public class DatacenterHttpUtils {
      */
     public JSONObject postFrom(String url, Map<String, String> headers, Map<String, Object> body) {
         try (HttpResponse response = HttpRequest.post(url)
-                .addHeaders(headers)
-                .form(body)
-                .execute()) {
+            .addHeaders(headers)
+            .form(body)
+            .execute()) {
             return JSONUtil.parseObj(response.body());
         } catch (Exception e) {
             throw new DatacenterInstanceException(e.getMessage());
@@ -83,10 +83,10 @@ public class DatacenterHttpUtils {
      */
     public JSONObject postBasicFrom(String url, Map<String, String> headers, String username, String password, Map<String, Object> body) {
         try (HttpResponse response = HttpRequest.post(url)
-                .addHeaders(headers)
-                .basicAuth(username, password)
-                .form(body)
-                .execute()) {
+            .addHeaders(headers)
+            .basicAuth(username, password)
+            .form(body)
+            .execute()) {
             return JSONUtil.parseObj(response.body());
         } catch (Exception e) {
             throw new DatacenterInstanceException(e.getMessage());
@@ -104,8 +104,8 @@ public class DatacenterHttpUtils {
     public JSONObject postUrl(String url, Map<String, String> headers, Map<String, Object> params) {
         String urlWithParams = url + "?" + URLUtil.buildQuery(params, null);
         try (HttpResponse response = HttpRequest.post(urlWithParams)
-                .addHeaders(headers)
-                .execute()) {
+            .addHeaders(headers)
+            .execute()) {
             return JSONUtil.parseObj(response.body());
         } catch (Exception e) {
             throw new DatacenterInstanceException(e.getMessage());
@@ -120,8 +120,8 @@ public class DatacenterHttpUtils {
      */
     public JSONObject getBasic(String url, String username, String password) {
         try (HttpResponse response = HttpRequest.get(url)
-                .basicAuth(username, password)
-                .execute()) {
+            .basicAuth(username, password)
+            .execute()) {
             return JSONUtil.parseObj(response.body());
         } catch (Exception e) {
             throw new DatacenterInstanceException(e.getMessage());
@@ -136,7 +136,7 @@ public class DatacenterHttpUtils {
      */
     public JSONObject getUrl(String url) {
         try (HttpResponse response = HttpRequest.get(url)
-                .execute()) {
+            .execute()) {
             return JSONUtil.parseObj(response.body());
         } catch (Exception e) {
             throw new DatacenterInstanceException(e.getMessage());

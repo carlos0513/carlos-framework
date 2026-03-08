@@ -38,10 +38,10 @@ public class OrgUserPositionService {
     public void assignPosition(OrgUserAssignPositionParam param) {
         // 检查用户是否已存在该岗位
         OrgUserPosition exist = userPositionManager.getOne(new LambdaQueryWrapper<OrgUserPosition>()
-                .eq(OrgUserPosition::getUserId, param.getUserId())
-                .eq(OrgUserPosition::getPositionId, param.getPositionId())
-                .eq(OrgUserPosition::getDepartmentId, param.getDepartmentId())
-                .eq(OrgUserPosition::getDeleted, false));
+            .eq(OrgUserPosition::getUserId, param.getUserId())
+            .eq(OrgUserPosition::getPositionId, param.getPositionId())
+            .eq(OrgUserPosition::getDepartmentId, param.getDepartmentId())
+            .eq(OrgUserPosition::getDeleted, false));
 
         if (exist != null) {
             throw new RuntimeException("用户已分配该岗位，不能重复分配");
@@ -50,9 +50,9 @@ public class OrgUserPositionService {
         // 如果设置为主岗位，需要将其他岗位设为非主岗位
         if (Boolean.TRUE.equals(param.getIsMain())) {
             userPositionManager.update(new LambdaUpdateWrapper<OrgUserPosition>()
-                    .eq(OrgUserPosition::getUserId, param.getUserId())
-                    .eq(OrgUserPosition::getIsMain, true)
-                    .set(OrgUserPosition::getIsMain, false));
+                .eq(OrgUserPosition::getUserId, param.getUserId())
+                .eq(OrgUserPosition::getIsMain, true)
+                .set(OrgUserPosition::getIsMain, false));
         }
 
         // 创建用户岗位关联
@@ -82,10 +82,10 @@ public class OrgUserPositionService {
     @Transactional(rollbackFor = Exception.class)
     public void resignPosition(String userId, String positionId) {
         boolean success = userPositionManager.update(new LambdaUpdateWrapper<OrgUserPosition>()
-                .eq(OrgUserPosition::getUserId, userId)
-                .eq(OrgUserPosition::getPositionId, positionId)
-                .set(OrgUserPosition::getPositionStatus, 5) // 已卸任
-                .set(OrgUserPosition::getDimissionDate, LocalDate.now()));
+            .eq(OrgUserPosition::getUserId, userId)
+            .eq(OrgUserPosition::getPositionId, positionId)
+            .set(OrgUserPosition::getPositionStatus, 5) // 已卸任
+            .set(OrgUserPosition::getDimissionDate, LocalDate.now()));
 
         if (!success) {
             throw new RuntimeException("卸任岗位失败");

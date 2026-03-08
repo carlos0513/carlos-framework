@@ -76,9 +76,9 @@ public final class MinioObject implements Serializable {
             }
 
             return new MinioObject(
-                    this.bucket,
-                    this.object,
-                    this.attachName
+                this.bucket,
+                this.object,
+                this.attachName
             );
         }
     }

@@ -47,8 +47,8 @@ public class RequestUtil {
      */
     public static HttpServletRequest getRequest() {
         return ((ServletRequestAttributes)
-                Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
-                .getRequest();
+            Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
+            .getRequest();
     }
 
     /**

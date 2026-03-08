@@ -150,22 +150,22 @@ public class Oauth2JwtTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodi
             if (userInfo.getRoleIds() != null && !userInfo.getRoleIds().isEmpty()) {
                 // 转换为 List 以便 JSON 序列化
                 context.getClaims().claim("role_ids",
-                        new java.util.ArrayList<>(userInfo.getRoleIds()));
+                    new java.util.ArrayList<>(userInfo.getRoleIds()));
             }
 
             // 添加权限列表
             if (context.getPrincipal().getAuthorities() != null &&
-                    !context.getPrincipal().getAuthorities().isEmpty()) {
+                !context.getPrincipal().getAuthorities().isEmpty()) {
                 String authorities = context.getPrincipal().getAuthorities().stream()
-                        .map(Object::toString)
-                        .collect(Collectors.joining(","));
+                    .map(Object::toString)
+                    .collect(Collectors.joining(","));
                 if (!authorities.isEmpty()) {
                     context.getClaims().claim("authorities", authorities);
                 }
             }
 
             log.debug("Enhanced JWT token for user: {} (user_id: {})",
-                    username, userInfo.getId());
+                username, userInfo.getId());
 
         } catch (Exception e) {
             // 增强失败不影响 Token 生成，只记录日志

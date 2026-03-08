@@ -2,7 +2,9 @@
 
 ## 模块简介
 
-`carlos-spring-cloud-starter` 是 Carlos 框架的 Spring Cloud Alibaba 集成模块，提供了微服务架构所需的核心组件集成，包括服务发现、配置管理、服务调用、负载均衡和容错保护等功能。基于 Spring Cloud Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.8+。
+`carlos-spring-cloud-starter` 是 Carlos 框架的 Spring Cloud Alibaba
+集成模块，提供了微服务架构所需的核心组件集成，包括服务发现、配置管理、服务调用、负载均衡和容错保护等功能。基于 Spring Cloud
+Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.8+。
 
 ## 主要功能
 

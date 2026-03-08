@@ -94,12 +94,12 @@ public class OrgUserDepartmentManagerImpl extends BaseServiceImpl<OrgUserDepartm
         LambdaQueryWrapper<OrgUserDepartment> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgUserDepartment::getId,
-                OrgUserDepartment::getUserId,
-                OrgUserDepartment::getDeptId,
-                OrgUserDepartment::getMainDept,
-                OrgUserDepartment::getCreateBy,
-                OrgUserDepartment::getCreateTime
+            OrgUserDepartment::getId,
+            OrgUserDepartment::getUserId,
+            OrgUserDepartment::getDeptId,
+            OrgUserDepartment::getMainDept,
+            OrgUserDepartment::getCreateBy,
+            OrgUserDepartment::getCreateTime
         );
         PageInfo<OrgUserDepartment> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgUserDepartmentConvert.INSTANCE::toVO);

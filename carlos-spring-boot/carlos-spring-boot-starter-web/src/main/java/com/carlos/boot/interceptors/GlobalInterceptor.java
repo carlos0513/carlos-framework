@@ -42,7 +42,7 @@ public class GlobalInterceptor implements AsyncHandlerInterceptor {
 
         // 打印请求信息
         if (properties.getPrintType() == GlobalInterceptorProperties.PrintType.REQUEST ||
-                properties.getPrintType() == GlobalInterceptorProperties.PrintType.BOTH_ORDER) {
+            properties.getPrintType() == GlobalInterceptorProperties.PrintType.BOTH_ORDER) {
             RequestUtil.printRequestInfo();
         }
         return true;

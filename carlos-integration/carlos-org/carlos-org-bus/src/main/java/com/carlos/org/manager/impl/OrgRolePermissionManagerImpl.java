@@ -94,12 +94,12 @@ public class OrgRolePermissionManagerImpl extends BaseServiceImpl<OrgRolePermiss
         LambdaQueryWrapper<OrgRolePermission> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgRolePermission::getId,
-                OrgRolePermission::getRoleId,
-                OrgRolePermission::getPermissionId,
-                OrgRolePermission::getCreateBy,
-                OrgRolePermission::getCreateTime,
-                OrgRolePermission::getTenantId
+            OrgRolePermission::getId,
+            OrgRolePermission::getRoleId,
+            OrgRolePermission::getPermissionId,
+            OrgRolePermission::getCreateBy,
+            OrgRolePermission::getCreateTime,
+            OrgRolePermission::getTenantId
         );
         PageInfo<OrgRolePermission> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgRolePermissionConvert.INSTANCE::toVO);

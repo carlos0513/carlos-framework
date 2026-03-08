@@ -29,51 +29,51 @@ public class RateLimitService {
 
     // Lua脚本实现令牌桶算法
     private static final String TOKEN_BUCKET_SCRIPT =
-            "local key = KEYS[1]\n" +
-                    "local now = tonumber(ARGV[1])\n" +
-                    "local capacity = tonumber(ARGV[2])\n" +
-                    "local refill_rate = tonumber(ARGV[3])\n" +
-                    "local refill_period = tonumber(ARGV[4])\n" +
-                    "local requested_tokens = tonumber(ARGV[5])\n" +
-                    "\n" +
-                    "-- 获取当前桶状态\n" +
-                    "local tokens = redis.call('GET', key)\n" +
-                    "local last_refill = redis.call('GET', key .. ':last_refill')\n" +
-                    "\n" +
-                    "-- 初始化桶\n" +
-                    "if tokens == false then\n" +
-                    "    tokens = capacity\n" +
-                    "    last_refill = now\n" +
-                    "else\n" +
-                    "    tokens = tonumber(tokens)\n" +
-                    "    last_refill = tonumber(last_refill)\n" +
-                    "end\n" +
-                    "\n" +
-                    "-- 计算时间间隔\n" +
-                    "local elapsed = now - last_refill\n" +
-                    "\n" +
-                    "-- 补充令牌\n" +
-                    "if elapsed >= refill_period then\n" +
-                    "    local refill_times = math.floor(elapsed / refill_period)\n" +
-                    "    tokens = math.min(capacity, tokens + (refill_times * refill_rate))\n" +
-                    "    last_refill = last_refill + (refill_times * refill_period)\n" +
-                    "end\n" +
-                    "\n" +
-                    "-- 消费令牌\n" +
-                    "if tokens >= requested_tokens then\n" +
-                    "    tokens = tokens - requested_tokens\n" +
-                    "    redis.call('SET', key, tokens)\n" +
-                    "    redis.call('SET', key .. ':last_refill', last_refill)\n" +
-                    "    redis.call('EXPIRE', key, 3600)\n" +
-                    "    redis.call('EXPIRE', key .. ':last_refill', 3600)\n" +
-                    "    return 1 -- 允许请求\n" +
-                    "else\n" +
-                    "    redis.call('SET', key, tokens)\n" +
-                    "    redis.call('SET', key .. ':last_refill', last_refill)\n" +
-                    "    redis.call('EXPIRE', key, 3600)\n" +
-                    "    redis.call('EXPIRE', key .. ':last_refill', 3600)\n" +
-                    "    return 0 -- 拒绝请求\n" +
-                    "end\n";
+        "local key = KEYS[1]\n" +
+            "local now = tonumber(ARGV[1])\n" +
+            "local capacity = tonumber(ARGV[2])\n" +
+            "local refill_rate = tonumber(ARGV[3])\n" +
+            "local refill_period = tonumber(ARGV[4])\n" +
+            "local requested_tokens = tonumber(ARGV[5])\n" +
+            "\n" +
+            "-- 获取当前桶状态\n" +
+            "local tokens = redis.call('GET', key)\n" +
+            "local last_refill = redis.call('GET', key .. ':last_refill')\n" +
+            "\n" +
+            "-- 初始化桶\n" +
+            "if tokens == false then\n" +
+            "    tokens = capacity\n" +
+            "    last_refill = now\n" +
+            "else\n" +
+            "    tokens = tonumber(tokens)\n" +
+            "    last_refill = tonumber(last_refill)\n" +
+            "end\n" +
+            "\n" +
+            "-- 计算时间间隔\n" +
+            "local elapsed = now - last_refill\n" +
+            "\n" +
+            "-- 补充令牌\n" +
+            "if elapsed >= refill_period then\n" +
+            "    local refill_times = math.floor(elapsed / refill_period)\n" +
+            "    tokens = math.min(capacity, tokens + (refill_times * refill_rate))\n" +
+            "    last_refill = last_refill + (refill_times * refill_period)\n" +
+            "end\n" +
+            "\n" +
+            "-- 消费令牌\n" +
+            "if tokens >= requested_tokens then\n" +
+            "    tokens = tokens - requested_tokens\n" +
+            "    redis.call('SET', key, tokens)\n" +
+            "    redis.call('SET', key .. ':last_refill', last_refill)\n" +
+            "    redis.call('EXPIRE', key, 3600)\n" +
+            "    redis.call('EXPIRE', key .. ':last_refill', 3600)\n" +
+            "    return 1 -- 允许请求\n" +
+            "else\n" +
+            "    redis.call('SET', key, tokens)\n" +
+            "    redis.call('SET', key .. ':last_refill', last_refill)\n" +
+            "    redis.call('EXPIRE', key, 3600)\n" +
+            "    redis.call('EXPIRE', key .. ':last_refill', 3600)\n" +
+            "    return 0 -- 拒绝请求\n" +
+            "end\n";
 
     /**
      * 检查请求是否被允许（令牌桶算法）

@@ -1,6 +1,7 @@
 # Carlos OAuth2 统一认证模块
 
-Carlos OAuth2 是基于 Spring Authorization Server 1.x 构建的统一认证授权模块，兼容 Spring Boot 3.x，提供完整的 OAuth2.1 和 OpenID Connect 1.0 支持。
+Carlos OAuth2 是基于 Spring Authorization Server 1.x 构建的统一认证授权模块，兼容 Spring Boot 3.x，提供完整的 OAuth2.1 和
+OpenID Connect 1.0 支持。
 
 ## 功能特性
 

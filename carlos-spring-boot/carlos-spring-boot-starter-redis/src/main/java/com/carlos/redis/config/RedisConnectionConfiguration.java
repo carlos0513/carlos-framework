@@ -30,7 +30,7 @@ import java.util.List;
 abstract class RedisConnectionConfiguration {
 
     private static final boolean COMMONS_POOL2_AVAILABLE = ClassUtils.isPresent("org.apache.commons.pool2.ObjectPool",
-            RedisConnectionConfiguration.class.getClassLoader());
+        RedisConnectionConfiguration.class.getClassLoader());
 
     private final RedisProperties properties;
 
@@ -133,11 +133,11 @@ abstract class RedisConnectionConfiguration {
     protected SslBundle getSslBundle() {
         return switch (this.mode) {
             case STANDALONE -> (this.connectionDetails.getStandalone() != null)
-                    ? this.connectionDetails.getStandalone().getSslBundle() : null;
+                ? this.connectionDetails.getStandalone().getSslBundle() : null;
             case CLUSTER -> (this.connectionDetails.getCluster() != null)
-                    ? this.connectionDetails.getCluster().getSslBundle() : null;
+                ? this.connectionDetails.getCluster().getSslBundle() : null;
             case SENTINEL -> (this.connectionDetails.getSentinel() != null)
-                    ? this.connectionDetails.getSentinel().getSslBundle() : null;
+                ? this.connectionDetails.getSentinel().getSslBundle() : null;
         };
     }
 

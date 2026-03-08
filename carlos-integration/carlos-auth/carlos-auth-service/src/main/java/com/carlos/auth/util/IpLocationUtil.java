@@ -37,18 +37,18 @@ public class IpLocationUtil {
      */
     public String getClientIp(HttpServletRequest request) {
         List<String> headerNames = Arrays.asList(
-                "X-Forwarded-For",
-                "X-Real-IP",
-                "Proxy-Client-IP",
-                "WL-Proxy-Client-IP",
-                "HTTP_X_FORWARDED_FOR",
-                "HTTP_X_FORWARDED",
-                "HTTP_X_CLUSTER_CLIENT_IP",
-                "HTTP_CLIENT_IP",
-                "HTTP_FORWARDED_FOR",
-                "HTTP_FORWARDED",
-                "HTTP_VIA",
-                "REMOTE_ADDR"
+            "X-Forwarded-For",
+            "X-Real-IP",
+            "Proxy-Client-IP",
+            "WL-Proxy-Client-IP",
+            "HTTP_X_FORWARDED_FOR",
+            "HTTP_X_FORWARDED",
+            "HTTP_X_CLUSTER_CLIENT_IP",
+            "HTTP_CLIENT_IP",
+            "HTTP_FORWARDED_FOR",
+            "HTTP_FORWARDED",
+            "HTTP_VIA",
+            "REMOTE_ADDR"
         );
 
         for (String header : headerNames) {
@@ -172,8 +172,8 @@ public class IpLocationUtil {
 
         // 检查当前地点是否在常用地点列表中
         return commonLocations.stream()
-                .map(Object::toString)
-                .anyMatch(loc -> loc.equals(location));
+            .map(Object::toString)
+            .anyMatch(loc -> loc.equals(location));
     }
 
     /**

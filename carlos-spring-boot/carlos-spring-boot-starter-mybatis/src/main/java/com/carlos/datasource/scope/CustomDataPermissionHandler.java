@@ -62,7 +62,7 @@ public class CustomDataPermissionHandler implements DataPermissionHandler {
             // 使用 ExpressionList.withExpressions() 替代已弃用的构造函数
             final ExpressionList itemsList = new ExpressionList<>();
             itemsList.setExpressions(
-                    values.stream().map(i -> new StringValue((String) i)).collect(Collectors.toList()));
+                values.stream().map(i -> new StringValue((String) i)).collect(Collectors.toList()));
             final InExpression deptInExpression = new InExpression(column, itemsList);
             return new AndExpression(where, deptInExpression);
         }

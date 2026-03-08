@@ -316,8 +316,8 @@ public final class PathMatchUtil {
             return Collections.emptyList();
         }
         return paths.stream()
-                .filter(path -> match(pattern, path))
-                .collect(Collectors.toList());
+            .filter(path -> match(pattern, path))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -332,8 +332,8 @@ public final class PathMatchUtil {
             return Collections.emptyList();
         }
         return paths.stream()
-                .filter(path -> !match(pattern, path))
-                .collect(Collectors.toList());
+            .filter(path -> !match(pattern, path))
+            .collect(Collectors.toList());
     }
 
     /**

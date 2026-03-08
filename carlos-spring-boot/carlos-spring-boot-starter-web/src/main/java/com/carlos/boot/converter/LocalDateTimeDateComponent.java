@@ -31,7 +31,7 @@ public class LocalDateTimeDateComponent {
 
         @Override
         public void serialize(final LocalDateTime value, final JsonGenerator gen, final SerializerProvider serializers)
-                throws IOException {
+            throws IOException {
             if (value != null) {
                 final String s = DateUtil.format(value, patten);
                 gen.writeString(s);
@@ -41,8 +41,8 @@ public class LocalDateTimeDateComponent {
         @Override
         public JsonSerializer<?> createContextual(final SerializerProvider prov, final BeanProperty property) {
             Optional.ofNullable(property.getAnnotation(JsonFormat.class))
-                    .map(JsonFormat::pattern)
-                    .ifPresent(patten -> this.patten = patten);
+                .map(JsonFormat::pattern)
+                .ifPresent(patten -> this.patten = patten);
             return this;
         }
     }

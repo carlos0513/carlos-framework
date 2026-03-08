@@ -29,11 +29,11 @@ public class RequestWrapperFilter implements Filter {
         if (JakartaServletUtil.isMultipart(servletRequest)) {
             request = servletRequest;
         } else if (contentType.equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)
-                || contentType.startsWith(MediaType.APPLICATION_JSON_VALUE)) {
+            || contentType.startsWith(MediaType.APPLICATION_JSON_VALUE)) {
             request = new GlobalBodyHttpServletRequestWrapper(servletRequest);
             // form表单形式
         } else if ((contentType.equals(MediaType.APPLICATION_FORM_URLENCODED_VALUE) || contentType.contains(MediaType.MULTIPART_FORM_DATA_VALUE))
-                && !request.getParameterMap().isEmpty()) {
+            && !request.getParameterMap().isEmpty()) {
             // 将参数放入重写的方法中
             request = new GlobalParamHttpServletRequestWrapper(servletRequest);
         }

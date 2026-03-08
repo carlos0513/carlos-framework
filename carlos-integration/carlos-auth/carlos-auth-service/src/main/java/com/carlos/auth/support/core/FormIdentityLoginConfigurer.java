@@ -18,13 +18,13 @@ public final class FormIdentityLoginConfigurer extends AbstractHttpConfigurer<Fo
     @Override
     public void init(HttpSecurity http) throws Exception {
         http.formLogin(formLogin -> {
-                    formLogin.loginPage("/token/login");
-                    formLogin.loginProcessingUrl("/token/form");
-                    formLogin.failureHandler(new FormAuthenticationFailureHandler());
+                formLogin.loginPage("/token/login");
+                formLogin.loginProcessingUrl("/token/form");
+                formLogin.failureHandler(new FormAuthenticationFailureHandler());
 
-                }).logout() // SSO登出成功处理
-                .logoutSuccessHandler(new SsoLogoutSuccessHandler()).deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true).and().csrf().disable();
+            }).logout() // SSO登出成功处理
+            .logoutSuccessHandler(new SsoLogoutSuccessHandler()).deleteCookies("JSESSIONID")
+            .invalidateHttpSession(true).and().csrf().disable();
     }
 
 }

@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * </p>
  *
  * @author Carlos
- * @date 2025-03-17 13:54 
+ * @date 2025-03-17 13:54
  */
 @Slf4j
 public class SnowflakeRedisCacheManager implements SnowflakeCacheManager {
@@ -46,13 +46,13 @@ public class SnowflakeRedisCacheManager implements SnowflakeCacheManager {
         if (save != null || save) {
             // 执行定期更新
             ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
-                    new BasicThreadFactory.Builder().namingPattern("snowflake-redis-pool-%d").daemon(true).build());
+                new BasicThreadFactory.Builder().namingPattern("snowflake-redis-pool-%d").daemon(true).build());
             executorService.scheduleAtFixedRate(this::resetExpire, refresh, refresh, TimeUnit.SECONDS);
             return true;
         }
         // 执行定期更新
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
-                new BasicThreadFactory.Builder().namingPattern("snowflake-redis-pool-%d").daemon(true).build());
+            new BasicThreadFactory.Builder().namingPattern("snowflake-redis-pool-%d").daemon(true).build());
         executorService.scheduleAtFixedRate(this::resetExpire, refresh, refresh, TimeUnit.SECONDS);
         return false;
     }

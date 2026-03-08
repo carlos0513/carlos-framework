@@ -34,7 +34,7 @@ public class CacheProperties implements InitializingBean {
         if (userPrefix) {
 
             Assert.hasText(this.keyPrefix, " When 'carlos.cache.use_prefix' is true', 'carlos.cache.key_prefix' " +
-                    "can't be blank.");
+                "can't be blank.");
             if (!keyPrefix.endsWith(StrUtil.COLON)) {
                 keyPrefix = keyPrefix + StrUtil.COLON;
             }

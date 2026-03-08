@@ -56,14 +56,14 @@ public class OssAutoConfiguration {
 
         // 创建 S3 配置
         S3Configuration s3Config = S3Configuration.builder()
-                .pathStyleAccessEnabled(properties.isPathStyleAccess())
-                .build();
+            .pathStyleAccessEnabled(properties.isPathStyleAccess())
+            .build();
 
         // 创建 S3 客户端构建器
         S3ClientBuilder builder = S3Client.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(credentials))
-                .serviceConfiguration(s3Config)
-                .region(Region.of(region));
+            .credentialsProvider(StaticCredentialsProvider.create(credentials))
+            .serviceConfiguration(s3Config)
+            .region(Region.of(region));
 
         // 设置自定义 endpoint
         if (StrUtil.isNotBlank(endpoint)) {
@@ -73,8 +73,8 @@ public class OssAutoConfiguration {
 
         // 设置超时时间
         builder.overrideConfiguration(config -> config
-                .apiCallTimeout(Duration.ofMillis(properties.getSocketTimeout()))
-                .apiCallAttemptTimeout(Duration.ofMillis(properties.getConnectionTimeout()))
+            .apiCallTimeout(Duration.ofMillis(properties.getSocketTimeout()))
+            .apiCallAttemptTimeout(Duration.ofMillis(properties.getConnectionTimeout()))
         );
 
         S3Client s3Client = builder.build();
@@ -99,8 +99,8 @@ public class OssAutoConfiguration {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
 
         S3Presigner.Builder builder = S3Presigner.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(credentials))
-                .region(Region.of(region));
+            .credentialsProvider(StaticCredentialsProvider.create(credentials))
+            .region(Region.of(region));
 
         if (StrUtil.isNotBlank(endpoint)) {
             builder.endpointOverride(URI.create(endpoint));

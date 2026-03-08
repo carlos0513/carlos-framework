@@ -71,9 +71,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @EnableConfigurationProperties(GatewayOAuth2Properties.class)
 @ConditionalOnProperty(
-        prefix = "carlos.gateway.oauth2.resource-server",
-        name = "enabled",
-        havingValue = "true"
+    prefix = "carlos.gateway.oauth2.resource-server",
+    name = "enabled",
+    havingValue = "true"
 )
 public class GatewayResourceServerConfig {
 
@@ -109,31 +109,31 @@ public class GatewayResourceServerConfig {
     @ConditionalOnMissingBean(name = "gatewaySecurityFilterChain")
     public SecurityWebFilterChain gatewaySecurityFilterChain(ServerHttpSecurity http) {
         GatewayOAuth2Properties.ResourceServerProperties resourceServer =
-                oauth2Properties.getResourceServer();
+            oauth2Properties.getResourceServer();
 
         http
-                // 禁用 CSRF（使用 Token 机制不需要 CSRF 保护）
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                // 配置请求授权
-                .authorizeExchange(exchanges -> {
-                    // 白名单路径
-                    List<String> permitAllPaths = resourceServer.getPermitAllPaths();
-                    if (permitAllPaths != null && !permitAllPaths.isEmpty()) {
-                        exchanges.pathMatchers(
-                                permitAllPaths.toArray(new String[0])
-                        ).permitAll();
-                        log.debug("Configured permit-all paths: {}", permitAllPaths);
-                    }
+            // 禁用 CSRF（使用 Token 机制不需要 CSRF 保护）
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            // 配置请求授权
+            .authorizeExchange(exchanges -> {
+                // 白名单路径
+                List<String> permitAllPaths = resourceServer.getPermitAllPaths();
+                if (permitAllPaths != null && !permitAllPaths.isEmpty()) {
+                    exchanges.pathMatchers(
+                        permitAllPaths.toArray(new String[0])
+                    ).permitAll();
+                    log.debug("Configured permit-all paths: {}", permitAllPaths);
+                }
 
-                    // 其他请求需要认证
-                    exchanges.anyExchange().authenticated();
-                })
-                // 配置 JWT 资源服务器
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwtSpec ->
-                                jwtSpec.jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        )
-                );
+                // 其他请求需要认证
+                exchanges.anyExchange().authenticated();
+            })
+            // 配置 JWT 资源服务器
+            .oauth2ResourceServer(oauth2 ->
+                oauth2.jwt(jwtSpec ->
+                    jwtSpec.jwtAuthenticationConverter(jwtAuthenticationConverter())
+                )
+            );
 
         log.info("Gateway OAuth2 Resource Server configured");
         if (resourceServer.getJwkSetUri() != null) {
@@ -182,19 +182,19 @@ public class GatewayResourceServerConfig {
     @ConditionalOnMissingBean
     public ReactiveJwtDecoder reactiveJwtDecoder() {
         GatewayOAuth2Properties.ResourceServerProperties resourceServer =
-                oauth2Properties.getResourceServer();
+            oauth2Properties.getResourceServer();
 
         // 优先使用 JWK Set URI
         if (resourceServer.getJwkSetUri() != null) {
             log.info("Configuring reactive JWT decoder with JWK Set URI: {}",
-                    resourceServer.getJwkSetUri());
+                resourceServer.getJwkSetUri());
             return NimbusReactiveJwtDecoder.withJwkSetUri(resourceServer.getJwkSetUri()).build();
         }
 
         // 其次使用 Issuer URI - 响应式版本需要通过 NimbusReactiveJwtDecoder 配置
         if (resourceServer.getIssuerUri() != null) {
             log.info("Configuring reactive JWT decoder with Issuer URI: {}",
-                    resourceServer.getIssuerUri());
+                resourceServer.getIssuerUri());
             // 从 Issuer 获取 JWK Set URI
             String jwkSetUri = resourceServer.getIssuerUri() + "/oauth2/jwks";
             return NimbusReactiveJwtDecoder.withJwkSetUri(jwkSetUri).build();
@@ -202,10 +202,10 @@ public class GatewayResourceServerConfig {
 
         // 必须配置其一
         throw new IllegalStateException(
-                "Gateway OAuth2 Resource Server configuration error: " +
-                        "Either 'carlos.gateway.oauth2.resource-server.jwk-set-uri' or " +
-                        "'carlos.gateway.oauth2.resource-server.issuer-uri' must be configured. " +
-                        "Please check your application.yml configuration."
+            "Gateway OAuth2 Resource Server configuration error: " +
+                "Either 'carlos.gateway.oauth2.resource-server.jwk-set-uri' or " +
+                "'carlos.gateway.oauth2.resource-server.issuer-uri' must be configured. " +
+                "Please check your application.yml configuration."
         );
     }
 
@@ -288,7 +288,7 @@ public class GatewayResourceServerConfig {
             }
 
             log.debug("Extracted authorities from JWT for user '{}': {}",
-                    jwt.getSubject(), authorities);
+                jwt.getSubject(), authorities);
 
             return authorities;
         };

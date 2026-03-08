@@ -93,9 +93,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @EnableConfigurationProperties(OAuth2Properties.class)
 @ConditionalOnProperty(
-        prefix = "carlos.oauth2.authorization-server",
-        name = "enabled",
-        havingValue = "true"
+    prefix = "carlos.oauth2.authorization-server",
+    name = "enabled",
+    havingValue = "true"
 )
 public class OAuth2AuthorizationServerConfig {
 
@@ -144,21 +144,21 @@ public class OAuth2AuthorizationServerConfig {
 
         // 获取授权服务器配置器
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                // 启用 OIDC 支持（OpenID Connect 1.0）
-                .oidc(Customizer.withDefaults());
+            // 启用 OIDC 支持（OpenID Connect 1.0）
+            .oidc(Customizer.withDefaults());
 
         // 配置异常处理和登录入口
         http
-                // 未认证时重定向到登录页面
-                .exceptionHandling(exceptions ->
-                        exceptions.authenticationEntryPoint(
-                                new LoginUrlAuthenticationEntryPoint("/login")
-                        )
+            // 未认证时重定向到登录页面
+            .exceptionHandling(exceptions ->
+                exceptions.authenticationEntryPoint(
+                    new LoginUrlAuthenticationEntryPoint("/login")
                 )
-                // 启用 JWT 资源服务器支持（用于验证自己的 Token）
-                .oauth2ResourceServer(resourceServer ->
-                        resourceServer.jwt(Customizer.withDefaults())
-                );
+            )
+            // 启用 JWT 资源服务器支持（用于验证自己的 Token）
+            .oauth2ResourceServer(resourceServer ->
+                resourceServer.jwt(Customizer.withDefaults())
+            );
 
         log.info("OAuth2 Authorization Server configured with endpoints:");
         log.info("  - Authorization endpoint: {}", oauth2Properties.getAuthorizationServer().getAuthorizationEndpoint());
@@ -188,27 +188,27 @@ public class OAuth2AuthorizationServerConfig {
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 配置请求授权
-                .authorizeHttpRequests(authorize -> authorize
-                        // 放行的路径
-                        .requestMatchers(
-                                "/login",           // 登录页面
-                                "/error",           // 错误页面
-                                "/oauth2/**",       // OAuth2 端点（由授权服务器过滤器处理）
-                                "/actuator/**",     // 健康检查
-                                "/assets/**",       // 静态资源
-                                "/webjars/**",      // WebJars 资源
-                                "/swagger-ui/**",   // Swagger UI
-                                "/doc.html",        // Knife4j 文档
-                                "/v3/api-docs/**"   // OpenAPI 文档
-                        ).permitAll()
-                        // 其他请求需要认证
-                        .anyRequest().authenticated()
-                )
-                // 禁用 CSRF（OAuth2 使用 Token 机制，不需要 CSRF 保护）
-                .csrf(AbstractHttpConfigurer::disable)
-                // 启用表单登录
-                .formLogin(Customizer.withDefaults());
+            // 配置请求授权
+            .authorizeHttpRequests(authorize -> authorize
+                // 放行的路径
+                .requestMatchers(
+                    "/login",           // 登录页面
+                    "/error",           // 错误页面
+                    "/oauth2/**",       // OAuth2 端点（由授权服务器过滤器处理）
+                    "/actuator/**",     // 健康检查
+                    "/assets/**",       // 静态资源
+                    "/webjars/**",      // WebJars 资源
+                    "/swagger-ui/**",   // Swagger UI
+                    "/doc.html",        // Knife4j 文档
+                    "/v3/api-docs/**"   // OpenAPI 文档
+                ).permitAll()
+                // 其他请求需要认证
+                .anyRequest().authenticated()
+            )
+            // 禁用 CSRF（OAuth2 使用 Token 机制，不需要 CSRF 保护）
+            .csrf(AbstractHttpConfigurer::disable)
+            // 启用表单登录
+            .formLogin(Customizer.withDefaults());
 
         return http.build();
     }
@@ -269,12 +269,12 @@ public class OAuth2AuthorizationServerConfig {
      * @return RegisteredClient 注册客户端
      */
     private RegisteredClient buildRegisteredClient(
-            OAuth2Properties.ClientProperties config,
-            PasswordEncoder passwordEncoder) {
+        OAuth2Properties.ClientProperties config,
+        PasswordEncoder passwordEncoder) {
 
         RegisteredClient.Builder builder = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId(config.getClientId())
-                .clientName(config.getClientName() != null ? config.getClientName() : config.getClientId());
+            .clientId(config.getClientId())
+            .clientName(config.getClientName() != null ? config.getClientName() : config.getClientId());
 
         // 配置客户端密钥（如果有）
         if (config.getClientSecret() != null && !config.getClientSecret().isEmpty()) {
@@ -316,11 +316,11 @@ public class OAuth2AuthorizationServerConfig {
 
         // 客户端设置
         ClientSettings clientSettings = ClientSettings.builder()
-                // 是否需要授权确认
-                .requireAuthorizationConsent(config.isRequireAuthorizationConsent())
-                // 是否需要 PKCE
-                .requireProofKey(config.isRequireProofKey())
-                .build();
+            // 是否需要授权确认
+            .requireAuthorizationConsent(config.isRequireAuthorizationConsent())
+            // 是否需要 PKCE
+            .requireProofKey(config.isRequireProofKey())
+            .build();
         builder.clientSettings(clientSettings);
 
         // Token 设置
@@ -328,19 +328,19 @@ public class OAuth2AuthorizationServerConfig {
 
         // 访问令牌有效期
         Duration accessTokenTTL = config.getAccessTokenTimeToLive() != null
-                ? config.getAccessTokenTimeToLive()
-                : oauth2Properties.getAuthorizationServer().getAccessTokenTimeToLive();
+            ? config.getAccessTokenTimeToLive()
+            : oauth2Properties.getAuthorizationServer().getAccessTokenTimeToLive();
         tokenSettingsBuilder.accessTokenTimeToLive(accessTokenTTL);
 
         // 刷新令牌有效期
         Duration refreshTokenTTL = config.getRefreshTokenTimeToLive() != null
-                ? config.getRefreshTokenTimeToLive()
-                : oauth2Properties.getAuthorizationServer().getRefreshTokenTimeToLive();
+            ? config.getRefreshTokenTimeToLive()
+            : oauth2Properties.getAuthorizationServer().getRefreshTokenTimeToLive();
         tokenSettingsBuilder.refreshTokenTimeToLive(refreshTokenTTL);
 
         // 是否重用刷新令牌
         tokenSettingsBuilder.reuseRefreshTokens(
-                oauth2Properties.getAuthorizationServer().isReuseRefreshTokens()
+            oauth2Properties.getAuthorizationServer().isReuseRefreshTokens()
         );
 
         builder.tokenSettings(tokenSettingsBuilder.build());
@@ -358,38 +358,38 @@ public class OAuth2AuthorizationServerConfig {
      */
     private RegisteredClient buildDefaultClient(PasswordEncoder passwordEncoder) {
         return RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("carlos-client")
-                .clientSecret(passwordEncoder.encode("carlos-secret"))
-                .clientName("Carlos Default Client")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .redirectUri("http://localhost:8080/login/oauth2/code/carlos")
-                .redirectUri("http://localhost:8080/authorized")
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/carlos")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .scope("read")
-                .scope("write")
-                .scope("all")
-                .clientSettings(ClientSettings.builder()
-                        .requireAuthorizationConsent(false)
-                        .requireProofKey(false)
-                        .build())
-                .tokenSettings(TokenSettings.builder()
-                        .accessTokenTimeToLive(
-                                oauth2Properties.getAuthorizationServer().getAccessTokenTimeToLive()
-                        )
-                        .refreshTokenTimeToLive(
-                                oauth2Properties.getAuthorizationServer().getRefreshTokenTimeToLive()
-                        )
-                        .reuseRefreshTokens(
-                                oauth2Properties.getAuthorizationServer().isReuseRefreshTokens()
-                        )
-                        .build())
-                .build();
+            .clientId("carlos-client")
+            .clientSecret(passwordEncoder.encode("carlos-secret"))
+            .clientName("Carlos Default Client")
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+            .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+            .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+            .redirectUri("http://localhost:8080/login/oauth2/code/carlos")
+            .redirectUri("http://localhost:8080/authorized")
+            .redirectUri("http://127.0.0.1:8080/login/oauth2/code/carlos")
+            .scope(OidcScopes.OPENID)
+            .scope(OidcScopes.PROFILE)
+            .scope("read")
+            .scope("write")
+            .scope("all")
+            .clientSettings(ClientSettings.builder()
+                .requireAuthorizationConsent(false)
+                .requireProofKey(false)
+                .build())
+            .tokenSettings(TokenSettings.builder()
+                .accessTokenTimeToLive(
+                    oauth2Properties.getAuthorizationServer().getAccessTokenTimeToLive()
+                )
+                .refreshTokenTimeToLive(
+                    oauth2Properties.getAuthorizationServer().getRefreshTokenTimeToLive()
+                )
+                .reuseRefreshTokens(
+                    oauth2Properties.getAuthorizationServer().isReuseRefreshTokens()
+                )
+                .build())
+            .build();
     }
 
     /**
@@ -442,9 +442,9 @@ public class OAuth2AuthorizationServerConfig {
 
         // 构建 RSAKey
         RSAKey rsaKey = new RSAKey.Builder(publicKey)
-                .privateKey(privateKey)
-                .keyID(oauth2Properties.getJwt().getKeyId())
-                .build();
+            .privateKey(privateKey)
+            .keyID(oauth2Properties.getJwt().getKeyId())
+            .build();
 
         // 创建 JWK Set
         JWKSet jwkSet = new JWKSet(rsaKey);
@@ -500,24 +500,24 @@ public class OAuth2AuthorizationServerConfig {
     @ConditionalOnMissingBean
     public AuthorizationServerSettings authorizationServerSettings() {
         OAuth2Properties.AuthorizationServerProperties config =
-                oauth2Properties.getAuthorizationServer();
+            oauth2Properties.getAuthorizationServer();
 
         return AuthorizationServerSettings.builder()
-                // Issuer 标识
-                .issuer(oauth2Properties.getJwt().getIssuer())
-                // 授权端点
-                .authorizationEndpoint(config.getAuthorizationEndpoint())
-                // 令牌端点
-                .tokenEndpoint(config.getTokenEndpoint())
-                // 令牌撤销端点
-                .tokenRevocationEndpoint(config.getTokenRevocationEndpoint())
-                // 令牌自省端点
-                .tokenIntrospectionEndpoint(config.getTokenIntrospectionEndpoint())
-                // JWK Set 端点
-                .jwkSetEndpoint(config.getJwkSetEndpoint())
-                // OIDC 用户信息端点
-                .oidcUserInfoEndpoint(config.getOidcUserInfoEndpoint())
-                .build();
+            // Issuer 标识
+            .issuer(oauth2Properties.getJwt().getIssuer())
+            // 授权端点
+            .authorizationEndpoint(config.getAuthorizationEndpoint())
+            // 令牌端点
+            .tokenEndpoint(config.getTokenEndpoint())
+            // 令牌撤销端点
+            .tokenRevocationEndpoint(config.getTokenRevocationEndpoint())
+            // 令牌自省端点
+            .tokenIntrospectionEndpoint(config.getTokenIntrospectionEndpoint())
+            // JWK Set 端点
+            .jwkSetEndpoint(config.getJwkSetEndpoint())
+            // OIDC 用户信息端点
+            .oidcUserInfoEndpoint(config.getOidcUserInfoEndpoint())
+            .build();
     }
 
     /**
@@ -576,7 +576,7 @@ public class OAuth2AuthorizationServerConfig {
     @Bean
     @ConditionalOnMissingBean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer(
-            ExtendUserDetailsService userDetailsService) {
+        ExtendUserDetailsService userDetailsService) {
 
         if (oauth2Properties.getJwt().isIncludeUserInfo()) {
             log.info("JWT token customizer enabled with user info inclusion");
@@ -588,7 +588,7 @@ public class OAuth2AuthorizationServerConfig {
             // 不添加用户信息，只添加自定义声明
             if (oauth2Properties.getJwt().getCustomClaims() != null) {
                 oauth2Properties.getJwt().getCustomClaims().forEach(
-                        (key, value) -> context.getClaims().claim(key, value)
+                    (key, value) -> context.getClaims().claim(key, value)
                 );
             }
         };

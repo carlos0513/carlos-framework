@@ -303,7 +303,7 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
             OAuth2RefreshToken refreshToken = authorization.getRefreshToken().getToken();
             if (refreshToken.getExpiresAt() != null) {
                 return Duration.ofSeconds(
-                        ChronoUnit.SECONDS.between(java.time.Instant.now(), refreshToken.getExpiresAt())
+                    ChronoUnit.SECONDS.between(java.time.Instant.now(), refreshToken.getExpiresAt())
                 );
             }
         }
@@ -313,7 +313,7 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
             OAuth2AccessToken accessToken = authorization.getAccessToken().getToken();
             if (accessToken.getExpiresAt() != null) {
                 return Duration.ofSeconds(
-                        ChronoUnit.SECONDS.between(java.time.Instant.now(), accessToken.getExpiresAt())
+                    ChronoUnit.SECONDS.between(java.time.Instant.now(), accessToken.getExpiresAt())
                 );
             }
         }

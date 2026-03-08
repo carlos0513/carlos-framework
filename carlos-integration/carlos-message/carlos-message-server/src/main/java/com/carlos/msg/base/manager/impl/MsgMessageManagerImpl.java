@@ -93,22 +93,22 @@ public class MsgMessageManagerImpl extends BaseServiceImpl<MsgMessageMapper, Msg
     public Paging<MsgMessageVO> getPage(MsgMessagePageParam param) {
         LambdaQueryWrapper<MsgMessage> wrapper = queryWrapper();
         wrapper.select(
-                MsgMessage::getId,
-                MsgMessage::getTemplateId,
-                MsgMessage::getSender,
-                MsgMessage::getMessageType,
-                MsgMessage::getMessageTitle,
-                MsgMessage::getMessageContent,
-                MsgMessage::getMessageRemark,
-                MsgMessage::getSourceBusiness,
-                MsgMessage::getSendUserId,
-                MsgMessage::getSendUserName,
-                MsgMessage::getFeedbackType,
-                MsgMessage::getFeedbackContent,
-                MsgMessage::getPriority,
-                MsgMessage::getPushChannel,
-                MsgMessage::getCreateBy,
-                MsgMessage::getCreateTime
+            MsgMessage::getId,
+            MsgMessage::getTemplateId,
+            MsgMessage::getSender,
+            MsgMessage::getMessageType,
+            MsgMessage::getMessageTitle,
+            MsgMessage::getMessageContent,
+            MsgMessage::getMessageRemark,
+            MsgMessage::getSourceBusiness,
+            MsgMessage::getSendUserId,
+            MsgMessage::getSendUserName,
+            MsgMessage::getFeedbackType,
+            MsgMessage::getFeedbackContent,
+            MsgMessage::getPriority,
+            MsgMessage::getPushChannel,
+            MsgMessage::getCreateBy,
+            MsgMessage::getCreateTime
         );
         PageInfo<MsgMessage> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, MsgMessageConvert.INSTANCE::toVO);

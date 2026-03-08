@@ -93,15 +93,15 @@ public class MsgMessageReceiverManagerImpl extends BaseServiceImpl<MsgMessageRec
     public Paging<MsgMessageReceiverVO> getPage(MsgMessageReceiverPageParam param) {
         LambdaQueryWrapper<MsgMessageReceiver> wrapper = queryWrapper();
         wrapper.select(
-                MsgMessageReceiver::getId,
-                MsgMessageReceiver::getMessageId,
-                MsgMessageReceiver::getReceiverId,
-                MsgMessageReceiver::getReceiverNumber,
-                MsgMessageReceiver::getReceiverAudience,
-                MsgMessageReceiver::getRead,
-                MsgMessageReceiver::getSuccess,
-                MsgMessageReceiver::getCreateBy,
-                MsgMessageReceiver::getCreateTime
+            MsgMessageReceiver::getId,
+            MsgMessageReceiver::getMessageId,
+            MsgMessageReceiver::getReceiverId,
+            MsgMessageReceiver::getReceiverNumber,
+            MsgMessageReceiver::getReceiverAudience,
+            MsgMessageReceiver::getRead,
+            MsgMessageReceiver::getSuccess,
+            MsgMessageReceiver::getCreateBy,
+            MsgMessageReceiver::getCreateTime
         );
         PageInfo<MsgMessageReceiver> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, MsgMessageReceiverConvert.INSTANCE::toVO);

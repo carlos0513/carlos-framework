@@ -23,7 +23,7 @@ public class WebsocketInterceptor implements HandshakeInterceptor {
      */
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes)
-            throws Exception {
+        throws Exception {
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest serverHttpRequest = (ServletServerHttpRequest) request;
             // 获取请求路径携带的参数

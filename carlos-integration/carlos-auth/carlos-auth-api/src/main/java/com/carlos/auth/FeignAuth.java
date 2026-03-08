@@ -17,9 +17,9 @@ import java.util.Map;
  * @date 2021/11/11 13:51
  */
 @FeignClient(
-        value = ServiceNameConstant.AUTH,
-        contextId = "auth",
-        fallbackFactory = FeignAuthFallbackFactory.class)
+    value = ServiceNameConstant.AUTH,
+    contextId = "auth",
+    fallbackFactory = FeignAuthFallbackFactory.class)
 public interface FeignAuth {
 
     /**
@@ -32,8 +32,8 @@ public interface FeignAuth {
      */
     @PostMapping(value = "/oauth2/token")
     Result<Oauth2TokenDTO> getAccessToken(
-            @RequestParam("param") Map<String, String> param,
-            @RequestHeader(value = "headers", required = false) MultiValueMap<String, String> headers);
+        @RequestParam("param") Map<String, String> param,
+        @RequestHeader(value = "headers", required = false) MultiValueMap<String, String> headers);
 
     /**
      * 获取加密后的密码

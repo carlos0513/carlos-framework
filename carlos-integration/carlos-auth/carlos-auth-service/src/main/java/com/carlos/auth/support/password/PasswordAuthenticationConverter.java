@@ -35,7 +35,7 @@ public class PasswordAuthenticationConverter extends BaseAuthenticationConverter
     public PasswordAuthenticationToken buildToken(Authentication clientPrincipal,
                                                   Set<String> scopes, Map<String, String> params) {
         return new PasswordAuthenticationToken(AuthorizationGrantType.PASSWORD, clientPrincipal,
-                scopes, params);
+            scopes, params);
     }
 
 

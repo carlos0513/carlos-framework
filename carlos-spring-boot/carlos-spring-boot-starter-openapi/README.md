@@ -2,7 +2,8 @@
 
 ## 一、模块简介
 
-`carlos-openapi` 是 Carlos 框架的 API 文档生成模块，基于 SpringDoc OpenAPI 3 和 Knife4j 提供强大的 REST API 文档生成和管理功能。该模块支持自动生成 OpenAPI 规范文档，并提供美观的交互式文档界面。
+`carlos-openapi` 是 Carlos 框架的 API 文档生成模块，基于 SpringDoc OpenAPI 3 和 Knife4j 提供强大的 REST API
+文档生成和管理功能。该模块支持自动生成 OpenAPI 规范文档，并提供美观的交互式文档界面。
 
 ## 二、主要功能
 

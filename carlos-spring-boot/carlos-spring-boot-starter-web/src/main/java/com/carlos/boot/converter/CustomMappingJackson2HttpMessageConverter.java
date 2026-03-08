@@ -74,7 +74,7 @@ public class CustomMappingJackson2HttpMessageConverter extends MappingJackson2Ht
      */
     @Override
     public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
-            throws IOException, HttpMessageNotReadableException {
+        throws IOException, HttpMessageNotReadableException {
         return super.read(type, contextClass, inputMessage);
     }
 
@@ -83,7 +83,7 @@ public class CustomMappingJackson2HttpMessageConverter extends MappingJackson2Ht
      */
     @Override
     protected void writeInternal(Object object, Type type, HttpOutputMessage outputMessage)
-            throws IOException, HttpMessageNotWritableException {
+        throws IOException, HttpMessageNotWritableException {
         super.writeInternal(object, type, outputMessage);
     }
 }

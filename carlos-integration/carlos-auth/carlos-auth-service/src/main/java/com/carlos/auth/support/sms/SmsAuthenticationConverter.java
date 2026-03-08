@@ -27,7 +27,7 @@ public class SmsAuthenticationConverter extends BaseAuthenticationConverter<SmsA
     @Override
     public SmsAuthenticationToken buildToken(Authentication clientPrincipal, Set<String> requestedScopes, Map<String, String> additionalParameters) {
         return new SmsAuthenticationToken(new AuthorizationGrantType("APP"),
-                clientPrincipal, requestedScopes, additionalParameters);
+            clientPrincipal, requestedScopes, additionalParameters);
     }
 
 

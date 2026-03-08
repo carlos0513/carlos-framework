@@ -83,10 +83,10 @@ public class LoginService {
         try {
             // 构建认证令牌
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
-                            loginRequest.getPassword()
-                    );
+                new UsernamePasswordAuthenticationToken(
+                    loginRequest.getUsername(),
+                    loginRequest.getPassword()
+                );
 
             // 执行认证
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -119,7 +119,7 @@ public class LoginService {
 
             // 发布登录成功审计事件（异步）
             eventPublisher.publishEvent(LoginAuditEvent.loginSuccess(
-                    this, user, request, null));
+                this, user, request, null));
 
             // 记录登录成功
             recordLoginSuccess(loginRequest.getUsername());
@@ -160,10 +160,10 @@ public class LoginService {
         // 使用authorization_code + PKCE流程（生产环境推荐）
 
         return LoginResponse.builder()
-                .accessToken("") // 空令牌，需通过/oauth2/token获取
-                .tokenType("Bearer")
-                .expiresIn(7200L)
-                .build();
+            .accessToken("") // 空令牌，需通过/oauth2/token获取
+            .tokenType("Bearer")
+            .expiresIn(7200L)
+            .build();
     }
 
     /**
@@ -175,20 +175,20 @@ public class LoginService {
      */
     private LoginResponse buildLoginResponse(UserInfo user, Authentication authentication) {
         LoginResponse.UserInfo userInfo = LoginResponse.UserInfo.builder()
-                .id(user.getUserId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .build();
+            .id(user.getUserId())
+            .username(user.getUsername())
+            .email(user.getEmail())
+            .phone(user.getPhone())
+            .build();
 
         // TODO: 实现真正的JWT令牌颁发
         // 临时使用空令牌，后续集成OAuth2Server
         return LoginResponse.builder()
-                .accessToken("")
-                .tokenType("Bearer")
-                .expiresIn(7200L)
-                .userInfo(userInfo)
-                .build();
+            .accessToken("")
+            .tokenType("Bearer")
+            .expiresIn(7200L)
+            .userInfo(userInfo)
+            .build();
     }
 
     /**
@@ -265,7 +265,7 @@ public class LoginService {
         try {
             // 发布登出审计事件
             eventPublisher.publishEvent(LoginAuditEvent.logout(
-                    this, user, request, extractSessionId(accessToken)));
+                this, user, request, extractSessionId(accessToken)));
 
             // TODO: 将令牌添加到Redis黑名单（可选）
             // String jti = extractJtiFromToken(accessToken);

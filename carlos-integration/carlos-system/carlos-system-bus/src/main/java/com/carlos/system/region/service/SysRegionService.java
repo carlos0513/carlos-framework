@@ -80,8 +80,8 @@ public class SysRegionService {
 
     private void checkRegion(SysRegionDTO dto) {
         long getByCode = this.regionManager.count(new LambdaQueryWrapper<SysRegion>()
-                .eq(SysRegion::getRegionCode, dto.getRegionCode())
-                .eq(SysRegion::getParentCode, dto.getParentCode()));
+            .eq(SysRegion::getRegionCode, dto.getRegionCode())
+            .eq(SysRegion::getParentCode, dto.getParentCode()));
         if (getByCode > 0) {
             throw new ServiceException("区域码已存在，添加失败！");
         }
@@ -265,7 +265,7 @@ public class SysRegionService {
             return vo;
         }
         SysRegionDTO parent = allList.stream().filter(
-                region -> StrUtil.equalsIgnoreCase(vo.getParentCode(), region.getRegionCode())).findFirst().get();
+            region -> StrUtil.equalsIgnoreCase(vo.getParentCode(), region.getRegionCode())).findFirst().get();
         if (parent == null) {
             return vo;
         }
@@ -464,8 +464,8 @@ public class SysRegionService {
         while (!currentLayer.isEmpty()) {
             // 收集当前层所有节点的 regionCode，用于查询下一层
             List<String> currentCodes = currentLayer.stream()
-                    .map(SysRegionDTO::getRegionCode)
-                    .collect(Collectors.toList());
+                .map(SysRegionDTO::getRegionCode)
+                .collect(Collectors.toList());
 
             // 批量更新当前层节点的 parents 字段
             for (SysRegionDTO region : currentLayer) {
@@ -491,10 +491,10 @@ public class SysRegionService {
 
             // 为下一层节点设置 parents 字段
             Map<String, String> parentPaths = currentLayer.stream()
-                    .collect(Collectors.toMap(
-                            SysRegionDTO::getRegionCode,
-                            r -> StrUtil.isBlank(r.getParents()) ? r.getRegionCode() : r.getParents() + "," + r.getRegionCode()
-                    ));
+                .collect(Collectors.toMap(
+                    SysRegionDTO::getRegionCode,
+                    r -> StrUtil.isBlank(r.getParents()) ? r.getRegionCode() : r.getParents() + "," + r.getRegionCode()
+                ));
 
             for (SysRegionDTO child : nextLayer) {
                 String parentCode = child.getParentCode();

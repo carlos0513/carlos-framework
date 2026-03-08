@@ -78,8 +78,8 @@ public abstract class AbstractOssTemplate implements OssTemplate {
      */
     protected String buildUrl(String bucketName, String objectName) {
         String endpoint = StrUtil.isNotBlank(properties.getPublicEndpoint())
-                ? properties.getPublicEndpoint()
-                : properties.getEndpoint();
+            ? properties.getPublicEndpoint()
+            : properties.getEndpoint();
 
         if (StrUtil.isBlank(endpoint)) {
             throw new OssException("Endpoint is not configured");

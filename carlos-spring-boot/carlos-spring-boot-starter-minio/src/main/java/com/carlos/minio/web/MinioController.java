@@ -32,8 +32,8 @@ public class MinioController {
     @Operation(summary = "minio初始化信息")
     public Result<ClientInfo> init() {
         return Result.ok(ClientInfo.builder().endpoint(properties.getEndpoint())
-                .accessKey(properties.getAccessKey())
-                .secretKey(properties.getSecretKey())
-                .defaultBucket(properties.getBucket()).build());
+            .accessKey(properties.getAccessKey())
+            .secretKey(properties.getSecretKey())
+            .defaultBucket(properties.getBucket()).build());
     }
 }

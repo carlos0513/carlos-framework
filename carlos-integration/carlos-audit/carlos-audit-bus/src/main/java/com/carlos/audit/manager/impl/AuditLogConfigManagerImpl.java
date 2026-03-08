@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+
 /**
  * <p>
  * 审计日志配置（动态TTL与采样策略） 查询封装实现类

@@ -56,7 +56,7 @@ public class RegionExcelListener implements ReadListener<RegionExcel> {
             final Integer columnIndex = excelDataConvertException.getColumnIndex();
             final CellData<?> cellData = excelDataConvertException.getCellData();
             log.error("第{}行，第{}列解析异常，数据为:{}", excelDataConvertException.getRowIndex(),
-                    excelDataConvertException.getColumnIndex(), excelDataConvertException.getCellData());
+                excelDataConvertException.getColumnIndex(), excelDataConvertException.getCellData());
             throw new ServiceException("第" + rowIndex + "行，第" + columnIndex + "列解析异常，数据为:" + cellData + "");
         }
     }

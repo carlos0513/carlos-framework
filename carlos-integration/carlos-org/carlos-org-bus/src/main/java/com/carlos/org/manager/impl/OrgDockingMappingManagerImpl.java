@@ -65,20 +65,20 @@ public class OrgDockingMappingManagerImpl extends BaseServiceImpl<OrgDockingMapp
     @Override
     public OrgDockingMappingDTO getDockingMapping(OrgDockingTypeEnum type, String targetCode, String targetId) {
         OrgDockingMapping entity = lambdaQuery()
-                .select(OrgDockingMapping::getId, OrgDockingMapping::getSystemId, OrgDockingMapping::getTargetId, OrgDockingMapping::getTargetCode, OrgDockingMapping::getDockingType)
-                .eq(OrgDockingMapping::getDockingType, type)
-                .eq(OrgDockingMapping::getTargetCode, targetCode)
-                .eq(OrgDockingMapping::getTargetId, targetId)
-                .one();
+            .select(OrgDockingMapping::getId, OrgDockingMapping::getSystemId, OrgDockingMapping::getTargetId, OrgDockingMapping::getTargetCode, OrgDockingMapping::getDockingType)
+            .eq(OrgDockingMapping::getDockingType, type)
+            .eq(OrgDockingMapping::getTargetCode, targetCode)
+            .eq(OrgDockingMapping::getTargetId, targetId)
+            .one();
         return OrgDockingMappingConvert.INSTANCE.toDTO(entity);
     }
 
     @Override
     public OrgDockingMappingDTO getDockingMappingByTargetId(String targetId) {
         OrgDockingMapping entity = lambdaQuery()
-                .select(OrgDockingMapping::getId, OrgDockingMapping::getSystemId, OrgDockingMapping::getTargetId, OrgDockingMapping::getTargetCode, OrgDockingMapping::getDockingType)
-                .eq(OrgDockingMapping::getTargetId, targetId)
-                .one();
+            .select(OrgDockingMapping::getId, OrgDockingMapping::getSystemId, OrgDockingMapping::getTargetId, OrgDockingMapping::getTargetCode, OrgDockingMapping::getDockingType)
+            .eq(OrgDockingMapping::getTargetId, targetId)
+            .one();
         return OrgDockingMappingConvert.INSTANCE.toDTO(entity);
     }
 
@@ -91,32 +91,32 @@ public class OrgDockingMappingManagerImpl extends BaseServiceImpl<OrgDockingMapp
     @Override
     public OrgDockingMappingDTO getSystemIdByTargetId(String targetId) {
         OrgDockingMapping entity = lambdaQuery()
-                .eq(OrgDockingMapping::getTargetId, targetId)
-                .one();
+            .eq(OrgDockingMapping::getTargetId, targetId)
+            .one();
         return OrgDockingMappingConvert.INSTANCE.toDTO(entity);
     }
 
     @Override
     public List<OrgDockingMappingDTO> getDockingMappingList(OrgDockingTypeEnum type) {
         List<OrgDockingMapping> list = lambdaQuery()
-                .eq(OrgDockingMapping::getDockingType, type)
-                .list();
+            .eq(OrgDockingMapping::getDockingType, type)
+            .list();
         return OrgDockingMappingConvert.INSTANCE.toDTO(list);
     }
 
     @Override
     public List<OrgDockingMappingDTO> listByTargetIds(Set<String> targetIds) {
         List<OrgDockingMapping> list = lambdaQuery()
-                .in(CollUtil.isNotEmpty(targetIds), OrgDockingMapping::getTargetId, targetIds)
-                .list();
+            .in(CollUtil.isNotEmpty(targetIds), OrgDockingMapping::getTargetId, targetIds)
+            .list();
         return OrgDockingMappingConvert.INSTANCE.toDTO(list);
     }
 
     @Override
     public List<OrgDockingMappingDTO> listBySystemIds(Set<String> systemIds) {
         List<OrgDockingMapping> list = lambdaQuery()
-                .in(CollUtil.isNotEmpty(systemIds), OrgDockingMapping::getSystemId, systemIds)
-                .list();
+            .in(CollUtil.isNotEmpty(systemIds), OrgDockingMapping::getSystemId, systemIds)
+            .list();
         return OrgDockingMappingConvert.INSTANCE.toDTO(list);
     }
 }

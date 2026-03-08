@@ -54,8 +54,8 @@ public class S3OssTemplate extends AbstractOssTemplate {
         try {
             if (!bucketExists(bucketName)) {
                 s3Client.createBucket(CreateBucketRequest.builder()
-                        .bucket(bucketName)
-                        .build());
+                    .bucket(bucketName)
+                    .build());
                 log.info("Created bucket: {}", bucketName);
             }
         } catch (Exception e) {
@@ -67,8 +67,8 @@ public class S3OssTemplate extends AbstractOssTemplate {
     public void deleteBucket(String bucketName) {
         try {
             s3Client.deleteBucket(DeleteBucketRequest.builder()
-                    .bucket(bucketName)
-                    .build());
+                .bucket(bucketName)
+                .build());
             log.info("Deleted bucket: {}", bucketName);
         } catch (Exception e) {
             throw new OssException("Failed to delete bucket: " + bucketName, e);
@@ -79,8 +79,8 @@ public class S3OssTemplate extends AbstractOssTemplate {
     public boolean bucketExists(String bucketName) {
         try {
             s3Client.headBucket(HeadBucketRequest.builder()
-                    .bucket(bucketName)
-                    .build());
+                .bucket(bucketName)
+                .build());
             return true;
         } catch (NoSuchBucketException e) {
             return false;
@@ -93,8 +93,8 @@ public class S3OssTemplate extends AbstractOssTemplate {
     public List<String> listBuckets() {
         try {
             return s3Client.listBuckets().buckets().stream()
-                    .map(Bucket::name)
-                    .collect(Collectors.toList());
+                .map(Bucket::name)
+                .collect(Collectors.toList());
         } catch (Exception e) {
             throw new OssException("Failed to list buckets", e);
         }
@@ -112,24 +112,24 @@ public class S3OssTemplate extends AbstractOssTemplate {
 
             // 上传文件
             PutObjectRequest request = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectName)
-                    .contentType(contentType)
-                    .contentLength(size)
-                    .build();
+                .bucket(bucketName)
+                .key(objectName)
+                .contentType(contentType)
+                .contentLength(size)
+                .build();
 
             PutObjectResponse response = s3Client.putObject(request,
-                    RequestBody.fromBytes(bytes));
+                RequestBody.fromBytes(bytes));
 
             return OssFile.builder()
-                    .fileName(objectName)
-                    .filePath(objectName)
-                    .url(getObjectUrl(bucketName, objectName))
-                    .size(size)
-                    .contentType(contentType)
-                    .hash(response.eTag())
-                    .bucketName(bucketName)
-                    .build();
+                .fileName(objectName)
+                .filePath(objectName)
+                .url(getObjectUrl(bucketName, objectName))
+                .size(size)
+                .contentType(contentType)
+                .hash(response.eTag())
+                .bucketName(bucketName)
+                .build();
         } catch (Exception e) {
             throw new OssException("Failed to upload object: " + objectName, e);
         }
@@ -145,9 +145,9 @@ public class S3OssTemplate extends AbstractOssTemplate {
         try {
             objectName = normalizeObjectName(objectName);
             GetObjectRequest request = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectName)
-                    .build();
+                .bucket(bucketName)
+                .key(objectName)
+                .build();
             return s3Client.getObject(request);
         } catch (Exception e) {
             throw new OssException("Failed to get object: " + objectName, e);
@@ -159,24 +159,24 @@ public class S3OssTemplate extends AbstractOssTemplate {
         try {
             objectName = normalizeObjectName(objectName);
             HeadObjectRequest request = HeadObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectName)
-                    .build();
+                .bucket(bucketName)
+                .key(objectName)
+                .build();
 
             HeadObjectResponse response = s3Client.headObject(request);
 
             return OssFile.builder()
-                    .fileName(objectName)
-                    .filePath(objectName)
-                    .url(getObjectUrl(bucketName, objectName))
-                    .size(response.contentLength())
-                    .contentType(response.contentType())
-                    .hash(response.eTag())
-                    .bucketName(bucketName)
-                    .lastModified(response.lastModified() != null
-                            ? LocalDateTime.ofInstant(response.lastModified(), ZoneId.systemDefault())
-                            : null)
-                    .build();
+                .fileName(objectName)
+                .filePath(objectName)
+                .url(getObjectUrl(bucketName, objectName))
+                .size(response.contentLength())
+                .contentType(response.contentType())
+                .hash(response.eTag())
+                .bucketName(bucketName)
+                .lastModified(response.lastModified() != null
+                    ? LocalDateTime.ofInstant(response.lastModified(), ZoneId.systemDefault())
+                    : null)
+                .build();
         } catch (Exception e) {
             throw new OssException("Failed to get object info: " + objectName, e);
         }
@@ -187,9 +187,9 @@ public class S3OssTemplate extends AbstractOssTemplate {
         try {
             objectName = normalizeObjectName(objectName);
             s3Client.deleteObject(DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectName)
-                    .build());
+                .bucket(bucketName)
+                .key(objectName)
+                .build());
             log.info("Deleted object: {}/{}", bucketName, objectName);
         } catch (Exception e) {
             throw new OssException("Failed to delete object: " + objectName, e);
@@ -200,18 +200,18 @@ public class S3OssTemplate extends AbstractOssTemplate {
     public void deleteObjects(String bucketName, List<String> objectNames) {
         try {
             List<ObjectIdentifier> keys = objectNames.stream()
-                    .map(this::normalizeObjectName)
-                    .map(name -> ObjectIdentifier.builder().key(name).build())
-                    .collect(Collectors.toList());
+                .map(this::normalizeObjectName)
+                .map(name -> ObjectIdentifier.builder().key(name).build())
+                .collect(Collectors.toList());
 
             Delete delete = Delete.builder()
-                    .objects(keys)
-                    .build();
+                .objects(keys)
+                .build();
 
             s3Client.deleteObjects(DeleteObjectsRequest.builder()
-                    .bucket(bucketName)
-                    .delete(delete)
-                    .build());
+                .bucket(bucketName)
+                .delete(delete)
+                .build());
 
             log.info("Deleted {} objects from bucket: {}", objectNames.size(), bucketName);
         } catch (Exception e) {
@@ -226,11 +226,11 @@ public class S3OssTemplate extends AbstractOssTemplate {
             targetObject = normalizeObjectName(targetObject);
 
             CopyObjectRequest request = CopyObjectRequest.builder()
-                    .sourceBucket(sourceBucket)
-                    .sourceKey(sourceObject)
-                    .destinationBucket(targetBucket)
-                    .destinationKey(targetObject)
-                    .build();
+                .sourceBucket(sourceBucket)
+                .sourceKey(sourceObject)
+                .destinationBucket(targetBucket)
+                .destinationKey(targetObject)
+                .build();
 
             s3Client.copyObject(request);
             log.info("Copied object from {}/{} to {}/{}", sourceBucket, sourceObject, targetBucket, targetObject);
@@ -245,24 +245,24 @@ public class S3OssTemplate extends AbstractOssTemplate {
             List<OssFile> files = new ArrayList<>();
 
             ListObjectsV2Request request = ListObjectsV2Request.builder()
-                    .bucket(bucketName)
-                    .prefix(prefix)
-                    .build();
+                .bucket(bucketName)
+                .prefix(prefix)
+                .build();
 
             ListObjectsV2Response response = s3Client.listObjectsV2(request);
 
             for (S3Object s3Object : response.contents()) {
                 files.add(OssFile.builder()
-                        .fileName(s3Object.key())
-                        .filePath(s3Object.key())
-                        .url(getObjectUrl(bucketName, s3Object.key()))
-                        .size(s3Object.size())
-                        .hash(s3Object.eTag())
-                        .bucketName(bucketName)
-                        .lastModified(s3Object.lastModified() != null
-                                ? LocalDateTime.ofInstant(s3Object.lastModified(), ZoneId.systemDefault())
-                                : null)
-                        .build());
+                    .fileName(s3Object.key())
+                    .filePath(s3Object.key())
+                    .url(getObjectUrl(bucketName, s3Object.key()))
+                    .size(s3Object.size())
+                    .hash(s3Object.eTag())
+                    .bucketName(bucketName)
+                    .lastModified(s3Object.lastModified() != null
+                        ? LocalDateTime.ofInstant(s3Object.lastModified(), ZoneId.systemDefault())
+                        : null)
+                    .build());
             }
             return files;
         } catch (Exception e) {
@@ -282,14 +282,14 @@ public class S3OssTemplate extends AbstractOssTemplate {
             objectName = normalizeObjectName(objectName);
 
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectName)
-                    .build();
+                .bucket(bucketName)
+                .key(objectName)
+                .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofSeconds(expires))
-                    .getObjectRequest(getObjectRequest)
-                    .build();
+                .signatureDuration(Duration.ofSeconds(expires))
+                .getObjectRequest(getObjectRequest)
+                .build();
 
             PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
             return presignedRequest.url().toString();
@@ -303,9 +303,9 @@ public class S3OssTemplate extends AbstractOssTemplate {
         try {
             objectName = normalizeObjectName(objectName);
             s3Client.headObject(HeadObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(objectName)
-                    .build());
+                .bucket(bucketName)
+                .key(objectName)
+                .build());
             return true;
         } catch (NoSuchKeyException e) {
             return false;

@@ -94,23 +94,23 @@ public class OrgPositionLevelManagerImpl extends BaseServiceImpl<OrgPositionLeve
         LambdaQueryWrapper<OrgPositionLevel> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgPositionLevel::getId,
-                OrgPositionLevel::getCategoryId,
-                OrgPositionLevel::getLevelCode,
-                OrgPositionLevel::getLevelName,
-                OrgPositionLevel::getLevelSeq,
-                OrgPositionLevel::getLevelGroup,
-                OrgPositionLevel::getMinSalary,
-                OrgPositionLevel::getMaxSalary,
-                OrgPositionLevel::getStockLevel,
-                OrgPositionLevel::getDescription,
-                OrgPositionLevel::getRequirements,
-                OrgPositionLevel::getState,
-                OrgPositionLevel::getTenantId,
-                OrgPositionLevel::getCreateBy,
-                OrgPositionLevel::getCreateTime,
-                OrgPositionLevel::getUpdateBy,
-                OrgPositionLevel::getUpdateTime
+            OrgPositionLevel::getId,
+            OrgPositionLevel::getCategoryId,
+            OrgPositionLevel::getLevelCode,
+            OrgPositionLevel::getLevelName,
+            OrgPositionLevel::getLevelSeq,
+            OrgPositionLevel::getLevelGroup,
+            OrgPositionLevel::getMinSalary,
+            OrgPositionLevel::getMaxSalary,
+            OrgPositionLevel::getStockLevel,
+            OrgPositionLevel::getDescription,
+            OrgPositionLevel::getRequirements,
+            OrgPositionLevel::getState,
+            OrgPositionLevel::getTenantId,
+            OrgPositionLevel::getCreateBy,
+            OrgPositionLevel::getCreateTime,
+            OrgPositionLevel::getUpdateBy,
+            OrgPositionLevel::getUpdateTime
         );
         PageInfo<OrgPositionLevel> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgPositionLevelConvert.INSTANCE::toVO);

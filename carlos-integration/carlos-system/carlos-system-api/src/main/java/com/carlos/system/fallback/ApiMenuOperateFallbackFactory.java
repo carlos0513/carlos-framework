@@ -20,7 +20,7 @@ import java.util.Set;
  */
 @Slf4j
 public class ApiMenuOperateFallbackFactory implements FallbackFactory
-        <ApiMenuOperate> {
+    <ApiMenuOperate> {
 
     @Override
     public ApiMenuOperate create(Throwable throwable) {

@@ -15,7 +15,7 @@ import org.springframework.cloud.openfeign.FallbackFactory;
  */
 @Slf4j
 public class ApiMsgMessageFallbackFactory implements FallbackFactory
-        <ApiMsgMessage> {
+    <ApiMsgMessage> {
 
     @Override
     public ApiMsgMessage create(Throwable throwable) {

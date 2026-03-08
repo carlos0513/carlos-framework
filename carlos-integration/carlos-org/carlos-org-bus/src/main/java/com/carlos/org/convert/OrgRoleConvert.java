@@ -58,12 +58,12 @@ public interface OrgRoleConvert {
      * DTO to VO
      */
     @Mappings({
-            @Mapping(target = "roleType", expression = "java(dto.getRoleType() != null ? dto.getRoleType().getCode() : null)"),
-            @Mapping(target = "roleTypeName", expression = "java(dto.getRoleType() != null ? dto.getRoleType().getDesc() : null)"),
-            @Mapping(target = "dataScope", expression = "java(dto.getDataScope() != null ? dto.getDataScope().getCode() : null)"),
-            @Mapping(target = "dataScopeName", expression = "java(dto.getDataScope() != null ? dto.getDataScope().getDesc() : null)"),
-            @Mapping(target = "state", expression = "java(dto.getState() != null ? dto.getState().getCode() : null)"),
-            @Mapping(target = "stateName", expression = "java(dto.getState() != null ? dto.getState().getDesc() : null)")
+        @Mapping(target = "roleType", expression = "java(dto.getRoleType() != null ? dto.getRoleType().getCode() : null)"),
+        @Mapping(target = "roleTypeName", expression = "java(dto.getRoleType() != null ? dto.getRoleType().getDesc() : null)"),
+        @Mapping(target = "dataScope", expression = "java(dto.getDataScope() != null ? dto.getDataScope().getCode() : null)"),
+        @Mapping(target = "dataScopeName", expression = "java(dto.getDataScope() != null ? dto.getDataScope().getDesc() : null)"),
+        @Mapping(target = "state", expression = "java(dto.getState() != null ? dto.getState().getCode() : null)"),
+        @Mapping(target = "stateName", expression = "java(dto.getState() != null ? dto.getState().getDesc() : null)")
     })
     OrgRoleVO toVO(OrgRoleDTO dto);
 

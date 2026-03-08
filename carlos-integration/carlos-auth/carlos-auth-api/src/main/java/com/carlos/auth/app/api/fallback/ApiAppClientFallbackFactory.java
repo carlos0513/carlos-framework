@@ -19,7 +19,7 @@ import java.io.Serializable;
  */
 @Slf4j
 public class ApiAppClientFallbackFactory implements FallbackFactory
-        <ApiAppClient> {
+    <ApiAppClient> {
 
     @Override
     public ApiAppClient create(Throwable throwable) {

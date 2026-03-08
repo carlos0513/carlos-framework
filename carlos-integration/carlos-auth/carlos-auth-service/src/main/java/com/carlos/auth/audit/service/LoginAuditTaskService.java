@@ -54,7 +54,7 @@ public class LoginAuditTaskService {
             auditLoginMapper.insert(auditLogin);
 
             log.info("Login audit log recorded: user={}, type={}, status={}",
-                    auditLogin.getUsername(), auditLogin.getEventType(), auditLogin.getStatus());
+                auditLogin.getUsername(), auditLogin.getEventType(), auditLogin.getStatus());
         } catch (Exception e) {
             log.error("Failed to record login audit log", e);
         }

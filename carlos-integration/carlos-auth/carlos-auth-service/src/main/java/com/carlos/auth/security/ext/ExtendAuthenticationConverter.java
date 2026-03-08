@@ -58,7 +58,7 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
             return null;
         }
         return new ExtendAuthenticationToken(username, password, AuthorizationGrantType.PASSWORD, (OAuth2ClientAuthenticationToken) clientPrincipal,
-                Sets.newHashSet(scope));
+            Sets.newHashSet(scope));
 
     }
 }

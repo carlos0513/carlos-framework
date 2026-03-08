@@ -114,7 +114,7 @@ public class AuthController {
             loginService.recordLoginSuccess(loginRequest.getUsername());
 
             log.info("Login successful for user: {} (IP: {}, Location: {})",
-                    loginRequest.getUsername(), clientIp, ipLocationUtil.getLocation(clientIp));
+                loginRequest.getUsername(), clientIp, ipLocationUtil.getLocation(clientIp));
 
             return Result.ok(loginResponse, "登录成功");
 

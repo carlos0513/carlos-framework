@@ -25,9 +25,9 @@ import java.util.Set;
 public class MessageSender {
 
     private final static Cache<Object, KafkaTemplate<Object, Object>> KAFKA = CacheBuilder.newBuilder()
-            // 设置并发级别为cpu核心数，默认为4
-            .concurrencyLevel(Runtime.getRuntime().availableProcessors())
-            .build();
+        // 设置并发级别为cpu核心数，默认为4
+        .concurrencyLevel(Runtime.getRuntime().availableProcessors())
+        .build();
 
     /**
      * 使用kafka发送消息

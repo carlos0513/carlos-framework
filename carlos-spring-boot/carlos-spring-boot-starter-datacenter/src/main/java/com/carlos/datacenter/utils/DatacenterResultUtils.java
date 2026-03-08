@@ -14,7 +14,7 @@ import com.carlos.datacenter.core.entity.DatacenterResult;
  */
 public class DatacenterResultUtils {
     private DatacenterResultUtils() {
-    }   //私有构造防止实例化
+    }   // 私有构造防止实例化
 
     public static DatacenterResult<? extends DatacenterResponse> error() {
         return error("error no response", null);

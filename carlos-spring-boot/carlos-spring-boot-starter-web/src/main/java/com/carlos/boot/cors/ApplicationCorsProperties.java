@@ -24,13 +24,13 @@ public class ApplicationCorsProperties {
 
 
     private static final List<String> DEFAULT_ALLOW_METHODS = Collections.unmodifiableList(
-            Arrays.asList(HttpMethod.GET.name(),
-                    HttpMethod.HEAD.name(),
-                    HttpMethod.POST.name(),
-                    HttpMethod.OPTIONS.name(),
-                    HttpMethod.PUT.name(),
-                    // HttpMethod.TRACE.name(),
-                    HttpMethod.DELETE.name()));
+        Arrays.asList(HttpMethod.GET.name(),
+            HttpMethod.HEAD.name(),
+            HttpMethod.POST.name(),
+            HttpMethod.OPTIONS.name(),
+            HttpMethod.PUT.name(),
+            // HttpMethod.TRACE.name(),
+            HttpMethod.DELETE.name()));
 
     /**
      * 是否启用跨域，默认启用

@@ -2,7 +2,8 @@
 
 ## 简介
 
-`carlos-spring-boot-commons` 是 Carlos Spring Boot Framework 的基础套件模块集合，提供纯工具库和核心组件，**不依赖 Spring Boot**，可以在任何 Java 项目中使用。
+`carlos-spring-boot-commons` 是 Carlos Spring Boot Framework 的基础套件模块集合，提供纯工具库和核心组件，**不依赖 Spring
+Boot**，可以在任何 Java 项目中使用。
 
 ## 模块列表
 
@@ -152,7 +153,6 @@ Excel 处理工具库，基于 Apache POI 和 EasyExcel：
 - **LuckySheet 支持**: ExcelSheet, CellData
 - **数据监听**: ExcelDataImportListener
 - **批量导入**: ExcelImportExecutor
-
 
 ## 依赖关系
 

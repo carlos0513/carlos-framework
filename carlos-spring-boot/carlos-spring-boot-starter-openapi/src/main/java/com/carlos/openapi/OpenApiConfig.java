@@ -58,14 +58,14 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
         OpenAPI openAPI = new OpenAPI()
-                .info(new Info()
-                        .title(properties.getTitle())
-                        .version(properties.getVersion())
-                        .description(properties.getDescription())
-                        .termsOfService(properties.getTermsOfServiceUrl())
-                        .license(new License()
-                                .name(properties.getLicense())
-                                .url(properties.getLicenseUrl())));
+            .info(new Info()
+                .title(properties.getTitle())
+                .version(properties.getVersion())
+                .description(properties.getDescription())
+                .termsOfService(properties.getTermsOfServiceUrl())
+                .license(new License()
+                    .name(properties.getLicense())
+                    .url(properties.getLicenseUrl())));
         // 联系方式
         Optional.ofNullable(properties.getContact()).ifPresent(contact -> openAPI.getInfo().contact(new Contact().name(contact.getName()).email(contact.getEmail()).url(contact.getUrl())));
         return openAPI;

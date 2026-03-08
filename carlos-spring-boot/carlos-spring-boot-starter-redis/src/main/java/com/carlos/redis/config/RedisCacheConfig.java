@@ -142,7 +142,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         // jdk8日期序列化和反序列化设置
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDateTime.class,
-                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_MS_PATTERN)));
+            new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_MS_PATTERN)));
         javaTimeModule.addDeserializer(LocalDateTime.class, new Deserializer());
 
         javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
@@ -159,12 +159,12 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         /* 在ObjectMapper对象设置忽略多余属性 */
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper
-                .registerModule(simpleModule)
-                .registerModule(javaTimeModule)
-                .registerModule(new ParameterNamesModule());
+            .registerModule(simpleModule)
+            .registerModule(javaTimeModule)
+            .registerModule(new ParameterNamesModule());
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL,
-                JsonTypeInfo.As.WRAPPER_ARRAY);
+            JsonTypeInfo.As.WRAPPER_ARRAY);
 
         serializer.setObjectMapper(objectMapper);
 
@@ -196,15 +196,15 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
     public CacheManager cacheManager() {
         // 生成一个默认配置，通过config对象即可对缓存进行自定义配置
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                // 配置注解缓存键值序列化方式
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
-                // 缓存不失效
-                .entryTtl(Duration.ofSeconds(-1));
+            // 配置注解缓存键值序列化方式
+            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
+            // 缓存不失效
+            .entryTtl(Duration.ofSeconds(-1));
         // 配置键缓存前缀
         if (cacheProperties.isUserPrefix()) {
             config.prefixCacheNameWith(cacheProperties.getKeyPrefix())
-                    .usePrefix();
+                .usePrefix();
         }
 
 
@@ -220,11 +220,11 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 
         // 使用自定义的缓存配置初始化一个cacheManager
         return RedisCacheManager.builder(factory)
-                .cacheDefaults(config)
-                // 注意这两句的调用顺序，一定要先调用该方法设置初始化的缓存名，再初始化相关的配置
-                // .initialCacheNames(cacheNames)
-                // .withInitialCacheConfigurations(configMap)
-                .build();
+            .cacheDefaults(config)
+            // 注意这两句的调用顺序，一定要先调用该方法设置初始化的缓存名，再初始化相关的配置
+            // .initialCacheNames(cacheNames)
+            // .withInitialCacheConfigurations(configMap)
+            .build();
     }
 
 

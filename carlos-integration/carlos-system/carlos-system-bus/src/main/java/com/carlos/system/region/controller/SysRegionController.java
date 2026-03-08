@@ -98,9 +98,9 @@ public class SysRegionController {
     @GetMapping("tree/list")
     @Operation(summary = "行政区域树形列表", description = "一次性全部加载")
     @Parameters({
-            @Parameter(name = "regionCode", description = "当前区域code"),
-            @Parameter(name = "regionName", description = "当前区域名称"),
-            @Parameter(name = "codeTop", description = "是否以传入的code作为顶级树的开始")
+        @Parameter(name = "regionCode", description = "当前区域code"),
+        @Parameter(name = "regionName", description = "当前区域名称"),
+        @Parameter(name = "codeTop", description = "是否以传入的code作为顶级树的开始")
     })
     public Result<List<SysRegionVO>> treeList(final String parentId, final String regionName, final String regionCode, final boolean codeTop) {
         return Result.ok(this.regionService.getRegionTree(parentId, regionName, regionCode, true, codeTop));

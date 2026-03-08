@@ -59,11 +59,11 @@ public class SecurityUser implements UserDetails {
         this.enable = user.getEnable();
         // 权限赋值
         Optional.ofNullable(user.getRoleIds())
-                .ifPresent(i -> this.authorities =
-                        i.stream()
-                                .map(role -> new SimpleGrantedAuthority(String.valueOf(role)))
-                                .collect(Collectors.toList())
-                );
+            .ifPresent(i -> this.authorities =
+                i.stream()
+                    .map(role -> new SimpleGrantedAuthority(String.valueOf(role)))
+                    .collect(Collectors.toList())
+            );
     }
 
     @JsonIgnore

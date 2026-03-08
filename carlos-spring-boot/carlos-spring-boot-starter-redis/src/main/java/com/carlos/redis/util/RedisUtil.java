@@ -63,9 +63,9 @@ public class RedisUtil {
 
     // 与 CPU 核数相同，也可配 System.getProperty("mget.parallelism", "8")
     public static final ForkJoinPool POOL = new ForkJoinPool(
-            8,
-            ForkJoinPool.defaultForkJoinWorkerThreadFactory,
-            null, true);   // true=异步模式，更轻量
+        8,
+        ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+        null, true);   // true=异步模式，更轻量
 
     public RedisUtil(@Qualifier("redisTemplate") RedisTemplate redisTemplate, @Qualifier("onlyMasterTemplate") RedisTemplate redisMasterTemplate) {
         RedisUtil.redisTemplate = redisTemplate;
@@ -195,8 +195,8 @@ public class RedisUtil {
                 });
 
                 long deleted = results.stream()
-                        .mapToLong(r -> r instanceof Long ? (Long) r : 0L)
-                        .sum();
+                    .mapToLong(r -> r instanceof Long ? (Long) r : 0L)
+                    .sum();
                 total.addAndGet(deleted);
             } catch (Exception e) {
                 log.error("delete batch fail, batchSize={}", batch.size(), e);
@@ -389,7 +389,7 @@ public class RedisUtil {
      * @date 2021/12/13 10:15
      */
     public static <T> Boolean setIfAbsent(
-            @NonNull String key, @NonNull T value, long timeout, TimeUnit unit) {
+        @NonNull String key, @NonNull T value, long timeout, TimeUnit unit) {
         return valueOperations.setIfAbsent(key, value, timeout, unit);
     }
 
@@ -404,7 +404,7 @@ public class RedisUtil {
      * @date 2021/12/13 10:15
      */
     public static <T> Boolean setIfAbsent(
-            @NonNull String key, @NonNull T value, Duration expire) {
+        @NonNull String key, @NonNull T value, Duration expire) {
         return setIfAbsent(key, value, expire.getSeconds());
     }
 
@@ -419,7 +419,7 @@ public class RedisUtil {
      * @date 2021/12/13 10:15
      */
     public static <T> Boolean setIfAbsent(
-            @NonNull String key, @NonNull T value, long timeout) {
+        @NonNull String key, @NonNull T value, long timeout) {
         return valueOperations.setIfAbsent(key, value, timeout, TimeUnit.SECONDS);
     }
 
@@ -467,7 +467,7 @@ public class RedisUtil {
      * @return true成功 false 失败
      */
     public static <T> boolean setValue(
-            @NonNull String key, @NonNull T value, long timeout, TimeUnit unit) {
+        @NonNull String key, @NonNull T value, long timeout, TimeUnit unit) {
         try {
             valueOperations.set(key, value, timeout, unit);
             return true;
@@ -499,7 +499,7 @@ public class RedisUtil {
      * @return true成功 false 失败
      */
     public static <T> boolean setValueRang(
-            @NonNull String key, @NonNull T value, long offset) {
+        @NonNull String key, @NonNull T value, long offset) {
         try {
             valueOperations.set(key, value, offset);
             return true;
@@ -518,7 +518,7 @@ public class RedisUtil {
      * @return true成功 false 失败
      */
     public static boolean setValueBit(
-            @NonNull String key, long offset, @NonNull boolean value) {
+        @NonNull String key, long offset, @NonNull boolean value) {
         try {
             valueOperations.setBit(key, offset, value);
             return true;
@@ -685,7 +685,7 @@ public class RedisUtil {
      * @return 加上指定值之后 key 的值
      */
     public static Long incrementValue(
-            @NonNull String key, long delta, long timeout, TimeUnit timeUnit) {
+        @NonNull String key, long delta, long timeout, TimeUnit timeUnit) {
         if (delta <= 0) {
             throw new CacheException("递增因子必须大于0");
         }
@@ -788,9 +788,9 @@ public class RedisUtil {
 
         // 2. 异步提交每批
         List<CompletableFuture<Map<String, T>>> futures = pages.stream()
-                .map(page -> CompletableFuture.supplyAsync(
-                        () -> hashMultiGet(page, fields, clazz), POOL))
-                .collect(Collectors.toList());
+            .map(page -> CompletableFuture.supplyAsync(
+                () -> hashMultiGet(page, fields, clazz), POOL))
+            .collect(Collectors.toList());
 
         // 3. 等待全部完成 & 归并（保持原顺序）
         futures.forEach(f -> result.putAll(f.join()));
@@ -1217,7 +1217,7 @@ public class RedisUtil {
      * @return 是否放入成功
      */
     public static <T> boolean pushList(
-            @NonNull String key, @NonNull T value, @NonNull long timeout) {
+        @NonNull String key, @NonNull T value, @NonNull long timeout) {
         try {
             listOperations.rightPush(key, value);
             if (timeout > 0) {
@@ -1255,7 +1255,7 @@ public class RedisUtil {
      * @return 是否放入成功
      */
     public static boolean pushListAll(
-            @NonNull String key, @NonNull List<?> value, @NonNull long timeout) {
+        @NonNull String key, @NonNull List<?> value, @NonNull long timeout) {
         try {
             listOperations.rightPushAll(key, value);
             if (timeout > 0) {
@@ -1341,7 +1341,7 @@ public class RedisUtil {
      * @return true 操作成功 false 操作失败
      */
     public static boolean listTrim(
-            @NonNull String key, @NonNull Long start, @NonNull Long end) {
+        @NonNull String key, @NonNull Long start, @NonNull Long end) {
         try {
             listOperations.trim(key, start, end);
             return true;
@@ -1427,7 +1427,7 @@ public class RedisUtil {
                     values.forEach((k, v) -> ops.opsForValue().set(k, v));
                 } else {                              // ② 有过期
                     values.forEach((k, v) ->
-                            ops.opsForValue().set(k, v, expire));
+                        ops.opsForValue().set(k, v, expire));
                 }
                 return null; // 必须
             }
@@ -1453,21 +1453,21 @@ public class RedisUtil {
         List<List<String>> batches = Lists.partition(keyList, batchSize);
         try {
             POOL.submit(() ->
-                    batches.parallelStream().forEach(batch -> {
-                        List<T> vs = (List<T>) valueOperations.multiGet(batch);
-                        int offset = keyList.indexOf(batch.get(0));
-                        for (int i = 0; i < batch.size(); i++) {
-                            idxVal.put(offset + i, vs.get(i));
-                        }
-                    })
+                batches.parallelStream().forEach(batch -> {
+                    List<T> vs = (List<T>) valueOperations.multiGet(batch);
+                    int offset = keyList.indexOf(batch.get(0));
+                    for (int i = 0; i < batch.size(); i++) {
+                        idxVal.put(offset + i, vs.get(i));
+                    }
+                })
             ).get(); // 等待全部完成
         } catch (Exception e) {
             throw new CacheGetException("parallel mget error", e);
         }
 
         return keyList.stream()
-                .map(k -> idxVal.get(keyList.indexOf(k)))
-                .collect(Collectors.toList());
+            .map(k -> idxVal.get(keyList.indexOf(k)))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -1585,7 +1585,7 @@ public class RedisUtil {
             return null;
         }
         String scriptSha = (String) redisTemplate.execute((RedisConnection c) ->
-                c.scriptLoad(script.getBytes(StandardCharsets.UTF_8)));
+            c.scriptLoad(script.getBytes(StandardCharsets.UTF_8)));
         return scriptSha;
     }
 
@@ -1639,10 +1639,10 @@ public class RedisUtil {
      */
     public static <T> T lua(RedisScript<T> script, List<String> keys, Object... args) {
         return (T) redisMasterTemplate.execute(script,
-                redisTemplate.getStringSerializer(),  // Key序列化器
-                redisTemplate.getStringSerializer(),
-                keys,
-                args);
+            redisTemplate.getStringSerializer(),  // Key序列化器
+            redisTemplate.getStringSerializer(),
+            keys,
+            args);
     }
 
     /**

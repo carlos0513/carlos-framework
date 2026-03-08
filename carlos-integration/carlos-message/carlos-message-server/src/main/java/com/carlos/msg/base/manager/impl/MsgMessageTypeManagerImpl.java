@@ -98,14 +98,14 @@ public class MsgMessageTypeManagerImpl extends BaseServiceImpl<MsgMessageTypeMap
     public Paging<MsgMessageTypeVO> getPage(MsgMessageTypePageParam param) {
         LambdaQueryWrapper<MsgMessageType> wrapper = queryWrapper();
         wrapper.select(
-                MsgMessageType::getId,
-                MsgMessageType::getTypeCode,
-                MsgMessageType::getTypeName,
-                MsgMessageType::getEnabled,
-                MsgMessageType::getCreateBy,
-                MsgMessageType::getCreateTime,
-                MsgMessageType::getUpdateBy,
-                MsgMessageType::getUpdateTime
+            MsgMessageType::getId,
+            MsgMessageType::getTypeCode,
+            MsgMessageType::getTypeName,
+            MsgMessageType::getEnabled,
+            MsgMessageType::getCreateBy,
+            MsgMessageType::getCreateTime,
+            MsgMessageType::getUpdateBy,
+            MsgMessageType::getUpdateTime
         );
         PageInfo<MsgMessageType> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, MsgMessageTypeConvert.INSTANCE::toVO);
@@ -135,11 +135,11 @@ public class MsgMessageTypeManagerImpl extends BaseServiceImpl<MsgMessageTypeMap
     public List<MsgMessageTypeBaseVO> getEnabledPage(String keyword) {
         MPJLambdaWrapper<MsgMessageType> wrapper = new MPJLambdaWrapper<>();
         wrapper.selectAll(MsgMessageType.class).eq(MsgMessageType::getEnabled, 1)
-                .and(e -> {
-                    e.like(StrUtil.isNotBlank(keyword), MsgMessageType::getTypeName, keyword)
-                            .or()
-                            .like(StrUtil.isNotBlank(keyword), MsgMessageType::getTypeCode, keyword);
-                });
+            .and(e -> {
+                e.like(StrUtil.isNotBlank(keyword), MsgMessageType::getTypeName, keyword)
+                    .or()
+                    .like(StrUtil.isNotBlank(keyword), MsgMessageType::getTypeCode, keyword);
+            });
         return MsgMessageTypeConvert.INSTANCE.toBaseVO(baseMapper.selectList(wrapper));
     }
 

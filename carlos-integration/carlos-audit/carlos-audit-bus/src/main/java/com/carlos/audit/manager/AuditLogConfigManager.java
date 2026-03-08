@@ -8,6 +8,7 @@ import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseService;
 
 import java.io.Serializable;
+
 /**
  * <p>
  * 审计日志配置（动态TTL与采样策略） 查询封装接口

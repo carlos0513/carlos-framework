@@ -55,31 +55,31 @@ public class CustomizeOAuth2AuthorizationService implements OAuth2AuthorizationS
         if (isState(authorization)) {
             String token = authorization.getAttribute("state");
             RedisUtil.setValue(buildKey(OAuth2ParameterNames.STATE, token), json, TIMEOUT,
-                    TimeUnit.MINUTES);
+                TimeUnit.MINUTES);
         }
 
         if (isCode(authorization)) {
             OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode = authorization
-                    .getToken(OAuth2AuthorizationCode.class);
+                .getToken(OAuth2AuthorizationCode.class);
             OAuth2AuthorizationCode authorizationCodeToken = authorizationCode.getToken();
             long between = ChronoUnit.MINUTES.between(authorizationCodeToken.getIssuedAt(),
-                    authorizationCodeToken.getExpiresAt());
+                authorizationCodeToken.getExpiresAt());
             RedisUtil.setValue(buildKey(OAuth2ParameterNames.CODE, authorizationCodeToken.getTokenValue()),
-                    json, between, TimeUnit.MINUTES);
+                json, between, TimeUnit.MINUTES);
         }
 
         if (isRefreshToken(authorization)) {
             OAuth2RefreshToken refreshToken = authorization.getRefreshToken().getToken();
             long between = ChronoUnit.SECONDS.between(refreshToken.getIssuedAt(), refreshToken.getExpiresAt());
             RedisUtil.setValue(buildKey(OAuth2ParameterNames.REFRESH_TOKEN, refreshToken.getTokenValue()),
-                    json, between, TimeUnit.SECONDS);
+                json, between, TimeUnit.SECONDS);
         }
 
         if (isAccessToken(authorization)) {
             OAuth2AccessToken accessToken = authorization.getAccessToken().getToken();
             long between = ChronoUnit.SECONDS.between(accessToken.getIssuedAt(), accessToken.getExpiresAt());
             RedisUtil.setValue(buildKey(OAuth2ParameterNames.ACCESS_TOKEN, accessToken.getTokenValue()),
-                    json, between, TimeUnit.SECONDS);
+                json, between, TimeUnit.SECONDS);
         }
     }
 
@@ -95,7 +95,7 @@ public class CustomizeOAuth2AuthorizationService implements OAuth2AuthorizationS
 
         if (isCode(authorization)) {
             OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode = authorization
-                    .getToken(OAuth2AuthorizationCode.class);
+                .getToken(OAuth2AuthorizationCode.class);
             OAuth2AuthorizationCode authorizationCodeToken = authorizationCode.getToken();
             keys.add(buildKey(OAuth2ParameterNames.CODE, authorizationCodeToken.getTokenValue()));
         }
@@ -143,7 +143,7 @@ public class CustomizeOAuth2AuthorizationService implements OAuth2AuthorizationS
 
     private static boolean isCode(OAuth2Authorization authorization) {
         OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode = authorization
-                .getToken(OAuth2AuthorizationCode.class);
+            .getToken(OAuth2AuthorizationCode.class);
         return Objects.nonNull(authorizationCode);
     }
 

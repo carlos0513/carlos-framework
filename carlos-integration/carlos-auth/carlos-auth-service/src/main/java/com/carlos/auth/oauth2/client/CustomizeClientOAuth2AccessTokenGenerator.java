@@ -101,7 +101,7 @@ public class CustomizeClientOAuth2AccessTokenGenerator implements OAuth2TokenGen
         String key = IdUtil.randomUUID();
 
         return new OAuth2AccessTokenClaims(OAuth2AccessToken.TokenType.BEARER, key, accessTokenClaimsSet.getIssuedAt(),
-                accessTokenClaimsSet.getExpiresAt(), context.getAuthorizedScopes(), accessTokenClaimsSet.getClaims());
+            accessTokenClaimsSet.getExpiresAt(), context.getAuthorizedScopes(), accessTokenClaimsSet.getClaims());
     }
 
     /**

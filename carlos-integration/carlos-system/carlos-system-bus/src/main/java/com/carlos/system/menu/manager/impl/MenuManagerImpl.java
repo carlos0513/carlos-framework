@@ -118,27 +118,27 @@ public class MenuManagerImpl extends BaseServiceImpl<MenuMapper, Menu> implement
     @Override
     public List<MenuDTO> getMenusByParentId(Serializable parentId, boolean detail, MenuType menuType) {
         LambdaQueryWrapper<Menu> wrapper = this.queryWrapper()
-                .eq(Menu::getParentId, parentId == null ? "0" : parentId)
-                .eq(menuType != null, Menu::getMenuType, menuType)
-                .orderByAsc(Menu::getSort)
-                .orderByDesc(Menu::getCreateTime);
+            .eq(Menu::getParentId, parentId == null ? "0" : parentId)
+            .eq(menuType != null, Menu::getMenuType, menuType)
+            .orderByAsc(Menu::getSort)
+            .orderByDesc(Menu::getCreateTime);
         if (detail) {
             wrapper.select(Menu::getId,
-                    Menu::getParentId,
-                    Menu::getTitle,
-                    Menu::getPath,
-                    Menu::getName,
-                    Menu::getIcon,
-                    Menu::getMeta,
-                    Menu::getComponent,
-                    Menu::getLevel,
-                    Menu::getSort,
-                    Menu::getState,
-                    Menu::getUrl,
-                    Menu::getHidden,
-                    Menu::getCreateTime,
-                    Menu::getUpdateTime,
-                    Menu::getMenuType);
+                Menu::getParentId,
+                Menu::getTitle,
+                Menu::getPath,
+                Menu::getName,
+                Menu::getIcon,
+                Menu::getMeta,
+                Menu::getComponent,
+                Menu::getLevel,
+                Menu::getSort,
+                Menu::getState,
+                Menu::getUrl,
+                Menu::getHidden,
+                Menu::getCreateTime,
+                Menu::getUpdateTime,
+                Menu::getMenuType);
         } else {
             wrapper.select(Menu::getId, Menu::getParentId, Menu::getTitle, Menu::getMenuType);
         }

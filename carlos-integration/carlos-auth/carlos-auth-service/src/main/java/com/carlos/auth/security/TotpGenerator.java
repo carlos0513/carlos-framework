@@ -94,9 +94,9 @@ public class TotpGenerator {
             // 动态截断
             int offset = hash[hash.length - 1] & 0x0F;
             int binary = ((hash[offset] & 0x7F) << 24) |
-                    ((hash[offset + 1] & 0xFF) << 16) |
-                    ((hash[offset + 2] & 0xFF) << 8) |
-                    (hash[offset + 3] & 0xFF);
+                ((hash[offset + 1] & 0xFF) << 16) |
+                ((hash[offset + 2] & 0xFF) << 8) |
+                (hash[offset + 3] & 0xFF);
 
             // 取模得到6位数字
             int code = binary % (int) Math.pow(10, CODE_DIGITS);

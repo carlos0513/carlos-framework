@@ -95,11 +95,11 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
     public Paging<SysResourceCategoryVO> getPage(SysResourceCategoryPageParam param) {
         LambdaQueryWrapper<SysResourceCategory> wrapper = queryWrapper();
         wrapper.select(
-                SysResourceCategory::getId,
-                SysResourceCategory::getParentId,
-                SysResourceCategory::getName,
-                SysResourceCategory::getCreateTime,
-                SysResourceCategory::getUpdateTime
+            SysResourceCategory::getId,
+            SysResourceCategory::getParentId,
+            SysResourceCategory::getName,
+            SysResourceCategory::getCreateTime,
+            SysResourceCategory::getUpdateTime
         );
         if (StringUtils.isNotBlank(param.getName())) {
             wrapper.like(SysResourceCategory::getName, param.getName());
@@ -128,20 +128,20 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
     @Override
     public List<ResourceCategoryDTO> getCategoryByParentId(Serializable parentId, boolean detail) {
         LambdaQueryWrapper<SysResourceCategory> wrapper = queryWrapper()
-                .eq(SysResourceCategory::getParentId, parentId == null ? 0 : parentId);
+            .eq(SysResourceCategory::getParentId, parentId == null ? 0 : parentId);
         if (detail) {
             wrapper.select(
-                    SysResourceCategory::getId,
-                    SysResourceCategory::getName,
-                    SysResourceCategory::getParentId,
-                    SysResourceCategory::getCreateTime,
-                    SysResourceCategory::getUpdateTime
+                SysResourceCategory::getId,
+                SysResourceCategory::getName,
+                SysResourceCategory::getParentId,
+                SysResourceCategory::getCreateTime,
+                SysResourceCategory::getUpdateTime
             );
         } else {
             wrapper.select(
-                    SysResourceCategory::getId,
-                    SysResourceCategory::getName,
-                    SysResourceCategory::getParentId
+                SysResourceCategory::getId,
+                SysResourceCategory::getName,
+                SysResourceCategory::getParentId
             );
         }
         List<SysResourceCategory> menus = list(wrapper);

@@ -29,10 +29,10 @@ public class JacksonConfig {
             @Override
             public void customize(Jackson2ObjectMapperBuilder builder) {
                 builder
-                        .serializerByType(BigInteger.class, ToStringSerializer.instance)
-                        .serializerByType(Long.class, ToStringSerializer.instance)
-                        .serializerByType(Long.TYPE, ToStringSerializer.instance)
-                        .modules(new JavaTimeModel())
+                    .serializerByType(BigInteger.class, ToStringSerializer.instance)
+                    .serializerByType(Long.class, ToStringSerializer.instance)
+                    .serializerByType(Long.TYPE, ToStringSerializer.instance)
+                    .modules(new JavaTimeModel())
                 ;
             }
         };

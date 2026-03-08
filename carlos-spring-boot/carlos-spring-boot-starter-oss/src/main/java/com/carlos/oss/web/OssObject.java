@@ -87,9 +87,9 @@ public final class OssObject implements Serializable {
             }
 
             return new OssObject(
-                    this.bucket,
-                    this.object,
-                    this.attachName
+                this.bucket,
+                this.object,
+                this.attachName
             );
         }
     }

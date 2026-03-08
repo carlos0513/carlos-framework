@@ -36,7 +36,7 @@ public class ExcelUtil {
      * @date 2022/11/28 16:24
      */
     public static void download(
-            final HttpServletResponse response, final String name, final List<List<String>> head, final Collection<?> data) {
+        final HttpServletResponse response, final String name, final List<List<String>> head, final Collection<?> data) {
 
         // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         try {
@@ -45,13 +45,13 @@ public class ExcelUtil {
             // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
             final String fileName = URLEncoder.encode(name, "UTF-8").replaceAll("\\+", "%20");
             response.setHeader(
-                    "Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+                "Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
             FastExcel.write(response.getOutputStream())
-                    .autoCloseStream(Boolean.FALSE)
-                    .head(head)
-                    .sheet("sheet1")
-                    .doWrite(data);
+                .autoCloseStream(Boolean.FALSE)
+                .head(head)
+                .sheet("sheet1")
+                .doWrite(data);
         } catch (final Exception e) {
             throw new RuntimeException("数据导出失败", e);
         }
@@ -68,7 +68,7 @@ public class ExcelUtil {
      * @date 2022/11/28 16:24
      */
     public static void download(
-            final HttpServletResponse response, final String name, final Class head, final Collection<?> data) {
+        final HttpServletResponse response, final String name, final Class head, final Collection<?> data) {
 
         // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         try {
@@ -77,12 +77,12 @@ public class ExcelUtil {
             // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
             final String fileName = URLEncoder.encode(name, "UTF-8").replaceAll("\\+", "%20");
             response.setHeader(
-                    "Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+                "Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
             FastExcel.write(response.getOutputStream(), head)
-                    .autoCloseStream(Boolean.TRUE)
-                    .sheet("sheet1")
-                    .doWrite(data);
+                .autoCloseStream(Boolean.TRUE)
+                .sheet("sheet1")
+                .doWrite(data);
         } catch (final Exception e) {
             throw new RuntimeException("数据导出失败", e);
         }

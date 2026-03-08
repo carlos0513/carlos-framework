@@ -20,32 +20,32 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MenuOperateVO implements Serializable {
-        private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
     private Long id;
     @Schema(description = "资源名称")
-        private String operateName;
+    private String operateName;
     @Schema(description = "资源编码")
-        private String operateCode;
+    private String operateCode;
     @Schema(description = "接口路径")
-        private String path;
+    private String path;
     @Schema(description = "菜单id")
     private Long menuId;
     @Schema(description = "请求方式")
-        private String operateMethod;
+    private String operateMethod;
     @Schema(description = "图标")
-        private String icon;
+    private String icon;
     @Schema(description = "资源类型，按钮")
-        private String operateType;
+    private String operateType;
     @Schema(description = "状态，0：禁用，1：启用")
-        private String state;
+    private String state;
     @Schema(description = "显示和隐藏，0：显示，1：隐藏")
-        private Boolean hidden;
+    private Boolean hidden;
     @Schema(description = "资源描述")
-        private String description;
+    private String description;
     @Schema(description = "创建时间")
-        private LocalDateTime createTime;
+    private LocalDateTime createTime;
     @Schema(description = "修改时间")
-        private LocalDateTime updateTime;
+    private LocalDateTime updateTime;
 
 }

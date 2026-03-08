@@ -88,12 +88,12 @@ public interface OrgDepartmentConvert {
         }
         // 先转换为 TreeVO
         List<OrgDepartmentTreeVO> treeList = dtoList.stream()
-                .map(this::toTreeVO)
-                .collect(java.util.stream.Collectors.toList());
+            .map(this::toTreeVO)
+            .collect(java.util.stream.Collectors.toList());
 
         // 构建父子关系
         java.util.Map<Long, OrgDepartmentTreeVO> map = treeList.stream()
-                .collect(java.util.stream.Collectors.toMap(OrgDepartmentTreeVO::getId, v -> v));
+            .collect(java.util.stream.Collectors.toMap(OrgDepartmentTreeVO::getId, v -> v));
 
         java.util.List<OrgDepartmentTreeVO> result = new java.util.ArrayList<>();
         for (OrgDepartmentTreeVO vo : treeList) {

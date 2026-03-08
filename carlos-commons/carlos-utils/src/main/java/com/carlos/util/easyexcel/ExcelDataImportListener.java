@@ -66,7 +66,7 @@ public class ExcelDataImportListener implements ReadListener<ExcelData> {
         if (exception instanceof ExcelDataConvertException) {
             ExcelDataConvertException excelDataConvertException = (ExcelDataConvertException) exception;
             log.error("第{}行，第{}列解析异常，数据为:{}", excelDataConvertException.getRowIndex(),
-                    excelDataConvertException.getColumnIndex(), excelDataConvertException.getCellData());
+                excelDataConvertException.getColumnIndex(), excelDataConvertException.getCellData());
         }
     }
 

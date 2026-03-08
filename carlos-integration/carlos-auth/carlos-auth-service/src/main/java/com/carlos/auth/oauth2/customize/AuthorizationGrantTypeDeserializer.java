@@ -9,20 +9,20 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import java.io.IOException;
 
 public class AuthorizationGrantTypeDeserializer
-        extends JsonDeserializer<AuthorizationGrantType> {
+    extends JsonDeserializer<AuthorizationGrantType> {
 
     @Override
     public AuthorizationGrantType deserialize(
-            JsonParser jsonParser,
-            DeserializationContext context
+        JsonParser jsonParser,
+        DeserializationContext context
     ) throws IOException {
-        // 从JSON中读取授权类型字符串 
+        // 从JSON中读取授权类型字符串
         String grantTypeValue = jsonParser.getValueAsString();
         if (StrUtil.isBlank(grantTypeValue)) {
             return null;
         }
 
-        // 匹配标准授权类型 
+        // 匹配标准授权类型
         if (AuthorizationGrantType.AUTHORIZATION_CODE.getValue().equals(grantTypeValue)) {
             return AuthorizationGrantType.AUTHORIZATION_CODE;
         } else if (AuthorizationGrantType.CLIENT_CREDENTIALS.getValue().equals(grantTypeValue)) {

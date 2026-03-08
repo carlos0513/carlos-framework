@@ -94,18 +94,18 @@ public class OrgPositionCategoryManagerImpl extends BaseServiceImpl<OrgPositionC
         LambdaQueryWrapper<OrgPositionCategory> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgPositionCategory::getId,
-                OrgPositionCategory::getCategoryCode,
-                OrgPositionCategory::getCategoryName,
-                OrgPositionCategory::getCategoryType,
-                OrgPositionCategory::getDescription,
-                OrgPositionCategory::getSort,
-                OrgPositionCategory::getState,
-                OrgPositionCategory::getTenantId,
-                OrgPositionCategory::getCreateBy,
-                OrgPositionCategory::getCreateTime,
-                OrgPositionCategory::getUpdateBy,
-                OrgPositionCategory::getUpdateTime
+            OrgPositionCategory::getId,
+            OrgPositionCategory::getCategoryCode,
+            OrgPositionCategory::getCategoryName,
+            OrgPositionCategory::getCategoryType,
+            OrgPositionCategory::getDescription,
+            OrgPositionCategory::getSort,
+            OrgPositionCategory::getState,
+            OrgPositionCategory::getTenantId,
+            OrgPositionCategory::getCreateBy,
+            OrgPositionCategory::getCreateTime,
+            OrgPositionCategory::getUpdateBy,
+            OrgPositionCategory::getUpdateTime
         );
         PageInfo<OrgPositionCategory> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgPositionCategoryConvert.INSTANCE::toVO);

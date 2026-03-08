@@ -20,7 +20,7 @@ public class SsoLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-            throws IOException {
+        throws IOException {
         if (response == null) {
             return;
         }

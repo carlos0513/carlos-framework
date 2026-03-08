@@ -49,11 +49,11 @@ public class RedisOAuth2AuthorizationConsentService implements OAuth2Authorizati
     @Override
     public void save(OAuth2AuthorizationConsent authorizationConsent) {
         log.debug("Saving OAuth2 authorization consent: clientId={}, principalName={}",
-                authorizationConsent.getRegisteredClientId(), authorizationConsent.getPrincipalName());
+            authorizationConsent.getRegisteredClientId(), authorizationConsent.getPrincipalName());
 
         String key = buildAuthorizationConsentKey(
-                authorizationConsent.getRegisteredClientId(),
-                authorizationConsent.getPrincipalName()
+            authorizationConsent.getRegisteredClientId(),
+            authorizationConsent.getPrincipalName()
         );
 
         ValueOperations<String, Object> ops = redisTemplate.opsForValue();
@@ -70,11 +70,11 @@ public class RedisOAuth2AuthorizationConsentService implements OAuth2Authorizati
     @Override
     public void remove(OAuth2AuthorizationConsent authorizationConsent) {
         log.debug("Removing OAuth2 authorization consent: clientId={}, principalName={}",
-                authorizationConsent.getRegisteredClientId(), authorizationConsent.getPrincipalName());
+            authorizationConsent.getRegisteredClientId(), authorizationConsent.getPrincipalName());
 
         String key = buildAuthorizationConsentKey(
-                authorizationConsent.getRegisteredClientId(),
-                authorizationConsent.getPrincipalName()
+            authorizationConsent.getRegisteredClientId(),
+            authorizationConsent.getPrincipalName()
         );
 
         redisTemplate.delete(key);

@@ -94,14 +94,14 @@ public class OrgUserRoleManagerImpl extends BaseServiceImpl<OrgUserRoleMapper, O
         LambdaQueryWrapper<OrgUserRole> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgUserRole::getId,
-                OrgUserRole::getUserId,
-                OrgUserRole::getRoleId,
-                OrgUserRole::getDeptId,
-                OrgUserRole::getExpireTime,
-                OrgUserRole::getCreateBy,
-                OrgUserRole::getCreateTime,
-                OrgUserRole::getTenantId
+            OrgUserRole::getId,
+            OrgUserRole::getUserId,
+            OrgUserRole::getRoleId,
+            OrgUserRole::getDeptId,
+            OrgUserRole::getExpireTime,
+            OrgUserRole::getCreateBy,
+            OrgUserRole::getCreateTime,
+            OrgUserRole::getTenantId
         );
         PageInfo<OrgUserRole> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgUserRoleConvert.INSTANCE::toVO);

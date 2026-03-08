@@ -103,8 +103,8 @@ public interface SysDictItemConvert {
     List<SysDictItemListVO> toVO(List<SysDictItemDTO> dtos);
 
     @Mappings({
-            @Mapping(source = "itemName", target = "name"),
-            @Mapping(source = "itemCode", target = "code")
+        @Mapping(source = "itemName", target = "name"),
+        @Mapping(source = "itemCode", target = "code")
     })
     SysDictItemListVO toListVO(SysDictItemDTO dtos);
 

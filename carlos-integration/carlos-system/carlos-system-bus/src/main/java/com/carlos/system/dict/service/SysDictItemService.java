@@ -191,7 +191,7 @@ public class SysDictItemService {
      */
     public Integer getNewSort(final Serializable dictId) {
         long count = dictItemManager.count(Wrappers.lambdaQuery(SysDictItem.class).eq(SysDictItem::getDictId,
-                dictId));
+            dictId));
         return Math.toIntExact(++count);
     }
 

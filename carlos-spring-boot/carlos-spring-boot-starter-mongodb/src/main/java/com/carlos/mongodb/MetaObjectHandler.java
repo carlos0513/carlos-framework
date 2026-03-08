@@ -36,7 +36,7 @@ public interface MetaObjectHandler {
      * @param metaObject meta object parameter
      */
     default MetaObjectHandler setFieldValByName(
-            final String fieldName, final Object fieldVal, final MetaObject metaObject) {
+        final String fieldName, final Object fieldVal, final MetaObject metaObject) {
         if (Objects.nonNull(fieldVal) && MetaObject.hasSetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
         }

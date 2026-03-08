@@ -2,59 +2,59 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.carlos.org</groupId>
-        <artifactId>carlos-org</artifactId>
-        <version>${revision}</version>
-    </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.carlos.org</groupId>
+    <artifactId>carlos-org</artifactId>
+    <version>${revision}</version>
+  </parent>
 
-    <packaging>jar</packaging>
+  <packaging>jar</packaging>
 
-    <artifactId>carlos-org-bus</artifactId>
+  <artifactId>carlos-org-bus</artifactId>
 
 
-    <dependencies>
+  <dependencies>
 
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-openapi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-log</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-sms</artifactId>
-        </dependency>
-        <!-- 引入test依賴 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-openapi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-redis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-log</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-sms</artifactId>
+    </dependency>
+    <!-- 引入test依賴 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>com.carlos.org</groupId>
-            <artifactId>carlos-org-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.idev.excel</groupId>
-            <artifactId>fastexcel</artifactId>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>com.carlos.org</groupId>
+      <artifactId>carlos-org-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>cn.idev.excel</groupId>
+      <artifactId>fastexcel</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>

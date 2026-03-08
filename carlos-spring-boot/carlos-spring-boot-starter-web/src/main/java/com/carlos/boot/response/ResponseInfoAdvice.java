@@ -62,8 +62,8 @@ public class ResponseInfoAdvice implements ResponseBodyAdvice<Object> {
         }
         final GlobalInterceptorProperties.PrintType printType = interceptorProperties.getGlobalInterceptor().getPrintType();
         if (printType == GlobalInterceptorProperties.PrintType.RESPONSE
-                || printType == GlobalInterceptorProperties.PrintType.BOTH_ORDER
-                || printType == GlobalInterceptorProperties.PrintType.BOTH_TOGETHER) {
+            || printType == GlobalInterceptorProperties.PrintType.BOTH_ORDER
+            || printType == GlobalInterceptorProperties.PrintType.BOTH_TOGETHER) {
             if (printType == GlobalInterceptorProperties.PrintType.BOTH_TOGETHER) {
                 RequestUtil.printRequestInfo();
             }

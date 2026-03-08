@@ -45,11 +45,11 @@ public class QrCodeGenerator {
 
             // otpauth://totp/{issuer}:{username}?secret={secret}&issuer={issuer}
             String uri = String.format(
-                    "otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=6&period=30",
-                    APP_NAME,
-                    encodedUsername,
-                    encodedSecret,
-                    encodedIssuer
+                "otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=6&period=30",
+                APP_NAME,
+                encodedUsername,
+                encodedSecret,
+                encodedIssuer
             );
 
             log.debug("Generated TOTP URI for user: {}", username);
@@ -81,8 +81,8 @@ public class QrCodeGenerator {
 
         // 返回可生成二维码图片的URL
         return String.format(
-                "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=%s",
-                encodedUri
+            "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=%s",
+            encodedUri
         );
     }
 

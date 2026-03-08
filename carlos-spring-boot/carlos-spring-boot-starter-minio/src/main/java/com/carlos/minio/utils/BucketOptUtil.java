@@ -67,7 +67,7 @@ public class BucketOptUtil {
                 return null;
             }
             return buckets.stream().map(bucket -> new BucketInfo(bucket.name(), bucket.creationDate().toLocalDateTime())).collect(
-                    Collectors.toList());
+                Collectors.toList());
         } catch (Exception e) {
             throw new MinioException(e.getMessage(), e);
         }
@@ -113,24 +113,24 @@ public class BucketOptUtil {
      */
     public static void setBucketPublic(String bucket) {
         String config =
-                "{\n" +
-                        "\t\"Version\": \"2012-10-17\",\n" +
-                        "\t\"Statement\": [{\n" +
-                        "\t\t\"Effect\": \"Allow\",\n" +
-                        "\t\t\"Principal\": {\n" +
-                        "\t\t\t\"AWS\": [\"*\"]\n" +
-                        "\t\t},\n" +
-                        "\t\t\"Action\": [\"s3:GetBucketLocation\", \"s3:ListBucket\", \"s3:ListBucketMultipartUploads\"],\n" +
-                        "\t\t\"Resource\": [\"arn:aws:s3:::" + bucket + "\"]\n" +
-                        "\t}, {\n" +
-                        "\t\t\"Effect\": \"Allow\",\n" +
-                        "\t\t\"Principal\": {\n" +
-                        "\t\t\t\"AWS\": [\"*\"]\n" +
-                        "\t\t},\n" +
-                        "\t\t\"Action\": [\"s3:AbortMultipartUpload\", \"s3:DeleteObject\", \"s3:GetObject\", \"s3:ListMultipartUploadParts\", \"s3:PutObject\"],\n" +
-                        "\t\t\"Resource\": [\"arn:aws:s3:::" + bucket + "/*\"]\n" +
-                        "\t}]\n" +
-                        "}\n";
+            "{\n" +
+                "\t\"Version\": \"2012-10-17\",\n" +
+                "\t\"Statement\": [{\n" +
+                "\t\t\"Effect\": \"Allow\",\n" +
+                "\t\t\"Principal\": {\n" +
+                "\t\t\t\"AWS\": [\"*\"]\n" +
+                "\t\t},\n" +
+                "\t\t\"Action\": [\"s3:GetBucketLocation\", \"s3:ListBucket\", \"s3:ListBucketMultipartUploads\"],\n" +
+                "\t\t\"Resource\": [\"arn:aws:s3:::" + bucket + "\"]\n" +
+                "\t}, {\n" +
+                "\t\t\"Effect\": \"Allow\",\n" +
+                "\t\t\"Principal\": {\n" +
+                "\t\t\t\"AWS\": [\"*\"]\n" +
+                "\t\t},\n" +
+                "\t\t\"Action\": [\"s3:AbortMultipartUpload\", \"s3:DeleteObject\", \"s3:GetObject\", \"s3:ListMultipartUploadParts\", \"s3:PutObject\"],\n" +
+                "\t\t\"Resource\": [\"arn:aws:s3:::" + bucket + "/*\"]\n" +
+                "\t}]\n" +
+                "}\n";
         setBucketPolicy(bucket, config);
     }
 
@@ -184,9 +184,9 @@ public class BucketOptUtil {
     public static void remove(String bucket) {
         try {
             MinioUtil.getClient().removeBucket(
-                    RemoveBucketArgs.builder()
-                            .bucket(bucket)
-                            .build()
+                RemoveBucketArgs.builder()
+                    .bucket(bucket)
+                    .build()
             );
         } catch (Exception e) {
             throw new MinioException(e.getMessage(), e);

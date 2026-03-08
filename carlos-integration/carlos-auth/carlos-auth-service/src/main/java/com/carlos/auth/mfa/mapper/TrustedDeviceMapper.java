@@ -27,9 +27,9 @@ public interface TrustedDeviceMapper extends BaseMapper<TrustedDevice> {
      * @return 可信设备信息
      */
     @Select("SELECT * FROM auth_trusted_device " +
-            "WHERE user_id = #{userId} " +
-            "AND device_fingerprint = #{deviceFingerprint} " +
-            "AND deleted = 0")
+        "WHERE user_id = #{userId} " +
+        "AND device_fingerprint = #{deviceFingerprint} " +
+        "AND deleted = 0")
     TrustedDevice selectByFingerprint(@Param("userId") Long userId,
                                       @Param("deviceFingerprint") String deviceFingerprint);
 
@@ -40,9 +40,9 @@ public interface TrustedDeviceMapper extends BaseMapper<TrustedDevice> {
      * @return 设备列表
      */
     @Select("SELECT * FROM auth_trusted_device " +
-            "WHERE user_id = #{userId} " +
-            "AND deleted = 0 " +
-            "ORDER BY last_used_time DESC")
+        "WHERE user_id = #{userId} " +
+        "AND deleted = 0 " +
+        "ORDER BY last_used_time DESC")
     List<TrustedDevice> selectUserDevices(@Param("userId") Long userId);
 
     /**
@@ -52,8 +52,8 @@ public interface TrustedDeviceMapper extends BaseMapper<TrustedDevice> {
      * @return 设备数量
      */
     @Select("SELECT COUNT(*) FROM auth_trusted_device " +
-            "WHERE user_id = #{userId} " +
-            "AND deleted = 0")
+        "WHERE user_id = #{userId} " +
+        "AND deleted = 0")
     int countByUserId(@Param("userId") Long userId);
 
     /**

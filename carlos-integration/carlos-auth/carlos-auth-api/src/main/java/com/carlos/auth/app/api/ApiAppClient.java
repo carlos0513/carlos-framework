@@ -19,9 +19,9 @@ import java.io.Serializable;
  * @date 2025-3-12 14:00:14
  */
 @FeignClient(
-        value = ServiceNameConstant.AUTH, path = "api/oauth2/app/client",
-        contextId = "auth-app",
-        fallbackFactory = ApiAppClientFallbackFactory.class)
+    value = ServiceNameConstant.AUTH, path = "api/oauth2/app/client",
+    contextId = "auth-app",
+    fallbackFactory = ApiAppClientFallbackFactory.class)
 public interface ApiAppClient {
 
 

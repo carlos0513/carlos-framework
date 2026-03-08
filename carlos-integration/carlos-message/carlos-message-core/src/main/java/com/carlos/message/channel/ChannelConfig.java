@@ -14,8 +14,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "contentType", visible = true)
 @JsonSubTypes({
-        // @JsonSubTypes.Type(value = RoleUser.class),
-        // @JsonSubTypes.Type(value = TokenUser.class),
+    // @JsonSubTypes.Type(value = RoleUser.class),
+    // @JsonSubTypes.Type(value = TokenUser.class),
 })
 public interface ChannelConfig {
 

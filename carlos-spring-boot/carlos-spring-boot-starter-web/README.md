@@ -2,7 +2,9 @@
 
 ## 模块简介
 
-`carlos-spring-boot-starter-web` 是 Carlos 框架的 Spring Boot 集成模块，提供了企业级的 Web 应用开发所需的自动配置、请求处理、异常处理、类型转换、CORS、XSS 防护、枚举服务、资源扫描等功能。该模块通过 Spring Boot 自动配置机制，简化了应用开发配置。
+`carlos-spring-boot-starter-web` 是 Carlos 框架的 Spring Boot 集成模块，提供了企业级的 Web
+应用开发所需的自动配置、请求处理、异常处理、类型转换、CORS、XSS 防护、枚举服务、资源扫描等功能。该模块通过 Spring Boot
+自动配置机制，简化了应用开发配置。
 
 ## 主要功能
 

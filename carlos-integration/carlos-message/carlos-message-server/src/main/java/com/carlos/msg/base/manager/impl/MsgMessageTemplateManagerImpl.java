@@ -98,16 +98,16 @@ public class MsgMessageTemplateManagerImpl extends BaseServiceImpl<MsgMessageTem
     public Paging<MsgMessageTemplatePageVO> getPage(MsgMessageTemplatePageParam param) {
         LambdaQueryWrapper<MsgMessageTemplate> wrapper = queryWrapper();
         wrapper.select(
-                MsgMessageTemplate::getId,
-                MsgMessageTemplate::getTypeId,
-                MsgMessageTemplate::getTemplateCode,
-                MsgMessageTemplate::getTemplateContent,
-                MsgMessageTemplate::getChannelConfig,
-                MsgMessageTemplate::getActive,
-                MsgMessageTemplate::getCreateBy,
-                MsgMessageTemplate::getCreateTime,
-                MsgMessageTemplate::getUpdateBy,
-                MsgMessageTemplate::getUpdateTime
+            MsgMessageTemplate::getId,
+            MsgMessageTemplate::getTypeId,
+            MsgMessageTemplate::getTemplateCode,
+            MsgMessageTemplate::getTemplateContent,
+            MsgMessageTemplate::getChannelConfig,
+            MsgMessageTemplate::getActive,
+            MsgMessageTemplate::getCreateBy,
+            MsgMessageTemplate::getCreateTime,
+            MsgMessageTemplate::getUpdateBy,
+            MsgMessageTemplate::getUpdateTime
         );
         PageInfo<MsgMessageTemplate> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, MsgMessageTemplateConvert.INSTANCE::toVO);
@@ -120,23 +120,23 @@ public class MsgMessageTemplateManagerImpl extends BaseServiceImpl<MsgMessageTem
         }
         LambdaQueryChainWrapper<MsgMessageTemplate> wrapper = lambdaQuery();
         wrapper.select(
-                        MsgMessageTemplate::getId,
-                        MsgMessageTemplate::getTypeId,
-                        MsgMessageTemplate::getTemplateCode,
-                        MsgMessageTemplate::getTemplateContent,
-                        MsgMessageTemplate::getChannelConfig,
-                        MsgMessageTemplate::getActive
-                )
-                .eq(MsgMessageTemplate::getTemplateCode, templateCode);
+                MsgMessageTemplate::getId,
+                MsgMessageTemplate::getTypeId,
+                MsgMessageTemplate::getTemplateCode,
+                MsgMessageTemplate::getTemplateContent,
+                MsgMessageTemplate::getChannelConfig,
+                MsgMessageTemplate::getActive
+            )
+            .eq(MsgMessageTemplate::getTemplateCode, templateCode);
         return MsgMessageTemplateConvert.INSTANCE.toDTO(wrapper.one());
     }
 
     @Override
     public List<MsgMessageTemplateExcel> getByIsActive() {
         List<MsgMessageTemplateDTO> messageTemplates = getBaseMapper().selectJoinList(MsgMessageTemplateDTO.class,
-                new MPJLambdaWrapper<MsgMessageTemplate>().selectAll(MsgMessageTemplate.class)
-                        .selectAs(MsgMessageType::getTypeName, MsgMessageTemplateDTO::getTypeName)
-                        .leftJoin(MsgMessageType.class, MsgMessageType::getId, MsgMessageTemplate::getTypeId)
+            new MPJLambdaWrapper<MsgMessageTemplate>().selectAll(MsgMessageTemplate.class)
+                .selectAs(MsgMessageType::getTypeName, MsgMessageTemplateDTO::getTypeName)
+                .leftJoin(MsgMessageType.class, MsgMessageType::getId, MsgMessageTemplate::getTypeId)
         );
         return MsgMessageTemplateConvert.INSTANCE.toExcels(messageTemplates);
     }

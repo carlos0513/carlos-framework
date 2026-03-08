@@ -13,16 +13,16 @@ import java.util.List;
 public interface AuditOperationMapper extends BaseMapper<AuditOperation> {
 
     @Select("SELECT * FROM audit_operation " +
-            "WHERE user_id = #{userId} " +
-            "AND create_time >= #{startTime} " +
-            "ORDER BY create_time DESC")
+        "WHERE user_id = #{userId} " +
+        "AND create_time >= #{startTime} " +
+        "ORDER BY create_time DESC")
     List<AuditOperation> selectUserOperations(@Param("userId") Long userId,
                                               @Param("startTime") LocalDateTime startTime);
 
     @Select("SELECT * FROM audit_operation " +
-            "WHERE operation_type = #{operationType} " +
-            "AND create_time >= #{startTime} " +
-            "ORDER BY create_time DESC")
+        "WHERE operation_type = #{operationType} " +
+        "AND create_time >= #{startTime} " +
+        "ORDER BY create_time DESC")
     List<AuditOperation> selectByOperationType(@Param("operationType") String operationType,
                                                @Param("startTime") LocalDateTime startTime);
 }

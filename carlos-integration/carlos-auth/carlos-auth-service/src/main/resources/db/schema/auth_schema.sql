@@ -155,7 +155,8 @@ VALUES (2, 'USER', '普通用户', '普通用户，拥有基本权限');
 
 -- 默认管理员用户（密码: admin123，BCrypt加密）
 INSERT INTO `auth_user` (`id`, `username`, `email`, `phone`, `password`, `status`, `login_attempts`)
-VALUES (1, 'admin', 'admin@carlos.com', '13800000000', '$2a$10$r0Ag1lLQGJRhCUYe7lGE5ebsj4WfKJUeJUxIrD8I6g9J9uC6zvyI2', 'ENABLE', 0);
+VALUES (1, 'admin', 'admin@carlos.com', '13800000000', '$2a$10$r0Ag1lLQGJRhCUYe7lGE5ebsj4WfKJUeJUxIrD8I6g9J9uC6zvyI2',
+        'ENABLE', 0);
 
 -- 分配管理员角色
 INSERT INTO `auth_user_role` (`id`, `user_id`, `role_id`)

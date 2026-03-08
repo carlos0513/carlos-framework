@@ -38,8 +38,8 @@ public class ApplicationInterceptorConfig implements WebMvcConfigurer {
             includePaths.add(BootConstant.ALL_PATH);
         }
         registry.addInterceptor(new GlobalInterceptor(properties))
-                .excludePathPatterns(properties.getExcludePaths().toArray(new String[]{}))
-                .addPathPatterns(includePaths.toArray(new String[]{}));
+            .excludePathPatterns(properties.getExcludePaths().toArray(new String[]{}))
+            .addPathPatterns(includePaths.toArray(new String[]{}));
 
 
     }

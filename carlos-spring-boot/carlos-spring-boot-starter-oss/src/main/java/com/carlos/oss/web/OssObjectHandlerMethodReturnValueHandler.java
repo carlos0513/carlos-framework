@@ -31,8 +31,8 @@ public class OssObjectHandlerMethodReturnValueHandler implements HandlerMethodRe
     }
 
     @Override
-    public void handleReturnValue(Object returnValue, MethodParameter returnType, 
-                                   ModelAndViewContainer mavContainer, NativeWebRequest webRequest) {
+    public void handleReturnValue(Object returnValue, MethodParameter returnType,
+                                  ModelAndViewContainer mavContainer, NativeWebRequest webRequest) {
         final OssObject ossObject = (OssObject) returnValue;
         final String bucket = ossObject.getBucket();
         final String object = ossObject.getObject();

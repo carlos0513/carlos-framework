@@ -160,13 +160,13 @@ public interface ExtendUserDetailsService extends UserDetailsService {
         }
 
         return User.builder()
-                .username(loginUserInfo.getAccount())
-                .password(loginUserInfo.getPassword())
-                .authorities(authorities)
-                .accountExpired(false)
-                .accountLocked(!loginUserInfo.getEnable())
-                .credentialsExpired(false)
-                .disabled(!loginUserInfo.getEnable())
-                .build();
+            .username(loginUserInfo.getAccount())
+            .password(loginUserInfo.getPassword())
+            .authorities(authorities)
+            .accountExpired(false)
+            .accountLocked(!loginUserInfo.getEnable())
+            .credentialsExpired(false)
+            .disabled(!loginUserInfo.getEnable())
+            .build();
     }
 }

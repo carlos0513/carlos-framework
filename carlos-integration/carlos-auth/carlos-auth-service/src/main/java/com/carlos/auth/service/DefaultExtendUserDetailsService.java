@@ -136,16 +136,16 @@ public class DefaultExtendUserDetailsService implements ExtendUserDetailsService
         }
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .roles(user.getRoleIds().stream()
-                        .map(String::valueOf)
-                        .toArray(String[]::new))
-                .accountExpired(!user.isAccountNonExpired())
-                .accountLocked(!user.isAccountNonLocked())
-                .credentialsExpired(!user.isCredentialsNonExpired())
-                .disabled(!user.isEnabled())
-                .build();
+            .username(user.getUsername())
+            .password(user.getPassword())
+            .roles(user.getRoleIds().stream()
+                .map(String::valueOf)
+                .toArray(String[]::new))
+            .accountExpired(!user.isAccountNonExpired())
+            .accountLocked(!user.isAccountNonLocked())
+            .credentialsExpired(!user.isCredentialsNonExpired())
+            .disabled(!user.isEnabled())
+            .build();
     }
 
     /**
@@ -181,9 +181,9 @@ public class DefaultExtendUserDetailsService implements ExtendUserDetailsService
      */
     private TestUser findUser(String username) {
         return testUsers.stream()
-                .filter(u -> u.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
+            .filter(u -> u.getUsername().equals(username))
+            .findFirst()
+            .orElse(null);
     }
 
     /**

@@ -94,28 +94,28 @@ public class OrgUserManagerImpl extends BaseServiceImpl<OrgUserMapper, OrgUser> 
         LambdaQueryWrapper<OrgUser> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgUser::getId,
-                OrgUser::getAccount,
-                OrgUser::getNickname,
-                OrgUser::getPwd,
-                OrgUser::getIdentify,
-                OrgUser::getPhone,
-                OrgUser::getAddress,
-                OrgUser::getGender,
-                OrgUser::getEmail,
-                OrgUser::getAvatar,
-                OrgUser::getDescription,
-                OrgUser::getState,
-                OrgUser::getMainDeptId,
-                OrgUser::getLoginTime,
-                OrgUser::getLoginIp,
-                OrgUser::getLoginCount,
-                OrgUser::getPwdLastModify,
-                OrgUser::getCreateBy,
-                OrgUser::getCreateTime,
-                OrgUser::getUpdateBy,
-                OrgUser::getUpdateTime,
-                OrgUser::getTenantId
+            OrgUser::getId,
+            OrgUser::getAccount,
+            OrgUser::getNickname,
+            OrgUser::getPwd,
+            OrgUser::getIdentify,
+            OrgUser::getPhone,
+            OrgUser::getAddress,
+            OrgUser::getGender,
+            OrgUser::getEmail,
+            OrgUser::getAvatar,
+            OrgUser::getDescription,
+            OrgUser::getState,
+            OrgUser::getMainDeptId,
+            OrgUser::getLoginTime,
+            OrgUser::getLoginIp,
+            OrgUser::getLoginCount,
+            OrgUser::getPwdLastModify,
+            OrgUser::getCreateBy,
+            OrgUser::getCreateTime,
+            OrgUser::getUpdateBy,
+            OrgUser::getUpdateTime,
+            OrgUser::getTenantId
         );
         PageInfo<OrgUser> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgUserConvert.INSTANCE::toVO);
@@ -128,8 +128,8 @@ public class OrgUserManagerImpl extends BaseServiceImpl<OrgUserMapper, OrgUser> 
         }
         LambdaQueryWrapper<OrgUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(OrgUser::getAccount, account)
-                .eq(OrgUser::getDeleted, false)
-                .last("LIMIT 1");
+            .eq(OrgUser::getDeleted, false)
+            .last("LIMIT 1");
         OrgUser entity = getOne(wrapper);
         return OrgUserConvert.INSTANCE.toDTO(entity);
     }
@@ -141,8 +141,8 @@ public class OrgUserManagerImpl extends BaseServiceImpl<OrgUserMapper, OrgUser> 
         }
         LambdaQueryWrapper<OrgUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(OrgUser::getPhone, phone)
-                .eq(OrgUser::getDeleted, false)
-                .last("LIMIT 1");
+            .eq(OrgUser::getDeleted, false)
+            .last("LIMIT 1");
         OrgUser entity = getOne(wrapper);
         return OrgUserConvert.INSTANCE.toDTO(entity);
     }

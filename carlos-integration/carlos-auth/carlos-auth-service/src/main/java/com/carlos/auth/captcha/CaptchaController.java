@@ -153,11 +153,11 @@ public class CaptchaController {
             // TODO: 生成并返回JWT令牌
 
             return Result.ok(
-                    CaptchaLoginResponse.builder()
-                            .message("验证成功")
-                            .requiresRegistration(false) // 根据实际逻辑判断
-                            .build(),
-                    "验证成功"
+                CaptchaLoginResponse.builder()
+                    .message("验证成功")
+                    .requiresRegistration(false) // 根据实际逻辑判断
+                    .build(),
+                "验证成功"
             );
 
         } catch (Exception e) {

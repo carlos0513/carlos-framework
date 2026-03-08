@@ -59,11 +59,11 @@ public class KeyPairManager {
      * @return KeyPair RSA 密钥对
      */
     public static KeyPair loadOrGenerateKeyPair(
-            String keyStorePath,
-            String keyStorePassword,
-            String keyAlias,
-            String keyPassword,
-            int keySize) {
+        String keyStorePath,
+        String keyStorePassword,
+        String keyAlias,
+        String keyPassword,
+        int keySize) {
 
         try {
             // 尝试从文件加载
@@ -105,10 +105,10 @@ public class KeyPairManager {
      * @return KeyPair 密钥对，如果文件不存在返回 null
      */
     private static KeyPair loadFromKeyStore(
-            String keyStorePath,
-            String keyStorePassword,
-            String keyAlias,
-            String keyPassword) throws Exception {
+        String keyStorePath,
+        String keyStorePassword,
+        String keyAlias,
+        String keyPassword) throws Exception {
 
         try {
             // 解析资源路径
@@ -179,11 +179,11 @@ public class KeyPairManager {
      * @param keyPassword 密钥密码
      */
     private static void saveToKeyStore(
-            KeyPair keyPair,
-            String keyStorePath,
-            String keyStorePassword,
-            String keyAlias,
-            String keyPassword) throws Exception {
+        KeyPair keyPair,
+        String keyStorePath,
+        String keyStorePassword,
+        String keyAlias,
+        String keyPassword) throws Exception {
 
         try {
             // 检查是否为 classpath 路径
@@ -210,10 +210,10 @@ public class KeyPairManager {
             // TODO: 如果需要证书链，可以引入 BouncyCastle 库
             Certificate[] certChain = null;
             keyStore.setKeyEntry(
-                    keyAlias,
-                    keyPair.getPrivate(),
-                    keyPassword != null ? keyPassword.toCharArray() : null,
-                    certChain
+                keyAlias,
+                keyPair.getPrivate(),
+                keyPassword != null ? keyPassword.toCharArray() : null,
+                certChain
             );
 
             // 保存到文件

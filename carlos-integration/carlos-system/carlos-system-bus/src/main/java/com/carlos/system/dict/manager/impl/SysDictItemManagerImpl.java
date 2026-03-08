@@ -71,9 +71,9 @@ public class SysDictItemManagerImpl extends ServiceImpl<SysDictItemMapper, SysDi
             throw new ServiceException("字典选项名称或字典选项编码不能为空！");
         }
         return lambdaQuery().eq(SysDictItem::getDictId, dictId)
-                .eq(StrUtil.isNotBlank(name), SysDictItem::getItemName, name)
-                .eq(StrUtil.isNotBlank(code), SysDictItem::getItemCode, code)
-                .ne(ObjectUtil.isNotEmpty(excludeId), SysDictItem::getId, excludeId).count();
+            .eq(StrUtil.isNotBlank(name), SysDictItem::getItemName, name)
+            .eq(StrUtil.isNotBlank(code), SysDictItem::getItemCode, code)
+            .ne(ObjectUtil.isNotEmpty(excludeId), SysDictItem::getId, excludeId).count();
     }
 
     @Override
@@ -100,14 +100,14 @@ public class SysDictItemManagerImpl extends ServiceImpl<SysDictItemMapper, SysDi
     @Override
     public List<SysDictItemDTO> listItems(Set<Serializable> dictIds, String name, boolean onlyEnable) {
         LambdaQueryWrapper<SysDictItem> wrapper = Wrappers.lambdaQuery(SysDictItem.class)
-                .orderByAsc(SysDictItem::getSort)
-                .select(SysDictItem::getId,
-                        SysDictItem::getDictId,
-                        SysDictItem::getItemCode,
-                        SysDictItem::getItemName,
-                        SysDictItem::getEnable,
-                        SysDictItem::getSort,
-                        SysDictItem::getDescription);
+            .orderByAsc(SysDictItem::getSort)
+            .select(SysDictItem::getId,
+                SysDictItem::getDictId,
+                SysDictItem::getItemCode,
+                SysDictItem::getItemName,
+                SysDictItem::getEnable,
+                SysDictItem::getSort,
+                SysDictItem::getDescription);
 
         wrapper.like(StringUtils.isNotBlank(name), SysDictItem::getItemName, name);
         wrapper.eq(onlyEnable, SysDictItem::getEnable, true);
@@ -129,13 +129,13 @@ public class SysDictItemManagerImpl extends ServiceImpl<SysDictItemMapper, SysDi
     @Override
     public List<SysDictItemDTO> listByItemIds(Set<Serializable> ids) {
         List<SysDictItem> list = lambdaQuery().in(SysDictItem::getId, ids)
-                .select(SysDictItem::getId,
-                        SysDictItem::getDictId,
-                        SysDictItem::getItemCode,
-                        SysDictItem::getItemName,
-                        SysDictItem::getEnable,
-                        SysDictItem::getSort,
-                        SysDictItem::getDescription).list();
+            .select(SysDictItem::getId,
+                SysDictItem::getDictId,
+                SysDictItem::getItemCode,
+                SysDictItem::getItemName,
+                SysDictItem::getEnable,
+                SysDictItem::getSort,
+                SysDictItem::getDescription).list();
 
         return SysDictItemConvert.INSTANCE.toDTO(list);
     }

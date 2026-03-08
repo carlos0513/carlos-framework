@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.carlos.system.dict.mapper.SysDictMapper">
-    <resultMap type="com.carlos.system.dict.pojo.vo.SysDictVO" id="baseMap">
-        <id column="id" property="id"/>
-        <result column="dict_name" property="dictName"/>
-        <result column="dict_code" property="dictCode"/>
-        <result column="description" property="description"/>
-        <result column="type" property="type"/>
-        <result column="create_time" property="createTime"/>
-        <result column="update_time" property="updateTime"/>
-    </resultMap>
+  <resultMap type="com.carlos.system.dict.pojo.vo.SysDictVO" id="baseMap">
+    <id column="id" property="id"/>
+    <result column="dict_name" property="dictName"/>
+    <result column="dict_code" property="dictCode"/>
+    <result column="description" property="description"/>
+    <result column="type" property="type"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
 
-    <select id="selectOwnPage" resultMap="baseMap">
-        SELECT *
-        FROM sys_dict
-        <where>
-            <if test="param.dictName != null and param.dictName != ''">
-                AND dict_name LIKE CONCAT('%', #{param.dictName}, '%')
-            </if>
-            <if test="param.description != null and param.description != ''">
-                AND description LIKE CONCAT('%', #{param.description}, '%')
-            </if>
-            <if test="param.type != null">
-                AND type = #{param.type.code}
-            </if>
-            <if test="param.start != null">
-                AND create_time &gt;= #{param.start}
-            </if>
-            <if test="param.end != null">
-                AND create_time &lt;= #{param.end}
-            </if>
-        </where>
-        ORDER BY id DESC
-    </select>
+  <select id="selectOwnPage" resultMap="baseMap">
+    SELECT *
+    FROM sys_dict
+    <where>
+      <if test="param.dictName != null and param.dictName != ''">
+        AND dict_name LIKE CONCAT('%', #{param.dictName}, '%')
+      </if>
+      <if test="param.description != null and param.description != ''">
+        AND description LIKE CONCAT('%', #{param.description}, '%')
+      </if>
+      <if test="param.type != null">
+        AND type = #{param.type.code}
+      </if>
+      <if test="param.start != null">
+        AND create_time &gt;= #{param.start}
+      </if>
+      <if test="param.end != null">
+        AND create_time &lt;= #{param.end}
+      </if>
+    </where>
+    ORDER BY id DESC
+  </select>
 </mapper>

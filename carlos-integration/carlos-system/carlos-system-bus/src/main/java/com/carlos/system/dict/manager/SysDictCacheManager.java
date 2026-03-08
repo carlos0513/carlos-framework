@@ -34,15 +34,15 @@ public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
 
     /** 本地缓存 */
     private static final Cache<String, List<SysDictItemDTO>> CACHE_DICT_ITEM = CacheBuilder.newBuilder()
-            .maximumSize(500)
-            .expireAfterAccess(60L, TimeUnit.MINUTES)
-            .build();
+        .maximumSize(500)
+        .expireAfterAccess(60L, TimeUnit.MINUTES)
+        .build();
 
     /** 字典项本地缓存 */
     private static final Cache<String, SysDictItemDTO> CACHE_ITEM_ID = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .expireAfterAccess(60L, TimeUnit.MINUTES)
-            .build();
+        .maximumSize(1000)
+        .expireAfterAccess(60L, TimeUnit.MINUTES)
+        .build();
 
     private final SysDictManager dictManager;
     private final SysDictItemManager itemManager;

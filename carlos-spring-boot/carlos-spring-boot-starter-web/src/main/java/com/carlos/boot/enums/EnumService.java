@@ -66,9 +66,9 @@ public class EnumService {
                 filterBuilder.includePackage(SPRING_BOOT_JAR_PREFIX + aPackage).includePackage(aPackage);
             }
             ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
-                    .forPackages(packages.toArray(new String[0]))
-                    .filterInputsBy(filterBuilder)
-                    .setScanners(Scanners.SubTypes);
+                .forPackages(packages.toArray(new String[0]))
+                .filterInputsBy(filterBuilder)
+                .setScanners(Scanners.SubTypes);
 
             // 使用反射 扫描工程的基本包路径
             final Reflections reflections = new Reflections(configurationBuilder);

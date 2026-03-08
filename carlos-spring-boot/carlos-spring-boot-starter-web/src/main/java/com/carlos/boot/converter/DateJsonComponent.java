@@ -42,9 +42,9 @@ public class DateJsonComponent {
         @Override
         public JsonSerializer<?> createContextual(final SerializerProvider prov, final BeanProperty property) {
             Optional.ofNullable(property)
-                    .map(p -> property.getAnnotation(JsonFormat.class))
-                    .map(JsonFormat::pattern)
-                    .ifPresent(patten -> this.patten = patten);
+                .map(p -> property.getAnnotation(JsonFormat.class))
+                .map(JsonFormat::pattern)
+                .ifPresent(patten -> this.patten = patten);
             return this;
         }
     }

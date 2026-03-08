@@ -149,8 +149,8 @@ public class OrgRoleController {
         voPaging.setTotal(dtoPaging.getTotal());
         voPaging.setPages(dtoPaging.getPages());
         voPaging.setRecords(dtoPaging.getRecords().stream()
-                .map(this::toUserVO)
-                .collect(Collectors.toList()));
+            .map(this::toUserVO)
+            .collect(Collectors.toList()));
         return voPaging;
     }
 

@@ -101,18 +101,18 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
     public Paging<SysResourceVO> getPage(SysResourcePageParam param) {
         LambdaQueryWrapper<SysResource> wrapper = queryWrapper();
         wrapper.select(
-                SysResource::getId,
-                SysResource::getCategoryId,
-                SysResource::getName,
-                SysResource::getPath,
-                SysResource::getMethod,
-                SysResource::getIcon,
-                SysResource::getType,
-                SysResource::getState,
-                SysResource::getHidden,
-                SysResource::getDescription,
-                SysResource::getCreateTime,
-                SysResource::getUpdateTime
+            SysResource::getId,
+            SysResource::getCategoryId,
+            SysResource::getName,
+            SysResource::getPath,
+            SysResource::getMethod,
+            SysResource::getIcon,
+            SysResource::getType,
+            SysResource::getState,
+            SysResource::getHidden,
+            SysResource::getDescription,
+            SysResource::getCreateTime,
+            SysResource::getUpdateTime
         );
         if (param.getCategoryId() != null) {
             wrapper.eq(SysResource::getCategoryId, param.getCategoryId());
@@ -150,10 +150,10 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
             List<SysResourceTreeDTO> children = getResourceTree(id);
             List<SysResourceDTO> resources = getResourceByCategoryId(id);
             list.add(new SysResourceTreeDTO()
-                    .setId(Convert.toLong(id))
-                    .setName(category.getName())
-                    .setChildren(children)
-                    .setResources(resources)
+                .setId(Convert.toLong(id))
+                .setName(category.getName())
+                .setChildren(children)
+                .setResources(resources)
             );
         }
         return list;
@@ -173,9 +173,9 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
     @Override
     public Serializable getIdByDto(SysResourceDTO dto) {
         SysResource entity = lambdaQuery()
-                .eq(SysResource::getCategoryId, dto.getCategoryId())
-                .eq(SysResource::getPath, dto.getPath())
-                .eq(SysResource::getMethod, dto.getMethod()).one();
+            .eq(SysResource::getCategoryId, dto.getCategoryId())
+            .eq(SysResource::getPath, dto.getPath())
+            .eq(SysResource::getMethod, dto.getMethod()).one();
         if (entity == null) {
             return null;
         }

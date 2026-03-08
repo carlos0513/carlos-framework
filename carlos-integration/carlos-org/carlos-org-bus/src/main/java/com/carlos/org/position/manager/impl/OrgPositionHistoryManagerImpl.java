@@ -94,26 +94,26 @@ public class OrgPositionHistoryManagerImpl extends BaseServiceImpl<OrgPositionHi
         LambdaQueryWrapper<OrgPositionHistory> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgPositionHistory::getId,
-                OrgPositionHistory::getUserId,
-                OrgPositionHistory::getChangeType,
-                OrgPositionHistory::getOldPositionId,
-                OrgPositionHistory::getNewPositionId,
-                OrgPositionHistory::getOldLevelId,
-                OrgPositionHistory::getNewLevelId,
-                OrgPositionHistory::getOldDeptId,
-                OrgPositionHistory::getNewDeptId,
-                OrgPositionHistory::getOldSalary,
-                OrgPositionHistory::getNewSalary,
-                OrgPositionHistory::getChangeReason,
-                OrgPositionHistory::getChangeDate,
-                OrgPositionHistory::getApprovalNo,
-                OrgPositionHistory::getAttachments,
-                OrgPositionHistory::getRemark,
-                OrgPositionHistory::getOperatorId,
-                OrgPositionHistory::getOperatorName,
-                OrgPositionHistory::getTenantId,
-                OrgPositionHistory::getCreateTime
+            OrgPositionHistory::getId,
+            OrgPositionHistory::getUserId,
+            OrgPositionHistory::getChangeType,
+            OrgPositionHistory::getOldPositionId,
+            OrgPositionHistory::getNewPositionId,
+            OrgPositionHistory::getOldLevelId,
+            OrgPositionHistory::getNewLevelId,
+            OrgPositionHistory::getOldDeptId,
+            OrgPositionHistory::getNewDeptId,
+            OrgPositionHistory::getOldSalary,
+            OrgPositionHistory::getNewSalary,
+            OrgPositionHistory::getChangeReason,
+            OrgPositionHistory::getChangeDate,
+            OrgPositionHistory::getApprovalNo,
+            OrgPositionHistory::getAttachments,
+            OrgPositionHistory::getRemark,
+            OrgPositionHistory::getOperatorId,
+            OrgPositionHistory::getOperatorName,
+            OrgPositionHistory::getTenantId,
+            OrgPositionHistory::getCreateTime
         );
         PageInfo<OrgPositionHistory> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgPositionHistoryConvert.INSTANCE::toVO);

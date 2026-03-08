@@ -115,8 +115,8 @@ public class OrgRoleManagerImpl extends BaseServiceImpl<OrgRoleMapper, OrgRole> 
         wrapper.orderByDesc(OrgRole::getCreateTime);
         PageInfo<OrgRole> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, entities -> entities.stream()
-                .map(OrgRoleConvert.INSTANCE::toDTO)
-                .collect(Collectors.toList()));
+            .map(OrgRoleConvert.INSTANCE::toDTO)
+            .collect(Collectors.toList()));
     }
 
     @Override
@@ -160,8 +160,8 @@ public class OrgRoleManagerImpl extends BaseServiceImpl<OrgRoleMapper, OrgRole> 
         int toIndex = Math.min(fromIndex + param.getSize(), total);
 
         List<OrgRoleUserDTO> records = fromIndex < total
-                ? allUsers.subList(fromIndex, toIndex)
-                : Collections.emptyList();
+            ? allUsers.subList(fromIndex, toIndex)
+            : Collections.emptyList();
 
         Paging<OrgRoleUserDTO> paging = new Paging<>();
         paging.setCurrent(param.getCurrent());

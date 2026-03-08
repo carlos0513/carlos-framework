@@ -60,13 +60,13 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication)
-            throws AuthenticationException {
+        throws AuthenticationException {
         Map<String, String> params = JakartaServletUtil.getParamMap(RequestUtil.getRequest());
         String grantType = params.get(OAuth2ParameterNames.GRANT_TYPE);
         if (authentication.getCredentials() == null) {
             this.logger.debug("Failed to authenticate since no credentials provided");
             throw new BadCredentialsException(this.messages
-                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+                .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }
 
         if (StrUtil.equals(GrantType.APP.getCode(), grantType)) {
@@ -91,7 +91,7 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
             if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
                 this.logger.debug("Failed to authenticate since password does not match stored value");
                 throw new BadCredentialsException(this.messages
-                        .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
             }
         }
     }

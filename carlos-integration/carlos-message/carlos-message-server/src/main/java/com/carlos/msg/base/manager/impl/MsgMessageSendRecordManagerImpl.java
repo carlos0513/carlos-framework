@@ -93,16 +93,16 @@ public class MsgMessageSendRecordManagerImpl extends BaseServiceImpl<MsgMessageS
     public Paging<MsgMessageSendRecordVO> getPage(MsgMessageSendRecordPageParam param) {
         LambdaQueryWrapper<MsgMessageSendRecord> wrapper = queryWrapper();
         wrapper.select(
-                MsgMessageSendRecord::getId,
-                MsgMessageSendRecord::getMessageId,
-                MsgMessageSendRecord::getRetryCount,
-                MsgMessageSendRecord::getSendTime,
-                MsgMessageSendRecord::getRequestParam,
-                MsgMessageSendRecord::getResponseData,
-                MsgMessageSendRecord::getPushChannel,
-                MsgMessageSendRecord::getSuccess,
-                MsgMessageSendRecord::getCreateBy,
-                MsgMessageSendRecord::getCreateTime
+            MsgMessageSendRecord::getId,
+            MsgMessageSendRecord::getMessageId,
+            MsgMessageSendRecord::getRetryCount,
+            MsgMessageSendRecord::getSendTime,
+            MsgMessageSendRecord::getRequestParam,
+            MsgMessageSendRecord::getResponseData,
+            MsgMessageSendRecord::getPushChannel,
+            MsgMessageSendRecord::getSuccess,
+            MsgMessageSendRecord::getCreateBy,
+            MsgMessageSendRecord::getCreateTime
         );
         PageInfo<MsgMessageSendRecord> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, MsgMessageSendRecordConvert.INSTANCE::toVO);

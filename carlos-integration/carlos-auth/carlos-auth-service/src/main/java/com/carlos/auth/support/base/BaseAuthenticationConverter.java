@@ -86,16 +86,16 @@ public abstract class BaseAuthenticationConverter<T extends BaseAuthenticationTo
         Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
         if (clientPrincipal == null) {
             throwError(OAuth2ErrorCodes.INVALID_REQUEST, OAuth2ErrorCodes.INVALID_CLIENT,
-                    "");
+                "");
         }
 
         // 扩展信息
         Map<String, String> additionalParameters = params.entrySet()
-                .stream()
-                .filter(e ->
-                        !e.getKey().equals(OAuth2ParameterNames.GRANT_TYPE)
-                                && !e.getKey().equals(OAuth2ParameterNames.SCOPE))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .stream()
+            .filter(e ->
+                !e.getKey().equals(OAuth2ParameterNames.GRANT_TYPE)
+                    && !e.getKey().equals(OAuth2ParameterNames.SCOPE))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         // 创建token
         return buildToken(clientPrincipal, requestedScopes, additionalParameters);

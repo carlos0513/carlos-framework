@@ -145,28 +145,28 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
     public Paging<SysRegionVO> getPage(SysRegionPageParam param) {
         LambdaQueryWrapper<SysRegion> wrapper = this.queryWrapper();
         wrapper.select(
-                SysRegion::getId,
-                SysRegion::getRegionCode,
-                SysRegion::getRegionName,
-                SysRegion::getParentCode,
-                SysRegion::getParents,
-                SysRegion::getRegionType,
-                SysRegion::getRegionArea,
-                SysRegion::getRegionPeopleNumber,
-                SysRegion::getRegionLevel,
-                SysRegion::getRegionLeader,
-                SysRegion::getExtend,
-                SysRegion::getLongitude,
-                SysRegion::getLatitude,
-                SysRegion::getBoundLeft,
-                SysRegion::getBoundRight,
-                SysRegion::getBoundBottom,
-                SysRegion::getBoundTop,
-                SysRegion::getGisOid,
-                SysRegion::getCreateBy,
-                SysRegion::getCreateTime,
-                SysRegion::getUpdateBy,
-                SysRegion::getUpdateTime
+            SysRegion::getId,
+            SysRegion::getRegionCode,
+            SysRegion::getRegionName,
+            SysRegion::getParentCode,
+            SysRegion::getParents,
+            SysRegion::getRegionType,
+            SysRegion::getRegionArea,
+            SysRegion::getRegionPeopleNumber,
+            SysRegion::getRegionLevel,
+            SysRegion::getRegionLeader,
+            SysRegion::getExtend,
+            SysRegion::getLongitude,
+            SysRegion::getLatitude,
+            SysRegion::getBoundLeft,
+            SysRegion::getBoundRight,
+            SysRegion::getBoundBottom,
+            SysRegion::getBoundTop,
+            SysRegion::getGisOid,
+            SysRegion::getCreateBy,
+            SysRegion::getCreateTime,
+            SysRegion::getUpdateBy,
+            SysRegion::getUpdateTime
         ).eq(SysRegion::getRegionCode, param.getRegionCode()).like(SysRegion::getRegionName, param.getRegionName());
         PageInfo<SysRegion> page = this.page(this.pageInfo(param), wrapper);
         return MybatisPage.convert(page, SysRegionConvert.INSTANCE::toVO);
@@ -183,14 +183,14 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
             return region;
         }
         SysRegion one = this.lambdaQuery()
-                .select(
-                        SysRegion::getId,
-                        SysRegion::getRegionCode,
-                        SysRegion::getRegionName,
-                        SysRegion::getParentCode,
-                        SysRegion::getRegionType
-                ).eq(SysRegion::getRegionCode, regionCode)
-                .one();
+            .select(
+                SysRegion::getId,
+                SysRegion::getRegionCode,
+                SysRegion::getRegionName,
+                SysRegion::getParentCode,
+                SysRegion::getRegionType
+            ).eq(SysRegion::getRegionCode, regionCode)
+            .one();
         if (one == null) {
             return null;
         }
@@ -215,28 +215,28 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
             return regions;
         }
         List<SysRegion> list = this.lambdaQuery().select(
-                        SysRegion::getId,
-                        SysRegion::getRegionCode,
-                        SysRegion::getRegionName,
-                        SysRegion::getParentCode,
-                        SysRegion::getRegionType
-                )
-                .eq(SysRegion::getParentCode, parentCode)
-                .list();
+                SysRegion::getId,
+                SysRegion::getRegionCode,
+                SysRegion::getRegionName,
+                SysRegion::getParentCode,
+                SysRegion::getRegionType
+            )
+            .eq(SysRegion::getParentCode, parentCode)
+            .list();
         return SysRegionConvert.INSTANCE.toDTO(list);
     }
 
     @Override
     public List<SysRegionDTO> listByParentCodes(List<String> codes) {
         List<SysRegion> list = this.lambdaQuery().select(
-                        SysRegion::getId,
-                        SysRegion::getRegionCode,
-                        SysRegion::getRegionName,
-                        SysRegion::getParentCode,
-                        SysRegion::getRegionType
-                )
-                .in(SysRegion::getParentCode, codes)
-                .list();
+                SysRegion::getId,
+                SysRegion::getRegionCode,
+                SysRegion::getRegionName,
+                SysRegion::getParentCode,
+                SysRegion::getRegionType
+            )
+            .in(SysRegion::getParentCode, codes)
+            .list();
         return SysRegionConvert.INSTANCE.toDTO(list);
     }
 
@@ -264,42 +264,42 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
     @Override
     public List<SysRegionDTO> getList(String parentId, String name, String code, boolean detail) {
         LambdaQueryWrapper<SysRegion> wrapper = this.queryWrapper()
-                .eq(CharSequenceUtil.isNotBlank(parentId), SysRegion::getParentCode, parentId)
-                .eq(CharSequenceUtil.isNotBlank(code), SysRegion::getRegionCode, code)
-                .like(CharSequenceUtil.isNotBlank(name), SysRegion::getRegionName, name);
+            .eq(CharSequenceUtil.isNotBlank(parentId), SysRegion::getParentCode, parentId)
+            .eq(CharSequenceUtil.isNotBlank(code), SysRegion::getRegionCode, code)
+            .like(CharSequenceUtil.isNotBlank(name), SysRegion::getRegionName, name);
 
         if (detail) {
             wrapper.select(
-                    SysRegion::getId,
-                    SysRegion::getRegionCode,
-                    SysRegion::getRegionName,
-                    SysRegion::getParentCode,
-                    SysRegion::getParents,
-                    SysRegion::getRegionType,
-                    SysRegion::getRegionArea,
-                    SysRegion::getRegionPeopleNumber,
-                    SysRegion::getRegionLevel,
-                    SysRegion::getRegionLeader,
-                    SysRegion::getExtend,
-                    SysRegion::getLongitude,
-                    SysRegion::getLatitude,
-                    SysRegion::getBoundLeft,
-                    SysRegion::getBoundRight,
-                    SysRegion::getBoundBottom,
-                    SysRegion::getBoundTop,
-                    SysRegion::getGisOid,
-                    SysRegion::getCreateBy,
-                    SysRegion::getCreateTime,
-                    SysRegion::getUpdateBy,
-                    SysRegion::getUpdateTime
+                SysRegion::getId,
+                SysRegion::getRegionCode,
+                SysRegion::getRegionName,
+                SysRegion::getParentCode,
+                SysRegion::getParents,
+                SysRegion::getRegionType,
+                SysRegion::getRegionArea,
+                SysRegion::getRegionPeopleNumber,
+                SysRegion::getRegionLevel,
+                SysRegion::getRegionLeader,
+                SysRegion::getExtend,
+                SysRegion::getLongitude,
+                SysRegion::getLatitude,
+                SysRegion::getBoundLeft,
+                SysRegion::getBoundRight,
+                SysRegion::getBoundBottom,
+                SysRegion::getBoundTop,
+                SysRegion::getGisOid,
+                SysRegion::getCreateBy,
+                SysRegion::getCreateTime,
+                SysRegion::getUpdateBy,
+                SysRegion::getUpdateTime
             );
         } else {
             wrapper.select(
-                    SysRegion::getId,
-                    SysRegion::getRegionCode,
-                    SysRegion::getRegionName,
-                    SysRegion::getParentCode,
-                    SysRegion::getParents
+                SysRegion::getId,
+                SysRegion::getRegionCode,
+                SysRegion::getRegionName,
+                SysRegion::getParentCode,
+                SysRegion::getParents
             );
         }
         List<SysRegion> menus = this.list(wrapper);
@@ -345,15 +345,15 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
             // 使用分页方式处理大量数据
             while (hasMore) {
                 PageInfo<SysRegion> pageInfo = this.page(new PageInfo<>(current, pageSize, false),
-                        queryWrapper().select(
-                                SysRegion::getId,
-                                SysRegion::getRegionCode,
-                                SysRegion::getRegionName,
-                                SysRegion::getParentCode,
-                                SysRegion::getParents,
-                                SysRegion::getRegionType,
-                                SysRegion::getSort
-                        )
+                    queryWrapper().select(
+                        SysRegion::getId,
+                        SysRegion::getRegionCode,
+                        SysRegion::getRegionName,
+                        SysRegion::getParentCode,
+                        SysRegion::getParents,
+                        SysRegion::getRegionType,
+                        SysRegion::getSort
+                    )
                 );
 
                 List<SysRegion> records = pageInfo.getRecords();

@@ -65,17 +65,17 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(
-        // 启用方法级安全注解
-        prePostEnabled = true,      // @PreAuthorize, @PostAuthorize
-        securedEnabled = true,      // @Secured
-        jsr250Enabled = true        // @RolesAllowed
+    // 启用方法级安全注解
+    prePostEnabled = true,      // @PreAuthorize, @PostAuthorize
+    securedEnabled = true,      // @Secured
+    jsr250Enabled = true        // @RolesAllowed
 )
 @RequiredArgsConstructor
 @EnableConfigurationProperties(OAuth2Properties.class)
 @ConditionalOnProperty(
-        prefix = "carlos.oauth2.resource-server",
-        name = "enabled",
-        havingValue = "true"
+    prefix = "carlos.oauth2.resource-server",
+    name = "enabled",
+    havingValue = "true"
 )
 public class OAuth2ResourceServerConfig {
 
@@ -112,35 +112,35 @@ public class OAuth2ResourceServerConfig {
     @ConditionalOnMissingBean(name = "resourceServerSecurityFilterChain")
     public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2Properties.ResourceServerProperties resourceServer =
-                oauth2Properties.getResourceServer();
+            oauth2Properties.getResourceServer();
 
         http
-                // 禁用 CSRF（使用 Token 机制不需要 CSRF 保护）
-                .csrf(AbstractHttpConfigurer::disable)
-                // 禁用 Session，使用无状态认证
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                // 配置请求授权
-                .authorizeHttpRequests(authorize -> {
-                    // 白名单路径
-                    List<String> permitAllPaths = resourceServer.getPermitAllPaths();
-                    if (permitAllPaths != null && !permitAllPaths.isEmpty()) {
-                        authorize.requestMatchers(
-                                permitAllPaths.toArray(new String[0])
-                        ).permitAll();
-                        log.debug("Configured permit-all paths: {}", permitAllPaths);
-                    }
+            // 禁用 CSRF（使用 Token 机制不需要 CSRF 保护）
+            .csrf(AbstractHttpConfigurer::disable)
+            // 禁用 Session，使用无状态认证
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            // 配置请求授权
+            .authorizeHttpRequests(authorize -> {
+                // 白名单路径
+                List<String> permitAllPaths = resourceServer.getPermitAllPaths();
+                if (permitAllPaths != null && !permitAllPaths.isEmpty()) {
+                    authorize.requestMatchers(
+                        permitAllPaths.toArray(new String[0])
+                    ).permitAll();
+                    log.debug("Configured permit-all paths: {}", permitAllPaths);
+                }
 
-                    // 其他请求需要认证
-                    authorize.anyRequest().authenticated();
-                })
-                // 配置 JWT 资源服务器
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt ->
-                                jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        )
-                );
+                // 其他请求需要认证
+                authorize.anyRequest().authenticated();
+            })
+            // 配置 JWT 资源服务器
+            .oauth2ResourceServer(oauth2 ->
+                oauth2.jwt(jwt ->
+                    jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+                )
+            );
 
         log.info("OAuth2 Resource Server configured");
         if (resourceServer.getJwkSetUri() != null) {
@@ -187,28 +187,28 @@ public class OAuth2ResourceServerConfig {
     @ConditionalOnMissingBean
     public JwtDecoder jwtDecoder() {
         OAuth2Properties.ResourceServerProperties resourceServer =
-                oauth2Properties.getResourceServer();
+            oauth2Properties.getResourceServer();
 
         // 优先使用 JWK Set URI
         if (resourceServer.getJwkSetUri() != null) {
             log.info("Configuring JWT decoder with JWK Set URI: {}",
-                    resourceServer.getJwkSetUri());
+                resourceServer.getJwkSetUri());
             return NimbusJwtDecoder.withJwkSetUri(resourceServer.getJwkSetUri()).build();
         }
 
         // 其次使用 Issuer URI
         if (resourceServer.getIssuerUri() != null) {
             log.info("Configuring JWT decoder with Issuer URI: {}",
-                    resourceServer.getIssuerUri());
+                resourceServer.getIssuerUri());
             return JwtDecoders.fromIssuerLocation(resourceServer.getIssuerUri());
         }
 
         // 必须配置其一
         throw new IllegalStateException(
-                "OAuth2 Resource Server configuration error: " +
-                        "Either 'carlos.oauth2.resource-server.jwk-set-uri' or " +
-                        "'carlos.oauth2.resource-server.issuer-uri' must be configured. " +
-                        "Please check your application.yml configuration."
+            "OAuth2 Resource Server configuration error: " +
+                "Either 'carlos.oauth2.resource-server.jwk-set-uri' or " +
+                "'carlos.oauth2.resource-server.issuer-uri' must be configured. " +
+                "Please check your application.yml configuration."
         );
     }
 
@@ -290,7 +290,7 @@ public class OAuth2ResourceServerConfig {
             }
 
             log.debug("Extracted authorities from JWT for user '{}': {}",
-                    jwt.getSubject(), authorities);
+                jwt.getSubject(), authorities);
 
             return authorities;
         };

@@ -35,7 +35,7 @@ public class LoginAuditListener {
     public void handleLoginAuditEvent(LoginAuditEvent event) {
         try {
             log.debug("Handling login audit event: user={}, type={}, status={}",
-                    event.getUser().getUsername(), event.getEventType(), event.getStatus());
+                event.getUser().getUsername(), event.getEventType(), event.getStatus());
 
             loginAuditTaskService.recordAsync(event);
 

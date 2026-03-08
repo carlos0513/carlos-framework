@@ -90,8 +90,8 @@ public class OrgPermissionManagerImpl extends BaseServiceImpl<OrgPermissionMappe
         wrapper.orderByAsc(OrgPermission::getSort);
         List<OrgPermission> list = list(wrapper);
         return list.stream()
-                .map(OrgPermissionConvert.INSTANCE::toDTO)
-                .collect(Collectors.toList());
+            .map(OrgPermissionConvert.INSTANCE::toDTO)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -100,8 +100,8 @@ public class OrgPermissionManagerImpl extends BaseServiceImpl<OrgPermissionMappe
         wrapper.eq(OrgPermission::getParentId, parentId);
         List<OrgPermission> list = list(wrapper);
         return list.stream()
-                .map(OrgPermissionConvert.INSTANCE::toDTO)
-                .collect(Collectors.toList());
+            .map(OrgPermissionConvert.INSTANCE::toDTO)
+            .collect(Collectors.toList());
     }
 
     @Override

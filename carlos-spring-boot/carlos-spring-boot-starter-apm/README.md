@@ -2,7 +2,8 @@
 
 ## 模块简介
 
-`carlos-apm` 是 Carlos 框架的应用性能监控（APM）集成模块，提供了对 SkyWalking 9.7.0 和 Spring Cloud Sleuth（基于 Brave）的集成支持。该模块实现了分布式追踪、链路监控、性能指标收集等功能，帮助开发者和运维人员监控微服务系统的运行状态。
+`carlos-apm` 是 Carlos 框架的应用性能监控（APM）集成模块，提供了对 SkyWalking 9.7.0 和 Spring Cloud Sleuth（基于
+Brave）的集成支持。该模块实现了分布式追踪、链路监控、性能指标收集等功能，帮助开发者和运维人员监控微服务系统的运行状态。
 
 ## 主要功能
 

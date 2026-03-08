@@ -44,10 +44,10 @@ public class ObjectOptUtil {
     public static InputStream getObject(String bucket, String object) {
         try {
             return MinioUtil.getClient().getObject(
-                    GetObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(object)
-                            .build()
+                GetObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(object)
+                    .build()
             );
         } catch (Exception e) {
             throw new MinioException(e.getMessage(), e);
@@ -82,10 +82,10 @@ public class ObjectOptUtil {
         }
         try {
             return MinioUtil.getClient().getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                    .bucket(bucketName)
-                    .expiry(expires, TimeUnit.DAYS)
-                    .method(Method.GET)
-                    .object(objectName).build()
+                .bucket(bucketName)
+                .expiry(expires, TimeUnit.DAYS)
+                .method(Method.GET)
+                .object(objectName).build()
             );
         } catch (Exception e) {
             throw new MinioException(e.getMessage(), e);
@@ -122,10 +122,10 @@ public class ObjectOptUtil {
         }
         try {
             return MinioUtil.getAsyncClient().getPresignedObjectPublicUrl(GetPresignedObjectUrlArgs.builder()
-                    .bucket(bucketName)
-                    .expiry(expires, TimeUnit.DAYS)
-                    .method(Method.GET)
-                    .object(objectName).build()
+                .bucket(bucketName)
+                .expiry(expires, TimeUnit.DAYS)
+                .method(Method.GET)
+                .object(objectName).build()
             );
         } catch (Exception e) {
             throw new MinioException(e.getMessage(), e);
@@ -226,8 +226,8 @@ public class ObjectOptUtil {
         StatObjectResponse object;
         try {
             object = MinioUtil.getClient().statObject(StatObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectName).build()
+                .bucket(bucketName)
+                .object(objectName).build()
             );
         } catch (Exception e) {
             throw new MinioException(e.getMessage(), e);
@@ -268,11 +268,11 @@ public class ObjectOptUtil {
         MinioUtil.checkBucket(bucket);
         try {
             MinioUtil.getClient().uploadObject(
-                    UploadObjectArgs.builder()
-                            .bucket(bucket)
-                            .filename(filename)
-                            .object(object)
-                            .build()
+                UploadObjectArgs.builder()
+                    .bucket(bucket)
+                    .filename(filename)
+                    .object(object)
+                    .build()
             );
             return new ObjectInfo(bucket, filename, object);
         } catch (Exception e) {
@@ -425,9 +425,9 @@ public class ObjectOptUtil {
         }
         MinioUtil.checkBucket(bucket);
         PutObjectArgs.Builder builder = PutObjectArgs.builder()
-                .bucket(bucket)
-                .object(object)
-                .stream(stream, objectSize, partSize);
+            .bucket(bucket)
+            .object(object)
+            .stream(stream, objectSize, partSize);
         if (StrUtil.isNotBlank(contentType)) {
             builder.contentType(contentType);
         }
@@ -452,10 +452,10 @@ public class ObjectOptUtil {
     public static void deleteObject(String bucket, String object) {
         try {
             MinioUtil.getClient().removeObject(
-                    RemoveObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(object)
-                            .build()
+                RemoveObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(object)
+                    .build()
             );
         } catch (Exception e) {
             throw new MinioException(e.getMessage(), e);

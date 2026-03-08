@@ -96,17 +96,17 @@ public class CustomizeRegisteredClientRepository implements RegisteredClientRepo
 
     private RegisteredClient convert(AppClientDTO dto) {
         RegisteredClient.Builder builder = RegisteredClient
-                .withId(String.valueOf(dto.getId()))
-                .clientId(dto.getAppKey())
-                .clientName(dto.getAppName())
-                .clientSecret(dto.getAppSecret())
-                .clientSecretExpiresAt(dto.getClientSecretExpiresAt().toInstant(ZoneOffset.UTC))
-                .clientIdIssuedAt(dto.getClientIssuedAt().toInstant(ZoneOffset.UTC));
+            .withId(String.valueOf(dto.getId()))
+            .clientId(dto.getAppKey())
+            .clientName(dto.getAppName())
+            .clientSecret(dto.getAppSecret())
+            .clientSecretExpiresAt(dto.getClientSecretExpiresAt().toInstant(ZoneOffset.UTC))
+            .clientIdIssuedAt(dto.getClientIssuedAt().toInstant(ZoneOffset.UTC));
         // 配置客户端相关的配置项，包括验证密钥或者 是否需要授权页面
         Optional.ofNullable(dto.getClientSettings()).ifPresent(settings -> {
             ClientSettings.Builder clientBuilder = ClientSettings.builder()
-                    .requireAuthorizationConsent(settings.getRequireAuthorizationConsent())
-                    .requireProofKey(settings.getRequireProofKey());
+                .requireAuthorizationConsent(settings.getRequireAuthorizationConsent())
+                .requireProofKey(settings.getRequireProofKey());
             if (StrUtil.isNotBlank(settings.getJwkSetUrl())) {
                 clientBuilder.jwkSetUrl(settings.getJwkSetUrl());
             }
@@ -116,20 +116,20 @@ public class CustomizeRegisteredClientRepository implements RegisteredClientRepo
         // //JWT的配置项 包括TTL  是否复用refreshToken等等
         Optional.ofNullable(dto.getTokenSettings()).ifPresent(settings -> {
             builder.tokenSettings(TokenSettings.builder()
-                    .authorizationCodeTimeToLive(Optional.ofNullable(settings.getAuthorizationCodeTimeToLive()).map(Duration::ofMinutes).orElse(Duration.ofMinutes(5)))
-                    .accessTokenTimeToLive(Optional.ofNullable(settings.getAccessTokenTimeToLive()).map(Duration::ofMinutes).orElse(Duration.ofMinutes(5)))
-                    .accessTokenFormat(Optional.ofNullable(settings.getAccessTokenFormat()).map(OAuth2TokenFormat::new).orElse(OAuth2TokenFormat.SELF_CONTAINED))
-                    .reuseRefreshTokens(settings.getReuseRefreshTokens())
-                    .refreshTokenTimeToLive(Optional.ofNullable(settings.getRefreshTokenTimeToLive()).map(Duration::ofMinutes).orElse(Duration.ofMinutes(60)))
-                    .build());
+                .authorizationCodeTimeToLive(Optional.ofNullable(settings.getAuthorizationCodeTimeToLive()).map(Duration::ofMinutes).orElse(Duration.ofMinutes(5)))
+                .accessTokenTimeToLive(Optional.ofNullable(settings.getAccessTokenTimeToLive()).map(Duration::ofMinutes).orElse(Duration.ofMinutes(5)))
+                .accessTokenFormat(Optional.ofNullable(settings.getAccessTokenFormat()).map(OAuth2TokenFormat::new).orElse(OAuth2TokenFormat.SELF_CONTAINED))
+                .reuseRefreshTokens(settings.getReuseRefreshTokens())
+                .refreshTokenTimeToLive(Optional.ofNullable(settings.getRefreshTokenTimeToLive()).map(Duration::ofMinutes).orElse(Duration.ofMinutes(60)))
+                .build());
         });
 
         // 授权方法
         Optional.ofNullable(dto.getAuthenticationMethods())
-                .ifPresent(methods -> methods.forEach(s -> builder.clientAuthenticationMethod(new ClientAuthenticationMethod(s))));
+            .ifPresent(methods -> methods.forEach(s -> builder.clientAuthenticationMethod(new ClientAuthenticationMethod(s))));
         // 授权模式
         Optional.ofNullable(dto.getAuthorizationGrantTypes())
-                .ifPresent(grants -> grants.forEach(s -> builder.authorizationGrantType(new AuthorizationGrantType(s))));
+            .ifPresent(grants -> grants.forEach(s -> builder.authorizationGrantType(new AuthorizationGrantType(s))));
         // 回调地址
         Optional.ofNullable(dto.getRedirectUris()).ifPresent(uris -> uris.forEach(builder::redirectUri));
         // scope

@@ -5,25 +5,25 @@
     <title>${paramName}</title>
 </head>
 <style>
-  #paramContent {
-    font-size: 20px;
-    line-height: 30px;
-    width: 100%;
-  }
+    #paramContent {
+        font-size: 20px;
+        line-height: 30px;
+        width: 100%;
+    }
 
-  .copyButton {
-    background-color: #367b55;
-    border-radius: 2px;
-    font-size: 20px;
-    padding: 5px;
-    margin: 10px 0;
-  }
+    .copyButton {
+        background-color: #367b55;
+        border-radius: 2px;
+        font-size: 20px;
+        padding: 5px;
+        margin: 10px 0;
+    }
 
-  .content {
-    text-align: center;
-    margin: 0 300px;
-    border-radius: 8px;
-  }
+    .content {
+        text-align: center;
+        margin: 0 300px;
+        border-radius: 8px;
+    }
 </style>
 <body>
 <div class="content">
@@ -36,10 +36,10 @@
 
 </body>
 <script language="JavaScript">
-  function copy() {
-    var output = document.getElementById("paramContent");
-    output.select();
-    document.execCommand("Copy");
-  }
+    function copy() {
+        var output = document.getElementById("paramContent");
+        output.select();
+        document.execCommand("Copy");
+    }
 </script>
 </html>

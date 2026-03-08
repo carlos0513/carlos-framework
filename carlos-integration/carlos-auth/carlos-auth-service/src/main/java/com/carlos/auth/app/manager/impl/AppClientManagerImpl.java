@@ -114,21 +114,21 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
     public Paging<AppClientPageVO> getPage(AppClientPageParam param) {
         LambdaQueryWrapper<AppClient> wrapper = queryWrapper();
         wrapper.select(
-                AppClient::getId,
-                AppClient::getAppKey,
-                AppClient::getAppName,
-                AppClient::getAppLogo,
-                AppClient::getClientSecretExpiresAt,
-                AppClient::getClientIssuedAt,
-                AppClient::getAuthenticationMethods,
-                AppClient::getAuthorizationGrantTypes,
-                AppClient::getScopes,
-                AppClient::getRedirectUris,
-                AppClient::getState,
-                AppClient::getCreateBy,
-                AppClient::getCreateTime,
-                AppClient::getUpdateBy,
-                AppClient::getUpdateTime
+            AppClient::getId,
+            AppClient::getAppKey,
+            AppClient::getAppName,
+            AppClient::getAppLogo,
+            AppClient::getClientSecretExpiresAt,
+            AppClient::getClientIssuedAt,
+            AppClient::getAuthenticationMethods,
+            AppClient::getAuthorizationGrantTypes,
+            AppClient::getScopes,
+            AppClient::getRedirectUris,
+            AppClient::getState,
+            AppClient::getCreateBy,
+            AppClient::getCreateTime,
+            AppClient::getUpdateBy,
+            AppClient::getUpdateTime
         );
         wrapper.eq(StrUtil.isNotBlank(param.getAppKey()), AppClient::getAppKey, param.getAppKey());
         wrapper.like(StrUtil.isNotBlank(param.getAppName()), AppClient::getAppName, param.getAppName());
@@ -142,16 +142,16 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
     public List<AppClientDTO> listByKeyword(String keyword) {
         LambdaQueryWrapper<AppClient> wrapper = queryWrapper();
         wrapper.select(
-                AppClient::getId,
-                AppClient::getAppKey,
-                AppClient::getAppSecret,
-                AppClient::getAppName,
-                AppClient::getAppLogo,
-                AppClient::getClientSecretExpiresAt,
-                AppClient::getClientIssuedAt,
-                AppClient::getAuthenticationMethods,
-                AppClient::getAuthorizationGrantTypes,
-                AppClient::getState
+            AppClient::getId,
+            AppClient::getAppKey,
+            AppClient::getAppSecret,
+            AppClient::getAppName,
+            AppClient::getAppLogo,
+            AppClient::getClientSecretExpiresAt,
+            AppClient::getClientIssuedAt,
+            AppClient::getAuthenticationMethods,
+            AppClient::getAuthorizationGrantTypes,
+            AppClient::getState
         );
         wrapper.like(StrUtil.isNotBlank(keyword), AppClient::getAppName, keyword);
         wrapper.like(StrUtil.isNotBlank(keyword), AppClient::getAppKey, keyword);
@@ -224,15 +224,15 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
     public List<AppClientDTO> listAll() {
         LambdaQueryWrapper<AppClient> wrapper = queryWrapper();
         wrapper.select(
-                AppClient::getId,
-                AppClient::getAppKey,
-                AppClient::getAppName,
-                AppClient::getAppLogo,
-                AppClient::getClientSecretExpiresAt,
-                AppClient::getClientIssuedAt,
-                AppClient::getAuthenticationMethods,
-                AppClient::getAuthorizationGrantTypes,
-                AppClient::getState
+            AppClient::getId,
+            AppClient::getAppKey,
+            AppClient::getAppName,
+            AppClient::getAppLogo,
+            AppClient::getClientSecretExpiresAt,
+            AppClient::getClientIssuedAt,
+            AppClient::getAuthenticationMethods,
+            AppClient::getAuthorizationGrantTypes,
+            AppClient::getState
         );
         wrapper.eq(AppClient::getState, ClientStateEnum.ENABLE);
         return AppClientConvert.INSTANCE.toDTO(this.list(wrapper));

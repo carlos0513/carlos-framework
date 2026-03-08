@@ -102,7 +102,7 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
      */
     protected Authentication doAuthenticate(T authenticationToken,
                                             UsernamePasswordAuthenticationToken userAuthenticationToken)
-            throws AuthenticationException {
+        throws AuthenticationException {
 
         OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(authenticationToken);
 
@@ -146,30 +146,30 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
             // @formatter:on
 
             OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization
-                    .withRegisteredClient(registeredClient).principalName(usernamePasswordAuthentication.getName())
-                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                    // .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes)
-                    ;
+                .withRegisteredClient(registeredClient).principalName(usernamePasswordAuthentication.getName())
+                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                // .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes)
+                ;
 
             // ----- Access token -----
             OAuth2TokenContext tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.ACCESS_TOKEN).build();
             OAuth2Token generatedAccessToken = this.tokenGenerator.generate(tokenContext);
             if (generatedAccessToken == null) {
                 OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR,
-                        "The token generator failed to generate the access token.", ERROR_URI);
+                    "The token generator failed to generate the access token.", ERROR_URI);
                 throw
-                        new OAuth2AuthenticationException(error);
+                    new OAuth2AuthenticationException(error);
             }
             OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER,
-                    generatedAccessToken.getTokenValue(), generatedAccessToken.getIssuedAt(),
-                    generatedAccessToken.getExpiresAt(), tokenContext.getAuthorizedScopes());
+                generatedAccessToken.getTokenValue(), generatedAccessToken.getIssuedAt(),
+                generatedAccessToken.getExpiresAt(), tokenContext.getAuthorizedScopes());
             if (generatedAccessToken instanceof ClaimAccessor) {
                 authorizationBuilder.id(accessToken.getTokenValue())
-                        .token(accessToken,
-                                (metadata) -> metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME,
-                                        ((ClaimAccessor) generatedAccessToken).getClaims()))
-                        // .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes)
-                        .attribute(Principal.class.getName(), usernamePasswordAuthentication);
+                    .token(accessToken,
+                        (metadata) -> metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME,
+                            ((ClaimAccessor) generatedAccessToken).getClaims()))
+                    // .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes)
+                    .attribute(Principal.class.getName(), usernamePasswordAuthentication);
             } else {
                 authorizationBuilder.id(accessToken.getTokenValue()).accessToken(accessToken);
             }
@@ -177,8 +177,8 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
             // ----- Refresh token -----
             OAuth2RefreshToken refreshToken = null;
             if (registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.REFRESH_TOKEN) &&
-                    // Do not issue refresh token to public client
-                    !clientPrincipal.getClientAuthenticationMethod().equals(ClientAuthenticationMethod.NONE)) {
+                // Do not issue refresh token to public client
+                !clientPrincipal.getClientAuthenticationMethod().equals(ClientAuthenticationMethod.NONE)) {
 
                 if (this.refreshTokenGenerator != null) {
                     Instant issuedAt = Instant.now();
@@ -189,7 +189,7 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
                     OAuth2Token generatedRefreshToken = this.tokenGenerator.generate(tokenContext);
                     if (!(generatedRefreshToken instanceof OAuth2RefreshToken)) {
                         OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR,
-                                "The token generator failed to generate the refresh token.", ERROR_URI);
+                            "The token generator failed to generate the refresh token.", ERROR_URI);
                         throw new OAuth2AuthenticationException(error);
                     }
                     refreshToken = (OAuth2RefreshToken) generatedRefreshToken;
@@ -204,7 +204,7 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
             log.debug("returning OAuth2AccessTokenAuthenticationToken");
 
             return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken,
-                    refreshToken, Objects.requireNonNull(authorization.getAccessToken().getClaims()));
+                refreshToken, Objects.requireNonNull(authorization.getAccessToken().getClaims()));
 
         } catch (Exception ex) {
             log.error("problem in authenticate", ex);
@@ -251,7 +251,7 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
     }
 
     private OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(
-            Authentication authentication) {
+        Authentication authentication) {
 
         OAuth2ClientAuthenticationToken clientPrincipal = null;
 

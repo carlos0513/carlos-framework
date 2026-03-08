@@ -76,12 +76,12 @@ public class OperationAuditAspect {
             }
 
             recordAuditLog(currentUser, operationType, resourceType,
-                    resourceId, beforeValue, afterValue, request);
+                resourceId, beforeValue, afterValue, request);
 
             return result;
         } catch (Exception e) {
             log.error("Operation audit error: operation={}, user={}",
-                    operationType, currentUser.getUsername(), e);
+                operationType, currentUser.getUsername(), e);
             throw e;
         }
     }
@@ -125,7 +125,7 @@ public class OperationAuditAspect {
     private HttpServletRequest getCurrentRequest() {
         try {
             ServletRequestAttributes attributes =
-                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             return attributes != null ? attributes.getRequest() : null;
         } catch (Exception e) {
             return null;
@@ -176,7 +176,7 @@ public class OperationAuditAspect {
             auditOperationMapper.insert(audit);
 
             log.info("Operation audit recorded: user={}, operation={}, type={}",
-                    user.getUsername(), operationType, resourceType);
+                user.getUsername(), operationType, resourceType);
         } catch (Exception e) {
             log.error("Failed to record operation audit", e);
         }

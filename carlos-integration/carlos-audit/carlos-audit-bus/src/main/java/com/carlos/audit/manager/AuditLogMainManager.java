@@ -8,6 +8,7 @@ import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseService;
 
 import java.io.Serializable;
+
 /**
  * <p>
  * 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据） 查询封装接口

@@ -35,7 +35,7 @@ public class IMinioAsyncClient extends MinioAsyncClient {
      * 获取公网临时访问地址
      */
     public String getPresignedObjectPublicUrl(GetPresignedObjectUrlArgs args)
-            throws InsufficientDataException, IOException, NoSuchAlgorithmException, InvalidKeyException, XmlParserException, InternalException, ExecutionException, InterruptedException {
+        throws InsufficientDataException, IOException, NoSuchAlgorithmException, InvalidKeyException, XmlParserException, InternalException, ExecutionException, InterruptedException {
         return getPresignedObjectUrl(args, publicBaseUrl);
     }
 
@@ -43,9 +43,9 @@ public class IMinioAsyncClient extends MinioAsyncClient {
      * 获取临时访问地址，可以指定baseurl
      */
     public String getPresignedObjectUrl(GetPresignedObjectUrlArgs args, String endpoint)
-            throws InsufficientDataException, InternalException,
-            InvalidKeyException, IOException, NoSuchAlgorithmException,
-            XmlParserException, ExecutionException, InterruptedException {
+        throws InsufficientDataException, InternalException,
+        InvalidKeyException, IOException, NoSuchAlgorithmException,
+        XmlParserException, ExecutionException, InterruptedException {
 
         checkArgs(args);
 
@@ -72,13 +72,13 @@ public class IMinioAsyncClient extends MinioAsyncClient {
             url = url.newBuilder(url.toString().replace(baseUrl.toString(), endpoint)).build();
         }
         Request request =
-                createRequest(
-                        url,
-                        args.method(),
-                        args.extraHeaders() == null ? null : httpHeaders(args.extraHeaders()),
-                        body,
-                        0,
-                        creds);
+            createRequest(
+                url,
+                args.method(),
+                args.extraHeaders() == null ? null : httpHeaders(args.extraHeaders()),
+                body,
+                0,
+                creds);
         url = Signer.presignV4(request, region, creds.accessKey(), creds.secretKey(), args.expiry());
         return url.toString();
     }

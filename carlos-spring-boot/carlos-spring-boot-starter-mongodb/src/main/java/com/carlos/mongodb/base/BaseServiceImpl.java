@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @SuppressWarnings("unchecked")
 public class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID>
-        implements BaseService<T, ID> {
+    implements BaseService<T, ID> {
 
     /**
      * 实体类型(Service对应的实体类)
@@ -102,7 +102,7 @@ public class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID>
 
         // 从field取出字段名，可以根据实际情况调整
         final org.springframework.data.mongodb.core.mapping.Field fieldAnnotation =
-                field.getAnnotation(org.springframework.data.mongodb.core.mapping.Field.class);
+            field.getAnnotation(org.springframework.data.mongodb.core.mapping.Field.class);
         if (fieldAnnotation != null && fieldAnnotation.value().length() > 0) {
             columnName = fieldAnnotation.value();
         } else {

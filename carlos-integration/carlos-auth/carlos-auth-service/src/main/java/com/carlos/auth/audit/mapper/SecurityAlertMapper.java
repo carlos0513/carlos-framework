@@ -12,12 +12,12 @@ import java.util.List;
 public interface SecurityAlertMapper extends BaseMapper<SecurityAlert> {
 
     @Select("SELECT * FROM security_alert " +
-            "WHERE user_id = #{userId} " +
-            "ORDER BY create_time DESC")
+        "WHERE user_id = #{userId} " +
+        "ORDER BY create_time DESC")
     List<SecurityAlert> selectByUserId(@Param("userId") Long userId);
 
     @Select("SELECT * FROM security_alert " +
-            "WHERE handled = 0 " +
-            "ORDER BY create_time DESC")
+        "WHERE handled = 0 " +
+        "ORDER BY create_time DESC")
     List<SecurityAlert> selectUnhandled();
 }

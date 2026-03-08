@@ -46,11 +46,11 @@ public class MfaController {
             MfaService.MfaSetupInfo setupInfo = mfaService.generateMfaSetup(username);
 
             MfaSetupResponse response = MfaSetupResponse.builder()
-                    .secret(setupInfo.getSecret())
-                    .qrCodeUrl(setupInfo.getQrCodeUrl())
-                    .formattedSecret(setupInfo.getFormattedSecret())
-                    .recoveryCodes(setupInfo.getRecoveryCodes())
-                    .build();
+                .secret(setupInfo.getSecret())
+                .qrCodeUrl(setupInfo.getQrCodeUrl())
+                .formattedSecret(setupInfo.getFormattedSecret())
+                .recoveryCodes(setupInfo.getRecoveryCodes())
+                .build();
 
             return Result.ok(response, "MFA设置信息生成成功");
         } catch (Exception e) {
@@ -129,11 +129,11 @@ public class MfaController {
             MfaService.MfaSetupInfo setupInfo = mfaService.resetMfaSecret(username);
 
             MfaSetupResponse response = MfaSetupResponse.builder()
-                    .secret(setupInfo.getSecret())
-                    .qrCodeUrl(setupInfo.getQrCodeUrl())
-                    .formattedSecret(setupInfo.getFormattedSecret())
-                    .recoveryCodes(setupInfo.getRecoveryCodes())
-                    .build();
+                .secret(setupInfo.getSecret())
+                .qrCodeUrl(setupInfo.getQrCodeUrl())
+                .formattedSecret(setupInfo.getFormattedSecret())
+                .recoveryCodes(setupInfo.getRecoveryCodes())
+                .build();
 
             return Result.ok(response, "MFA密钥重置成功");
         } catch (Exception e) {
@@ -158,8 +158,8 @@ public class MfaController {
             boolean enabled = mfaService.isMfaEnabled(username);
 
             MfaStatusResponse response = MfaStatusResponse.builder()
-                    .enabled(enabled)
-                    .build();
+                .enabled(enabled)
+                .build();
 
             return Result.ok(response);
         } catch (Exception e) {

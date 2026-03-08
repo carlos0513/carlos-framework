@@ -94,16 +94,16 @@ public class OrgPositionRoleManagerImpl extends BaseServiceImpl<OrgPositionRoleM
         LambdaQueryWrapper<OrgPositionRole> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgPositionRole::getId,
-                OrgPositionRole::getPositionId,
-                OrgPositionRole::getRoleId,
-                OrgPositionRole::getDefaultRole,
-                OrgPositionRole::getState,
-                OrgPositionRole::getCreateBy,
-                OrgPositionRole::getCreateTime,
-                OrgPositionRole::getUpdateBy,
-                OrgPositionRole::getUpdateTime,
-                OrgPositionRole::getTenantId
+            OrgPositionRole::getId,
+            OrgPositionRole::getPositionId,
+            OrgPositionRole::getRoleId,
+            OrgPositionRole::getDefaultRole,
+            OrgPositionRole::getState,
+            OrgPositionRole::getCreateBy,
+            OrgPositionRole::getCreateTime,
+            OrgPositionRole::getUpdateBy,
+            OrgPositionRole::getUpdateTime,
+            OrgPositionRole::getTenantId
         );
         PageInfo<OrgPositionRole> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgPositionRoleConvert.INSTANCE::toVO);

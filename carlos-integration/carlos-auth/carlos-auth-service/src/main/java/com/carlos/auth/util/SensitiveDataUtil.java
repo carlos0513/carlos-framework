@@ -229,9 +229,9 @@ public class SensitiveDataUtil {
 
         String lowerName = fieldName.toLowerCase();
         String[] sensitiveWords = {
-                "password", "pwd", "token", "secret", "key",
-                "credential", "auth", "phone", "mobile",
-                "email", "idcard", "bankcard", "credit"
+            "password", "pwd", "token", "secret", "key",
+            "credential", "auth", "phone", "mobile",
+            "email", "idcard", "bankcard", "credit"
         };
 
         for (String word : sensitiveWords) {

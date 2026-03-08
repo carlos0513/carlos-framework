@@ -20,7 +20,7 @@ public class SM4UtilTest {
         String realKey = DigestUtil.md5Hex16(key);
         String iv = DigestUtil.md5Hex16(StrUtil.subWithLength(key, 0, 16));
         SM4 sm4 = new SM4(Mode.CBC, Padding.PKCS5Padding,
-                realKey.getBytes(), iv.getBytes());
+            realKey.getBytes(), iv.getBytes());
         // sm4 = new SM4(Mode.ECB, Padding.PKCS5Padding,
         //         realKey.getBytes());
 

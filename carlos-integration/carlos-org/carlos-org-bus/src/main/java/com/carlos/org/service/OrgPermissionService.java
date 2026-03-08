@@ -85,7 +85,7 @@ public class OrgPermissionService {
             throw new OrgModuleException("新增权限失败");
         }
         log.info("PM-002 新增权限成功：id={}, permName={}, permCode={}",
-                dto.getId(), dto.getPermName(), dto.getPermCode());
+            dto.getId(), dto.getPermName(), dto.getPermCode());
     }
 
 

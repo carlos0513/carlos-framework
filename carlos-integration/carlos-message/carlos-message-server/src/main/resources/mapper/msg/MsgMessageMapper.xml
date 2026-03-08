@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.carlos.msg.base.mapper.MsgMessageMapper">
-    <resultMap type="com.carlos.msg.base.pojo.entity.MsgMessage" id="baseMap">
-                <id column="id" property="id"/>
-                <result column="template_id" property="templateId"/>
-                <result column="sender" property="sender"/>
-                <result column="message_type" property="messageType"/>
-                <result column="message_title" property="messageTitle"/>
-                <result column="message_content" property="messageContent"/>
-                <result column="message_remark" property="messageRemark"/>
-                <result column="source_business" property="sourceBusiness"/>
-                <result column="send_user_id" property="sendUserId"/>
-                <result column="send_user_name" property="sendUserName"/>
-                <result column="feedback_type" property="feedbackType"/>
-                <result column="feedback_content" property="feedbackContent"/>
-                <result column="priority" property="priority"/>
-                <result column="push_channel" property="pushChannel"/>
-                <result column="create_by" property="createBy"/>
-                <result column="create_time" property="createTime"/>
-    </resultMap>
-
-
+  <resultMap type="com.carlos.msg.base.pojo.entity.MsgMessage" id="baseMap">
+    <id column="id" property="id"/>
+    <result column="template_id" property="templateId"/>
+    <result column="sender" property="sender"/>
+    <result column="message_type" property="messageType"/>
+    <result column="message_title" property="messageTitle"/>
+    <result column="message_content" property="messageContent"/>
+    <result column="message_remark" property="messageRemark"/>
+    <result column="source_business" property="sourceBusiness"/>
+    <result column="send_user_id" property="sendUserId"/>
+    <result column="send_user_name" property="sendUserName"/>
+    <result column="feedback_type" property="feedbackType"/>
+    <result column="feedback_content" property="feedbackContent"/>
+    <result column="priority" property="priority"/>
+    <result column="push_channel" property="pushChannel"/>
+    <result column="create_by" property="createBy"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
 </mapper>

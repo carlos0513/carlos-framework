@@ -65,14 +65,14 @@ public class MfaRecoveryCodeService {
 
         // 保存新的恢复码
         List<MfaRecoveryCode> entities = recoveryCodes.stream()
-                .map(code -> {
-                    MfaRecoveryCode entity = new MfaRecoveryCode();
-                    entity.setUserId(userId);
-                    entity.setCode(code);
-                    entity.setUsed(false);
-                    return entity;
-                })
-                .collect(Collectors.toList());
+            .map(code -> {
+                MfaRecoveryCode entity = new MfaRecoveryCode();
+                entity.setUserId(userId);
+                entity.setCode(code);
+                entity.setUsed(false);
+                return entity;
+            })
+            .collect(Collectors.toList());
 
         // 批量保存
         for (MfaRecoveryCode entity : entities) {
@@ -96,9 +96,9 @@ public class MfaRecoveryCodeService {
 
         // 查找未使用的恢复码
         LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-                .eq(MfaRecoveryCode::getUserId, userId)
-                .eq(MfaRecoveryCode::getCode, code.toUpperCase())
-                .eq(MfaRecoveryCode::getUsed, false);
+            .eq(MfaRecoveryCode::getUserId, userId)
+            .eq(MfaRecoveryCode::getCode, code.toUpperCase())
+            .eq(MfaRecoveryCode::getUsed, false);
 
         MfaRecoveryCode recoveryCode = recoveryCodeMapper.selectOne(queryWrapper);
 
@@ -109,9 +109,9 @@ public class MfaRecoveryCodeService {
 
         // 标记为已使用
         LambdaUpdateWrapper<MfaRecoveryCode> updateWrapper = new LambdaUpdateWrapper<MfaRecoveryCode>()
-                .eq(MfaRecoveryCode::getId, recoveryCode.getId())
-                .set(MfaRecoveryCode::getUsed, true)
-                .set(MfaRecoveryCode::getUsedTime, LocalDateTime.now());
+            .eq(MfaRecoveryCode::getId, recoveryCode.getId())
+            .set(MfaRecoveryCode::getUsed, true)
+            .set(MfaRecoveryCode::getUsedTime, LocalDateTime.now());
 
         recoveryCodeMapper.update(null, updateWrapper);
 
@@ -132,9 +132,9 @@ public class MfaRecoveryCodeService {
         }
 
         LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-                .eq(MfaRecoveryCode::getUserId, userId)
-                .eq(MfaRecoveryCode::getCode, code.toUpperCase())
-                .eq(MfaRecoveryCode::getUsed, false);
+            .eq(MfaRecoveryCode::getUserId, userId)
+            .eq(MfaRecoveryCode::getCode, code.toUpperCase())
+            .eq(MfaRecoveryCode::getUsed, false);
 
         Long count = recoveryCodeMapper.selectCount(queryWrapper);
         return count != null && count > 0;
@@ -152,14 +152,14 @@ public class MfaRecoveryCodeService {
         }
 
         LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-                .eq(MfaRecoveryCode::getUserId, userId)
-                .eq(MfaRecoveryCode::getUsed, false);
+            .eq(MfaRecoveryCode::getUserId, userId)
+            .eq(MfaRecoveryCode::getUsed, false);
 
         List<MfaRecoveryCode> codes = recoveryCodeMapper.selectList(queryWrapper);
 
         return codes.stream()
-                .map(MfaRecoveryCode::getCode)
-                .collect(Collectors.toList());
+            .map(MfaRecoveryCode::getCode)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -174,8 +174,8 @@ public class MfaRecoveryCodeService {
         }
 
         LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-                .eq(MfaRecoveryCode::getUserId, userId)
-                .eq(MfaRecoveryCode::getUsed, false);
+            .eq(MfaRecoveryCode::getUserId, userId)
+            .eq(MfaRecoveryCode::getUsed, false);
 
         Long count = recoveryCodeMapper.selectCount(queryWrapper);
         return count != null && count > 0;
@@ -192,7 +192,7 @@ public class MfaRecoveryCodeService {
         }
 
         LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-                .eq(MfaRecoveryCode::getUserId, userId);
+            .eq(MfaRecoveryCode::getUserId, userId);
 
         recoveryCodeMapper.delete(queryWrapper);
 

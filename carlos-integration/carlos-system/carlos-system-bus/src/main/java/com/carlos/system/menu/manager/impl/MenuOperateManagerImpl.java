@@ -97,18 +97,18 @@ public class MenuOperateManagerImpl extends BaseServiceImpl<MenuOperateMapper, M
     public Paging<MenuOperateVO> getPage(MenuOperatePageParam param) {
         LambdaQueryWrapper<MenuOperate> wrapper = queryWrapper();
         wrapper.select(
-                MenuOperate::getId,
-                MenuOperate::getOperateName,
-                MenuOperate::getOperateCode,
-                MenuOperate::getPath,
-                MenuOperate::getOperateMethod,
-                MenuOperate::getIcon,
-                MenuOperate::getOperateType,
-                MenuOperate::getState,
-                MenuOperate::getHidden,
-                MenuOperate::getDescription,
-                MenuOperate::getCreateTime,
-                MenuOperate::getUpdateTime
+            MenuOperate::getId,
+            MenuOperate::getOperateName,
+            MenuOperate::getOperateCode,
+            MenuOperate::getPath,
+            MenuOperate::getOperateMethod,
+            MenuOperate::getIcon,
+            MenuOperate::getOperateType,
+            MenuOperate::getState,
+            MenuOperate::getHidden,
+            MenuOperate::getDescription,
+            MenuOperate::getCreateTime,
+            MenuOperate::getUpdateTime
         );
         PageInfo<MenuOperate> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, MenuOperateConvert.INSTANCE::toVO);
@@ -117,10 +117,10 @@ public class MenuOperateManagerImpl extends BaseServiceImpl<MenuOperateMapper, M
     @Override
     public List<MenuOperateDTO> listByKeyword(String keyword) {
         List<MenuOperate> list = lambdaQuery()
-                .like(StrUtil.isNotBlank(keyword), MenuOperate::getOperateName, keyword)
-                .or(StrUtil.isNotBlank(keyword))
-                .like(StrUtil.isNotBlank(keyword), MenuOperate::getDescription, keyword)
-                .list();
+            .like(StrUtil.isNotBlank(keyword), MenuOperate::getOperateName, keyword)
+            .or(StrUtil.isNotBlank(keyword))
+            .like(StrUtil.isNotBlank(keyword), MenuOperate::getDescription, keyword)
+            .list();
         return MenuOperateConvert.INSTANCE.toDTO(list);
     }
 

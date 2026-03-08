@@ -94,7 +94,7 @@ public class DefaultDataScopeHandler implements DataScopeHandler {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         DefaultParameterNameDiscoverer u =
-                new DefaultParameterNameDiscoverer();
+            new DefaultParameterNameDiscoverer();
         Object[] args = joinPoint.getArgs();
         String[] paramNames = u.getParameterNames(method);
         HashMap<String, Object> map = Maps.newHashMap();

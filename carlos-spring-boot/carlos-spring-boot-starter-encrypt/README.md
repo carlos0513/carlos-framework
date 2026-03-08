@@ -2,7 +2,8 @@
 
 ## 模块简介
 
-`carlos-spring-boot-starter-encrypt` 是 Carlos 框架的加密工具模块，提供了基于中国国密算法的加密解密功能。该模块支持 SM2（非对称加密）和 SM4（对称加密）两种国密算法，基于 BouncyCastle 1.70 和 Hutool 5.8.40 实现。
+`carlos-spring-boot-starter-encrypt` 是 Carlos 框架的加密工具模块，提供了基于中国国密算法的加密解密功能。该模块支持
+SM2（非对称加密）和 SM4（对称加密）两种国密算法，基于 BouncyCastle 1.70 和 Hutool 5.8.40 实现。
 
 ## 主要功能
 

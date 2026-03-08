@@ -18,15 +18,15 @@ public interface BootConstant {
      * 通用忽略过滤路径
      */
     Set<String> COMMON_EXCLUDE_PATH = Sets.newHashSet(
-            "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/doc.html",
-            "/favicon.ico",
-            "/swagger-resources/**",
-            "/v3/api-docs/**",
-            "/webjars/**",
-            "/csrf",
-            "/v3/api-docs-ext"
+        "/swagger-ui.html",
+        "/swagger-ui/**",
+        "/doc.html",
+        "/favicon.ico",
+        "/swagger-resources/**",
+        "/v3/api-docs/**",
+        "/webjars/**",
+        "/csrf",
+        "/v3/api-docs-ext"
     );
 
     /**

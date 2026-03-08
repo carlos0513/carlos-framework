@@ -72,13 +72,13 @@ public class SysDictManagerImpl extends ServiceImpl<SysDictMapper, SysDict> impl
     @Override
     public SysDictDTO getDictById(Serializable id) {
         SysDict one = lambdaQuery()
-                .select(SysDict::getId,
-                        SysDict::getDictCode,
-                        SysDict::getDictName,
-                        SysDict::getType,
-                        SysDict::getDescription)
-                .eq(SysDict::getId, id)
-                .one();
+            .select(SysDict::getId,
+                SysDict::getDictCode,
+                SysDict::getDictName,
+                SysDict::getType,
+                SysDict::getDescription)
+            .eq(SysDict::getId, id)
+            .one();
         return SysDictConvert.INSTANCE.toDTO(one);
     }
 
@@ -91,12 +91,12 @@ public class SysDictManagerImpl extends ServiceImpl<SysDictMapper, SysDict> impl
     @Override
     public List<SysDictDTO> listDict(String name) {
         LambdaQueryWrapper<SysDict> wrapper = Wrappers
-                .lambdaQuery(SysDict.class)
-                .select(SysDict::getId,
-                        SysDict::getDictCode,
-                        SysDict::getDictName,
-                        SysDict::getType,
-                        SysDict::getDescription);
+            .lambdaQuery(SysDict.class)
+            .select(SysDict::getId,
+                SysDict::getDictCode,
+                SysDict::getDictName,
+                SysDict::getType,
+                SysDict::getDescription);
         if (StringUtils.isNotBlank(name)) {
             wrapper.like(SysDict::getDictName, name);
         }
@@ -122,12 +122,12 @@ public class SysDictManagerImpl extends ServiceImpl<SysDictMapper, SysDict> impl
             return null;
         }
         LambdaQueryWrapper<SysDict> wrapper = Wrappers
-                .lambdaQuery(SysDict.class)
-                .select(SysDict::getId,
-                        SysDict::getDictCode,
-                        SysDict::getDictName,
-                        SysDict::getType,
-                        SysDict::getDescription);
+            .lambdaQuery(SysDict.class)
+            .select(SysDict::getId,
+                SysDict::getDictCode,
+                SysDict::getDictName,
+                SysDict::getType,
+                SysDict::getDescription);
         wrapper.in(SysDict::getId, ids);
         List<SysDict> dicts = dictMapper.selectList(wrapper);
         return SysDictConvert.INSTANCE.toDTO(dicts);

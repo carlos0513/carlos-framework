@@ -41,15 +41,15 @@ public class OssController {
     @Operation(summary = "获取 OSS 初始化信息")
     public Result<OssClientInfo> init() {
         return Result.ok(OssClientInfo.builder()
-                .endpoint(properties.getEndpoint())
-                .publicEndpoint(properties.getPublicEndpoint())
-                .accessKey(properties.getAccessKey())
-                .secretKey(properties.getSecretKey())
-                .defaultBucket(properties.getBucketName())
-                .region(properties.getRegion())
-                .pathStyleAccess(properties.isPathStyleAccess())
-                .type(properties.getType() != null ? properties.getType().name() : null)
-                .build());
+            .endpoint(properties.getEndpoint())
+            .publicEndpoint(properties.getPublicEndpoint())
+            .accessKey(properties.getAccessKey())
+            .secretKey(properties.getSecretKey())
+            .defaultBucket(properties.getBucketName())
+            .region(properties.getRegion())
+            .pathStyleAccess(properties.isPathStyleAccess())
+            .type(properties.getType() != null ? properties.getType().name() : null)
+            .build());
     }
 
     /**
@@ -111,16 +111,16 @@ public class OssController {
     @Parameter(name = "objectName", description = "对象名称（可选，默认使用原文件名）")
     @Parameter(name = "bucketName", description = "桶名称（可选，默认使用配置桶）")
     public Result<OssFile> upload(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam(required = false) String objectName,
-            @RequestParam(required = false) String bucketName) {
-        
+        @RequestParam("file") MultipartFile file,
+        @RequestParam(required = false) String objectName,
+        @RequestParam(required = false) String bucketName) {
+
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
         String targetObject = objectName != null ? objectName : file.getOriginalFilename();
-        
+
         try {
-            OssFile ossFile = ossTemplate.putObject(targetBucket, targetObject, 
-                    file.getInputStream(), file.getContentType());
+            OssFile ossFile = ossTemplate.putObject(targetBucket, targetObject,
+                file.getInputStream(), file.getContentType());
             return Result.ok(ossFile);
         } catch (Exception e) {
             log.error("Failed to upload file", e);
@@ -136,8 +136,8 @@ public class OssController {
     @Parameter(name = "objectName", description = "对象名称")
     @Parameter(name = "bucketName", description = "桶名称（可选）")
     public Result<OssFile> getObjectInfo(
-            @RequestParam String objectName,
-            @RequestParam(required = false) String bucketName) {
+        @RequestParam String objectName,
+        @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
         return Result.ok(ossTemplate.getObjectInfo(targetBucket, objectName));
     }
@@ -150,8 +150,8 @@ public class OssController {
     @Parameter(name = "objectName", description = "对象名称")
     @Parameter(name = "bucketName", description = "桶名称（可选）")
     public Result<Boolean> objectExists(
-            @RequestParam String objectName,
-            @RequestParam(required = false) String bucketName) {
+        @RequestParam String objectName,
+        @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
         return Result.ok(ossTemplate.objectExists(targetBucket, objectName));
     }
@@ -164,8 +164,8 @@ public class OssController {
     @Parameter(name = "objectName", description = "对象名称")
     @Parameter(name = "bucketName", description = "桶名称（可选）")
     public Result<Void> deleteObject(
-            @RequestParam String objectName,
-            @RequestParam(required = false) String bucketName) {
+        @RequestParam String objectName,
+        @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
         ossTemplate.deleteObject(targetBucket, objectName);
         return Result.ok();
@@ -179,8 +179,8 @@ public class OssController {
     @Parameter(name = "objectName", description = "对象名称")
     @Parameter(name = "bucketName", description = "桶名称（可选）")
     public Result<String> getObjectUrl(
-            @RequestParam String objectName,
-            @RequestParam(required = false) String bucketName) {
+        @RequestParam String objectName,
+        @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
         return Result.ok(ossTemplate.getObjectUrl(targetBucket, objectName));
     }
@@ -194,9 +194,9 @@ public class OssController {
     @Parameter(name = "bucketName", description = "桶名称（可选）")
     @Parameter(name = "expires", description = "过期时间（秒，默认3600）")
     public Result<String> getPresignedUrl(
-            @RequestParam String objectName,
-            @RequestParam(required = false) String bucketName,
-            @RequestParam(required = false, defaultValue = "3600") int expires) {
+        @RequestParam String objectName,
+        @RequestParam(required = false) String bucketName,
+        @RequestParam(required = false, defaultValue = "3600") int expires) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
         return Result.ok(ossTemplate.getPresignedUrl(targetBucket, objectName, expires));
     }
@@ -209,8 +209,8 @@ public class OssController {
     @Parameter(name = "prefix", description = "前缀（可选）")
     @Parameter(name = "bucketName", description = "桶名称（可选）")
     public Result<List<OssFile>> listObjects(
-            @RequestParam(required = false) String prefix,
-            @RequestParam(required = false) String bucketName) {
+        @RequestParam(required = false) String prefix,
+        @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
         return Result.ok(ossTemplate.listObjects(targetBucket, prefix));
     }

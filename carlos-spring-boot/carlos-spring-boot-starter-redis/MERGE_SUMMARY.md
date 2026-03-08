@@ -2,7 +2,8 @@
 
 ## 合并概述
 
-已成功将 `carlos-spring-boot-starter-redisson` 模块合并到 `carlos-spring-boot-starter-redis` 模块中，并集成了 Caffeine 本地缓存和多级缓存功能。
+已成功将 `carlos-spring-boot-starter-redisson` 模块合并到 `carlos-spring-boot-starter-redis` 模块中，并集成了 Caffeine
+本地缓存和多级缓存功能。
 
 ## 合并日期
 
@@ -335,4 +336,5 @@ mvn dependency:tree
 
 ## 总结
 
-本次合并成功将 Redisson 分布式锁、Caffeine 本地缓存和 Redis 基础功能整合到一个统一的模块中，提供了更强大、更易用的 Redis 解决方案。合并后的模块不仅保持了原有功能的完整性，还新增了多级缓存等高级特性，为项目提供了更好的性能和开发体验。
+本次合并成功将 Redisson 分布式锁、Caffeine 本地缓存和 Redis 基础功能整合到一个统一的模块中，提供了更强大、更易用的 Redis
+解决方案。合并后的模块不仅保持了原有功能的完整性，还新增了多级缓存等高级特性，为项目提供了更好的性能和开发体验。

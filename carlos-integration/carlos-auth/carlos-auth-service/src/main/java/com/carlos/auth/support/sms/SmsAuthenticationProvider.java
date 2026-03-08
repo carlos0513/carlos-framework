@@ -19,7 +19,7 @@ import java.util.Map;
  * @Description: 短信登录的核心处理
  */
 public class SmsAuthenticationProvider
-        extends BaseAuthenticationProvider<SmsAuthenticationToken> {
+    extends BaseAuthenticationProvider<SmsAuthenticationToken> {
 
     private static final Logger LOGGER = LogManager.getLogger(SmsAuthenticationProvider.class);
 

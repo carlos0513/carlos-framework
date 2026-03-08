@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+
 /**
  * <p>
  * 审计日志宽主表（合并数据变更、技术上下文、标签、附件，保留7天热数据） 查询封装实现类

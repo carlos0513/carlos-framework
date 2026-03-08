@@ -57,9 +57,9 @@ public class AccessTokenParam implements Serializable {
      */
     public Map<String, String> toMap() {
         return BeanCopier.create(this, new LinkedHashMap<String, String>(),
-                CopyOptions.create()
-                        .setIgnoreNullValue(true)
-                        .setFieldNameEditor(StrUtil::toUnderlineCase)
+            CopyOptions.create()
+                .setIgnoreNullValue(true)
+                .setFieldNameEditor(StrUtil::toUnderlineCase)
         ).copy();
     }
 }

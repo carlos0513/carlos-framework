@@ -100,8 +100,8 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
         wrapper.orderByAsc(OrgDepartment::getSort);
         PageInfo<OrgDepartment> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, entities -> entities.stream()
-                .map(OrgDepartmentConvert.INSTANCE::toDTO)
-                .collect(java.util.stream.Collectors.toList()));
+            .map(OrgDepartmentConvert.INSTANCE::toDTO)
+            .collect(java.util.stream.Collectors.toList()));
     }
 
     @Override
@@ -110,8 +110,8 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
         wrapper.orderByAsc(OrgDepartment::getSort);
         List<OrgDepartment> list = list(wrapper);
         return list.stream()
-                .map(entity -> OrgDepartmentConvert.INSTANCE.toDTO(entity))
-                .collect(Collectors.toList());
+            .map(entity -> OrgDepartmentConvert.INSTANCE.toDTO(entity))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -129,8 +129,8 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
         wrapper.eq(OrgDepartment::getParentId, parentId);
         List<OrgDepartment> list = list(wrapper);
         return list.stream()
-                .map(OrgDepartmentConvert.INSTANCE::toDTO)
-                .collect(Collectors.toList());
+            .map(OrgDepartmentConvert.INSTANCE::toDTO)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -149,8 +149,8 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
         int toIndex = Math.min(fromIndex + param.getSize(), total);
 
         List<OrgDepartmentUserDTO> records = fromIndex < total
-                ? allUsers.subList(fromIndex, toIndex)
-                : Collections.emptyList();
+            ? allUsers.subList(fromIndex, toIndex)
+            : Collections.emptyList();
 
         Paging<OrgDepartmentUserDTO> paging = new Paging<>();
         paging.setCurrent(param.getCurrent());

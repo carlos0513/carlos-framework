@@ -34,13 +34,13 @@ public class JavaTimeModel extends SimpleModule {
         // ======================= 时间序列化规则 ===============================
         // yyyy-MM-dd HH:mm:ss
         this.addSerializer(LocalDateTime.class,
-                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
+            new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
         // yyyy-MM-dd
         this.addSerializer(LocalDate.class,
-                new LocalDateSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
+            new LocalDateSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
         // HH:mm:ss
         this.addSerializer(LocalTime.class,
-                new LocalTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
+            new LocalTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
 
         // Instant 类型序列化
         this.addSerializer(Instant.class, InstantSerializer.INSTANCE);
@@ -48,13 +48,13 @@ public class JavaTimeModel extends SimpleModule {
         // ======================= 时间反序列化规则 ==============================
         // yyyy-MM-dd HH:mm:ss
         this.addDeserializer(LocalDateTime.class,
-                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
+            new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN)));
         // yyyy-MM-dd
         this.addDeserializer(LocalDate.class,
-                new LocalDateDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
+            new LocalDateDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
         // HH:mm:ss
         this.addDeserializer(LocalTime.class,
-                new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
+            new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
         // Instant 反序列化
         this.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
     }

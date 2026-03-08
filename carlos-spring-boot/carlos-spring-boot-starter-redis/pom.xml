@@ -2,67 +2,67 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>com.carlos</groupId>
-        <artifactId>carlos-spring-boot</artifactId>
-        <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+  <parent>
+    <groupId>com.carlos</groupId>
+    <artifactId>carlos-spring-boot</artifactId>
+    <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>carlos-spring-boot-starter-redis</artifactId>
+  <artifactId>carlos-spring-boot-starter-redis</artifactId>
 
-    <description>Redis缓存模块，集成Redisson分布式锁和Caffeine本地缓存，支持多级缓存</description>
+  <description>Redis缓存模块，集成Redisson分布式锁和Caffeine本地缓存，支持多级缓存</description>
 
-    <dependencies>
-      <!-- carlos-spring-boot-core -->
-        <dependency>
-            <groupId>com.carlos</groupId>
-          <artifactId>carlos-spring-boot-core</artifactId>
-        </dependency>
+  <dependencies>
+    <!-- carlos-spring-boot-core -->
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-core</artifactId>
+    </dependency>
 
-        <!-- carlos-spring-boot-starter-json -->
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-json</artifactId>
-        </dependency>
+    <!-- carlos-spring-boot-starter-json -->
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-json</artifactId>
+    </dependency>
 
-        <!-- Spring Boot Redis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
+    <!-- Spring Boot Redis -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
 
-        <!-- Redis连接池 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-        </dependency>
+    <!-- Redis连接池 -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+    </dependency>
 
-        <!-- Redisson分布式锁 -->
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-        </dependency>
+    <!-- Redisson分布式锁 -->
+    <dependency>
+      <groupId>org.redisson</groupId>
+      <artifactId>redisson-spring-boot-starter</artifactId>
+    </dependency>
 
-        <!-- Caffeine本地缓存 -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
+    <!-- Caffeine本地缓存 -->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+    </dependency>
 
-        <!-- Spring Cache -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
+    <!-- Spring Cache -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-cache</artifactId>
+    </dependency>
 
-        <!-- Fastjson -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
+    <!-- Fastjson -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+    </dependency>
 
-    </dependencies>
+  </dependencies>
 </project>

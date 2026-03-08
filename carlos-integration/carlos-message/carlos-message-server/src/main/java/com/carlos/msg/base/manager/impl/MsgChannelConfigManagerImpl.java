@@ -95,15 +95,15 @@ public class MsgChannelConfigManagerImpl extends BaseServiceImpl<MsgChannelConfi
     public Paging<MsgChannelConfigVO> getPage(MsgChannelConfigPageParam param) {
         LambdaQueryWrapper<MsgChannelConfig> wrapper = queryWrapper();
         wrapper.select(
-                MsgChannelConfig::getId,
-                MsgChannelConfig::getChannelType,
-                MsgChannelConfig::getChannelName,
-                MsgChannelConfig::getRemark,
-                MsgChannelConfig::getEnabled,
-                MsgChannelConfig::getCreateBy,
-                MsgChannelConfig::getCreateTime,
-                MsgChannelConfig::getUpdateBy,
-                MsgChannelConfig::getUpdateTime
+            MsgChannelConfig::getId,
+            MsgChannelConfig::getChannelType,
+            MsgChannelConfig::getChannelName,
+            MsgChannelConfig::getRemark,
+            MsgChannelConfig::getEnabled,
+            MsgChannelConfig::getCreateBy,
+            MsgChannelConfig::getCreateTime,
+            MsgChannelConfig::getUpdateBy,
+            MsgChannelConfig::getUpdateTime
         );
         PageInfo<MsgChannelConfig> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, MsgChannelConfigConvert.INSTANCE::toVO);
@@ -124,8 +124,8 @@ public class MsgChannelConfigManagerImpl extends BaseServiceImpl<MsgChannelConfi
             return false;
         }
         return lambdaUpdate()
-                .eq(MsgChannelConfig::getId, id)
-                .set(MsgChannelConfig::getEnabled, enabled)
-                .update();
+            .eq(MsgChannelConfig::getId, id)
+            .set(MsgChannelConfig::getEnabled, enabled)
+            .update();
     }
 }

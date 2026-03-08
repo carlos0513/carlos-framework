@@ -94,14 +94,14 @@ public class OrgDepartmentRoleManagerImpl extends BaseServiceImpl<OrgDepartmentR
         LambdaQueryWrapper<OrgDepartmentRole> wrapper = queryWrapper();
         wrapper.select(
 
-                OrgDepartmentRole::getId,
-                OrgDepartmentRole::getDeptId,
-                OrgDepartmentRole::getRoleId,
-                OrgDepartmentRole::getDefaultRole,
-                OrgDepartmentRole::getCreateBy,
-                OrgDepartmentRole::getCreateTime,
-                OrgDepartmentRole::getUpdateTime,
-                OrgDepartmentRole::getTenantId
+            OrgDepartmentRole::getId,
+            OrgDepartmentRole::getDeptId,
+            OrgDepartmentRole::getRoleId,
+            OrgDepartmentRole::getDefaultRole,
+            OrgDepartmentRole::getCreateBy,
+            OrgDepartmentRole::getCreateTime,
+            OrgDepartmentRole::getUpdateTime,
+            OrgDepartmentRole::getTenantId
         );
         PageInfo<OrgDepartmentRole> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, OrgDepartmentRoleConvert.INSTANCE::toVO);

@@ -2,7 +2,9 @@
 
 ## 模块简介
 
-`carlos-spring-boot-starter-mybatis` 是 Carlos 框架的数据访问层模块，提供了 MyBatis-Plus 集成、多数据源支持、分页查询、数据权限控制、自动填充等功能。该模块基于 MyBatis-Plus 3.5.15 和 Dynamic DataSource 4.3.1 构建，支持 MySQL 和达梦数据库。
+`carlos-spring-boot-starter-mybatis` 是 Carlos 框架的数据访问层模块，提供了 MyBatis-Plus
+集成、多数据源支持、分页查询、数据权限控制、自动填充等功能。该模块基于 MyBatis-Plus 3.5.15 和 Dynamic DataSource 4.3.1 构建，支持
+MySQL 和达梦数据库。
 
 ## 主要功能
 

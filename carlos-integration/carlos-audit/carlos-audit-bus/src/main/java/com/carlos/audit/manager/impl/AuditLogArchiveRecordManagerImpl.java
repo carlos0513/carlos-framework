@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+
 /**
  * <p>
  * 审计日志归档记录（管理冷数据归档） 查询封装实现类

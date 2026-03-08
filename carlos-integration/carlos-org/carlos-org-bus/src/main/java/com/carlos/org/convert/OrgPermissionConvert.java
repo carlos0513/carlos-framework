@@ -46,11 +46,11 @@ public interface OrgPermissionConvert {
     // ==================== DTO ↔ VO ====================
 
     @Mappings({
-            @Mapping(target = "permType", expression = "java(dto.getPermType() != null ? dto.getPermType().getCode() : null)"),
-            @Mapping(target = "permTypeName", expression = "java(dto.getPermType() != null ? dto.getPermType().getDesc() : null)"),
-            @Mapping(target = "state", expression = "java(dto.getState() != null ? dto.getState().getCode() : null)"),
-            @Mapping(target = "stateName", expression = "java(dto.getState() != null ? dto.getState().getDesc() : null)"),
-            @Mapping(target = "children", ignore = true)
+        @Mapping(target = "permType", expression = "java(dto.getPermType() != null ? dto.getPermType().getCode() : null)"),
+        @Mapping(target = "permTypeName", expression = "java(dto.getPermType() != null ? dto.getPermType().getDesc() : null)"),
+        @Mapping(target = "state", expression = "java(dto.getState() != null ? dto.getState().getCode() : null)"),
+        @Mapping(target = "stateName", expression = "java(dto.getState() != null ? dto.getState().getDesc() : null)"),
+        @Mapping(target = "children", ignore = true)
     })
     OrgPermissionVO toVO(OrgPermissionDTO dto);
 
@@ -64,12 +64,12 @@ public interface OrgPermissionConvert {
 
         // 转换为VO
         List<OrgPermissionVO> voList = dtoList.stream()
-                .map(this::toVO)
-                .collect(Collectors.toList());
+            .map(this::toVO)
+            .collect(Collectors.toList());
 
         // 按父ID分组
         Map<Long, List<OrgPermissionVO>> parentMap = voList.stream()
-                .collect(Collectors.groupingBy(vo -> vo.getParentId() != null ? vo.getParentId() : 0L));
+            .collect(Collectors.groupingBy(vo -> vo.getParentId() != null ? vo.getParentId() : 0L));
 
         // 构建树形结构
         return buildTree(parentMap, 0L);

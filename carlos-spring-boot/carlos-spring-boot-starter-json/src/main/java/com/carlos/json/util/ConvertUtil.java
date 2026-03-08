@@ -27,12 +27,12 @@ public class ConvertUtil {
      * 日期格式化数组
      */
     private static final String[] FORMATS = {
-            DatePattern.NORM_DATETIME_MS_PATTERN,
-            DatePattern.NORM_DATETIME_PATTERN,
-            DatePattern.NORM_DATETIME_MINUTE_PATTERN,
-            "yyyy-MM-dd HH",
-            DatePattern.NORM_DATE_PATTERN,
-            "yyyy-MM"
+        DatePattern.NORM_DATETIME_MS_PATTERN,
+        DatePattern.NORM_DATETIME_PATTERN,
+        DatePattern.NORM_DATETIME_MINUTE_PATTERN,
+        "yyyy-MM-dd HH",
+        DatePattern.NORM_DATE_PATTERN,
+        "yyyy-MM"
     };
 
     /**
@@ -113,13 +113,13 @@ public class ConvertUtil {
 
         try {
             Calendar calendar = DateUtil.parseByPatterns(source,
-                    DatePattern.NORM_DATETIME_PATTERN,
-                    DatePattern.NORM_DATETIME_MINUTE_PATTERN,
-                    DatePattern.NORM_DATE_PATTERN,
-                    DatePattern.NORM_MONTH_PATTERN,
-                    DatePattern.NORM_DATETIME_MS_PATTERN,
-                    DatePattern.CHINESE_DATE_TIME_PATTERN,
-                    DatePattern.UTC_MS_WITH_ZONE_OFFSET_PATTERN
+                DatePattern.NORM_DATETIME_PATTERN,
+                DatePattern.NORM_DATETIME_MINUTE_PATTERN,
+                DatePattern.NORM_DATE_PATTERN,
+                DatePattern.NORM_MONTH_PATTERN,
+                DatePattern.NORM_DATETIME_MS_PATTERN,
+                DatePattern.CHINESE_DATE_TIME_PATTERN,
+                DatePattern.UTC_MS_WITH_ZONE_OFFSET_PATTERN
             );
             return CalendarUtil.toLocalDateTime(calendar);
         } catch (Exception e) {
@@ -150,13 +150,13 @@ public class ConvertUtil {
         Calendar calendar;
         try {
             calendar = DateUtil.parseByPatterns(source,
-                    DatePattern.NORM_DATETIME_PATTERN,
-                    DatePattern.NORM_DATETIME_MINUTE_PATTERN,
-                    DatePattern.NORM_DATE_PATTERN,
-                    DatePattern.NORM_MONTH_PATTERN,
-                    DatePattern.NORM_DATETIME_MS_PATTERN,
-                    DatePattern.CHINESE_DATE_TIME_PATTERN,
-                    DatePattern.UTC_MS_WITH_ZONE_OFFSET_PATTERN
+                DatePattern.NORM_DATETIME_PATTERN,
+                DatePattern.NORM_DATETIME_MINUTE_PATTERN,
+                DatePattern.NORM_DATE_PATTERN,
+                DatePattern.NORM_MONTH_PATTERN,
+                DatePattern.NORM_DATETIME_MS_PATTERN,
+                DatePattern.CHINESE_DATE_TIME_PATTERN,
+                DatePattern.UTC_MS_WITH_ZONE_OFFSET_PATTERN
             );
             return CalendarUtil.toLocalDateTime(calendar).toLocalDate();
         } catch (DateException e) {
@@ -179,8 +179,8 @@ public class ConvertUtil {
         }
 
         Calendar calendar = DateUtil.parseByPatterns(source,
-                DatePattern.NORM_DATETIME_PATTERN,
-                DatePattern.NORM_DATETIME_MINUTE_PATTERN
+            DatePattern.NORM_DATETIME_PATTERN,
+            DatePattern.NORM_DATETIME_MINUTE_PATTERN
         );
         return CalendarUtil.toLocalDateTime(calendar).toLocalTime();
     }

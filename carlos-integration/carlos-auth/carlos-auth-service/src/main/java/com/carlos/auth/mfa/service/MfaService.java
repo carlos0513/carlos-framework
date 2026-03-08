@@ -60,11 +60,11 @@ public class MfaService {
         List<String> recoveryCodes = recoveryCodeService.generateRecoveryCodes();
 
         return MfaSetupInfo.builder()
-                .secret(secret)
-                .qrCodeUrl(qrCodeUrl)
-                .formattedSecret(qrCodeGenerator.formatSecretForDisplay(secret))
-                .recoveryCodes(recoveryCodes)
-                .build();
+            .secret(secret)
+            .qrCodeUrl(qrCodeUrl)
+            .formattedSecret(qrCodeGenerator.formatSecretForDisplay(secret))
+            .recoveryCodes(recoveryCodes)
+            .build();
     }
 
     /**

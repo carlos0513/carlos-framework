@@ -231,7 +231,7 @@ public class OrgRoleService {
             throw new OrgModuleException("配置角色权限失败");
         }
         log.info("RM-007 配置角色权限成功：roleId={}, permissionCount={}",
-                param.getRoleId(), param.getPermissionIds().size());
+            param.getRoleId(), param.getPermissionIds().size());
     }
 
 
@@ -292,11 +292,11 @@ public class OrgRoleService {
         List<Long> permissionIds = roleManager.getPermissionIdsByRoleId(param.getSourceRoleId());
         if (permissionIds != null && !permissionIds.isEmpty()) {
             roleManager.assignPermissions(newRole.getId(),
-                    permissionIds.stream().map(id -> (Serializable) id).collect(java.util.stream.Collectors.toList()));
+                permissionIds.stream().map(id -> (Serializable) id).collect(java.util.stream.Collectors.toList()));
         }
 
         log.info("RM-010 复制角色成功：sourceRoleId={}, newRoleId={}, newRoleName={}",
-                param.getSourceRoleId(), newRole.getId(), param.getNewRoleName());
+            param.getSourceRoleId(), newRole.getId(), param.getNewRoleName());
     }
 
 }

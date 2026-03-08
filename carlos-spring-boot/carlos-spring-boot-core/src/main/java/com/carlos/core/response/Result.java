@@ -86,11 +86,11 @@ public class Result<T> implements Serializable {
             message = apiMessage;
         }
         return Result.<T>builder()
-                .code(statusCode.getCode())
-                .message(message)
-                .data(data)
-                .success(success)
-                .build();
+            .code(statusCode.getCode())
+            .message(message)
+            .data(data)
+            .success(success)
+            .build();
     }
     // region----------------------  成功响应相关结果 start  ------------------------
 
@@ -152,11 +152,11 @@ public class Result<T> implements Serializable {
             code = StatusCode.FAIL.getCode();
         }
         return Result.<T>builder()
-                .code(code)
-                .message(message)
-                .stack(stack)
-                .success(false)
-                .build();
+            .code(code)
+            .message(message)
+            .stack(stack)
+            .success(false)
+            .build();
     }
 
     /**
@@ -185,11 +185,11 @@ public class Result<T> implements Serializable {
             message = statusCode.getMessage();
         }
         return Result.<T>builder()
-                .code(statusCode.getCode())
-                .message(message)
-                .stack(stack)
-                .success(false)
-                .build();
+            .code(statusCode.getCode())
+            .message(message)
+            .stack(stack)
+            .success(false)
+            .build();
     }
 
     /**
@@ -258,9 +258,9 @@ public class Result<T> implements Serializable {
      */
     public static Result<String> fail(Integer errorCode, String message) {
         return new Result<String>()
-                .setSuccess(false)
-                .setCode(errorCode)
-                .setMessage(message);
+            .setSuccess(false)
+            .setCode(errorCode)
+            .setMessage(message);
     }
 
 

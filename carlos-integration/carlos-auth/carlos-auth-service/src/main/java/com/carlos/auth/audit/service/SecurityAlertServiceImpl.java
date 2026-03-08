@@ -56,7 +56,7 @@ public class SecurityAlertServiceImpl implements SecurityAlertService {
         securityAlertMapper.insert(alert);
 
         log.warn("Security Alert: {} - {} - User: {} (IP: {}, Location: {})",
-                alert.getTitle(), alert.getSeverity(), user.getUsername(), ip, location);
+            alert.getTitle(), alert.getSeverity(), user.getUsername(), ip, location);
 
         sendNotification(alert);
 
@@ -110,7 +110,7 @@ public class SecurityAlertServiceImpl implements SecurityAlertService {
         securityAlertMapper.insert(alert);
 
         log.warn("Security Alert [新设备]: User: {} login from {} (IP: {}, Device: {})",
-                user.getUsername(), location, ip, deviceDesc);
+            user.getUsername(), location, ip, deviceDesc);
 
         sendNotification(alert);
 
@@ -137,7 +137,7 @@ public class SecurityAlertServiceImpl implements SecurityAlertService {
         securityAlertMapper.insert(alert);
 
         log.warn("Security Alert [暴力破解]: Account: {} may be under brute force attack from {} (IP: {})",
-                identifier, location, ip);
+            identifier, location, ip);
 
         sendNotification(alert);
 
@@ -165,7 +165,7 @@ public class SecurityAlertServiceImpl implements SecurityAlertService {
         securityAlertMapper.insert(alert);
 
         log.info("Security Alert [非工作时间]: User: {} login at {} (IP: {}, Location: {})",
-                user.getUsername(), now, ip, location);
+            user.getUsername(), now, ip, location);
 
         sendNotification(alert);
 
@@ -179,7 +179,7 @@ public class SecurityAlertServiceImpl implements SecurityAlertService {
 
         // 高级别告警发送短信
         if (AlertSeverity.HIGH.getCode().equals(alert.getSeverity()) ||
-                AlertSeverity.CRITICAL.getCode().equals(alert.getSeverity())) {
+            AlertSeverity.CRITICAL.getCode().equals(alert.getSeverity())) {
             sendSmsNotification(alert);
         }
 
@@ -190,7 +190,7 @@ public class SecurityAlertServiceImpl implements SecurityAlertService {
     private void sendEmailNotification(SecurityAlert alert) {
         // TODO: 集成邮件发送服务
         log.info("[告警通知-邮件] 标题: {}, 内容: {}, 级别: {}",
-                alert.getTitle(), alert.getContent(), alert.getSeverity());
+            alert.getTitle(), alert.getContent(), alert.getSeverity());
     }
 
     private void sendSmsNotification(SecurityAlert alert) {
@@ -203,8 +203,8 @@ public class SecurityAlertServiceImpl implements SecurityAlertService {
         Map<String, Object> message = new HashMap<>();
         message.put("title", "安全告警: " + alert.getTitle());
         message.put("text", String.format("用户: %s\nIP: %s\n位置: %s\n时间: %s",
-                alert.getUsername(), alert.getIpAddress(), alert.getLocation(),
-                alert.getCreateTime()));
+            alert.getUsername(), alert.getIpAddress(), alert.getLocation(),
+            alert.getCreateTime()));
 
         log.info("[告警通知-钉钉] 消息: {}", message);
     }

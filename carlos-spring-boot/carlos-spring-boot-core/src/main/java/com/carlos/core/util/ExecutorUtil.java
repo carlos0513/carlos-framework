@@ -42,13 +42,13 @@ public class ExecutorUtil {
         // ThreadPoolExecutor.CallerRunsPolicy：由调用线程处理该任务
         handler = ObjUtil.defaultIfNull(handler, new ThreadPoolExecutor.CallerRunsPolicy());
         return ExecutorBuilder.create()
-                .setCorePoolSize(coreNum)
-                .setMaxPoolSize(maxNum)
-                .setKeepAliveTime(10, TimeUnit.SECONDS)
-                .setThreadFactory(ThreadUtil.createThreadFactoryBuilder().setNamePrefix(namePrefix).build())
-                .setWorkQueue(new LinkedBlockingQueue<>(queueSize))
-                .setHandler(handler)
-                .build();
+            .setCorePoolSize(coreNum)
+            .setMaxPoolSize(maxNum)
+            .setKeepAliveTime(10, TimeUnit.SECONDS)
+            .setThreadFactory(ThreadUtil.createThreadFactoryBuilder().setNamePrefix(namePrefix).build())
+            .setWorkQueue(new LinkedBlockingQueue<>(queueSize))
+            .setHandler(handler)
+            .build();
 
     }
 

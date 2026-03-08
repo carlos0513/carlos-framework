@@ -39,9 +39,9 @@ public class MinioConfig {
         builder.credentials(properties.getAccessKey(), properties.getSecretKey());
 
         OkHttpClient okHttpClient = HttpUtils
-                .newDefaultHttpClient(properties.getConnectTimeout().toMillis(),
-                        properties.getWriteTimeout().toMillis(),
-                        properties.getReadTimeout().toMillis());
+            .newDefaultHttpClient(properties.getConnectTimeout().toMillis(),
+                properties.getWriteTimeout().toMillis(),
+                properties.getReadTimeout().toMillis());
         builder.httpClient(okHttpClient);
         MinioClient client = builder.build();
         return client;
@@ -54,14 +54,14 @@ public class MinioConfig {
     @Bean
     IMinioAsyncClient minioAsyncClient(MinioProperties properties) {
         OkHttpClient okHttpClient = HttpUtils
-                .newDefaultHttpClient(properties.getConnectTimeout().toMillis(),
-                        properties.getWriteTimeout().toMillis(),
-                        properties.getReadTimeout().toMillis());
+            .newDefaultHttpClient(properties.getConnectTimeout().toMillis(),
+                properties.getWriteTimeout().toMillis(),
+                properties.getReadTimeout().toMillis());
         MinioAsyncClient client = MinioAsyncClient.builder()
-                .endpoint(properties.getEndpoint())
-                .credentials(properties.getAccessKey(), properties.getSecretKey())
-                .httpClient(okHttpClient)
-                .build();
+            .endpoint(properties.getEndpoint())
+            .credentials(properties.getAccessKey(), properties.getSecretKey())
+            .httpClient(okHttpClient)
+            .build();
         IMinioAsyncClient asyncClient = new IMinioAsyncClient(client);
         String publicEndpoint = properties.getPublicEndpoint();
         if (!StrUtil.endWith(publicEndpoint, StrUtil.SLASH)) {

@@ -2,7 +2,9 @@
 
 ## 模块简介
 
-`carlos-mongodb` 是 Carlos 框架的 MongoDB 数据库集成模块，基于 Spring Data MongoDB 提供对 MongoDB 数据库的访问支持。该模块提供了与 `carlos-spring-boot-starter-mybatis` 类似的基础设施，包括通用的 Service 基类、字段自动填充、分页支持等，使 MongoDB 开发体验与 MyBatis 保持一致性。
+`carlos-mongodb` 是 Carlos 框架的 MongoDB 数据库集成模块，基于 Spring Data MongoDB 提供对 MongoDB 数据库的访问支持。该模块提供了与
+`carlos-spring-boot-starter-mybatis` 类似的基础设施，包括通用的 Service 基类、字段自动填充、分页支持等，使 MongoDB 开发体验与
+MyBatis 保持一致性。
 
 ## 主要功能
 

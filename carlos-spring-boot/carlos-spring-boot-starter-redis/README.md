@@ -2,7 +2,8 @@
 
 ## 模块简介
 
-`carlos-spring-boot-starter-redis` 是 Carlos 框架的 Redis 缓存集成模块，提供了基于 Lettuce 客户端的 Redis 连接管理、Spring Cache 抽象支持、高级 Redis 操作工具、Lua 脚本执行、多数据源支持等功能。该模块支持主从读写分离、批量操作、管道优化等企业级特性。
+`carlos-spring-boot-starter-redis` 是 Carlos 框架的 Redis 缓存集成模块，提供了基于 Lettuce 客户端的 Redis 连接管理、Spring
+Cache 抽象支持、高级 Redis 操作工具、Lua 脚本执行、多数据源支持等功能。该模块支持主从读写分离、批量操作、管道优化等企业级特性。
 
 **本模块已集成以下功能：**
 

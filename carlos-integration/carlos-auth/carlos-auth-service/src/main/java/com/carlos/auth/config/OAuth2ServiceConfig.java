@@ -30,10 +30,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(
-        prefix = "carlos.auth",
-        name = "enabled",
-        havingValue = "true",
-        matchIfMissing = true
+    prefix = "carlos.auth",
+    name = "enabled",
+    havingValue = "true",
+    matchIfMissing = true
 )
 public class OAuth2ServiceConfig {
 
