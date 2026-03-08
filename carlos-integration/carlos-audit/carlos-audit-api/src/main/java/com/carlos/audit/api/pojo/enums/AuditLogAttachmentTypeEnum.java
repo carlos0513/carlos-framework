@@ -1,4 +1,4 @@
-package com.carlos.audit.pojo.enums;
+package com.carlos.audit.api.pojo.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.carlos.core.enums.AppEnum;

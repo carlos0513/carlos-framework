@@ -1,11 +1,11 @@
 package com.carlos.audit.annotation;
 
 import cn.hutool.json.JSONUtil;
+import com.carlos.audit.api.pojo.enums.AuditLogBizChannelEnum;
+import com.carlos.audit.api.pojo.enums.AuditLogPrincipalTypeEnum;
+import com.carlos.audit.api.pojo.enums.AuditLogStateEnum;
 import com.carlos.audit.disruptor.AuditLogEventProducer;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
-import com.carlos.audit.pojo.enums.AuditLogBizChannelEnum;
-import com.carlos.audit.pojo.enums.AuditLogPrincipalTypeEnum;
-import com.carlos.audit.pojo.enums.AuditLogStateEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

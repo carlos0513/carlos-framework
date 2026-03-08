@@ -1,6 +1,9 @@
 package com.carlos.audit.pojo.dto;
 
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,6 +15,8 @@ import java.time.LocalDateTime;
  * @author Carlos
  * @date 2026年3月6日 下午9:31:12
  */
+@Data
+@Accessors(chain = true)
 public class AuditLogConfigDTO {
     /** 主键 */
     private Long id;
@@ -37,101 +42,4 @@ public class AuditLogConfigDTO {
     private Long updateBy;
     /** 更新时间 */
     private LocalDateTime updateTime;
-
-    // Getter and Setter methods
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogType() {
-        return logType;
-    }
-
-    public void setLogType(String logType) {
-        this.logType = logType;
-    }
-
-    public Integer getRetentionDays() {
-        return retentionDays;
-    }
-
-    public void setRetentionDays(Integer retentionDays) {
-        this.retentionDays = retentionDays;
-    }
-
-    public BigDecimal getSamplingRate() {
-        return samplingRate;
-    }
-
-    public void setSamplingRate(BigDecimal samplingRate) {
-        this.samplingRate = samplingRate;
-    }
-
-    public Boolean getAsyncWrite() {
-        return asyncWrite;
-    }
-
-    public void setAsyncWrite(Boolean asyncWrite) {
-        this.asyncWrite = asyncWrite;
-    }
-
-    public Boolean getStoreDataChange() {
-        return storeDataChange;
-    }
-
-    public void setStoreDataChange(Boolean storeDataChange) {
-        this.storeDataChange = storeDataChange;
-    }
-
-    public Boolean getStoreTechnical() {
-        return storeTechnical;
-    }
-
-    public void setStoreTechnical(Boolean storeTechnical) {
-        this.storeTechnical = storeTechnical;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public Long getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Long createBy) {
-        this.createBy = createBy;
-    }
-
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
-
-    public Long getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Long updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    public LocalDateTime getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(LocalDateTime updateTime) {
-        this.updateTime = updateTime;
-    }
 }

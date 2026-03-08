@@ -308,7 +308,7 @@
 
 | ID      | 模块                                 | 描述     | 优先级 |
 |---------|------------------------------------|--------|-----|
-| INT-016 | carlos-spring-boot-starter-core    | 核心基础   | P0  |
+| INT-016 | carlos-spring-boot-core            | 核心基础   | P0  |
 | INT-017 | carlos-spring-boot-starter-web     | Web 支持 | P0  |
 | INT-018 | carlos-spring-cloud-starter        | 微服务支持  | P0  |
 | INT-019 | carlos-spring-boot-starter-mybatis | 数据库支持  | P0  |

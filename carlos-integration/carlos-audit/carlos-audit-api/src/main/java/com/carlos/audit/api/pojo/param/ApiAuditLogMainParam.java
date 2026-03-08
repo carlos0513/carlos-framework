@@ -1,6 +1,7 @@
 package com.carlos.audit.api.pojo.param;
 
 
+import com.carlos.audit.api.pojo.enums.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -37,7 +38,7 @@ public class ApiAuditLogMainParam implements Serializable {
     /** 日志Schema版本，用于兼容性处理 */
     private Integer logSchemaVersion;
     /** 大类：SECURITY-安全/BUSINESS-业务/SYSTEM-系统/AUDIT-审计 */
-    private String category;
+    private AuditLogCategoryEnum category;
     /** 细类：USER_LOGIN-登录/ORDER_PAY-支付/DATA_EXPORT-数据导出等 */
     private String logType;
     /** 风险等级 0-100，0为无风险，100为极高风险 */
@@ -45,7 +46,7 @@ public class ApiAuditLogMainParam implements Serializable {
     /** 操作主体ID，用户ID或服务账号 */
     private String principalId;
     /** 主体类型：USER-用户/SERVICE-服务/SYSTEM-系统/ANONYMOUS-匿名 */
-    private String principalType;
+    private AuditLogPrincipalTypeEnum principalType;
     /** 主体名称，冗余存储避免关联查询 */
     private String principalName;
     /** 租户ID，SaaS多租户隔离字段 */
@@ -65,7 +66,7 @@ public class ApiAuditLogMainParam implements Serializable {
     /** 对象关键信息摘要，JSON格式存储关键字段 */
     private String targetSnapshot;
     /** 状态：SUCCESS-成功/FAIL-失败/PENDING-处理中/TIMEOUT-超时/PARTIAL_SUCCESS-部分成功 */
-    private String state;
+    private AuditLogStateEnum state;
     /** 业务结果码，用于细分错误类型 */
     private String resultCode;
     /** 结果描述，前500字符 */
@@ -95,15 +96,15 @@ public class ApiAuditLogMainParam implements Serializable {
     /** 经度 */
     private BigDecimal locationLon;
     /** 认证方式：PASSWORD-密码/SMS-短信/OAUTH2-OAuth2/LDAP-LDAP/CERT-证书 */
-    private String authType;
+    private AuditLogAuthTypeEnum authType;
     /** 认证源：LOCAL-本地/WECHAT-微信/DINGTALK-钉钉 */
-    private String authProvider;
+    private AuditLogAuthProviderEnum authProvider;
     /** 当前角色列表，JSON数组 */
     private String roles;
     /** 当前权限列表，JSON数组 */
     private String permissions;
     /** 业务渠道：WEB-网页/APP-移动应用/MINI_PROGRAM-小程序/OPEN_API-开放接口 */
-    private String bizChannel;
+    private AuditLogBizChannelEnum bizChannel;
     /** 业务场景，如：订单创建-ORDER_CREATE */
     private String bizScene;
     /** 业务订单号，用于关联订单 */

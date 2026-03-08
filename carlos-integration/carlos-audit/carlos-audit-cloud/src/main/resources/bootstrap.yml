@@ -1,5 +1,5 @@
 server:
-port: 8080
+  port: 8080
 spring:
   profiles:
     active: ${PROFILE:local}
@@ -22,9 +22,6 @@ spring:
             refresh: true
           -
             data-id: mysql.yml
-            refresh: true
-          -
-            data-id: minio.yml
             refresh: true
 
 # 本地调试环境

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -234,7 +236,7 @@ public class ClickHouseBatchWriter {
         // dept_path
         sb.append(formatNullableString(log.getDeptPath())).append(", ");
         // target_type
-        sb.append(formatEnum(log.getTargetType())).append(", ");
+        sb.append(log.getTargetType()).append(", ");
         // target_id
         sb.append(formatNullableString(log.getTargetId())).append(", ");
         // target_name
@@ -258,27 +260,27 @@ public class ClickHouseBatchWriter {
         // biz_channel
         sb.append(formatEnum(log.getBizChannel())).append(", ");
         // created_time
-        sb.append(formatDateTime(log.getCreatedTime() != null ? log.getCreatedTime() : java.time.LocalDateTime.now()));
+        sb.append(formatDateTime(log.getCreatedTime() != null ? log.getCreatedTime() : LocalDateTime.now()));
 
         sb.append(")");
         return sb.toString();
     }
 
-    private String formatDateTime(java.time.LocalDateTime dt) {
+    private String formatDateTime(LocalDateTime dt) {
         if (dt == null) {
             return "now()";
         }
         return "'" + dt.toString().replace("T", " ") + "'";
     }
 
-    private String formatDate(java.time.LocalDate d) {
+    private String formatDate(LocalDate d) {
         if (d == null) {
             return "today()";
         }
         return "'" + d.toString() + "'";
     }
 
-    private String formatNullableDateTime(java.time.LocalDateTime dt) {
+    private String formatNullableDateTime(LocalDateTime dt) {
         if (dt == null) {
             return "NULL";
         }

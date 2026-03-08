@@ -1,4 +1,4 @@
-package com.carlos.audit.pojo.enums;
+package com.carlos.audit.api.pojo.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.carlos.core.enums.AppEnum;
@@ -8,36 +8,31 @@ import lombok.Getter;
 
 /**
  * <p>
- * 审计日志主体类型枚举
+ * 审计日志变更类型枚举
  * </p>
  *
  * @author Carlos
  * @date 2026-03-06
  */
-@AppEnum(code = "AuditLogPrincipalType")
+@AppEnum(code = "AuditLogChangeType")
 @Getter
 @AllArgsConstructor
-public enum AuditLogPrincipalTypeEnum implements BaseEnum {
+public enum AuditLogChangeTypeEnum implements BaseEnum {
 
     /**
-     * 用户
+     * 新增
      */
-    USER(1, "用户"),
+    ADDED(1, "新增"),
 
     /**
-     * 服务
+     * 修改
      */
-    SERVICE(2, "服务"),
+    MODIFIED(2, "修改"),
 
     /**
-     * 系统
+     * 删除
      */
-    SYSTEM(3, "系统"),
-
-    /**
-     * 匿名用户
-     */
-    ANONYMOUS(4, "匿名用户");
+    REMOVED(3, "删除");
 
     @EnumValue
     private final Integer code;

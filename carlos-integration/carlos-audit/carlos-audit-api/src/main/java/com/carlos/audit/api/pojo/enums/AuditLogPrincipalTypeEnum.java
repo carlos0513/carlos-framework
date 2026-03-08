@@ -1,4 +1,4 @@
-package com.carlos.audit.pojo.enums;
+package com.carlos.audit.api.pojo.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.carlos.core.enums.AppEnum;
@@ -8,51 +8,36 @@ import lombok.Getter;
 
 /**
  * <p>
- * 审计日志业务渠道枚举
+ * 审计日志主体类型枚举
  * </p>
  *
  * @author Carlos
  * @date 2026-03-06
  */
-@AppEnum(code = "AuditLogBizChannel")
+@AppEnum(code = "AuditLogPrincipalType")
 @Getter
 @AllArgsConstructor
-public enum AuditLogBizChannelEnum implements BaseEnum {
+public enum AuditLogPrincipalTypeEnum implements BaseEnum {
 
     /**
-     * Web端
+     * 用户
      */
-    WEB(1, "Web端"),
+    USER(1, "用户"),
 
     /**
-     * App移动端
+     * 服务
      */
-    APP(2, "App移动端"),
+    SERVICE(2, "服务"),
 
     /**
-     * 小程序
+     * 系统
      */
-    MINI_PROGRAM(3, "小程序"),
+    SYSTEM(3, "系统"),
 
     /**
-     * 开放API
+     * 匿名用户
      */
-    OPEN_API(4, "开放API"),
-
-    /**
-     * 桌面客户端
-     */
-    DESKTOP(5, "桌面客户端"),
-
-    /**
-     * H5页面
-     */
-    H5(6, "H5页面"),
-
-    /**
-     * 系统后台
-     */
-    BACKGROUND(7, "系统后台");
+    ANONYMOUS(4, "匿名用户");
 
     @EnumValue
     private final Integer code;

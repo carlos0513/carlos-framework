@@ -3,7 +3,8 @@ package com.carlos.audit.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.carlos.audit.pojo.enums.*;
+import com.carlos.audit.api.pojo.enums.*;
+import com.carlos.audit.pojo.enums.AuditLogPayloadStorageTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -124,7 +125,7 @@ public class AuditLogMain extends Model<AuditLogMain> implements Serializable {
      * 对象类型：ORDER-订单/USER-用户/CONFIG-配置/DATA-数据
      */
     @TableField(value = "target_type")
-    private AuditLogTargetTypeEnum targetType;
+    private String targetType;
     /**
      * 对象唯一标识
      */

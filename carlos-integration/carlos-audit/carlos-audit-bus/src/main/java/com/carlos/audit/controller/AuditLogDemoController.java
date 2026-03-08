@@ -1,8 +1,7 @@
 package com.carlos.audit.controller;
 
 import com.carlos.audit.annotation.AuditLog;
-import com.carlos.audit.pojo.enums.AuditLogCategoryEnum;
-import com.carlos.audit.pojo.enums.AuditLogTargetTypeEnum;
+import com.carlos.audit.api.pojo.enums.AuditLogCategoryEnum;
 import com.carlos.core.response.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,7 +51,7 @@ public class AuditLogDemoController {
         category = AuditLogCategoryEnum.BUSINESS,
         operation = "'订单支付: ' + #param.orderNo + ', 金额: ' + #param.amount",
         targetId = "#param.orderNo",
-        targetType = AuditLogTargetTypeEnum.ORDER,
+        targetType = "ORDER",
         riskLevel = 70,
         recordParams = true,
         recordResult = true
@@ -74,7 +73,7 @@ public class AuditLogDemoController {
             type = "DATA_EXPORT",
         category = AuditLogCategoryEnum.SECURITY,
         operation = "'数据导出: ' + #tableName + ', 条件: ' + #condition",
-        targetType = AuditLogTargetTypeEnum.CONFIG,
+        targetType = "CONFIG",
         riskLevel = 80
     )
     @GetMapping("/export")
@@ -93,7 +92,7 @@ public class AuditLogDemoController {
             type = "CONFIG_CHANGE",
         category = AuditLogCategoryEnum.SYSTEM,
         operation = "'配置变更: ' + #param.configKey",
-        targetType = AuditLogTargetTypeEnum.CONFIG,
+        targetType = "CONFIG",
         riskLevel = 90,
         async = false  // 同步记录，确保日志写入成功
     )
@@ -111,7 +110,7 @@ public class AuditLogDemoController {
             type = "FILE_UPLOAD",
         category = AuditLogCategoryEnum.BUSINESS,
         operation = "'文件上传: ' + #fileName",
-        targetType = AuditLogTargetTypeEnum.FILE,
+        targetType = "FILE",
         riskLevel = 20,
         bizChannel = "#channel"
     )

@@ -1,4 +1,4 @@
-package com.carlos.audit.pojo.enums;
+package com.carlos.audit.api.pojo.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.carlos.core.enums.AppEnum;
@@ -8,56 +8,51 @@ import lombok.Getter;
 
 /**
  * <p>
- * 审计日志认证方式枚举
+ * 审计日志业务渠道枚举
  * </p>
  *
  * @author Carlos
  * @date 2026-03-06
  */
-@AppEnum(code = "AuditLogAuthType")
+@AppEnum(code = "AuditLogBizChannel")
 @Getter
 @AllArgsConstructor
-public enum AuditLogAuthTypeEnum implements BaseEnum {
+public enum AuditLogBizChannelEnum implements BaseEnum {
 
     /**
-     * 密码认证
+     * Web端
      */
-    PASSWORD(1, "密码认证"),
+    WEB(1, "Web端"),
 
     /**
-     * 短信验证码
+     * App移动端
      */
-    SMS(2, "短信验证码"),
+    APP(2, "App移动端"),
 
     /**
-     * OAuth2认证
+     * 小程序
      */
-    OAUTH2(3, "OAuth2认证"),
+    MINI_PROGRAM(3, "小程序"),
 
     /**
-     * LDAP认证
+     * 开放API
      */
-    LDAP(4, "LDAP认证"),
+    OPEN_API(4, "开放API"),
 
     /**
-     * 证书认证
+     * 桌面客户端
      */
-    CERT(5, "证书认证"),
+    DESKTOP(5, "桌面客户端"),
 
     /**
-     * 扫码登录
+     * H5页面
      */
-    QR_CODE(6, "扫码登录"),
+    H5(6, "H5页面"),
 
     /**
-     * 人脸识别
+     * 系统后台
      */
-    FACE(7, "人脸识别"),
-
-    /**
-     * 指纹认证
-     */
-    FINGERPRINT(8, "指纹认证");
+    BACKGROUND(7, "系统后台");
 
     @EnumValue
     private final Integer code;

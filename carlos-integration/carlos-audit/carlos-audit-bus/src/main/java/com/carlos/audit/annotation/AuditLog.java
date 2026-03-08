@@ -1,7 +1,6 @@
 package com.carlos.audit.annotation;
 
-import com.carlos.audit.pojo.enums.AuditLogCategoryEnum;
-import com.carlos.audit.pojo.enums.AuditLogTargetTypeEnum;
+import com.carlos.audit.api.pojo.enums.AuditLogCategoryEnum;
 
 import java.lang.annotation.*;
 
@@ -66,7 +65,7 @@ public @interface AuditLog {
     /**
      * 目标对象类型
      */
-    AuditLogTargetTypeEnum targetType() default AuditLogTargetTypeEnum.OTHER;
+    String targetType() default "OTHER";
 
     /**
      * 业务渠道（SpEL表达式）
