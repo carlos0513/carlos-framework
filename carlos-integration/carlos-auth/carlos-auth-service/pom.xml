@@ -32,7 +32,7 @@
         <!-- 核心基础模块 -->
         <dependency>
             <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-core</artifactId>
+          <artifactId>carlos-spring-boot-core</artifactId>
         </dependency>
 
         <!-- Web 支持 -->
@@ -73,13 +73,13 @@
 
         <!-- ==================== Spring Security OAuth2 ==================== -->
 
-        <!-- 
-            Spring Authorization Server 1.x
-            注意：这是 Spring Boot 3.x 兼容的版本，与 0.4.x 版本 API 不兼容
-            主要变化：
-            - 配置方式改为使用 OAuth2AuthorizationServerConfigurer
-            - 端点配置通过 Lambda DSL 方式
-        -->
+      <!--
+          Spring Authorization Server 1.x
+          注意：这是 Spring Boot 3.x 兼容的版本，与 0.4.x 版本 API 不兼容
+          主要变化：
+          - 配置方式改为使用 OAuth2AuthorizationServerConfigurer
+          - 端点配置通过 Lambda DSL 方式
+      -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-authorization-server</artifactId>

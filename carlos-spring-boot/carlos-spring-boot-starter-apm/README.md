@@ -514,7 +514,7 @@ public class BusinessTracer {
 
 ## 依赖项
 
-- `carlos-spring-boot-starter-core`：基础工具类
+- `carlos-spring-boot-core`：基础工具类
 - `micrometer-tracing-bridge-brave`：Spring Cloud Sleuth（Brave 实现）
 - `apm-toolkit-trace`：SkyWalking 追踪工具包
 - `apm-toolkit-logback-1.x`：SkyWalking Logback 集成
@@ -606,7 +606,7 @@ public BravePropagation.Factory propagationFactory() {
 
 ## 相关模块
 
-- **carlos-spring-boot-starter-core**：基础工具类、工具类依赖
+- **carlos-spring-boot-core**：基础工具类、工具类依赖
 - **carlos-log**：日志记录，与追踪信息结合
 - **carlos-spring-cloud-starter**：微服务基础，分布式追踪依赖
 - **carlos-gateway**：API 网关，网关层追踪支持

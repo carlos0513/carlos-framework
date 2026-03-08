@@ -7,7 +7,7 @@
       "Bash(then echo \"Processing $dir/pom.xml\")",
       "Bash(fi:*)",
       "Bash(done)",
-      "Bash(do if [[ \"$dir\" != \"carlos-spring-boot-starter-core/\" ]])",
+      "Bash(do if [[ \"$dir\" != \"carlos-spring-boot-core/\" ]])",
       "Bash(then echo \"Processing $dir\")",
       "Bash(find:*)",
       "Bash(while:*)",

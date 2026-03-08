@@ -84,7 +84,7 @@ carlos-framework/                          # Root aggregator
 ├── carlos-dependencies/                   # Dependency management (BOM)
 ├── carlos-parent/                         # Parent POM
 ├── carlos-commons/                        # Framework-agnostic utilities
-│   ├── carlos-spring-boot-starter-core/   # Core abstractions & exceptions
+│   ├── carlos-spring-boot-core/   # Core abstractions & exceptions
 │   ├── carlos-utils/                     # Common utility functions
 │   └── carlos-excel/                     # Excel processing (Apache POI)
 ├── carlos-spring-boot/                    # Spring Boot integration

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>carlos-spring-boot-starter-core</artifactId>
+  <artifactId>carlos-spring-boot-core</artifactId>
 
     <description>
         Carlos Spring Boot 核心模块，提供基础抽象、异常处理、分页、响应包装等功能

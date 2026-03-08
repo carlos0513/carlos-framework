@@ -75,7 +75,7 @@ public void completeTask(String taskId) {
 
 ## 依赖模块
 
-- **carlos-spring-boot-starter-core**: 核心基础功能
+- **carlos-spring-boot-core**: 核心基础功能
 - **Flowable**: BPMN工作流引擎
 
 ## 注意事项

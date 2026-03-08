@@ -87,7 +87,7 @@
     <!-- 无需指定版本，由 parent 管理 -->
     <dependency>
         <groupId>com.carlos</groupId>
-        <artifactId>carlos-spring-boot-starter-core</artifactId>
+        <artifactId>carlos-spring-boot-core</artifactId>
     </dependency>
 
     <dependency>

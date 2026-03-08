@@ -856,9 +856,9 @@ A: 使用 Knife4j 的导出功能：
 2. 点击右上角"导出"按钮
 3. 选择导出格式（Markdown、Word、PDF、OpenAPI JSON/YAML）
 
-### 5. 与 carlos-spring-boot-starter-core 集成
+### 5. 与 carlos-spring-boot-core 集成
 
-本模块使用 `carlos-spring-boot-starter-core` 模块的工具类获取应用地址和端口信息，确保文档链接的正确性。
+本模块使用 `carlos-spring-boot-core` 模块的工具类获取应用地址和端口信息，确保文档链接的正确性。
 
 ### 6. 版本要求
 
@@ -869,6 +869,6 @@ A: 使用 Knife4j 的导出功能：
 
 ### 7.相关模块
 
-- **carlos-spring-boot-starter-core**：基础工具类、常量定义、响应格式
+- **carlos-spring-boot-core**：基础工具类、常量定义、响应格式
 - **carlos-auth**：OAuth2 认证授权，为文档提供认证支持
 - **carlos-gateway**：API 网关，文档可能需要网关相关配置

@@ -630,6 +630,6 @@ try {
 
 ## 相关模块
 
-- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-core`: 核心基础模块
 - `carlos-spring-boot-starter-web`: Spring Boot 自动配置
 - `carlos-spring-boot-starter-encrypt`: 加密工具

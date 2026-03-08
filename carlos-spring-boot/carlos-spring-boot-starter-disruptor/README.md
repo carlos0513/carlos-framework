@@ -95,7 +95,7 @@ public void publishOrder(Order order) {
 
 ## 依赖模块
 
-- **carlos-spring-boot-starter-core**: 核心基础功能
+- **carlos-spring-boot-core**: 核心基础功能
 - **LMAX Disruptor**: 高性能队列框架
 
 ## 性能优化建议

@@ -572,7 +572,7 @@ spring:
 - **Fastjson**: JSON 序列化（2.0.60）
 - **Hutool**: 工具库
 - **Guava**: 缓存工具
-- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-core**: 核心基础模块
 - **carlos-spring-boot-starter-json**: JSON 工具
 
 ## 使用场景
@@ -791,5 +791,5 @@ MultiLevelCacheUtil.clear();
 
 ## 相关模块
 
-- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-core`: 核心基础模块
 - `carlos-spring-boot-starter-json`: JSON 工具

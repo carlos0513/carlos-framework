@@ -1,8 +1,8 @@
-# carlos-spring-boot-starter-core
+# carlos-spring-boot-core
 
 ## 模块简介
 
-`carlos-spring-boot-starter-core` 是 Carlos 框架的核心基础模块，提供了框架所需的基础抽象、工具类和基类。该模块是整个框架的基石，被其他大部分模块所依赖。
+`carlos-spring-boot-core` 是 Carlos 框架的核心基础模块，提供了框架所需的基础抽象、工具类和基类。该模块是整个框架的基石，被其他大部分模块所依赖。
 
 ## 主要功能
 
@@ -378,7 +378,7 @@ public Result<Void> internalMethod() {
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-spring-boot-starter-core</artifactId>
+    <artifactId>carlos-spring-boot-core</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```

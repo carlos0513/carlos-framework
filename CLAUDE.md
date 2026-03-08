@@ -28,7 +28,7 @@ mvn clean install -P carlos-public    # 公共服务器: zcarlos.com:8081
 mvn clean install -P carlos-private   # 私有服务器: 192.168.3.30:8081
 
 # 构建指定模块
-cd carlos-commons/carlos-spring-boot-starter-core
+cd carlos-commons/carlos-spring-boot-core
 mvn clean install
 
 # 构建 Spring Boot starters
@@ -79,7 +79,7 @@ carlos-framework/                          # 根聚合 POM
 ├── carlos-dependencies/                   # 依赖版本管理 (BOM)
 ├── carlos-parent/                         # 父 POM (构建配置、插件)
 ├── carlos-commons/                        # 与框架无关的工具类
-│   ├── carlos-spring-boot-starter-core/                      # 核心抽象、异常、分页
+│   ├── carlos-spring-boot-core/                      # 核心抽象、异常、分页
 │   ├── carlos-utils/                     # 公共工具函数
 │   └── carlos-excel/                     # Excel 处理工具
 ├── carlos-spring-boot/                    # Spring Boot 集成层
@@ -110,7 +110,7 @@ carlos-framework/                          # 根聚合 POM
 
 **Commons 层 (与框架无关)：**
 
-- `carlos-spring-boot-starter-core`: 基础抽象、注解、AOP、异常、分页、响应包装器
+- `carlos-spring-boot-core`: 基础抽象、注解、AOP、异常、分页、响应包装器
 - `carlos-utils`: 公共工具类和辅助函数 (树形工具、HTTP 客户端)
 - `carlos-excel`: 使用 Apache POI 5.2.5 和 EasyExcel 进行 Excel 导入/导出
 
@@ -698,6 +698,72 @@ public class UserCreateParam {
    XxxPageParam     - 分页查询（继承分页基类）
    ```
 
+5. **属性注入规范（强制）**：
+    - **禁止使用 `@Value` 注解进行属性注入，统一使用 `@ConfigurationProperties` 的 Properties 类**
+
+   ```java
+   // ❌ 错误：使用 @Value 注解
+   @Value("${carlos.redis.host}")
+   private String redisHost;
+   
+   @Value("${carlos.redis.port:6379}")
+   private int redisPort;
+   
+   // ✅ 正确：使用 Properties 类
+   @ConfigurationProperties(prefix = "carlos.redis")
+   @Data
+   public class RedisProperties {
+       private String host;
+       private int port = 6379;
+   }
+   
+   // 在配置类中注入
+   @Configuration
+   @EnableConfigurationProperties(RedisProperties.class)
+   public class RedisAutoConfiguration {
+       private final RedisProperties properties;
+       
+       public RedisAutoConfiguration(RedisProperties properties) {
+           this.properties = properties;
+       }
+   }
+   
+   // 或在业务类中注入
+   @Service
+   @RequiredArgsConstructor
+   public class RedisService {
+       private final RedisProperties properties;
+   }
+   ```
+
+   **优势**：类型安全、IDE 支持、默认值清晰、配置集中、易于测试
+
+6. **Lombok 使用规范（强制）**：
+    - **所有 POJO 类必须使用 Lombok 注解生成 getter/setter 方法，禁止手写 get/set 方法**
+
+   ```java
+   // ❌ 错误：手写 get/set 方法
+   public class UserDTO {
+       private Long id;
+       private String name;
+       
+       public Long getId() { return id; }
+       public void setId(Long id) { this.id = id; }
+       public String getName() { return name; }
+       public void setName(String name) { this.name = name; }
+   }
+   
+   // ✅ 正确：使用 Lombok @Data
+   @Data
+   public class UserDTO {
+       private Long id;
+       private String name;
+   }
+   ```
+
+   **推荐注解**：`@Data`、`@Getter`、`@Setter`、`@NoArgsConstructor`、`@AllArgsConstructor`、`@RequiredArgsConstructor`、
+   `@Builder`、`@Slf4j`
+
 ### Feign 接口规范
 
 1. **接口定义**（API 模块）：
@@ -752,7 +818,7 @@ public class UserCreateParam {
 
 **依赖规则：**
 
-- Commons 模块 (`carlos-spring-boot-starter-core`, `carlos-utils`, `carlos-excel`) 是基础，与框架无关
+- Commons 模块 (`carlos-spring-boot-core`, `carlos-utils`, `carlos-excel`) 是基础，与框架无关
 - Spring Boot starters 可以依赖 commons 模块
 - Spring Boot starters 应依赖 `carlos-spring-boot-starter-web` 获取基础配置
 - Spring Cloud starters 应依赖 `carlos-spring-cloud-starter`
@@ -929,14 +995,21 @@ void should_create_user_successfully_when_params_valid() {
 // 严禁：硬编码凭据
 private String apiKey = "sk-proj-xxxxx";
 
-// 推荐：环境变量
+// 严禁：使用 @Value 注解（不符合本项目规范）
 @Value("${api.key}")
 private String apiKey;
 
-// 或在启动时验证
+// ✅ 推荐：使用 Properties 类
+@ConfigurationProperties(prefix = "app")
+@Data
+public class AppProperties {
+    private String apiKey;
+}
+
+// 在启动时验证
 @PostConstruct
 public void init() {
-    if (StringUtils.isEmpty(apiKey)) {
+    if (StringUtils.isEmpty(appProperties.getApiKey())) {
         throw new IllegalStateException("API_KEY not configured");
     }
 }
@@ -1276,7 +1349,7 @@ System.out.println("调试信息");  // 生产环境无法关闭
 - OAuth2 Authorization Server，支持多种授权类型 (authorization_code, client_credentials, refresh_token)
 - OAuth2 Resource Server，支持 JWT 验证
 - 自定义 JWT token 增强，包含用户上下文 (user_id, tenant_id, dept_id, role_ids, authorities)
-- 与 carlos-spring-boot-starter-core 认证系统集成 (LoginUserInfo, UserContext)
+- 与 carlos-spring-boot-core 认证系统集成 (LoginUserInfo, UserContext)
 - 基于 @PreAuthorize 注解的方法级安全控制
 - OAuth2Util 工具类，便于访问当前用户信息
 
@@ -1343,7 +1416,7 @@ public void adminOnlyMethod() { }
 
 **依赖：**
 
-- carlos-spring-boot-starter-core (用户信息、异常)
+- carlos-spring-boot-core (用户信息、异常)
 - carlos-spring-boot-starter-redis (可选，用于令牌存储)
 - spring-boot-starter-security
 - spring-security-oauth2-authorization-server

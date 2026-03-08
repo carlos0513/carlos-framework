@@ -358,7 +358,7 @@ carlos:
 
 - **BouncyCastle**: 1.70（密码学提供者）
 - **Hutool**: 5.8.40（SM2/SM4 工具封装）
-- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-core**: 核心基础模块
 - **Spring Boot**: 3.5.8+（自动配置）
 
 ## 算法特性
@@ -472,6 +472,6 @@ IllegalArgumentException: Invalid public key format
 
 ## 相关模块
 
-- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-core`: 核心基础模块
 - `carlos-tools`: 加密工具 GUI
 - `carlos-test`: 加密功能测试

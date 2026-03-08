@@ -156,7 +156,7 @@ blends:
 
 ## 依赖模块
 
-- **carlos-spring-boot-starter-core**: 核心基础功能
+- **carlos-spring-boot-core**: 核心基础功能
 - **carlos-spring-boot-starter-redis**: Redis缓存支持（用于限流）
 
 ## 注意事项

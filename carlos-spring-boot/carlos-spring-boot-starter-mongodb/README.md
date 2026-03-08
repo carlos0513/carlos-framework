@@ -638,7 +638,7 @@ public class LocationService {
 
 ## 依赖项
 
-- `carlos-spring-boot-starter-core`：基础工具类、通用字段抽象
+- `carlos-spring-boot-core`：基础工具类、通用字段抽象
 - `spring-boot-starter-data-mongodb`：Spring Data MongoDB 核心依赖
 - `spring-boot-starter`：Spring Boot 基础依赖
 
@@ -680,6 +680,6 @@ public class LocationService {
 
 ## 相关模块
 
-- **carlos-spring-boot-starter-core**：基础工具类、通用字段抽象
+- **carlos-spring-boot-core**：基础工具类、通用字段抽象
 - **carlos-spring-boot-starter-mybatis**：关系型数据库访问，可对比参考
 - **carlos-spring-boot-starter-redis**：缓存支持，可与 MongoDB 配合使用

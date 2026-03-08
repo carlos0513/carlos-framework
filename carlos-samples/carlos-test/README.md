@@ -148,7 +148,7 @@ ab -n 10000 -c 100 http://localhost:9812/api/user/list
 
 本模块依赖框架的所有组件，用于集成测试：
 
-- carlos-spring-boot-starter-core
+- carlos-spring-boot-core
 - carlos-spring-boot-starter-mybatis
 - carlos-spring-boot-starter-redis
 - carlos-auth

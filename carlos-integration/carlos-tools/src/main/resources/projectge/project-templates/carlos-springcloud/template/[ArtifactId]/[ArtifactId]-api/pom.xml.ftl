@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-core</artifactId>
+            <artifactId>carlos-spring-boot-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

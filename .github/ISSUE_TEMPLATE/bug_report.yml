@@ -28,7 +28,7 @@ body:
       label: Affected Module
       description: Which module is affected by this bug?
       options:
-        - carlos-spring-boot-starter-core
+        - carlos-spring-boot-core
         - carlos-spring-boot-starter-redis
         - carlos-spring-boot-starter-mybatis
         - carlos-spring-boot-starter-mongodb

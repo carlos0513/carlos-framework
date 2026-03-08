@@ -545,7 +545,7 @@ spring:
 - **Druid**: 1.2.27 (连接池和监控)
 - **MySQL Driver**: 8.0.33
 - **Dameng Driver**: 8.1.3.62 (达梦数据库)
-- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-core**: 核心基础模块
 - **carlos-spring-boot-starter-datascope**: 数据权限模块（可选）
 - **carlos-snowflake**: 雪花算法 ID 生成
 
@@ -714,7 +714,7 @@ itemsList.setExpressions(expressions);
 
 ## 相关模块
 
-- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-core`: 核心基础模块
 - `carlos-spring-boot-starter-datascope`: 数据权限模块
 - `carlos-snowflake`: 雪花算法 ID 生成
 - `carlos-utils`: 工具模块

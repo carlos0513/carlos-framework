@@ -128,7 +128,7 @@ ObjectStat stat = minioUtil.statObject("my-bucket", "file.txt");
 
 ## 依赖模块
 
-- **carlos-spring-boot-starter-core**: 核心基础功能
+- **carlos-spring-boot-core**: 核心基础功能
 - **MinIO Java SDK**: MinIO官方SDK
 
 ## 注意事项

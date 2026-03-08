@@ -623,7 +623,7 @@ spring:
 - **Reflections**: 类路径扫描
 - **Apache Commons Text**: XSS 转义
 - **MapStruct**: Bean 映射
-- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-core**: 核心基础模块
 - **carlos-spring-boot-starter-json**: JSON 工具
 - **carlos-apm**: APM 追踪工具
 
@@ -666,7 +666,7 @@ spring:
 
 ## 相关模块
 
-- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-core`: 核心基础模块
 - `carlos-spring-boot-starter-json`: JSON 工具
 - `carlos-apm`: APM 追踪
 - `carlos-gateway`: API 网关

@@ -514,7 +514,7 @@ server:
 - **Spring Cloud Alibaba Sentinel**: 熔断降级
 - **Feign OkHttp**: HTTP 客户端
 - **Caffeine**: 缓存库
-- **carlos-spring-boot-starter-core**: 核心基础模块
+- **carlos-spring-boot-core**: 核心基础模块
 - **carlos-spring-boot-starter-web**: Spring Boot 集成
 
 ## 使用指南
@@ -656,7 +656,7 @@ grep "refresh" logs/application.log
 
 ## 相关模块
 
-- `carlos-spring-boot-starter-core`: 核心基础模块
+- `carlos-spring-boot-core`: 核心基础模块
 - `carlos-spring-boot-starter-web`: Spring Boot 集成
 - `carlos-gateway`: API 网关
 - `carlos-apm`: APM 监控

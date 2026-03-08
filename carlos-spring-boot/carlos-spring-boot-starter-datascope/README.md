@@ -277,7 +277,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> {
 
 ## 依赖项
 
-- `carlos-spring-boot-starter-core`：用户上下文管理、基础工具类
+- `carlos-spring-boot-core`：用户上下文管理、基础工具类
 - `spring-boot-starter-aop`：AOP支持
 - `spring-boot-starter`：Spring Boot基础依赖
 
@@ -324,9 +324,9 @@ CurrentUser.setUserContext(userContext);
 CurrentUser.remove();
 ```
 
-### 4. 与carlos-spring-boot-starter-core集成
+### 4. 与carlos-spring-boot-core集成
 
-本模块深度依赖 `carlos-spring-boot-starter-core` 模块的 `CurrentUser` 工具类获取用户上下文信息，确保在使用前正确设置用户登录信息。
+本模块深度依赖 `carlos-spring-boot-core` 模块的 `CurrentUser` 工具类获取用户上下文信息，确保在使用前正确设置用户登录信息。
 
 ## 版本要求
 
@@ -336,6 +336,6 @@ CurrentUser.remove();
 
 ## 相关模块
 
-- **carlos-spring-boot-starter-core**：用户上下文管理、基础工具类
+- **carlos-spring-boot-core**：用户上下文管理、基础工具类
 - **carlos-spring-boot-starter-mybatis**：MyBatis-Plus集成、数据访问层支持
 - **carlos-auth**：OAuth2认证授权、用户信息管理

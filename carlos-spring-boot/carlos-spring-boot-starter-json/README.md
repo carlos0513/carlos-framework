@@ -143,7 +143,7 @@ public class CustomSerializer extends JsonSerializer<LocalDateTime> {
 
 ## 依赖模块
 
-- **carlos-spring-boot-starter-core**: 核心基础功能
+- **carlos-spring-boot-core**: 核心基础功能
 - **Fastjson 2.x**: 阿里巴巴JSON库
 - **Jackson**: Spring默认JSON库
 

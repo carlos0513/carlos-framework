@@ -6,10 +6,10 @@
 
 ## 模块列表
 
-| 模块                                                                           | 说明      | 主要功能                     |
-|------------------------------------------------------------------------------|---------|--------------------------|
-| [carlos-spring-boot-starter-core](carlos-spring-boot-starter-core/README.md) | 核心框架组件库 | 基础抽象、注解、AOP、异常处理、分页、响应封装 |
-| [carlos-utils](carlos-utils/README.md)                                       | 通用工具库   | 各种工具类和辅助函数               |
+| 模块                                                           | 说明      | 主要功能                     |
+|--------------------------------------------------------------|---------|--------------------------|
+| [carlos-spring-boot-core](carlos-spring-boot-core/README.md) | 核心框架组件库 | 基础抽象、注解、AOP、异常处理、分页、响应封装 |
+| [carlos-utils](carlos-utils/README.md)                       | 通用工具库   | 各种工具类和辅助函数               |
 
 ## 特点
 
@@ -42,7 +42,7 @@
     <!-- 核心组件 -->
     <dependency>
         <groupId>com.carlos</groupId>
-        <artifactId>carlos-spring-boot-starter-core</artifactId>
+        <artifactId>carlos-spring-boot-core</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </dependency>
 
@@ -119,7 +119,7 @@ public class OrderService {
 
 ## 模块详情
 
-### carlos-spring-boot-starter-core
+### carlos-spring-boot-core
 
 核心框架组件库，提供：
 
@@ -136,7 +136,7 @@ public class OrderService {
 - **枚举**: BaseEnum, Enum
 - **工具**: SpelUtil, PropertyNamer, BrowserUtil 等
 
-[查看详细文档](carlos-spring-boot-starter-core/README.md)
+[查看详细文档](carlos-spring-boot-core/README.md)
 
 ### carlos-utils
 
@@ -157,13 +157,13 @@ Excel 处理工具库，基于 Apache POI 和 EasyExcel：
 ## 依赖关系
 
 ```
-carlos-spring-boot-starter-core
+carlos-spring-boot-core
     ↓ (依赖)
 carlos-utils
 
 carlos-excel
     ↓ (依赖)
-carlos-spring-boot-starter-core
+carlos-spring-boot-core
 ```
 
 ## 版本管理
@@ -199,7 +199,7 @@ Commons 模块使用统一的版本号，由 `carlos-spring-boot-parent` 管理�
     <groupId>com.carlos</groupId>
     <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
 </dependency>
-<!-- carlos-spring-boot-starter-core 会被自动引入 -->
+<!-- carlos-spring-boot-core 会被自动引入 -->
 ```
 
 ### 2. 非 Spring Boot 项目
@@ -209,7 +209,7 @@ Commons 模块使用统一的版本号，由 `carlos-spring-boot-parent` 管理�
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-spring-boot-starter-core</artifactId>
+    <artifactId>carlos-spring-boot-core</artifactId>
     <version>3.0.0-SNAPSHOT</version>
 </dependency>
 ```
@@ -219,9 +219,9 @@ Commons 模块使用统一的版本号，由 `carlos-spring-boot-parent` 管理�
 在微服务架构中，Commons 模块提供统一的基础功能：
 
 ```
-服务A (carlos-spring-boot-starter-core)
-服务B (carlos-spring-boot-starter-core)
-服务C (carlos-spring-boot-starter-core)
+服务A (carlos-spring-boot-core)
+服务B (carlos-spring-boot-core)
+服务C (carlos-spring-boot-core)
     ↓
 统一的响应格式、异常处理、分页等
 ```
@@ -236,7 +236,7 @@ Commons 模块使用统一的版本号，由 `carlos-spring-boot-parent` 管理�
 <!-- 只需要核心功能 -->
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-spring-boot-starter-core</artifactId>
+    <artifactId>carlos-spring-boot-core</artifactId>
 </dependency>
 ```
 
@@ -307,7 +307,7 @@ cd carlos-spring-boot-commons
 mvn clean install
 
 # 构建单个模块
-cd carlos-spring-boot-starter-core
+cd carlos-spring-boot-core
 mvn clean install
 ```
 

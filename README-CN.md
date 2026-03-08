@@ -84,7 +84,7 @@ carlos-framework/                          # 根聚合器
 ├── carlos-dependencies/                   # 依赖管理 (BOM)
 ├── carlos-parent/                         # 父 POM
 ├── carlos-commons/                        # 与框架无关的工具类
-│   ├── carlos-spring-boot-starter-core/   # 核心抽象和异常
+│   ├── carlos-spring-boot-core/   # 核心抽象和异常
 │   ├── carlos-utils/                     # 公共工具函数
 │   └── carlos-excel/                     # Excel 处理 (Apache POI)
 ├── carlos-spring-boot/                    # Spring Boot 集成

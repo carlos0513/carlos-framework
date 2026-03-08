@@ -40,7 +40,7 @@ carlos-framework/                          # 根聚合器 (carlos-framework)
 ├── carlos-dependencies/                   # BOM - 依赖版本管理
 ├── carlos-parent/                         # 父 POM - 构建配置和插件管理
 ├── carlos-commons/                        # 通用基础库（框架无关）
-│   ├── carlos-spring-boot-starter-core/                       # 核心抽象、异常、分页、响应包装
+│   ├── carlos-spring-boot-core/                       # 核心抽象、异常、分页、响应包装
 │   ├── carlos-utils/                      # 通用工具类
 │   └── carlos-excel/                      # Excel 处理工具
 ├── carlos-spring-boot/                    # Spring Boot 集成层（22 个 Starters）
@@ -106,7 +106,7 @@ mvn clean install
 mvn clean install -DskipTests=false
 
 # 仅构建特定模块
-cd carlos-commons/carlos-spring-boot-starter-core
+cd carlos-commons/carlos-spring-boot-core
 mvn clean install
 ```
 
@@ -412,24 +412,24 @@ public class RedisAutoConfiguration {
 <!-- 正确：不指定版本，由 parent 管理 -->
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-spring-boot-starter-core</artifactId>
+    <artifactId>carlos-spring-boot-core</artifactId>
 </dependency>
 
 <!-- 错误：硬编码版本 -->
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-spring-boot-starter-core</artifactId>
+    <artifactId>carlos-spring-boot-core</artifactId>
     <version>3.0.0</version>
 </dependency>
 ```
 
 ### 模块命名规范
 
-| 模块类型                | 命名格式                                                      | 示例                                               |
-|---------------------|-----------------------------------------------------------|--------------------------------------------------|
-| Commons 模块          | `carlos-{function}`                                       | `carlos-spring-boot-starter-core`、`carlos-utils` |
-| Spring Boot Starter | `carlos-spring-boot-starter-{function}`                   | `carlos-spring-boot-starter-redis`               |
-| License 模块          | `carlos-license-*`、`carlos-spring-boot-starter-license-*` | `carlos-license-core`                            |
+| 模块类型                | 命名格式                                                      | 示例                                       |
+|---------------------|-----------------------------------------------------------|------------------------------------------|
+| Commons 模块          | `carlos-{function}`                                       | `carlos-spring-boot-core`、`carlos-utils` |
+| Spring Boot Starter | `carlos-spring-boot-starter-{function}`                   | `carlos-spring-boot-starter-redis`       |
+| License 模块          | `carlos-license-*`、`carlos-spring-boot-starter-license-*` | `carlos-license-core`                    |
 
 ### 资源过滤
 
@@ -447,6 +447,122 @@ app:
 - 所有文件使用 UTF-8 编码（无 BOM）
 - 保持原始文件编码，禁止转换
 - 中文内容使用 UTF-8 存储
+
+### Spring Boot 属性注入规范（强制）
+
+**禁止使用 `@Value` 注解进行属性注入，统一使用 `@ConfigurationProperties` 的 Properties 类。**
+
+```java
+// ❌ 错误：使用 @Value 注解
+@Value("${carlos.redis.host}")
+private String redisHost;
+
+@Value("${carlos.redis.port:6379}")
+private int redisPort;
+
+// ✅ 正确：使用 Properties 类
+@ConfigurationProperties(prefix = "carlos.redis")
+@Data
+public class RedisProperties {
+    private String host;
+    private int port = 6379;
+}
+
+// 在配置类中注入
+@Configuration
+@EnableConfigurationProperties(RedisProperties.class)
+public class RedisAutoConfiguration {
+    private final RedisProperties properties;
+    
+    public RedisAutoConfiguration(RedisProperties properties) {
+        this.properties = properties;
+    }
+}
+
+// 或者在业务类中注入
+@Service
+@RequiredArgsConstructor
+public class RedisService {
+    private final RedisProperties properties;
+}
+```
+
+**规范说明：**
+
+1. **类型安全**: Properties 类提供编译时类型检查，`@Value` 在运行时才可能发现类型错误
+2. **IDE 支持**: Properties 类可以被 IDE 识别，支持自动补全和重构
+3. **默认值**: 在 Properties 类中使用字段初始化设置默认值，比 `@Value` 的 `:` 语法更清晰
+4. **批量注入**: 相关配置可以集中在一个 Properties 类中，避免分散的 `@Value` 注解
+5. **验证支持**: 可以在 Properties 类上使用 `@Validated` 进行配置校验
+6. **可测试性**: Properties 类易于在单元测试中构造和注入
+
+### Lombok 使用规范（强制）
+
+**所有 POJO 类必须使用 Lombok 注解生成 getter/setter 方法，禁止手写 get/set 方法。**
+
+```java
+// ❌ 错误：手写 get/set 方法
+public class UserDTO {
+    private Long id;
+    private String name;
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+
+// ✅ 正确：使用 Lombok 注解
+@Data
+public class UserDTO {
+    private Long id;
+    private String name;
+}
+
+// ✅ 正确：使用 @Getter/@Setter（需要精细控制时）
+@Getter
+@Setter
+public class UserDTO {
+    private Long id;
+    
+    // 只读字段，不生成 setter
+    @Setter(AccessLevel.NONE)
+    private String name;
+}
+```
+
+**常用 Lombok 注解：**
+
+| 注解                         | 用途                                        | 适用场景                    |
+|----------------------------|-------------------------------------------|-------------------------|
+| `@Data`                    | 生成 getter、setter、toString、equals、hashCode | POJO 类、DTO、VO、Param 等   |
+| `@Getter`                  | 只生成 getter                                | 只读对象或需要精细控制时            |
+| `@Setter`                  | 只生成 setter                                | 特殊场景                    |
+| `@NoArgsConstructor`       | 生成无参构造器                                   | 需要无参构造的场景               |
+| `@AllArgsConstructor`      | 生成全参构造器                                   | 配合 @Builder 使用          |
+| `@RequiredArgsConstructor` | 生成包含 final 字段的构造器                         | Service、Controller 依赖注入 |
+| `@Builder`                 | 生成 Builder 模式代码                           | 构建复杂对象                  |
+| `@Slf4j`                   | 生成日志对象                                    | 需要记录日志的类                |
+| `@EqualsAndHashCode`       | 生成 equals 和 hashCode                      | 需要自定义比较逻辑时              |
+
+**规范说明：**
+
+1. **代码整洁**: 避免样板代码，提高可读性
+2. **易于维护**: 修改字段时无需同步修改 get/set 方法
+3. **减少错误**: 避免手写 get/set 时的拼写错误或逻辑错误
+4. **IDE 兼容**: 所有主流 IDE 都支持 Lombok 插件
+5. **构建工具**: 项目已配置 Lombok 依赖，无需额外引入
 
 ## 编程规约
 
@@ -1099,7 +1215,7 @@ META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
 
 ### 建议测试策略
 
-1. **核心模块必测**: carlos-spring-boot-starter-core、carlos-spring-boot-starter-mybatis、carlos-auth
+1. **核心模块必测**: carlos-spring-boot-core、carlos-spring-boot-starter-mybatis、carlos-auth
 2. **集成测试优先**: 数据库、Redis、MQ 等外部依赖
 3. **安全模块重点测**: carlos-spring-boot-starter-encrypt、carlos-license、carlos-auth
 4. **工具类覆盖**: carlos-utils、carlos-excel
@@ -1256,7 +1372,7 @@ mvn checkstyle:check
 
 ## 参考文档
 
-- 核心模块: `carlos-commons/carlos-spring-boot-starter-core/README.md`
+- 核心模块: `carlos-commons/carlos-spring-boot-core/README.md`
 - 父模块说明: `carlos-parent/README.md`
 - License 文档: `carlos-integration/carlos-license/README.md`
 - OAuth2 文档: `carlos-spring-boot/carlos-spring-boot-starter-oauth2/README.md`
