@@ -1,185 +1,135 @@
-# carlos-snowflake
+# carlos-spring-boot-starter-snowflake
 
-雪花算法分布式ID生成组件，提供高性能、全局唯一的ID生成服务。
+基于雪花算法的分布式 ID 生成器，支持 Redis 模式和本地模式两种运行方式。
 
-## 功能特性
+## 特性
 
-- **全局唯一**: 保证分布式环境下ID全局唯一
-- **高性能**: 单机每秒可生成400万+ID
-- **趋势递增**: ID按时间趋势递增，有利于数据库索引
-- **信息可解析**: ID包含时间戳、机器ID、序列号等信息
-- **灵活配置**: 支持自定义工作机器ID和数据中心ID
+- **双模式支持**：
+    - **Redis 模式**：分布式环境下多实例自动协调 workerId/dataCenterId
+    - **本地模式**：单机/开发环境，基于 IP 哈希或配置生成 ID，无 Redis 依赖
+- **自动检测**：自动根据 classpath 中是否存在 Redis 选择合适的模式
+- **轻量级**：本地模式无需任何外部依赖
 
 ## 快速开始
 
-### Maven依赖
+### 1. 添加依赖
 
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-snowflake</artifactId>
-    <version>${carlos.version}</version>
+    <artifactId>carlos-spring-boot-starter-snowflake</artifactId>
 </dependency>
 ```
 
-### 配置示例
+### 2. 配置（可选）
 
 ```yaml
 carlos:
   snowflake:
-    # 是否启用
-    enabled: true
-    # 工作机器ID (0-31)
-    worker-id: 1
-    # 数据中心ID (0-31)
-    datacenter-id: 1
-    # 是否使用系统时钟
-    use-system-clock: false
+    # 服务标签，默认使用 spring.application.name
+    tag: my-service
+    
+    # 本地模式配置（可选）
+    # 若不配置，则基于 IP 地址自动生成
+    worker-id: 1        # 工作节点 ID (0-31)
+    data-center-id: 1   # 数据中心 ID (0-31)
 ```
 
-## 使用示例
-
-### 生成ID
+### 3. 使用
 
 ```java
-@Autowired
-private SnowflakeIdGenerator idGenerator;
-
-public void generateId() {
-    // 生成Long类型ID
-    Long id = idGenerator.nextId();
-    System.out.println("生成的ID: " + id);
-
-    // 生成String类型ID
-    String idStr = idGenerator.nextIdStr();
-    System.out.println("生成的ID字符串: " + idStr);
-}
-```
-
-### 批量生成ID
-
-```java
-public void generateBatch() {
-    // 批量生成100个ID
-    List<Long> ids = idGenerator.nextIds(100);
-
-    for (Long id : ids) {
-        System.out.println(id);
+@Service
+public class UserService {
+    
+    public void createUser() {
+        // 生成 Long 类型 ID
+        Long id = SnowflakeUtil.longId();
+        
+        // 生成 String 类型 ID
+        String idStr = SnowflakeUtil.strId();
     }
 }
 ```
 
-### 解析ID信息
+## 模式说明
 
-```java
-public void parseId(Long id) {
-    SnowflakeInfo info = idGenerator.parseId(id);
+### Redis 模式（分布式环境推荐）
 
-    System.out.println("时间戳: " + info.getTimestamp());
-    System.out.println("数据中心ID: " + info.getDatacenterId());
-    System.out.println("工作机器ID: " + info.getWorkerId());
-    System.out.println("序列号: " + info.getSequence());
-    System.out.println("生成时间: " + info.getGenerateTime());
-}
-```
+当 classpath 中存在 `carlos-spring-boot-starter-redis` 时自动启用：
 
-### 在实体类中使用
-
-```java
-@Data
-@TableName("user")
-public class User {
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
-
-    private String name;
-    private String email;
-}
-```
-
-## ID结构说明
-
-雪花算法生成的64位ID结构：
-
-```
-0 - 0000000000 0000000000 0000000000 0000000000 0 - 00000 - 00000 - 000000000000
-|   |-------------------------------------------|   |-----|   |-----|   |----------|
-符号位(1bit)    时间戳(41bit)                    数据中心(5bit) 机器(5bit) 序列号(12bit)
-```
-
-- **符号位**: 1位，始终为0
-- **时间戳**: 41位，精确到毫秒，可使用69年
-- **数据中心ID**: 5位，支持32个数据中心
-- **工作机器ID**: 5位，每个数据中心支持32台机器
-- **序列号**: 12位，每毫秒可生成4096个ID
-
-## 配置说明
-
-### Worker ID 和 Datacenter ID
-
-- **取值范围**: 0-31
-- **配置方式**:
-    - 手动配置（推荐）
-    - 自动获取（基于IP或MAC地址）
+- 多实例间通过 Redis 协调，确保每个实例使用唯一的 workerId/dataCenterId
+- 支持最多 1024 个节点（32 dataCenter × 32 worker）
+- 实例下线时自动释放 workerId（通过 TTL + 定时续期）
 
 ```yaml
+# Redis 模式额外配置
 carlos:
   snowflake:
-    # 手动指定
+    namespace: snowflake      # Redis key 前缀
+    redis-expire: 24h         # Redis 过期时间
+```
+
+### 本地模式（轻量级/开发环境）
+
+当 classpath 中不存在 Redis 时自动启用：
+
+- **自动模式**：基于本机 IP 地址哈希生成 workerId/dataCenterId
+- **配置模式**：通过配置指定固定的 workerId/dataCenterId
+
+```yaml
+# 自动模式（默认）- 基于 IP 生成
+carlos:
+  snowflake:
+    tag: my-service
+
+# 配置模式 - 使用固定值
+carlos:
+  snowflake:
+    tag: my-service
     worker-id: 1
-    datacenter-id: 1
-
-    # 或使用自动获取
-    auto-worker-id: true
+    data-center-id: 1
 ```
 
-### 时钟回拨处理
+**注意**：本地模式下，如果多台机器使用相同的 workerId/dataCenterId，可能会产生重复的 ID。建议：
 
-组件内置时钟回拨检测和处理机制：
+- 单机部署使用自动模式
+- 多机部署时为每台机器配置唯一的 workerId/dataCenterId
 
-- 检测到时钟回拨会抛出异常
-- 可配置容忍的回拨时间（毫秒）
-- 建议使用NTP同步服务器时间
+## 配置项
 
-```yaml
-carlos:
-  snowflake:
-    # 容忍的时钟回拨时间（毫秒）
-    max-backward-ms: 5
+| 配置项                                 | 说明             | 默认值                       | 适用模式     |
+|-------------------------------------|----------------|---------------------------|----------|
+| `carlos.snowflake.tag`              | 服务标签           | `spring.application.name` | 全部       |
+| `carlos.snowflake.worker-id`        | 工作节点 ID (0-31) | `null`（自动）                | 本地模式     |
+| `carlos.snowflake.data-center-id`   | 数据中心 ID (0-31) | `null`（自动）                | 本地模式     |
+| `carlos.snowflake.namespace`        | Redis key 前缀   | `snowflake`               | Redis 模式 |
+| `carlos.snowflake.redis-expire`     | Redis 过期时间     | `24h`                     | Redis 模式 |
+| `carlos.snowflake.use-system-clock` | 使用系统时钟         | `false`                   | 全部       |
+
+## 工作原理
+
+### 雪花算法结构
+
+```
+| 1 bit | 41 bit | 5 bit | 5 bit | 12 bit |
+| 符号位 | 时间戳 | 数据中心 | 工作节点 | 序列号 |
 ```
 
-## 性能测试
+- **时间戳**：41 位，约可使用 69 年
+- **数据中心**：5 位，最多 32 个
+- **工作节点**：5 位，最多 32 个
+- **序列号**：12 位，每毫秒每节点可生成 4096 个 ID
 
-单机性能测试结果：
+### 模式选择逻辑
 
-| 线程数 | QPS   | 平均耗时   |
-|-----|-------|--------|
-| 1   | 400万+ | 0.25μs |
-| 10  | 350万+ | 2.8μs  |
-| 100 | 300万+ | 33μs   |
-
-## 依赖模块
-
-- **carlos-spring-boot-core**: 核心基础功能
+```
+classpath 中存在 RedisUtil?
+    ├── 是 → Redis 模式（分布式协调）
+    └── 否 → 本地模式（IP/配置）
+```
 
 ## 注意事项
 
-- **生产环境必须配置唯一的worker-id和datacenter-id**
-- 不同机器的worker-id必须不同，否则可能产生重复ID
-- 注意服务器时间同步，避免时钟回拨
-- ID生成依赖系统时间，确保系统时间准确
-- 单机部署可以不配置datacenter-id
-
-## 与其他ID生成方案对比
-
-| 方案    | 优点       | 缺点           |
-|-------|----------|--------------|
-| 数据库自增 | 简单可靠     | 性能差，单点故障     |
-| UUID  | 全局唯一     | 无序，占用空间大     |
-| 雪花算法  | 高性能，趋势递增 | 依赖时钟，需配置机器ID |
-| Redis | 高性能      | 依赖Redis，网络开销 |
-
-## 版本要求
-
-- JDK 17+
-- Spring Boot 3.x
+1. **时钟回拨**：雪花算法依赖系统时间，若发生时钟回拨可能导致 ID 重复或生成失败
+2. **本地模式多机部署**：多台机器使用本地模式时，需确保 workerId/dataCenterId 不重复
+3. **Redis 模式依赖**：Redis 模式下必须保证 Redis 可用，否则服务启动会失败
