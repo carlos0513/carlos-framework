@@ -11,7 +11,6 @@ import com.carlos.msg.base.pojo.param.MsgChannelConfigStateParam;
 import com.carlos.msg.base.pojo.param.MsgChannelConfigUpdateParam;
 import com.carlos.msg.base.pojo.vo.MsgChannelConfigVO;
 import com.carlos.msg.base.service.MsgChannelConfigService;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,6 @@ public class MsgChannelConfigController {
     private final MsgChannelConfigManager channelConfigManager;
 
 
-    @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
     @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MsgChannelConfigCreateParam param) {
@@ -50,21 +48,21 @@ public class MsgChannelConfigController {
         channelConfigService.addMsgChannelConfig(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         channelConfigService.deleteMsgChannelConfig(param.getIds());
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("state")
     @Operation(summary = "修改状态")
     public void state(@RequestBody MsgChannelConfigStateParam param) {
         channelConfigService.changeState(param.getIds(), param.getEnabled());
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MsgChannelConfigUpdateParam param) {
@@ -72,14 +70,14 @@ public class MsgChannelConfigController {
         channelConfigService.updateMsgChannelConfig(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("detail")
     @Operation(summary = BASE_NAME + "详情")
     public MsgChannelConfigVO detail(String id) {
         return MsgChannelConfigConvert.INSTANCE.toVO(channelConfigManager.getDtoById(id));
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgChannelConfigVO> page(MsgChannelConfigPageParam param) {

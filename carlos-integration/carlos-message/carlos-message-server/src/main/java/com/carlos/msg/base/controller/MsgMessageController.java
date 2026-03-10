@@ -10,7 +10,6 @@ import com.carlos.msg.base.pojo.param.MsgMessagePageParam;
 import com.carlos.msg.base.pojo.param.MsgMessageUpdateParam;
 import com.carlos.msg.base.pojo.vo.MsgMessageVO;
 import com.carlos.msg.base.service.MsgMessageService;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,6 @@ public class MsgMessageController {
     private final MsgMessageManager messageManager;
 
 
-    @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
     @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MsgMessageCreateParam param) {
@@ -47,14 +45,14 @@ public class MsgMessageController {
         messageService.addMsgMessage(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         messageService.deleteMsgMessage(param.getIds());
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MsgMessageUpdateParam param) {
@@ -62,14 +60,14 @@ public class MsgMessageController {
         messageService.updateMsgMessage(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("detail")
     @Operation(summary = BASE_NAME + "详情")
     public MsgMessageVO detail(String id) {
         return MsgMessageConvert.INSTANCE.toVO(messageManager.getDtoById(id));
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgMessageVO> page(MsgMessagePageParam param) {

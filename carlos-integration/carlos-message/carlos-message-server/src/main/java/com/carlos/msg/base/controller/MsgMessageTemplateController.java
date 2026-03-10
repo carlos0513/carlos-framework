@@ -18,7 +18,6 @@ import com.carlos.msg.base.pojo.vo.MsgMessageTemplatePageVO;
 import com.carlos.msg.base.pojo.vo.MsgMessageTemplateVO;
 import com.carlos.msg.base.service.MsgMessageTemplateService;
 import com.carlos.util.easyexcel.ExcelUtil;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,7 +50,6 @@ public class MsgMessageTemplateController {
     private final MsgMessageTemplateManager messageTemplateManager;
 
 
-    @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
     @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MsgMessageTemplateCreateParam param) {
@@ -59,14 +57,14 @@ public class MsgMessageTemplateController {
         messageTemplateService.addMsgMessageTemplate(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         messageTemplateService.deleteMsgMessageTemplate(param.getIds());
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MsgMessageTemplateUpdateParam param) {
@@ -74,14 +72,14 @@ public class MsgMessageTemplateController {
         messageTemplateService.updateMsgMessageTemplate(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("detail")
     @Operation(summary = BASE_NAME + "详情")
     public MsgMessageTemplateVO detail(String id) {
         return MsgMessageTemplateConvert.INSTANCE.toVO(messageTemplateManager.getDtoById(id));
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgMessageTemplatePageVO> page(MsgMessageTemplatePageParam param) {

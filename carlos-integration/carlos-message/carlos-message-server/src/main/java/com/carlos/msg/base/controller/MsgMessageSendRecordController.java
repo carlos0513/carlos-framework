@@ -6,7 +6,6 @@ import com.carlos.msg.base.manager.MsgMessageSendRecordManager;
 import com.carlos.msg.base.pojo.param.MsgMessageSendRecordPageParam;
 import com.carlos.msg.base.pojo.vo.MsgMessageSendRecordVO;
 import com.carlos.msg.base.service.MsgMessageSendRecordService;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +35,13 @@ public class MsgMessageSendRecordController {
     private final MsgMessageSendRecordManager messageSendRecordManager;
 
 
-    @ApiOperationSupport(author = "Carlos")
     @GetMapping("detail")
     @Operation(summary = BASE_NAME + "详情")
     public MsgMessageSendRecordVO detail(String id) {
         return MsgMessageSendRecordConvert.INSTANCE.toVO(messageSendRecordManager.getDtoById(id));
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgMessageSendRecordVO> page(MsgMessageSendRecordPageParam param) {

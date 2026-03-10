@@ -19,7 +19,6 @@ import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamId;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.util.easyexcel.ExcelUtil;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,7 +51,6 @@ public class AppClientController {
 
     private final AppClientManager registeredClientManager;
 
-    @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
     @Operation(summary = "新增" + BASE_NAME)
     public AppClientVO add(@RequestBody @Validated AppClientCreateParam param) {
@@ -61,14 +59,14 @@ public class AppClientController {
         return AppClientConvert.INSTANCE.toVO(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         registeredClientService.deleteAppClient(param.getIds());
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated AppClientUpdateParam param) {
@@ -76,28 +74,28 @@ public class AppClientController {
         registeredClientService.updateAppClient(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("resetSecret")
     @Operation(summary = "重置秘钥")
     public String resetSecret(@RequestBody @Validated ParamId<Serializable> param) {
         return registeredClientService.resetSecret(param.getId());
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("detail")
     @Operation(summary = BASE_NAME + "详情")
     public AppClientVO detail(String id) {
         return AppClientConvert.INSTANCE.toVO(registeredClientService.findById(id, true));
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("list")
     @Operation(summary = "应用列表")
     public List<AppClientListVO> list(String keyword) {
         return AppClientConvert.INSTANCE.toListVO(registeredClientService.list(keyword));
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<AppClientPageVO> page(AppClientPageParam param) {

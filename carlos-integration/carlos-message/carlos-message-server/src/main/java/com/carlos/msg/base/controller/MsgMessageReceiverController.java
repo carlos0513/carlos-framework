@@ -10,7 +10,6 @@ import com.carlos.msg.base.pojo.param.MsgMessageReceiverPageParam;
 import com.carlos.msg.base.pojo.param.MsgMessageReceiverUpdateParam;
 import com.carlos.msg.base.pojo.vo.MsgMessageReceiverVO;
 import com.carlos.msg.base.service.MsgMessageReceiverService;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,6 @@ public class MsgMessageReceiverController {
     private final MsgMessageReceiverManager messageReceiverManager;
 
 
-    @ApiOperationSupport(author = "Carlos")
     @PostMapping("add")
     @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MsgMessageReceiverCreateParam param) {
@@ -47,14 +45,14 @@ public class MsgMessageReceiverController {
         messageReceiverService.addMsgMessageReceiver(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         messageReceiverService.deleteMsgMessageReceiver(param.getIds());
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MsgMessageReceiverUpdateParam param) {
@@ -62,14 +60,14 @@ public class MsgMessageReceiverController {
         messageReceiverService.updateMsgMessageReceiver(dto);
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("detail")
     @Operation(summary = BASE_NAME + "详情")
     public MsgMessageReceiverVO detail(String id) {
         return MsgMessageReceiverConvert.INSTANCE.toVO(messageReceiverManager.getDtoById(id));
     }
 
-    @ApiOperationSupport(author = "Carlos")
+
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MsgMessageReceiverVO> page(MsgMessageReceiverPageParam param) {
