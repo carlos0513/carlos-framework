@@ -12,15 +12,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>carlos-message-server</artifactId>
-    <description>消息中心服务端启动模块</description>
+    <description>消息中心服务端</description>
 
     <dependencies>
-        <!-- Bus模块（包含所有业务实现） -->
-        <dependency>
-            <groupId>com.carlos.message</groupId>
-            <artifactId>carlos-message-bus</artifactId>
-        </dependency>
-
         <!-- API模块 -->
         <dependency>
             <groupId>com.carlos.message</groupId>
@@ -45,6 +39,12 @@
             <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
         </dependency>
 
+        <!-- carlos Redis -->
+        <dependency>
+            <groupId>com.carlos</groupId>
+            <artifactId>carlos-spring-boot-starter-redis</artifactId>
+        </dependency>
+
         <!-- carlos OpenAPI -->
         <dependency>
             <groupId>com.carlos</groupId>
@@ -57,10 +57,34 @@
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
+        <!-- FreeMarker -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+
         <!-- OpenFeign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- MapStruct -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Test -->

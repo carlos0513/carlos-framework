@@ -17,8 +17,6 @@
     <modules>
         <module>carlos-message-api</module>
         <module>carlos-message-core</module>
-        <module>carlos-message-bus</module>
-        <module>carlos-message-spring-boot-starter</module>
         <module>carlos-message-server</module>
         <module>carlos-message-boot</module>
         <module>carlos-message-cloud</module>
@@ -34,16 +32,6 @@
             <dependency>
                 <groupId>com.carlos.message</groupId>
                 <artifactId>carlos-message-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.carlos.message</groupId>
-                <artifactId>carlos-message-bus</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.carlos.message</groupId>
-                <artifactId>carlos-message-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
