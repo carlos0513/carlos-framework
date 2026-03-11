@@ -25,6 +25,10 @@
       <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-openapi</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.carlos.audit</groupId>
       <artifactId>carlos-audit-api</artifactId>
     </dependency>
@@ -39,10 +43,9 @@
     <!-- ClickHouse 客户端 -->
     <dependency>
       <groupId>com.clickhouse</groupId>
-      <artifactId>clickhouse-http-client</artifactId>
-      <version>0.7.0</version>
+      <artifactId>clickhouse-jdbc-all</artifactId>
+      <version>0.9.6</version>
     </dependency>
-
     <!-- Spring AOP -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

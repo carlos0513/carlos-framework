@@ -3,6 +3,7 @@ package com.carlos.audit.controller;
 import com.carlos.audit.annotation.AuditLog;
 import com.carlos.audit.api.pojo.enums.AuditLogCategoryEnum;
 import com.carlos.core.response.Result;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
  * @author Carlos
  * @date 2026-03-06
  */
+@Hidden
 @RestController
 @RequestMapping("/api/audit/demo")
 @Tag(name = "审计日志使用示例", description = "演示 @AuditLog 注解的各种使用方式")

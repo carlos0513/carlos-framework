@@ -1,5 +1,6 @@
 package com.carlos.audit.service;
 
+import com.carlos.audit.manager.AuditLogMainManager;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
 import com.carlos.audit.pojo.vo.AuditLogStatsVO;
 import com.carlos.core.pagination.Paging;
@@ -25,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuditLogQueryService {
 
-    // TODO: 注入 ClickHouse 客户端或 Mapper 进行实际查询
+    private final AuditLogMainManager auditLogMainManager;
 
     /**
      * 分页查询审计日志
@@ -97,14 +98,7 @@ public class AuditLogQueryService {
      */
     public List<AuditLogMainDTO> getUserTrail(String principalId, LocalDateTime startTime, LocalDateTime endTime) {
         log.debug("查询用户行为轨迹，principalId={}", principalId);
-
-        // TODO: 实现查询
-        // SELECT * FROM audit_log_main_local
-        // WHERE principal_id = #{principalId}
-        // AND server_time >= #{startTime} AND server_time <= #{endTime}
-        // ORDER BY server_time ASC
-
-        return Collections.emptyList();
+        return auditLogMainManager.getUserTrail(principalId, startTime, endTime);
     }
 
     /**

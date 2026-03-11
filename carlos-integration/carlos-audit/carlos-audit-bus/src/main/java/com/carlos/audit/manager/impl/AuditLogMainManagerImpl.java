@@ -17,6 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -185,6 +189,29 @@ public class AuditLogMainManagerImpl extends BaseServiceImpl<AuditLogMainMapper,
         );
         PageInfo<AuditLogMain> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, AuditLogMainConvert.INSTANCE::toVO);
+    }
+
+    @Override
+    public List<AuditLogMainDTO> getUserTrail(String principalId, LocalDateTime startTime, LocalDateTime endTime) {
+        if (principalId == null || principalId.isEmpty()) {
+            log.warn("principalId cannot be null or empty");
+            return Collections.emptyList();
+        }
+
+        LambdaQueryWrapper<AuditLogMain> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AuditLogMain::getPrincipalId, principalId);
+
+        if (Objects.nonNull(startTime)) {
+            wrapper.ge(AuditLogMain::getServerTime, startTime);
+        }
+        if (Objects.nonNull(endTime)) {
+            wrapper.le(AuditLogMain::getServerTime, endTime);
+        }
+
+        wrapper.orderByAsc(AuditLogMain::getServerTime);
+
+        List<AuditLogMain> entityList = getBaseMapper().selectList(wrapper);
+        return AuditLogMainConvert.INSTANCE.toDTO(entityList);
     }
 
 }

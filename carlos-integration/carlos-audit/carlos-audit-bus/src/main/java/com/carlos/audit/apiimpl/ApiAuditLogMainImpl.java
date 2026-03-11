@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 public class ApiAuditLogMainImpl implements ApiAuditLogMain {
 
     private final AuditLogMainService logMainService;
-    private final AuditLogMainConvert auditLogMainConvert;
 
     /**
      * 保存审计日志（异步）
@@ -62,7 +61,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             logMainService.addAuditLogMain(dto);
 
             // 转换为 AO 返回
-            AuditLogMainAO ao = auditLogMainConvert.toAO(dto);
+            AuditLogMainAO ao = AuditLogMainConvert.INSTANCE.toAO(dto);
 
             log.debug("审计日志异步保存成功，logType: {}", param.getLogType());
             return Result.ok(ao, "审计日志保存成功");
@@ -102,7 +101,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             }
 
             // 转换为 AO 返回
-            AuditLogMainAO ao = auditLogMainConvert.toAO(dto);
+            AuditLogMainAO ao = AuditLogMainConvert.INSTANCE.toAO(dto);
 
             log.debug("审计日志同步保存成功，logType: {}", param.getLogType());
             return Result.ok(ao, "审计日志保存成功");
@@ -195,7 +194,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             logMainService.addAuditLogMain(dto);
 
             // 转换为 AO 返回
-            AuditLogMainAO ao = auditLogMainConvert.toAO(dto);
+            AuditLogMainAO ao = AuditLogMainConvert.INSTANCE.toAO(dto);
 
             log.debug("简单审计日志保存成功，logType: {}", logType);
             return Result.ok(ao, "审计日志保存成功");

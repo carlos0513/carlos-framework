@@ -5,6 +5,7 @@ import com.carlos.audit.pojo.vo.AuditLogStatsVO;
 import com.carlos.audit.service.AuditLogQueryService;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.response.Result;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.List;
  * @author Carlos
  * @date 2026-03-06
  */
+@Hidden
 @RestController
 @RequestMapping("/audit/log/query")
 @RequiredArgsConstructor

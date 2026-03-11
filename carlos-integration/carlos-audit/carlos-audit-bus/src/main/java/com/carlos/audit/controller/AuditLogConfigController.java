@@ -10,6 +10,7 @@ import com.carlos.audit.pojo.vo.AuditLogConfigVO;
 import com.carlos.audit.service.AuditLogConfigService;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.io.Serializable;
  * @author Carlos
  * @date 2026年3月6日 下午9:31:12
  */
+@Hidden
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("audit/log/config")

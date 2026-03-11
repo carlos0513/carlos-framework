@@ -8,6 +8,8 @@ import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseService;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -67,4 +69,16 @@ public interface AuditLogMainManager extends BaseService<AuditLogMain> {
      * @date 2026年3月6日 下午9:31:12
      */
     Paging<AuditLogMainVO> getPage(AuditLogMainPageParam param);
+
+    /**
+     * 查询用户行为轨迹
+     *
+     * @param principalId 主体ID
+     * @param startTime   开始时间
+     * @param endTime     结束时间
+     * @return 行为轨迹列表
+     * @author Carlos
+     * @date 2026年3月6日 下午9:31:12
+     */
+    List<AuditLogMainDTO> getUserTrail(String principalId, LocalDateTime startTime, LocalDateTime endTime);
 }
