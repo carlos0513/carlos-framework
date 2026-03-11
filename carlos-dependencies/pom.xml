@@ -35,7 +35,8 @@
 
     <!-- 安全相关 -->
     <spring-security-oauth2-jose.version>6.2.7</spring-security-oauth2-jose.version>
-    <spring-boot-starter-security.version>3.2.12</spring-boot-starter-security.version>
+    <!-- Spring Security 版本由 Spring Boot 3.5.9 统一管理，不指定显式版本 -->
+    <!-- <spring-boot-starter-security.version>3.2.12</spring-boot-starter-security.version> -->
     <!--<spring-cloud-oauth2.version>2.2.5.RELEASE</spring-cloud-oauth2.version>-->
     <!--<spring-security-oauth2-jose.version>5.7.3</spring-security-oauth2-jose.version>-->
     <!--<spring-boot-starter-security.version>2.7.4</spring-boot-starter-security.version>-->
@@ -45,7 +46,7 @@
     <!--<mybatis-plus.version>3.5.2</mybatis-plus.version>-->
     <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
     <!--<mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>-->
-    <alibaba.seata.version>2.0.0</alibaba.seata.version>        <!-- SB3 分支 -->
+    <alibaba.seata.version>2.5.0</alibaba.seata.version>        <!-- SCA 2025.0.0.0 推荐版本 -->
     <!--<alibaba.seata.version>1.5.1</alibaba.seata.version>-->
 
     <!-- 工具 -->
@@ -113,7 +114,8 @@
     <sms4j.version>3.3.4</sms4j.version>
     <dingtalk-sdk.version>2.0.0</dingtalk-sdk.version>
     <aws-s3.version>2.20.26</aws-s3.version>
-    <rocketmq-spring-boot.version>2.0.2</rocketmq-spring-boot.version>
+    <rocketmq-spring-boot.version>5.3.1</rocketmq-spring-boot.version>        <!-- SCA 2025.0.0.0 推荐版本 -->
+    <nacos-client.version>3.0.3</nacos-client.version>              <!-- SCA 2025.0.0.0 推荐版本 -->
     <swagger-annotations.version>2.2.36</swagger-annotations.version>
     <swagger-core-jakarta.version>2.2.36</swagger-core-jakarta.version>
     <jakarta-validation.version>3.1.1</jakarta-validation.version>
