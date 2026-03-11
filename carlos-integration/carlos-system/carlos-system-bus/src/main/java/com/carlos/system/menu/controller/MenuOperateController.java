@@ -11,7 +11,6 @@ import com.carlos.system.menu.pojo.param.MenuOperateSearchParam;
 import com.carlos.system.menu.pojo.param.MenuOperateUpdateParam;
 import com.carlos.system.menu.pojo.vo.MenuOperateVO;
 import com.carlos.system.menu.service.MenuOperateService;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,6 @@ public class MenuOperateController {
     private final MenuOperateManager menuOperateManager;
 
 
-    @ApiOperationSupport(author = "carlos")
     @PostMapping("add")
     @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated MenuOperateCreateParam param) {
@@ -50,14 +48,14 @@ public class MenuOperateController {
         menuOperateService.addMenuOperate(dto);
     }
 
-    @ApiOperationSupport(author = "carlos")
+
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<String> param) {
         menuOperateService.deleteMenuOperate(param.getIds());
     }
 
-    @ApiOperationSupport(author = "carlos")
+
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
     public void update(@RequestBody @Validated MenuOperateUpdateParam param) {
@@ -65,14 +63,14 @@ public class MenuOperateController {
         menuOperateService.updateMenuOperate(dto);
     }
 
-    @ApiOperationSupport(author = "carlos")
+
     @GetMapping("{id}")
     @Operation(summary = BASE_NAME + "详情")
     public MenuOperateVO detail(@PathVariable String id) {
         return MenuOperateConvert.INSTANCE.toVO(menuOperateManager.getDtoById(id));
     }
 
-    @ApiOperationSupport(author = "carlos")
+
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MenuOperateVO> page(MenuOperatePageParam param) {
