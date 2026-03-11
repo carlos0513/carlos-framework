@@ -347,6 +347,7 @@ src/main/resources/
     - 使用 `@Slf4j` 记录业务日志
     - 业务方法命名：`addXxx()`, `deleteXxx()`, `updateXxx()`
     - 处理业务异常和成功后的后续操作（如发送消息）
+   - **严禁直接引用 Mapper 层**：Service 层必须通过 Manager 层进行数据操作，禁止直接注入 Mapper
 
 3. **Manager 编码规范**：
     - 继承 `BaseService<Entity>` 获取基础 CRUD 能力
@@ -1276,6 +1277,7 @@ carlos-dependencies (BOM)
 - ❌ 循环依赖（已由 maven-enforcer-plugin 强制检查）
 - ❌ 子模块硬编码版本号
 - ❌ 生产环境包含 license-generate 模块
+- ❌ Service 层直接引用 Mapper：Service 必须通过 Manager 层进行数据操作，严禁直接注入 Mapper
 
 ## 重要配置参考
 

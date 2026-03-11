@@ -96,6 +96,10 @@
             <source>${java.version}</source>
             <target>${java.version}</target>
             <encoding>${project.build.sourceEncoding}</encoding>
+            <!-- 关键：保留方法参数名，用于 Spring Boot 3.x + OpenAPI 识别参数名 -->
+            <compilerArgs>
+              <arg>-parameters</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
 

@@ -42,6 +42,11 @@ public class ResponseInfoAdvice implements ResponseBodyAdvice<Object> {
         if (declaringClass.getName().contains("springdoc")) {
             return false;
         }
+        // 过滤掉 OpenAPI 相关类
+        if (declaringClass.getName().startsWith("org.springdoc") ||
+            declaringClass.getName().startsWith("io.swagger")) {
+            return false;
+        }
         // 判断是否要执行beforeBodyWrite方法，true为执行，false不执行
         final RestController annotation = declaringClass.getAnnotation(RestController.class);
         final ClientApi apiAnnotation = declaringClass.getAnnotation(ClientApi.class);

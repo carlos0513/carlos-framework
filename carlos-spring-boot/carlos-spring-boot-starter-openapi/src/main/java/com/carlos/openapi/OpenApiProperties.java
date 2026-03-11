@@ -7,7 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Swagger配置属性
@@ -25,28 +24,9 @@ public class OpenApiProperties {
     private boolean enable = false;
 
     /**
-     * 扫描的基本包 多个包使用 逗号分开
-     */
-    private String basePackage;
-    /**
-     * swagger会解析的url规则
-     **/
-    private Set<String> basePath;
-
-    /**
-     * 在basePath基础上需要排除的url规则
-     **/
-    private Set<String> excludePath;
-
-    /**
      * 描述
      */
     private String description;
-
-    /**
-     * 组名称 如果是微服务组件不要配置该值
-     */
-    private String groupName;
 
     /**
      * 标题
@@ -59,15 +39,9 @@ public class OpenApiProperties {
     private String termsOfServiceUrl;
 
     /**
-     * host信息
-     **/
-    private String host;
-
-    /**
      * 版本
      */
     private String version;
-
     /**
      * 许可证
      **/

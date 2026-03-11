@@ -49,7 +49,7 @@
     <!--<alibaba.seata.version>1.5.1</alibaba.seata.version>-->
 
     <!-- 工具 -->
-    <knife4j.version>4.5.0</knife4j.version>
+    <knife4j.version>4.6.0-SNAPSHOT</knife4j.version>
     <hutool.version>5.8.40</hutool.version>
     <fastexcel.version>1.3.0</fastexcel.version>
     <commons-collections4.version>4.4</commons-collections4.version>
@@ -114,7 +114,8 @@
     <dingtalk-sdk.version>2.0.0</dingtalk-sdk.version>
     <aws-s3.version>2.20.26</aws-s3.version>
     <rocketmq-spring-boot.version>2.0.2</rocketmq-spring-boot.version>
-    <swagger-annotations.version>2.2.19</swagger-annotations.version>
+    <swagger-annotations.version>2.2.36</swagger-annotations.version>
+    <swagger-core-jakarta.version>2.2.36</swagger-core-jakarta.version>
     <jakarta-validation.version>3.1.1</jakarta-validation.version>
 
     <!-- SkyWalking -->
@@ -696,7 +697,7 @@
       <dependency>
         <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-annotations-jakarta</artifactId>
-        <version>${swagger-annotations.version}</version>
+        <version>${swagger-core-jakarta.version}</version>
       </dependency>
       <dependency>
         <groupId>jakarta.validation</groupId>
@@ -865,8 +866,9 @@
           <configuration>
             <source>${java.version}</source>
             <target>${java.version}</target>
+            <!-- 关键：保留方法参数名，用于 Spring Boot 3.x + OpenAPI 识别参数名 -->
             <compilerArgs>
-              <arg>-parameters</arg> <!-- 保留方法参数名 -->
+              <arg>-parameters</arg>
             </compilerArgs>
           </configuration>
         </plugin>
