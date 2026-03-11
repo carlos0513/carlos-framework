@@ -692,14 +692,26 @@ public class UserCreateParam {
     - 方法命名：`add()`, `delete()`, `modify()`, `getDtoById()`, `getPage()`
     - 返回值为 boolean 表示操作是否成功
 
-4. **Param 细分规范**：
+4. **数据查询规范（强制）**：
+    - **严禁在代码中直接编写 SQL 语句**（包括原生 SQL、XML Mapper 中的 SQL 等）
+    - **必须使用 MyBatis-Plus + mybatis-plus-join 在 Manager 层实现数据查询**
+    - 仅当 MyBatis-Plus 组件无法实现的复杂查询（如复杂报表、统计分析等），才允许编写自定义 SQL
+    - 所有查询逻辑统一封装在 Manager 层，Service 层通过 Manager 获取数据
+
+5. **Redis 缓存规范（强制）**：
+    - **所有 Redis 缓存操作必须统一在 Manager 层实现**
+    - Service 层禁止直接操作 Redis，必须通过 Manager 层进行缓存数据的读写
+    - 缓存 key 的命名规范：`{模块名}:{业务名}:{标识}`，如 `org:user:123`
+    - 缓存注解（如 `@Cacheable`、`@CacheEvict`）统一应用在 Manager 层方法上
+
+6. **Param 细分规范**：
    ```
    XxxCreateParam   - 新增操作（@Validated 校验）
    XxxUpdateParam   - 更新操作（包含 ID 字段）
    XxxPageParam     - 分页查询（继承分页基类）
    ```
 
-5. **属性注入规范（强制）**：
+7. **属性注入规范（强制）**：
     - **禁止使用 `@Value` 注解进行属性注入，统一使用 `@ConfigurationProperties` 的 Properties 类**
 
    ```java
@@ -739,7 +751,7 @@ public class UserCreateParam {
 
    **优势**：类型安全、IDE 支持、默认值清晰、配置集中、易于测试
 
-6. **Lombok 使用规范（强制）**：
+8. **Lombok 使用规范（强制）**：
     - **所有 POJO 类必须使用 Lombok 注解生成 getter/setter 方法，禁止手写 get/set 方法**
 
    ```java
