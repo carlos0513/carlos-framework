@@ -8,41 +8,41 @@
 
 ### 核心功能
 
-- [ ] **MSG-P0-001**: 实现 `Channel` 接口定义 - 当前接口为空，需要定义发送方法
-    - 文件: `carlos-message-server/.../sender/channel/Channel.java`
+- [ ] **MSG-P0-001**: 实现 `ChannelAdapter` 接口定义 - 渠道适配器接口
+    - 文件: `carlos-message-core/.../channel/ChannelAdapter.java`
     - 预计工时: 2h
 
-- [ ] **MSG-P0-002**: 完成 `MsgChannelFactory` 工厂实现 - 当前方法均为空实现
-    - 文件: `carlos-message-server/.../sender/channel/MsgChannelFactory.java`
+- [ ] **MSG-P0-002**: 完成 `ChannelFactory` 工厂实现 - 渠道工厂
+    - 文件: `carlos-message-core/.../channel/ChannelFactory.java`
     - 预计工时: 4h
 
-- [ ] **MSG-P0-003**: 实现短信渠道适配器 `SmsChannel`
-    - 文件: `carlos-message-server/.../sender/channel/SmsChannel.java`
+- [ ] **MSG-P0-003**: 实现短信渠道适配器 `SmsChannelAdapter`
+    - 文件: `carlos-message-bus/.../channel/sms/SmsChannelAdapter.java`
     - 预计工时: 8h
     - 依赖: MSG-P0-001, MSG-P0-002
 
-- [ ] **MSG-P0-004**: 实现钉钉渠道适配器 `DingtalkChannel`
-    - 文件: `carlos-message-server/.../sender/channel/DingtalkChannel.java`
+- [ ] **MSG-P0-004**: 实现钉钉渠道适配器 `DingtalkChannelAdapter`
+    - 文件: `carlos-message-bus/.../channel/dingtalk/DingtalkChannelAdapter.java`
     - 预计工时: 8h
     - 依赖: MSG-P0-001, MSG-P0-002
 
-- [ ] **MSG-P0-005**: 完成消息发送主逻辑 `MsgSenderService.msgSend()`
-    - 文件: `carlos-message-server/.../sender/MsgSenderService.java`
+- [ ] **MSG-P0-005**: 完成消息发送主逻辑 `MessageSendService.send()`
+    - 文件: `carlos-message-bus/.../service/MessageSendService.java`
     - 预计工时: 8h
     - 依赖: MSG-P0-003, MSG-P0-004
 
-- [ ] **MSG-P0-006**: 完善 `MsgContext` 消息上下文
-    - 文件: `carlos-message-server/.../pojo/dto/MsgContext.java`
+- [ ] **MSG-P0-006**: 完善 `MessageContext` 消息上下文
+    - 文件: `carlos-message-core/.../protocol/MessageContext.java`
     - 预计工时: 2h
 
 ### API 接口
 
-- [ ] **MSG-P0-007**: 启用 Feign 接口 `ApiMsgMessage`
-    - 文件: `carlos-message-server/.../api/ApiMsgMessage.java`
+- [ ] **MSG-P0-007**: 启用 Feign 接口 `MessageSendApi`
+    - 文件: `carlos-message-api/.../api/MessageSendApi.java`
     - 预计工时: 2h
 
-- [ ] **MSG-P0-008**: 完善 Feign 接口实现 `ApiMsgMessageImpl`
-    - 文件: `carlos-message-server/.../apiimpl/ApiMsgMessageImpl.java`
+- [ ] **MSG-P0-008**: 完善 Feign 接口实现 `MessageSendApiImpl`
+    - 文件: `carlos-message-bus/.../apiimpl/MessageSendApiImpl.java`
     - 预计工时: 4h
     - 依赖: MSG-P0-007
 
@@ -71,7 +71,7 @@
     - 依赖: MSG-P0-001
 
 - [ ] **MSG-P1-005**: 启用 WebSocket 站内信
-    - 文件: `carlos-message-server/.../socket/WebSocketConfig.java`
+    - 文件: `carlos-message-bus/.../websocket/MessageWebSocketHandler.java`
     - 预计工时: 12h
 
 - [ ] **MSG-P1-006**: 实现企业微信渠道适配器
@@ -80,11 +80,13 @@
 
 ### 客户端 SDK
 
-- [ ] **MSG-P1-007**: 完善客户端模块 `carlos-message-client`
+- [ ] **MSG-P1-007**: 完善客户端模块 `carlos-message-spring-boot-starter`
+    - 文件: `carlos-message-spring-boot-starter/.../MessageClient.java`
     - 预计工时: 8h
     - 依赖: MSG-P0-007
 
 - [ ] **MSG-P1-008**: 实现客户端自动配置
+    - 文件: `carlos-message-spring-boot-starter/.../MessageClientAutoConfiguration.java`
     - 预计工时: 4h
     - 依赖: MSG-P1-007
 
@@ -176,9 +178,11 @@
     - 预计工时: 4h
 
 - [ ] **MSG-REF-002**: 统一异常处理 - 完善 `MessageException` 体系
+    - 文件: `carlos-message-core/.../exception/MessageException.java`
     - 预计工时: 4h
 
-- [ ] **MSG-REF-003**: 优化数据库表结构 - 参考 `MESSAGE_DESIGN_SPEC.md`
+- [ ] **MSG-REF-003**: 创建数据库初始化脚本 - 参考 `DATABASE_SCHEMA.md`
+    - 文件: `doc/database_init.sql`
     - 预计工时: 8h
 
 - [ ] **MSG-REF-004**: 完善单元测试覆盖

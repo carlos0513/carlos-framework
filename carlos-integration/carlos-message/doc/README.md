@@ -32,18 +32,18 @@ mysql -u root -p < database_init.sql
 ```sql
 USE carlos_message;
 SHOW TABLES;
--- 应该看到6张表：msg_channel, msg_receiver, msg_record, msg_send_log, msg_template, msg_type
+-- 应该看到6张表：message_channel, message_receiver, message_record, message_send_log, message_template, message_type
 ```
 
 ### 3. 查看初始数据
 
 ```sql
 -- 查看消息类型
-SELECT * FROM msg_type;
+SELECT * FROM message_type;
 
 -- 查看表结构
-DESC msg_record;
-DESC msg_receiver;
+DESC message_record;
+DESC message_receiver;
 ```
 
 ---
@@ -51,17 +51,17 @@ DESC msg_receiver;
 ## 核心表关系
 
 ```
-msg_type (消息类型)
+message_type (消息类型)
     │
-    └── msg_template (消息模板) ──┐
-                                  │
-msg_channel (渠道配置)             │
-    │                              │
-    └── msg_receiver (接收人) ◄────┘
+    └── message_template (消息模板) ──┐
+                                      │
+message_channel (渠道配置)             │
+    │                                  │
+    └── message_receiver (接收人) ◄────┘
             │
-            ├── msg_record (消息记录)
+            ├── message_record (消息记录)
             │
-            └── msg_send_log (发送日志)
+            └── message_send_log (发送日志)
 ```
 
 ---
@@ -72,12 +72,13 @@ msg_channel (渠道配置)             │
 
 **优化内容：**
 
-1. ✅ 修复 `msg_record` 表状态字段歧义问题（改为统计字段）
+1. ✅ 修复 `message_record` 表状态字段歧义问题（改为统计字段）
 2. ✅ 统一所有表的审计字段（create_by/update_by/create_time/update_time）
 3. ✅ 完善所有表的索引设计（添加复合索引优化高频查询）
 4. ✅ 优化字段长度和必填属性（提高灵活性）
-5. ✅ 增加 `msg_send_log.receiver_id` 字段（精确关联接收人）
-6. ✅ 统一 `msg_type` 和 `msg_record` 的关联方式（都使用 type_code）
+5. ✅ 增加 `message_send_log.receiver_id` 字段（精确关联接收人）
+6. ✅ 统一 `message_type` 和 `message_record` 的关联方式（都使用 type_code）
+7. ✅ 表名统一为 `message_*` 前缀（与模块名保持一致）
 
 ---
 

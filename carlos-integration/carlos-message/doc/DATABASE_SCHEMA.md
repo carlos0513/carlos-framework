@@ -17,14 +17,14 @@
 
 ## 表清单
 
-| 表名           | 说明     | 预估数据量   | 保留策略 |
-|--------------|--------|---------|------|
-| msg_type     | 消息类型表  | < 200条  | 永久   |
-| msg_template | 消息模板表  | < 1000条 | 永久   |
-| msg_channel  | 渠道配置表  | < 50条   | 永久   |
-| msg_record   | 消息记录表  | 20万条/天  | 30天  |
-| msg_receiver | 消息接收人表 | 40万条/天  | 30天  |
-| msg_send_log | 发送日志表  | 20万条/天  | 7天   |
+| 表名               | 说明     | 预估数据量   | 保留策略 |
+|------------------|--------|---------|------|
+| message_type     | 消息类型表  | < 200条  | 永久   |
+| message_template | 消息模板表  | < 1000条 | 永久   |
+| message_channel  | 渠道配置表  | < 50条   | 永久   |
+| message_record   | 消息记录表  | 20万条/天  | 30天  |
+| message_receiver | 消息接收人表 | 40万条/天  | 30天  |
+| message_send_log | 发送日志表  | 20万条/天  | 7天   |
 
 ---
 
@@ -39,10 +39,10 @@
 
 ## 详细表结构
 
-### 0. msg_type - 消息类型表
+### 0. message_type - 消息类型表
 
 ```sql
-CREATE TABLE msg_type
+CREATE TABLE message_type
 (
     id          BIGINT(20)  NOT NULL COMMENT '主键ID',
     type_code   VARCHAR(32) NOT NULL COMMENT '类型编码，如：ORDER_NOTIFY',
@@ -64,7 +64,7 @@ CREATE TABLE msg_type
 **初始数据：**
 
 ```sql
-INSERT INTO msg_type (id, type_code, type_name, is_enabled) VALUES
+INSERT INTO message_type (id, type_code, type_name, is_enabled) VALUES
 (1, 'TASK_NOTIFY', '任务通知', 1),
 (2, 'VERIFY_CODE', '验证码', 1),
 (3, 'SYSTEM_NOTIFY', '系统通知', 1),
@@ -74,13 +74,13 @@ INSERT INTO msg_type (id, type_code, type_name, is_enabled) VALUES
 
 ---
 
-### 1. msg_template - 消息模板表
+### 1. message_template - 消息模板表
 
 ```sql
-CREATE TABLE msg_template
+CREATE TABLE message_template
 (
     id               BIGINT(20)  NOT NULL COMMENT '主键ID',
-    type_id          BIGINT(20)  NOT NULL COMMENT '消息类型ID，关联msg_type.id',
+    type_id          BIGINT(20)  NOT NULL COMMENT '消息类型ID，关联message_type.id',
     template_code    VARCHAR(50) NOT NULL COMMENT '模板编码，唯一标识',
     template_name    VARCHAR(50) NOT NULL COMMENT '模板名称',
     title_template   VARCHAR(100)         DEFAULT NULL COMMENT '标题模板，可为空',
@@ -106,7 +106,7 @@ CREATE TABLE msg_template
 **示例数据：**
 
 ```sql
-INSERT INTO msg_template (type_id, template_code, template_name, title_template, content_template, param_schema, channel_config, is_enabled) VALUES
+INSERT INTO message_template (type_id, template_code, template_name, title_template, content_template, param_schema, channel_config, is_enabled) VALUES
 (1, 'ORDER_SUCCESS', '订单支付成功', '订单通知', '尊敬的${userName}，您的订单${orderNo}已支付成功，金额￥${amount}。', 
  '{"userName":"string","orderNo":"string","amount":"string"}', 
  '{"SMS":{"templateCode":"SMS_123"},"DINGTALK":{"agentId":"123"}}', 1),
@@ -117,10 +117,10 @@ INSERT INTO msg_template (type_id, template_code, template_name, title_template,
 
 ---
 
-### 2. msg_channel - 渠道配置表
+### 2. message_channel - 渠道配置表
 
 ```sql
-CREATE TABLE msg_channel
+CREATE TABLE message_channel
 (
     id               BIGINT       NOT NULL COMMENT '主键ID',
     channel_code     VARCHAR(32)  NOT NULL COMMENT '渠道编码，如：ALIYUN_SMS、DINGTALK_WORK',
@@ -152,7 +152,7 @@ CREATE TABLE msg_channel
 **示例数据：**
 
 ```sql
-INSERT INTO msg_channel (channel_code, channel_name, channel_type, provider, channel_config, weight, is_enabled) VALUES
+INSERT INTO message_channel (channel_code, channel_name, channel_type, provider, channel_config, weight, is_enabled) VALUES
 ('ALIYUN_SMS', '阿里云短信', 1, 'aliyun', '{"accessKey":"xxx","secretKey":"xxx","signName":"xxx","endpoint":"dysmsapi.aliyuncs.com"}', 100, 1),
 ('TENCENT_SMS', '腾讯云短信', 1, 'tencent', '{"secretId":"xxx","secretKey":"xxx","smsSdkAppId":"xxx"}', 80, 1),
 ('DINGTALK_WORK', '钉钉工作通知', 3, 'dingtalk', '{"appKey":"xxx","appSecret":"xxx","agentId":"xxx"}', 100, 1);
@@ -160,28 +160,28 @@ INSERT INTO msg_channel (channel_code, channel_name, channel_type, provider, cha
 
 ---
 
-### 3. msg_record - 消息记录表（核心表）
+### 3. message_record - 消息记录表（核心表）
 
 **设计说明：**
 
-- 一条消息（msg_id）可以发送给多个接收人
+- 一条消息（message_id）可以发送给多个接收人
 - 本表记录消息的整体信息，不包含单个接收人的发送状态
 - 发送统计通过 `total_count/success_count/fail_count` 字段记录
 
 ```sql
-CREATE TABLE msg_record
+CREATE TABLE message_record
 (
     id               BIGINT       NOT NULL COMMENT '主键ID',
-    msg_id           VARCHAR(64)  NOT NULL COMMENT '消息唯一标识，业务ID，如：MSG_2024031112000001',
+    message_id           VARCHAR(64)  NOT NULL COMMENT '消息唯一标识，业务ID，如：message_2024031112000001',
     
     -- 模板信息
-    template_code    VARCHAR(32)  NOT NULL COMMENT '模板编码，关联msg_template',
+    template_code    VARCHAR(32)  NOT NULL COMMENT '模板编码，关联message_template',
     template_params  JSON                  DEFAULT NULL COMMENT '模板参数JSON，如：{"userName":"张三"}',
     
     -- 消息内容（渲染后的最终内容）
-    msg_type         VARCHAR(32)  NOT NULL COMMENT '消息类型编码，关联msg_type.type_code',
-    msg_title        VARCHAR(255)          DEFAULT NULL COMMENT '消息标题（渲染后）',
-    msg_content      TEXT         NOT NULL COMMENT '消息内容（渲染后）',
+    message_type         VARCHAR(32)  NOT NULL COMMENT '消息类型编码，关联message_type.type_code',
+    message_title        VARCHAR(255)          DEFAULT NULL COMMENT '消息标题（渲染后）',
+    message_content      TEXT         NOT NULL COMMENT '消息内容（渲染后）',
     
     -- 发送方信息
     sender_id        VARCHAR(32)  NOT NULL COMMENT '发送人ID',
@@ -211,9 +211,9 @@ CREATE TABLE msg_record
     update_time   DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     
     PRIMARY KEY (id) USING BTREE,
-    UNIQUE KEY uk_msg_id (msg_id),
+    UNIQUE KEY uk_message_id (message_id),
     INDEX idx_template_code (template_code),
-    INDEX idx_msg_type (msg_type),
+    INDEX idx_message_type (message_type),
     INDEX idx_sender_id (sender_id),
     INDEX idx_sender_system (sender_system),
     INDEX idx_priority (priority),
@@ -226,13 +226,13 @@ CREATE TABLE msg_record
 
 **说明：**
 
-- `msg_id` 业务唯一标识，用于幂等控制和查询
-- `msg_title/msg_content` 存储渲染后的最终内容，便于查询和重发
+- `message_id` 业务唯一标识，用于幂等控制和查询
+- `message_title/message_content` 存储渲染后的最终内容，便于查询和重发
 - 统计字段实时更新或通过定时任务汇总更新
 
 ---
 
-### 4. msg_receiver - 消息接收人表
+### 4. message_receiver - 消息接收人表
 
 **设计说明：**
 
@@ -241,10 +241,10 @@ CREATE TABLE msg_record
 - 状态流转：待发送(0) → 发送中(1) → 已发送(2) → 送达(3) → 已读(4) 或 失败(5) → 撤回(6)
 
 ```sql
-CREATE TABLE msg_receiver
+CREATE TABLE message_receiver
 (
     id                BIGINT       NOT NULL COMMENT '主键ID',
-    msg_id            VARCHAR(64)  NOT NULL COMMENT '消息ID，关联msg_record.msg_id',
+    message_id            VARCHAR(64)  NOT NULL COMMENT '消息ID，关联message_record.message_id',
     channel_code      VARCHAR(32)  NOT NULL COMMENT '渠道编码，如：ALIYUN_SMS',
     
     -- 接收人信息
@@ -252,7 +252,7 @@ CREATE TABLE msg_receiver
     receiver_type     TINYINT               DEFAULT 1 COMMENT '接收人类型: 1-用户 2-部门 3-角色',
     receiver_number   VARCHAR(128)          DEFAULT NULL COMMENT '接收地址，如手机号/邮箱/钉钉ID',
     receiver_audience VARCHAR(64)           DEFAULT NULL COMMENT '接收者设备标识，用于推送',
-    channel_msg_id    VARCHAR(64)           DEFAULT NULL COMMENT '渠道返回的消息ID，用于查询渠道状态',
+    channel_message_id    VARCHAR(64)           DEFAULT NULL COMMENT '渠道返回的消息ID，用于查询渠道状态',
     
     -- 状态流转（核心字段）
     status      TINYINT  NOT NULL DEFAULT 0 COMMENT '状态: 0-待发送 1-发送中 2-已发送 3-送达 4-已读 5-失败 6-撤回',
@@ -276,14 +276,14 @@ CREATE TABLE msg_receiver
     update_time DATETIME NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     
     PRIMARY KEY (id) USING BTREE,
-    INDEX idx_msg_id (msg_id),
+    INDEX idx_message_id (message_id),
     INDEX idx_channel_code (channel_code),
     INDEX idx_receiver_id (receiver_id),
     INDEX idx_status (status),
     -- 复合索引，优化高频查询
     INDEX idx_receiver_status (receiver_id, status),
     INDEX idx_channel_status (channel_code, status),
-    INDEX idx_msg_status (msg_id, status),
+    INDEX idx_message_status (message_id, status),
     INDEX idx_schedule (schedule_time, status),
     INDEX idx_create_time (create_time)
 ) ENGINE = InnoDB
@@ -332,26 +332,26 @@ CREATE TABLE msg_receiver
 
 ```sql
 -- 1. 查询某人的待发送消息
-SELECT * FROM msg_receiver 
+SELECT * FROM message_receiver 
 WHERE receiver_id = ? AND status = 0 
 ORDER BY create_time DESC;
 -- 使用索引: idx_receiver_status
 
 -- 2. 查询某条消息的所有接收人状态
-SELECT * FROM msg_receiver 
-WHERE msg_id = ? 
+SELECT * FROM message_receiver 
+WHERE message_id = ? 
 ORDER BY create_time;
--- 使用索引: idx_msg_id
+-- 使用索引: idx_message_id
 
 -- 3. 查询某渠道的失败记录（用于重试）
-SELECT * FROM msg_receiver 
+SELECT * FROM message_receiver 
 WHERE channel_code = ? AND status = 5 AND fail_count < 3 
 ORDER BY create_time 
 LIMIT 100;
 -- 使用索引: idx_channel_status
 
 -- 4. 查询定时发送队列
-SELECT * FROM msg_receiver 
+SELECT * FROM message_receiver 
 WHERE status = 0 AND schedule_time <= NOW() 
 ORDER BY schedule_time 
 LIMIT 1000;
@@ -360,7 +360,7 @@ LIMIT 1000;
 
 ---
 
-### 5. msg_send_log - 发送日志表
+### 5. message_send_log - 发送日志表
 
 **设计说明：**
 
@@ -369,11 +369,11 @@ LIMIT 1000;
 - 数据量大，建议保留7天后清理
 
 ```sql
-CREATE TABLE msg_send_log
+CREATE TABLE message_send_log
 (
     id            BIGINT       NOT NULL COMMENT '主键ID',
-    msg_id        VARCHAR(64)  NOT NULL COMMENT '消息ID，关联msg_record',
-    receiver_id   BIGINT       NOT NULL COMMENT '接收人记录ID，关联msg_receiver.id',
+    message_id        VARCHAR(64)  NOT NULL COMMENT '消息ID，关联message_record',
+    receiver_id   BIGINT       NOT NULL COMMENT '接收人记录ID，关联message_receiver.id',
     channel_code  VARCHAR(32)  NOT NULL COMMENT '渠道编码',
     
     -- 请求响应（用于排查问题）
@@ -383,14 +383,14 @@ CREATE TABLE msg_send_log
     -- 执行结果
     is_success    TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '是否成功: 0-失败 1-成功',
     error_code    VARCHAR(32)  COMMENT '错误码',
-    error_msg     VARCHAR(512) COMMENT '错误信息',
+    error_message     VARCHAR(512) COMMENT '错误信息',
     cost_time     INT          COMMENT '耗时，单位毫秒',
     
     -- 审计
     create_time   DATETIME     NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     
     PRIMARY KEY (id) USING BTREE,
-    INDEX idx_msg_id (msg_id),
+    INDEX idx_message_id (message_id),
     INDEX idx_receiver_id (receiver_id),
     INDEX idx_channel_code (channel_code),
     INDEX idx_is_success (is_success),
@@ -413,21 +413,21 @@ CREATE TABLE msg_send_log
 -- ============================================
 
 -- 1. 清理30天前的消息记录（已完成的消息）
-DELETE FROM msg_record 
+DELETE FROM message_record 
 WHERE create_time < DATE_SUB(NOW(), INTERVAL 30 DAY);
 
 -- 2. 清理30天前的接收人记录
-DELETE FROM msg_receiver 
+DELETE FROM message_receiver 
 WHERE create_time < DATE_SUB(NOW(), INTERVAL 30 DAY);
 
 -- 3. 清理7天前的发送日志
-DELETE FROM msg_send_log 
+DELETE FROM message_send_log 
 WHERE create_time < DATE_SUB(NOW(), INTERVAL 7 DAY);
 
 -- 4. 归档重要数据（可选）
 -- 将30天前的数据插入到历史表
-INSERT INTO msg_record_history 
-SELECT * FROM msg_record 
+INSERT INTO message_record_history 
+SELECT * FROM message_record 
 WHERE create_time < DATE_SUB(NOW(), INTERVAL 30 DAY);
 ```
 
@@ -441,23 +441,23 @@ WHERE create_time < DATE_SUB(NOW(), INTERVAL 30 DAY);
 
 ```sql
 -- 每月一张表
-msg_record_202401
-msg_record_202402
-msg_record_202403
+message_record_202401
+message_record_202402
+message_record_202403
 ...
 
 -- 应用层根据时间路由
-String tableName = "msg_record_" + formatDate(now, "yyyyMM");
+String tableName = "message_record_" + formatDate(now, "yyyyMM");
 ```
 
 ### 方案2：按用户ID取模
 
 ```sql
 -- 16张分表
-msg_record_00  -- userId % 16 = 0
-msg_record_01  -- userId % 16 = 1
+message_record_00  -- userId % 16 = 0
+message_record_01  -- userId % 16 = 1
 ...
-msg_record_15
+message_record_15
 ```
 
 ### 方案3：使用ShardingSphere（推荐生产环境）
@@ -469,8 +469,8 @@ spring:
     rules:
       sharding:
         tables:
-          msg_record:
-            actual-data-nodes: ds0.msg_record_$->{2024..2025}0$->{1..9},ds0.msg_record_$->{2024..2025}1$->{0..2}
+          message_record:
+            actual-data-nodes: ds0.message_record_$->{2024..2025}0$->{1..9},ds0.message_record_$->{2024..2025}1$->{0..2}
             table-strategy:
               standard:
                 sharding-column: create_time

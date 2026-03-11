@@ -19,8 +19,8 @@ USE carlos_message;
 -- ============================================
 -- 0. 消息类型表
 -- ============================================
-DROP TABLE IF EXISTS msg_type;
-CREATE TABLE msg_type
+DROP TABLE IF EXISTS message_type;
+CREATE TABLE message_type
 (
     id          BIGINT(20)  NOT NULL COMMENT '主键ID',
     type_code   VARCHAR(32) NOT NULL COMMENT '类型编码',
@@ -39,7 +39,7 @@ CREATE TABLE msg_type
   ROW_FORMAT = DYNAMIC;
 
 -- 插入初始数据
-INSERT INTO msg_type (id, type_code, type_name, is_enabled)
+INSERT INTO message_type (id, type_code, type_name, is_enabled)
 VALUES (1, 'TASK_NOTIFY', '任务通知', 1),
        (2, 'VERIFY_CODE', '验证码', 1),
        (3, 'SYSTEM_NOTIFY', '系统通知', 1),
@@ -49,8 +49,8 @@ VALUES (1, 'TASK_NOTIFY', '任务通知', 1),
 -- ============================================
 -- 1. 消息模板表
 -- ============================================
-DROP TABLE IF EXISTS msg_template;
-CREATE TABLE msg_template
+DROP TABLE IF EXISTS message_template;
+CREATE TABLE message_template
 (
     id               BIGINT(20)  NOT NULL COMMENT '主键ID',
     type_id          BIGINT(20)  NOT NULL COMMENT '消息类型ID',
@@ -78,8 +78,8 @@ CREATE TABLE msg_template
 -- ============================================
 -- 2. 渠道配置表
 -- ============================================
-DROP TABLE IF EXISTS msg_channel;
-CREATE TABLE msg_channel
+DROP TABLE IF EXISTS message_channel;
+CREATE TABLE message_channel
 (
     id               BIGINT      NOT NULL COMMENT '主键ID',
     channel_code     VARCHAR(32) NOT NULL COMMENT '渠道编码',
@@ -110,16 +110,16 @@ CREATE TABLE msg_channel
 -- ============================================
 -- 3. 消息记录表（核心表）
 -- ============================================
-DROP TABLE IF EXISTS msg_record;
-CREATE TABLE msg_record
+DROP TABLE IF EXISTS message_record;
+CREATE TABLE message_record
 (
     id               BIGINT      NOT NULL COMMENT '主键ID',
-    msg_id           VARCHAR(64) NOT NULL COMMENT '消息唯一标识',
+    message_id      VARCHAR(64) NOT NULL COMMENT '消息唯一标识',
     template_code    VARCHAR(32) NOT NULL COMMENT '模板编码',
     template_params  JSON                 DEFAULT NULL COMMENT '模板参数JSON',
-    msg_type         VARCHAR(32) NOT NULL COMMENT '消息类型编码',
-    msg_title        VARCHAR(255)         DEFAULT NULL COMMENT '消息标题',
-    msg_content      TEXT        NOT NULL COMMENT '消息内容',
+    message_type    VARCHAR(32) NOT NULL COMMENT '消息类型编码',
+    message_title   VARCHAR(255) DEFAULT NULL COMMENT '消息标题',
+    message_content TEXT        NOT NULL COMMENT '消息内容',
     sender_id        VARCHAR(32) NOT NULL COMMENT '发送人ID',
     sender_name      VARCHAR(64)          DEFAULT NULL COMMENT '发送人名称',
     sender_system    VARCHAR(50) NOT NULL COMMENT '发送系统标识',
@@ -136,9 +136,9 @@ CREATE TABLE msg_record
     update_by        BIGINT      NULL     DEFAULT NULL COMMENT '更新人',
     update_time      DATETIME    NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (id) USING BTREE,
-    UNIQUE KEY uk_msg_id (msg_id),
+    UNIQUE KEY uk_message_id (message_id),
     INDEX idx_template_code (template_code),
-    INDEX idx_msg_type (msg_type),
+    INDEX idx_message_type (message_type),
     INDEX idx_sender_id (sender_id),
     INDEX idx_sender_system (sender_system),
     INDEX idx_priority (priority),
@@ -151,17 +151,17 @@ CREATE TABLE msg_record
 -- ============================================
 -- 4. 消息接收人表
 -- ============================================
-DROP TABLE IF EXISTS msg_receiver;
-CREATE TABLE msg_receiver
+DROP TABLE IF EXISTS message_receiver;
+CREATE TABLE message_receiver
 (
     id                BIGINT      NOT NULL COMMENT '主键ID',
-    msg_id            VARCHAR(64) NOT NULL COMMENT '消息ID',
+    message_id         VARCHAR(64) NOT NULL COMMENT '消息ID',
     channel_code      VARCHAR(32) NOT NULL COMMENT '渠道编码',
     receiver_id       VARCHAR(64) NOT NULL COMMENT '接收者ID',
     receiver_type     TINYINT              DEFAULT 1 COMMENT '接收人类型: 1-用户 2-部门 3-角色',
     receiver_number   VARCHAR(128)         DEFAULT NULL COMMENT '接收地址',
     receiver_audience VARCHAR(64)          DEFAULT NULL COMMENT '接收者设备标识',
-    channel_msg_id    VARCHAR(64)          DEFAULT NULL COMMENT '渠道返回的消息ID',
+    channel_message_id VARCHAR(64) DEFAULT NULL COMMENT '渠道返回的消息ID',
     status            TINYINT     NOT NULL DEFAULT 0 COMMENT '状态: 0-待发送 1-发送中 2-已发送 3-送达 4-已读 5-失败 6-撤回',
     fail_count        TINYINT              DEFAULT 0 COMMENT '失败次数',
     fail_reason       VARCHAR(512)         DEFAULT NULL COMMENT '失败原因',
@@ -176,13 +176,13 @@ CREATE TABLE msg_receiver
     update_by         BIGINT      NULL     DEFAULT NULL COMMENT '更新人',
     update_time       DATETIME    NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (id) USING BTREE,
-    INDEX idx_msg_id (msg_id),
+    INDEX idx_message_id (message_id),
     INDEX idx_channel_code (channel_code),
     INDEX idx_receiver_id (receiver_id),
     INDEX idx_status (status),
     INDEX idx_receiver_status (receiver_id, status),
     INDEX idx_channel_status (channel_code, status),
-    INDEX idx_msg_status (msg_id, status),
+    INDEX idx_message_status (message_id, status),
     INDEX idx_schedule (schedule_time, status),
     INDEX idx_create_time (create_time)
 ) ENGINE = InnoDB
@@ -193,22 +193,22 @@ CREATE TABLE msg_receiver
 -- ============================================
 -- 5. 发送日志表
 -- ============================================
-DROP TABLE IF EXISTS msg_send_log;
-CREATE TABLE msg_send_log
+DROP TABLE IF EXISTS message_send_log;
+CREATE TABLE message_send_log
 (
     id            BIGINT      NOT NULL COMMENT '主键ID',
-    msg_id        VARCHAR(64) NOT NULL COMMENT '消息ID',
+    message_id    VARCHAR(64) NOT NULL COMMENT '消息ID',
     receiver_id   BIGINT      NOT NULL COMMENT '接收人记录ID',
     channel_code  VARCHAR(32) NOT NULL COMMENT '渠道编码',
     request_param MEDIUMTEXT COMMENT '请求参数',
     response_data MEDIUMTEXT COMMENT '响应数据',
     is_success    TINYINT(1)  NOT NULL DEFAULT 0 COMMENT '是否成功: 0-失败 1-成功',
     error_code    VARCHAR(32) COMMENT '错误码',
-    error_msg     VARCHAR(512) COMMENT '错误信息',
+    error_message VARCHAR(512) COMMENT '错误信息',
     cost_time     INT COMMENT '耗时(ms)',
     create_time   DATETIME    NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (id) USING BTREE,
-    INDEX idx_msg_id (msg_id),
+    INDEX idx_message_id (message_id),
     INDEX idx_receiver_id (receiver_id),
     INDEX idx_channel_code (channel_code),
     INDEX idx_is_success (is_success),

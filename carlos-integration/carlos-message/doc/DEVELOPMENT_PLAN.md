@@ -1,8 +1,25 @@
 # Carlos Message 模块开发方案
 
-> 版本: 1.0  
+> 版本: 1.1  
 > 日期: 2026-03-11  
-> 状态: 已确认
+> 状态: 已确认（已按 Carlos Framework 研发规范调整）
+
+---
+
+## 规范遵循说明
+
+本文档已根据 `AGENTS.md` 中的研发规范进行工程结构调整，主要变更包括：
+
+| 规范项          | 调整内容                                                          |
+|--------------|---------------------------------------------------------------|
+| **模块命名**     | 统一使用 `-api` / `-core` / `-bus` / `-spring-boot-starter` 后缀    |
+| **分层架构**     | 严格遵循 API / API实现 / Controller / Service / Manager / Mapper 分层 |
+| **领域模型**     | 明确划分 AO / DTO / VO / Param / Entity / Enum / Excel            |
+| **包结构**      | 统一使用 `com.carlos.message` 作为根包，按功能分层组织                        |
+| **对象转换**     | 新增 Convert 层，使用 MapStruct 进行对象转换                              |
+| **枚举规范**     | 统一放在 `pojo.enums` 包下，实现 `BaseEnum` 接口                         |
+| **Feign 接口** | API 模块包含 Feign 接口和 fallback 工厂                                |
+| **自动配置**     | Starter 模块遵循 Spring Boot 3.x 自动配置规范                           |
 
 ---
 
@@ -164,131 +181,270 @@
 
 ### 核心表清单
 
-| 表名           | 说明     | 数据量预估   | 备注                        |
-|--------------|--------|---------|---------------------------|
-| msg_type     | 消息类型表  | < 200条  | 基础数据，包含任务通知、验证码等类型        |
-| msg_template | 消息模板表  | < 1000条 | 模板管理，支持变量替换               |
-| msg_channel  | 渠道配置表  | < 50条   | 渠道配置，支持多服务商               |
-| msg_record   | 消息记录表  | 20万条/天  | 30天 ≈ 600万条，存储消息整体信息      |
-| msg_receiver | 消息接收人表 | 40万条/天  | 30天 ≈ 1200万条，存储每个接收人的发送状态 |
-| msg_send_log | 发送日志表  | 20万条/天  | 7天 ≈ 140万条，详细发送日志         |
+| 表名               | 说明     | 数据量预估   | 备注                        |
+|------------------|--------|---------|---------------------------|
+| message_type     | 消息类型表  | < 200条  | 基础数据，包含任务通知、验证码等类型        |
+| message_template | 消息模板表  | < 1000条 | 模板管理，支持变量替换               |
+| message_channel  | 渠道配置表  | < 50条   | 渠道配置，支持多服务商               |
+| message_record   | 消息记录表  | 20万条/天  | 30天 ≈ 600万条，存储消息整体信息      |
+| message_receiver | 消息接收人表 | 40万条/天  | 30天 ≈ 1200万条，存储每个接收人的发送状态 |
+| message_send_log | 发送日志表  | 20万条/天  | 7天 ≈ 140万条，详细发送日志         |
 
 ### 表关系说明
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  msg_type   │────▶│ msg_template│◀────│ msg_channel │
-│  (消息类型)  │     │  (消息模板)  │     │  (渠道配置)  │
-└─────────────┘     └──────┬──────┘     └──────┬──────┘
-                           │                    │
-                           └──────────┬─────────┘
-                                      ▼
-                           ┌─────────────────────┐
-                           │     msg_record      │
-                           │    (消息记录)        │
-                           │   存储消息整体信息    │
-                           └──────────┬──────────┘
-                                      │ 1:N
-                                      ▼
-                           ┌─────────────────────┐
-                           │   msg_receiver      │
-                           │   (消息接收人)       │
-                           │ 存储每个接收人的状态  │
-                           └──────────┬──────────┘
-                                      │ 1:N
-                                      ▼
-                           ┌─────────────────────┐
-                           │   msg_send_log      │
-                           │   (发送日志)         │
-                           │ 记录每次发送的详情   │
-                           └─────────────────────┘
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  message_type   │────▶│ message_template│◀────│ message_channel │
+│  (消息类型)      │     │  (消息模板)      │     │  (渠道配置)      │
+└─────────────────┘     └────────┬────────┘     └─────────────────┘
+                                 │
+                                 ▼
+                      ┌─────────────────────┐
+                      │   message_record    │
+                      │    (消息记录)        │
+                      │   存储消息整体信息    │
+                      └──────────┬──────────┘
+                                 │ 1:N
+                                 ▼
+                      ┌─────────────────────┐
+                      │  message_receiver   │
+                      │   (消息接收人)       │
+                      │ 存储每个接收人的状态  │
+                      └──────────┬──────────┘
+                                 │ 1:N
+                                 ▼
+                      ┌─────────────────────┐
+                      │  message_send_log   │
+                      │   (发送日志)         │
+                      │ 记录每次发送的详情   │
+                      └─────────────────────┘
 ```
 
 **设计要点：**
 
-1. **msg_record** - 一条消息一条记录，存储消息整体信息和统计（total_count/success_count/fail_count）
-2. **msg_receiver** - 记录每个接收人在每个渠道的发送状态，支持状态流转（待发送→发送中→已发送→送达→已读/失败）
-3. **msg_send_log** - 记录每次发送的详细日志，用于问题排查和对账
+1. **message_record** - 一条消息一条记录，存储消息整体信息和统计（total_count/success_count/fail_count）
+2. **message_receiver** - 记录每个接收人在每个渠道的发送状态，支持状态流转（待发送→发送中→已发送→送达→已读/失败）
+3. **message_send_log** - 记录每次发送的详细日志，用于问题排查和对账
+
+### 数据清理策略
+
+| 表名               | 保留时间 | 清理方式   |
+|------------------|------|--------|
+| message_record   | 30天  | 定时任务清理 |
+| message_receiver | 30天  | 定时任务清理 |
+| message_send_log | 7天   | 定时任务清理 |
+| message_type     | 永久   | 手动维护   |
+| message_template | 永久   | 逻辑删除   |
+| message_channel  | 永久   | 逻辑删除   |
+
+详见: [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md) 数据清理策略章节
 
 ---
 
 ## 四、模块结构设计
 
+> 遵循 Carlos Framework 研发规范（AGENTS.md）的分层架构设计
+
 ```
 carlos-message/
-├── carlos-message-api                    # API接口定义
-│   └── src/main/java/com/carlos/message/api/
-│       ├── MessageSendApi.java           # Feign接口
-│       ├── MessageQueryApi.java          # 查询接口
-│       ├── dto/                          # DTO定义
-│       └── enums/                        # 枚举定义
+├── carlos-message-api                    # API接口定义（Feign接口）
+│   └── src/main/java/com/carlos/message/
+│       ├── api/                          # Feign接口定义
+│       │   ├── MessageSendApi.java       # 消息发送接口
+│       │   ├── MessageQueryApi.java      # 消息查询接口
+│       │   ├── MessageTemplateApi.java   # 模板管理接口
+│       │   └── fallback/                 # 熔断降级工厂
+│       │       ├── MessageSendApiFallbackFactory.java
+│       │       └── MessageQueryApiFallbackFactory.java
+│       └── pojo/
+│           ├── ao/                       # API响应对象（供调用方使用）
+│           │   ├── MessageRecordAO.java
+│           │   ├── MessageReceiverAO.java
+│           │   └── MessageTemplateAO.java
+│           └── param/                    # API请求参数（供调用方使用）
+│               ├── MessageSendParam.java
+│               ├── MessagePageParam.java
+│               └── MessageTemplateParam.java
 │
-├── carlos-message-core                   # 核心模块
+├── carlos-message-core                   # 核心模块（框架无关）
 │   └── src/main/java/com/carlos/message/core/
 │       ├── protocol/                     # 消息协议
-│       ├── channel/                      # 渠道抽象
+│       │   ├── MessageProtocol.java
+│       │   └── MessageStatus.java
+│       ├── channel/                      # 渠道抽象层
+│       │   ├── ChannelAdapter.java       # 渠道适配器接口
+│       │   ├── ChannelFactory.java       # 渠道工厂
+│       │   └── ChannelContext.java       # 渠道上下文
 │       ├── template/                     # 模板引擎
+│       │   ├── TemplateEngine.java
+│       │   └── TemplateVariable.java
 │       ├── queue/                        # 队列抽象
+│       │   ├── MessageQueue.java
+│       │   └── MessageConsumer.java
 │       ├── limiter/                      # 限流组件
+│       │   └── RateLimiter.java
 │       ├── retry/                        # 重试组件
+│       │   └── RetryPolicy.java
 │       └── constants/                    # 常量定义
+│           └── MessageConstants.java
 │
-├── carlos-message-client                 # 客户端SDK
-│   └── src/main/java/com/carlos/message/client/
-│       ├── MessageClient.java
-│       ├── MessageTemplate.java          # 模板注解
-│       ├── config/MessageClientAutoConfiguration.java
-│       └── fallback/MessageClientFallback.java
-│
-├── carlos-message-server-api             # 服务端API层
-│   └── src/main/java/com/carlos/message/server/api/
-│       ├── controller/                   # REST API
-│       │   ├── MessageSendController.java
-│       │   ├── MessageQueryController.java
-│       │   ├── TemplateController.java
-│       │   └── ChannelController.java
-│       └── websocket/                    # WebSocket
-│           └── MessageWebSocketHandler.java
-│
-├── carlos-message-server-service         # 服务端业务层
-│   └── src/main/java/com/carlos/message/server/service/
-│       ├── MessageSendService.java       # 发送服务
-│       ├── MessageQueryService.java      # 查询服务
-│       ├── TemplateService.java          # 模板服务
-│       ├── ChannelService.java           # 渠道服务
-│       └── scheduler/                    # 定时任务
-│           ├── ScheduledMessageJob.java
-│           └── DelayMessageJob.java
-│
-├── carlos-message-server-channel         # 渠道实现
-│   └── src/main/java/com/carlos/message/server/channel/
-│       ├── sms/                          # 短信渠道
-│       │   ├── SmsChannelAdapter.java
-│       │   ├── SmsChannelConfig.java
-│       │   ├── aliyun/AliyunSmsProvider.java
-│       │   └── tencent/TencentSmsProvider.java
-│       ├── dingtalk/                     # 钉钉渠道
-│       │   ├── DingtalkChannelAdapter.java
-│       │   └── DingtalkChannelConfig.java
-│       ├── websocket/                    # 站内信
-│       │   ├── WebSocketChannelAdapter.java
+├── carlos-message-bus                    # 业务模块（服务端实现）
+│   └── src/main/java/com/carlos/message/
+│       ├── apiimpl/                      # Feign接口实现（REST端点）
+│       │   ├── MessageSendApiImpl.java
+│       │   └── MessageQueryApiImpl.java
+│       ├── controller/                   # Web控制器层（非Feign接口）
+│       │   ├── MessageTemplateController.java
+│       │   ├── MessageChannelController.java
+│       │   └── MessageStatisticsController.java
+│       ├── service/                      # Service层（业务逻辑）
+│       │   ├── MessageSendService.java
+│       │   ├── MessageQueryService.java
+│       │   ├── MessageTemplateService.java
+│       │   └── MessageChannelService.java
+│       ├── manager/                      # Manager层（数据查询封装）
+│       │   ├── MessageRecordManager.java
+│       │   ├── MessageReceiverManager.java
+│       │   ├── MessageTemplateManager.java
+│       │   └── MessageChannelManager.java
+│       ├── mapper/                       # MyBatis Mapper接口
+│       │   ├── MessageRecordMapper.java
+│       │   ├── MessageReceiverMapper.java
+│       │   ├── MessageTemplateMapper.java
+│       │   └── MessageChannelMapper.java
+│       ├── convert/                      # MapStruct对象转换
+│       │   ├── MessageConvert.java
+│       │   ├── TemplateConvert.java
+│       │   └── ChannelConvert.java
+│       ├── websocket/                    # WebSocket处理器
+│       │   ├── MessageWebSocketHandler.java
 │       │   └── WebSocketSessionManager.java
-│       └── email/                        # 邮件渠道（P2）
-│           └── EmailChannelAdapter.java
-│
-├── carlos-message-server-infrastructure  # 基础设施
-│   └── src/main/java/com/carlos/message/server/infra/
-│       ├── repository/                   # 数据访问
-│       ├── cache/                        # 缓存
+│       ├── channel/                      # 渠道具体实现
+│       │   ├── sms/
+│       │   │   ├── SmsChannelAdapter.java
+│       │   │   ├── SmsChannelProperties.java
+│       │   │   ├── AliyunSmsProvider.java
+│       │   │   └── TencentSmsProvider.java
+│       │   ├── dingtalk/
+│       │   │   ├── DingtalkChannelAdapter.java
+│       │   │   └── DingtalkChannelProperties.java
+│       │   ├── websocket/
+│       │   │   └── WebSocketChannelAdapter.java
+│       │   └── email/
+│       │       └── EmailChannelAdapter.java
+│       ├── scheduler/                    # 定时任务
+│       │   ├── ScheduledMessageJob.java
+│       │   └── DelayMessageJob.java
+│       ├── config/                       # 配置类
+│       │   ├── MessageProperties.java
+│       │   ├── MessageAutoConfiguration.java
+│       │   └── WebSocketConfig.java
 │       ├── queue/                        # 队列实现
 │       │   └── RedisMessageQueue.java
-│       └── monitor/                      # 监控
+│       ├── limiter/                      # 限流实现
+│       │   └── RedisRateLimiter.java
+│       ├── monitor/                      # 监控
+│       │   └── MessageMonitorService.java
+│       └── pojo/
+│           ├── dto/                      # DTO（服务层与数据层传输）
+│           │   ├── MessageRecordDTO.java
+│           │   ├── MessageReceiverDTO.java
+│           │   └── MessageTemplateDTO.java
+│           ├── entity/                   # Entity（数据库实体）
+│           │   ├── MessageRecord.java
+│           │   ├── MessageReceiver.java
+│           │   ├── MessageTemplate.java
+│           │   └── MessageChannel.java
+│           ├── vo/                       # VO（视图对象）
+│           │   ├── MessageRecordVO.java
+│           │   ├── MessageReceiverVO.java
+│           │   ├── MessageStatisticsVO.java
+│           │   └── MessageTemplateVO.java
+│           ├── param/                    # 请求参数（按操作细分）
+│           │   ├── MessageCreateParam.java
+│           │   ├── MessagePageParam.java
+│           │   ├── MessageUpdateParam.java
+│           │   ├── TemplateCreateParam.java
+│           │   └── TemplateUpdateParam.java
+│           ├── enums/                    # 枚举类型
+│           │   ├── MessageStatusEnum.java
+│           │   ├── MessageChannelEnum.java
+│           │   ├── MessageTypeEnum.java
+│           │   └── TemplateTypeEnum.java
+│           └── excel/                    # Excel导入导出对象
+│               └── MessageExportExcel.java
 │
-├── carlos-message-server-admin           # 管理后台API（P2）
-│   └── src/main/java/com/carlos/message/server/admin/
+├── carlos-message-spring-boot-starter    # Spring Boot Starter
+│   └── src/main/java/com/carlos/message/boot/
+│       ├── MessageClient.java            # 客户端SDK主类
+│       ├── MessageTemplate.java          # 模板注解
+│       ├── MessageClientProperties.java  # 客户端配置
+│       └── MessageClientAutoConfiguration.java
 │
-├── carlos-message-boot                   # Spring Boot启动
-└── carlos-message-cloud                  # Spring Cloud启动
+└── carlos-message-server                 # 服务端启动模块
+    └── src/main/java/com/carlos/message/server/
+        ├── MessageServerApplication.java
+        └── resources/
+            ├── application.yml
+            ├── mapper/                   # MyBatis XML映射文件
+            │   └── message/
+            │       ├── MessageRecordMapper.xml
+            │       ├── MessageReceiverMapper.xml
+            │       └── MessageTemplateMapper.xml
+            └── META-INF/spring/
+                └── org.springframework.boot.autoconfigure.AutoConfiguration.imports
+```
+
+### 分层领域模型说明
+
+| 模型         | 所在包                                                                | 说明                       |
+|------------|--------------------------------------------------------------------|--------------------------|
+| **AO**     | `carlos-message-api/pojo/ao`                                       | API接口响应对象，供Feign调用方使用    |
+| **Param**  | `carlos-message-api/pojo/param`<br>`carlos-message-bus/pojo/param` | API请求参数 / 前端参数接收对象，按操作细分 |
+| **DTO**    | `carlos-message-bus/pojo/dto`                                      | 服务层与数据层之间的数据传输对象         |
+| **VO**     | `carlos-message-bus/pojo/vo`                                       | 视图对象，响应给前端，需标注Swagger注解  |
+| **Entity** | `carlos-message-bus/pojo/entity`                                   | 与数据库表结构一一对应              |
+| **Enum**   | `carlos-message-bus/pojo/enums`                                    | 业务枚举，必须实现 `BaseEnum`     |
+| **Excel**  | `carlos-message-bus/pojo/excel`                                    | 导入导出专用对象                 |
+
+### 分层职责说明
+
+| 层级              | 目录                               | 职责                                  |
+|-----------------|----------------------------------|-------------------------------------|
+| **API层**        | `carlos-message-api/api/`        | Feign接口定义，对外暴露服务，提供熔断降级工厂           |
+| **API实现层**      | `carlos-message-bus/apiimpl/`    | Feign接口的REST实现，同时暴露HTTP端点           |
+| **Controller层** | `carlos-message-bus/controller/` | 接收Web请求，完成参数校验，Param→DTO转换          |
+| **Service层**    | `carlos-message-bus/service/`    | 业务逻辑服务层，处理业务流程，通过Manager层获取数据       |
+| **Manager层**    | `carlos-message-bus/manager/`    | 数据查询封装层，继承 `BaseService`，实现CRUD原子操作 |
+| **Mapper层**     | `carlos-message-bus/mapper/`     | 数据访问层，MyBatis实现，与数据库交互              |
+| **Convert层**    | `carlos-message-bus/convert/`    | MapStruct对象转换接口                     |
+| **渠道层**         | `carlos-message-bus/channel/`    | 各消息渠道的具体实现                          |
+
+### 包命名规范
+
+```java
+// API模块
+package com.carlos.message.api;
+package com.carlos.message.pojo.ao;
+package com.carlos.message.pojo.param;
+
+// Business模块
+package com.carlos.message.apiimpl;
+package com.carlos.message.controller;
+package com.carlos.message.service;
+package com.carlos.message.manager;
+package com.carlos.message.mapper;
+package com.carlos.message.convert;
+package com.carlos.message.channel.sms;
+package com.carlos.message.websocket;
+package com.carlos.message.scheduler;
+package com.carlos.message.config;
+package com.carlos.message.pojo.dto;
+package com.carlos.message.pojo.entity;
+package com.carlos.message.pojo.vo;
+package com.carlos.message.pojo.param;
+package com.carlos.message.pojo.enums;
+package com.carlos.message.pojo.excel;
 ```
 
 ---
@@ -299,35 +455,35 @@ carlos-message/
 
 **Week 1: 基础设施搭建**
 
-| 任务                 | 工时 | 输出物                                     |
-|--------------------|----|-----------------------------------------|
-| 数据库表结构设计与创建        | 1天 | SQL脚本                                   |
-| 核心模块重构（API、Core）   | 3天 | carlos-message-api, carlos-message-core |
-| Redis Stream消息队列实现 | 2天 | RedisMessageQueue.java                  |
-| 渠道抽象与工厂设计          | 2天 | ChannelAdapter, ChannelFactory          |
+| 任务                 | 工时 | 输出物                                                                 |
+|--------------------|----|---------------------------------------------------------------------|
+| 数据库表结构设计与创建        | 1天 | SQL脚本                                                               |
+| 核心模块重构（API、Core）   | 3天 | carlos-message-api, carlos-message-core<br>carlos-message-bus（基础结构） |
+| Redis Stream消息队列实现 | 2天 | RedisMessageQueue.java                                              |
+| 渠道抽象与工厂设计          | 2天 | ChannelAdapter（core）<br>ChannelFactory（core）<br>各渠道实现（bus/channel/） |
 
 **Week 2: 渠道实现**
 
-| 任务           | 工时 | 输出物                                  |
-|--------------|----|--------------------------------------|
-| 短信渠道适配（多服务商） | 3天 | SmsChannelAdapter, AliyunSmsProvider |
-| 钉钉渠道适配（工作通知） | 2天 | DingtalkChannelAdapter               |
-| 渠道配置管理功能     | 2天 | ChannelController, ChannelService    |
+| 任务           | 工时 | 输出物                                                                                                                     |
+|--------------|----|-------------------------------------------------------------------------------------------------------------------------|
+| 短信渠道适配（多服务商） | 3天 | SmsChannelAdapter（bus/channel/sms/）<br>AliyunSmsProvider, TencentSmsProvider                                            |
+| 钉钉渠道适配（工作通知） | 2天 | DingtalkChannelAdapter（bus/channel/dingtalk/）                                                                           |
+| 渠道配置管理功能     | 2天 | MessageChannelController（bus/controller/）<br>MessageChannelService（bus/service/）<br>MessageChannelManager（bus/manager/） |
 
 **Week 3: 发送流程与模板**
 
-| 任务         | 工时 | 输出物                                 |
-|------------|----|-------------------------------------|
-| 消息发送核心流程   | 3天 | MessageSendService                  |
-| 模板引擎（变量替换） | 2天 | TemplateEngine                      |
-| 模板管理功能     | 2天 | TemplateController, TemplateService |
+| 任务         | 工时 | 输出物                                                                                                                        |
+|------------|----|----------------------------------------------------------------------------------------------------------------------------|
+| 消息发送核心流程   | 3天 | MessageSendService（bus/service/）<br>MessageSendApiImpl（bus/apiimpl/）                                                       |
+| 模板引擎（变量替换） | 2天 | TemplateEngine（core/template/）                                                                                             |
+| 模板管理功能     | 2天 | MessageTemplateController（bus/controller/）<br>MessageTemplateService（bus/service/）<br>MessageTemplateManager（bus/manager/） |
 
 **Phase 1 交付物:**
 
-- [ ] 短信、钉钉发送功能
-- [ ] 基础模板管理
-- [ ] REST API
-- [ ] Java SDK (carlos-message-client)
+- [ ] 短信、钉钉发送功能（carlos-message-bus）
+- [ ] 基础模板管理（carlos-message-bus）
+- [ ] REST API（carlos-message-api + carlos-message-bus/apiimpl/）
+- [ ] Java SDK（carlos-message-spring-boot-starter）
 
 ---
 
@@ -335,36 +491,36 @@ carlos-message/
 
 **Week 4: 站内信与消息追踪**
 
-| 任务                  | 工时 | 输出物                     |
-|---------------------|----|-------------------------|
-| WebSocket站内信实现      | 4天 | MessageWebSocketHandler |
-| WebSocket Session管理 | 2天 | WebSocketSessionManager |
-| 消息状态流转（已读回执）        | 2天 | 状态机实现                   |
+| 任务                  | 工时 | 输出物                                                                                        |
+|---------------------|----|--------------------------------------------------------------------------------------------|
+| WebSocket站内信实现      | 4天 | MessageWebSocketHandler（bus/websocket/）<br>WebSocketChannelAdapter（bus/channel/websocket/） |
+| WebSocket Session管理 | 2天 | WebSocketSessionManager（bus/websocket/）                                                    |
+| 消息状态流转（已读回执）        | 2天 | 状态机实现（core/protocol/ + bus/manager/）                                                       |
 
 **Week 5: 定时/延时发送**
 
-| 任务            | 工时 | 输出物                 |
-|---------------|----|---------------------|
-| XXL-Job定时任务集成 | 2天 | ScheduledMessageJob |
-| 延时队列实现        | 2天 | DelayMessageJob     |
-| 定时发送管理        | 2天 | ScheduleController  |
-| 消息撤回功能        | 2天 | revoke接口            |
+| 任务            | 工时 | 输出物                                                              |
+|---------------|----|------------------------------------------------------------------|
+| XXL-Job定时任务集成 | 2天 | ScheduledMessageJob（bus/scheduler/）                              |
+| 延时队列实现        | 2天 | DelayMessageJob（bus/scheduler/）<br>RedisMessageQueue（bus/queue/） |
+| 定时发送管理        | 2天 | ScheduleController（bus/controller/）                              |
+| 消息撤回功能        | 2天 | revoke接口                                                         |
 
 **Week 6: 增强功能**
 
-| 任务          | 工时 | 输出物                 |
-|-------------|----|---------------------|
-| 批量发送优化      | 2天 | batchSend接口         |
-| 限流控制（滑动窗口）  | 2天 | RateLimiter         |
-| 失败告警（邮件/短信） | 2天 | AlarmService        |
-| 邮件渠道（P2）    | 2天 | EmailChannelAdapter |
+| 任务          | 工时 | 输出物                                                          |
+|-------------|----|--------------------------------------------------------------|
+| 批量发送优化      | 2天 | MessageSendService.batchSend()（bus/service/）                 |
+| 限流控制（滑动窗口）  | 2天 | RateLimiter（core/limiter/）<br>RedisRateLimiter（bus/limiter/） |
+| 失败告警（邮件/短信） | 2天 | AlarmService（bus/service/）                                   |
+| 邮件渠道（P2）    | 2天 | EmailChannelAdapter（bus/channel/email/）                      |
 
 **Phase 2 交付物:**
 
-- [ ] 站内信（WebSocket）
-- [ ] 定时/延时发送
-- [ ] 消息状态追踪
-- [ ] 管理后台API
+- [ ] 站内信（WebSocket）（carlos-message-bus/websocket/ + bus/channel/websocket/）
+- [ ] 定时/延时发送（carlos-message-bus/scheduler/）
+- [ ] 消息状态追踪（carlos-message-bus/service/）
+- [ ] 管理后台API（carlos-message-bus/controller/）
 
 ---
 
@@ -372,12 +528,12 @@ carlos-message/
 
 **Week 7-8: 监控与优化**
 
-| 任务          | 工时 | 输出物                      |
-|-------------|----|--------------------------|
-| 内置监控页面      | 4天 | MonitorController + 前端页面 |
-| 发送统计报表      | 3天 | StatisticsService        |
-| 性能优化（批量/异步） | 3天 | 优化后的发送流程                 |
-| 压力测试与调优     | 4天 | 压测报告                     |
+| 任务          | 工时 | 输出物                                                                              |
+|-------------|----|----------------------------------------------------------------------------------|
+| 内置监控页面      | 4天 | MessageMonitorController（bus/controller/）<br>MessageMonitorService（bus/monitor/） |
+| 发送统计报表      | 3天 | MessageStatisticsController（bus/controller/）<br>统计查询方法（bus/manager/）             |
+| 性能优化（批量/异步） | 3天 | 优化后的发送流程                                                                         |
+| 压力测试与调优     | 4天 | 压测报告                                                                             |
 
 **Week 9: 完善与文档**
 
@@ -462,7 +618,7 @@ public class SmsChannelRouter {
 
 1. **✅ 确认整体方案** - 是否有需要调整的地方？
 2. **⚠️ 确认数据库设计** - 表结构是否满足需求？
-3. **⚠️ 确认模块划分** - 是否需要调整模块结构？
+3. **✅ 确认模块划分** - 已按 Carlos Framework 规范调整完成
 4. **⚠️ 确认开发节奏** - 3+3+3周的节奏是否合适？
 
 ### 8.2 启动开发所需准备
@@ -470,9 +626,13 @@ public class SmsChannelRouter {
 确认后，我将立即开始：
 
 1. 创建详细的数据库变更脚本
-2. 编写核心模块代码
-3. 实现短信和钉钉渠道
-4. 搭建基础发送流程
+2. 搭建 carlos-message-api 模块（Feign接口定义）
+3. 搭建 carlos-message-core 模块（渠道抽象、模板引擎）
+4. 搭建 carlos-message-bus 模块（业务实现、渠道实现）
+5. 搭建 carlos-message-spring-boot-starter 模块（客户端SDK）
+6. 搭建 carlos-message-server 启动模块
+7. 实现短信和钉钉渠道
+8. 搭建基础发送流程
 
 ---
 
