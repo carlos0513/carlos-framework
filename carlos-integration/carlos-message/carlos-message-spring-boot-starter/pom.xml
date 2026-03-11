@@ -7,20 +7,13 @@
         <artifactId>carlos-message</artifactId>
         <version>${revision}</version>
     </parent>
-
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>carlos-message-server</artifactId>
-    <description>消息中心服务端启动模块</description>
+    <artifactId>carlos-message-spring-boot-starter</artifactId>
+    <description>消息中心 Spring Boot Starter</description>
 
     <dependencies>
-        <!-- Bus模块（包含所有业务实现） -->
-        <dependency>
-            <groupId>com.carlos.message</groupId>
-            <artifactId>carlos-message-bus</artifactId>
-        </dependency>
-
         <!-- API模块 -->
         <dependency>
             <groupId>com.carlos.message</groupId>
@@ -33,41 +26,24 @@
             <artifactId>carlos-message-core</artifactId>
         </dependency>
 
-        <!-- carlos Web -->
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- carlos MyBatis -->
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-mybatis</artifactId>
-        </dependency>
-
-        <!-- carlos OpenAPI -->
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-spring-boot-starter-openapi</artifactId>
-        </dependency>
-
-        <!-- WebSocket -->
+        <!-- Spring Boot 自动配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
 
-        <!-- OpenFeign -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-
-        <!-- Test -->
+        <!-- Spring Boot 配置处理器 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -76,6 +52,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
