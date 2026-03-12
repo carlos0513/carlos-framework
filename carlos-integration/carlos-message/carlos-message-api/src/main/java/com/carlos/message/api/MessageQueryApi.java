@@ -1,9 +1,11 @@
 package com.carlos.message.api;
 
-import com.carlos.core.pojo.response.Paging;
+import com.carlos.core.pagination.Paging;
 import com.carlos.core.response.Result;
-import com.carlos.message.pojo.ao.MessageRecordAO;
+import com.carlos.message.ServiceNameConstant;
+import com.carlos.message.api.fallback.MessageQueryApiFallbackFactory;
 import com.carlos.message.pojo.ao.MessageReceiverAO;
+import com.carlos.message.pojo.ao.MessageRecordAO;
 import com.carlos.message.pojo.param.MessagePageParam;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -23,7 +25,7 @@ import java.util.List;
  * @date 2026/3/11
  */
 @FeignClient(
-        name = "carlos-message",
+    name = ServiceNameConstant.SERVICE_NAME,
         contextId = "messageQueryApi",
         path = "/api/message",
         fallbackFactory = MessageQueryApiFallbackFactory.class

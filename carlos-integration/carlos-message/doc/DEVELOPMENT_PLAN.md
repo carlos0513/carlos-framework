@@ -381,7 +381,7 @@ carlos-message/
 │       ├── MessageClientProperties.java  # 客户端配置
 │       └── MessageClientAutoConfiguration.java
 │
-└── carlos-message-server                 # 服务端启动模块
+└── carlos-message-bus                 # 服务端启动模块
     └── src/main/java/com/carlos/message/server/
         ├── MessageServerApplication.java
         └── resources/
@@ -630,7 +630,7 @@ public class SmsChannelRouter {
 3. 搭建 carlos-message-core 模块（渠道抽象、模板引擎）
 4. 搭建 carlos-message-bus 模块（业务实现、渠道实现）
 5. 搭建 carlos-message-spring-boot-starter 模块（客户端SDK）
-6. 搭建 carlos-message-server 启动模块
+6. 搭建 carlos-message-bus 启动模块
 7. 实现短信和钉钉渠道
 8. 搭建基础发送流程
 

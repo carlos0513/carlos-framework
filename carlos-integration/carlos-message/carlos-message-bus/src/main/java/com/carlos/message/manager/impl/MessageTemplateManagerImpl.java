@@ -1,0 +1,115 @@
+package com.carlos.message.manager.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.carlos.core.pagination.Paging;
+import com.carlos.datasource.base.BaseServiceImpl;
+import com.carlos.datasource.pagination.MybatisPage;
+import com.carlos.datasource.pagination.PageInfo;
+import com.carlos.message.convert.MessageTemplateConvert;
+import com.carlos.message.manager.MessageTemplateManager;
+import com.carlos.message.mapper.MessageTemplateMapper;
+import com.carlos.message.pojo.dto.MessageTemplateDTO;
+import com.carlos.message.pojo.entity.MessageTemplate;
+import com.carlos.message.pojo.param.MessageTemplatePageParam;
+import com.carlos.message.pojo.vo.MessageTemplateVO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+
+/**
+ * <p>
+ * 消息模板 查询封装实现类
+ * </p>
+ *
+ * @author Carlos
+ * @date 2026年3月12日 上午11:17:05
+ */
+@Slf4j
+@RequiredArgsConstructor
+@Component
+public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateMapper, MessageTemplate> implements MessageTemplateManager {
+
+    @Override
+    public boolean add(MessageTemplateDTO dto) {
+        MessageTemplate entity = MessageTemplateConvert.INSTANCE.toDO(dto);
+        boolean success = save(entity);
+        if (!success) {
+            log.warn("Insert 'MessageTemplate' data fail, entity:{}", entity);
+            return false;
+        }
+        dto.setId(entity.getId());
+        // 保存完成的后续
+        if (log.isDebugEnabled()) {
+            log.debug("Insert 'MessageTemplate' data: id:{}", entity.getId());
+        }
+        return true;
+    }
+
+    @Override
+    public boolean delete(Serializable id) {
+        if (id == null) {
+            log.warn("id can't be null");
+            return false;
+        }
+        boolean success = removeById(id);
+        if (!success) {
+            log.warn("Remove 'MessageTemplate' data fail, id:{}", id);
+            return false;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Remove 'MessageTemplate' data by id:{}", id);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean modify(MessageTemplateDTO dto) {
+        MessageTemplate entity = MessageTemplateConvert.INSTANCE.toDO(dto);
+        boolean success = updateById(entity);
+        if (!success) {
+            log.warn("Update 'MessageTemplate' data fail, entity:{}", entity);
+            return false;
+        }
+        // 修改成功的后续操作
+        if (log.isDebugEnabled()) {
+            log.debug("Update 'MessageTemplate' data by id:{}", dto.getId());
+        }
+        return true;
+    }
+
+    @Override
+    public MessageTemplateDTO getDtoById(Serializable id) {
+        if (id == null) {
+            log.warn("id is null");
+            return null;
+        }
+        MessageTemplate entity = getBaseMapper().selectById(id);
+        return MessageTemplateConvert.INSTANCE.toDTO(entity);
+    }
+
+    @Override
+    public Paging<MessageTemplateVO> getPage(MessageTemplatePageParam param) {
+        LambdaQueryWrapper<MessageTemplate> wrapper = queryWrapper();
+        wrapper.select(
+
+            MessageTemplate::getId,
+            MessageTemplate::getTypeId,
+            MessageTemplate::getTemplateCode,
+            MessageTemplate::getTemplateName,
+            MessageTemplate::getTitleTemplate,
+            MessageTemplate::getContentTemplate,
+            MessageTemplate::getParamSchema,
+            MessageTemplate::getChannelConfig,
+            MessageTemplate::getEnabled,
+            MessageTemplate::getCreateBy,
+            MessageTemplate::getCreateTime,
+            MessageTemplate::getUpdateBy,
+            MessageTemplate::getUpdateTime
+        );
+        PageInfo<MessageTemplate> page = page(pageInfo(param), wrapper);
+        return MybatisPage.convert(page, MessageTemplateConvert.INSTANCE::toVO);
+    }
+
+}

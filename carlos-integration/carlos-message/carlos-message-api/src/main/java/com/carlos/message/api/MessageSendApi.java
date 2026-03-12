@@ -1,17 +1,15 @@
 package com.carlos.message.api;
 
 import com.carlos.core.response.Result;
+import com.carlos.message.ServiceNameConstant;
+import com.carlos.message.api.fallback.MessageSendApiFallbackFactory;
 import com.carlos.message.pojo.ao.MessageStatusAO;
 import com.carlos.message.pojo.ao.SendResultAO;
 import com.carlos.message.pojo.param.MessageSendParam;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +26,7 @@ import java.util.List;
  * @date 2026/3/11
  */
 @FeignClient(
-        name = "carlos-message",
+    name = ServiceNameConstant.SERVICE_NAME,
         contextId = "messageSendApi",
         path = "/api/message",
         fallbackFactory = MessageSendApiFallbackFactory.class

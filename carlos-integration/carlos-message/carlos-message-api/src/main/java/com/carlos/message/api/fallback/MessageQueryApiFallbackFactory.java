@@ -1,10 +1,10 @@
 package com.carlos.message.api.fallback;
 
-import com.carlos.core.pojo.response.Paging;
+import com.carlos.core.pagination.Paging;
 import com.carlos.core.response.Result;
 import com.carlos.message.api.MessageQueryApi;
-import com.carlos.message.pojo.ao.MessageRecordAO;
 import com.carlos.message.pojo.ao.MessageReceiverAO;
+import com.carlos.message.pojo.ao.MessageRecordAO;
 import com.carlos.message.pojo.param.MessagePageParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;

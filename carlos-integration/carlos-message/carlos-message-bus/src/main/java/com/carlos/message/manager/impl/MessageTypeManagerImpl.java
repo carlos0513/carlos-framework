@@ -1,0 +1,110 @@
+package com.carlos.message.manager.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.carlos.core.pagination.Paging;
+import com.carlos.datasource.base.BaseServiceImpl;
+import com.carlos.datasource.pagination.MybatisPage;
+import com.carlos.datasource.pagination.PageInfo;
+import com.carlos.message.convert.MessageTypeConvert;
+import com.carlos.message.manager.MessageTypeManager;
+import com.carlos.message.mapper.MessageTypeMapper;
+import com.carlos.message.pojo.dto.MessageTypeDTO;
+import com.carlos.message.pojo.entity.MessageType;
+import com.carlos.message.pojo.param.MessageTypePageParam;
+import com.carlos.message.pojo.vo.MessageTypeVO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+
+/**
+ * <p>
+ * 消息类型 查询封装实现类
+ * </p>
+ *
+ * @author Carlos
+ * @date 2026年3月12日 上午11:17:05
+ */
+@Slf4j
+@RequiredArgsConstructor
+@Component
+public class MessageTypeManagerImpl extends BaseServiceImpl<MessageTypeMapper, MessageType> implements MessageTypeManager {
+
+    @Override
+    public boolean add(MessageTypeDTO dto) {
+        MessageType entity = MessageTypeConvert.INSTANCE.toDO(dto);
+        boolean success = save(entity);
+        if (!success) {
+            log.warn("Insert 'MessageType' data fail, entity:{}", entity);
+            return false;
+        }
+        dto.setId(entity.getId());
+        // 保存完成的后续
+        if (log.isDebugEnabled()) {
+            log.debug("Insert 'MessageType' data: id:{}", entity.getId());
+        }
+        return true;
+    }
+
+    @Override
+    public boolean delete(Serializable id) {
+        if (id == null) {
+            log.warn("id can't be null");
+            return false;
+        }
+        boolean success = removeById(id);
+        if (!success) {
+            log.warn("Remove 'MessageType' data fail, id:{}", id);
+            return false;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Remove 'MessageType' data by id:{}", id);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean modify(MessageTypeDTO dto) {
+        MessageType entity = MessageTypeConvert.INSTANCE.toDO(dto);
+        boolean success = updateById(entity);
+        if (!success) {
+            log.warn("Update 'MessageType' data fail, entity:{}", entity);
+            return false;
+        }
+        // 修改成功的后续操作
+        if (log.isDebugEnabled()) {
+            log.debug("Update 'MessageType' data by id:{}", dto.getId());
+        }
+        return true;
+    }
+
+    @Override
+    public MessageTypeDTO getDtoById(Serializable id) {
+        if (id == null) {
+            log.warn("id is null");
+            return null;
+        }
+        MessageType entity = getBaseMapper().selectById(id);
+        return MessageTypeConvert.INSTANCE.toDTO(entity);
+    }
+
+    @Override
+    public Paging<MessageTypeVO> getPage(MessageTypePageParam param) {
+        LambdaQueryWrapper<MessageType> wrapper = queryWrapper();
+        wrapper.select(
+
+            MessageType::getId,
+            MessageType::getTypeCode,
+            MessageType::getTypeName,
+            MessageType::getEnabled,
+            MessageType::getCreateBy,
+            MessageType::getCreateTime,
+            MessageType::getUpdateBy,
+            MessageType::getUpdateTime
+        );
+        PageInfo<MessageType> page = page(pageInfo(param), wrapper);
+        return MybatisPage.convert(page, MessageTypeConvert.INSTANCE::toVO);
+    }
+
+}

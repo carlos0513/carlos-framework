@@ -1,6 +1,6 @@
 package com.carlos.message.pojo.param;
 
-import com.carlos.core.pojo.param.PageParam;
+import com.carlos.core.param.ParamPage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "消息分页查询参数")
-public class MessagePageParam extends PageParam {
+public class MessagePageParam extends ParamPage {
 
     private static final long serialVersionUID = 1L;
 

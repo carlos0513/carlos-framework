@@ -17,7 +17,7 @@
     <modules>
         <module>carlos-message-api</module>
         <module>carlos-message-core</module>
-        <module>carlos-message-server</module>
+      <module>carlos-message-bus</module>
         <module>carlos-message-boot</module>
         <module>carlos-message-cloud</module>
     </modules>
@@ -36,7 +36,7 @@
             </dependency>
             <dependency>
                 <groupId>com.carlos.message</groupId>
-                <artifactId>carlos-message-server</artifactId>
+              <artifactId>carlos-message-bus</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
