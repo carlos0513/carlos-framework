@@ -128,8 +128,7 @@ public class MessageRecordManagerImpl extends BaseServiceImpl<MessageRecordMappe
     @Override
     public MessageRecord getByMessageId(String messageId) {
         LambdaQueryWrapper<MessageRecord> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MessageRecord::getMessageId, messageId)
-            .eq(MessageRecord::getDeleted, 0);
+        wrapper.eq(MessageRecord::getMessageId, messageId);
         return baseMapper.selectOne(wrapper);
     }
 
