@@ -67,4 +67,35 @@ public interface MessageTemplateManager extends BaseService<MessageTemplate> {
      * @date 2026年3月12日 上午11:17:05
      */
     Paging<MessageTemplateVO> getPage(MessageTemplatePageParam param);
+
+    /**
+     * 根据模板编码查询消息模板
+     *
+     * @param templateCode 模板编码
+     * @return 消息模板DTO
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    MessageTemplateDTO getByTemplateCode(String templateCode);
+
+    /**
+     * 发布消息模板（草稿->启用）
+     *
+     * @param id 主键ID
+     * @return boolean
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    boolean publish(Serializable id);
+
+    /**
+     * 更新消息模板状态
+     *
+     * @param id 主键ID
+     * @param enabled 是否启用
+     * @return boolean
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    boolean updateStatus(Serializable id, Boolean enabled);
 }

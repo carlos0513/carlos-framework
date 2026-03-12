@@ -1,5 +1,7 @@
 package com.carlos.message.manager.impl;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseServiceImpl;
@@ -112,4 +114,69 @@ public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateM
         return MybatisPage.convert(page, MessageTemplateConvert.INSTANCE::toVO);
     }
 
+    @Override
+    public MessageTemplateDTO getByTemplateCode(String templateCode) {
+        if (StrUtil.isBlank(templateCode)) {
+            log.warn("templateCode can't be blank");
+            return null;
+        }
+        LambdaQueryWrapper<MessageTemplate> wrapper = new LambdaQueryWrapper<MessageTemplate>()
+            .eq(MessageTemplate::getTemplateCode, templateCode)
+            .eq(MessageTemplate::getDeleted, false);
+        MessageTemplate entity = getOne(wrapper, false);
+        if (entity == null) {
+            log.warn("MessageTemplate not found by templateCode: {}", templateCode);
+            return null;
+        }
+        return MessageTemplateConvert.INSTANCE.toDTO(entity);
+    }
+
+    @Override
+    public boolean publish(Serializable id) {
+        if (id == null) {
+            log.warn("id can't be null");
+            return false;
+        }
+        MessageTemplateDTO existing = getDtoById(id);
+        if (existing == null) {
+            log.warn("MessageTemplate not found by id: {}", id);
+            return false;
+        }
+        if (existing.getEnabled() != null && existing.getEnabled()) {
+            log.warn("MessageTemplate already enabled, id: {}", id);
+            return false;
+        }
+        MessageTemplate entity = new MessageTemplate();
+        entity.setId(Convert.toLong(id));
+        entity.setEnabled(Boolean.TRUE);
+        boolean success = updateById(entity);
+        if (!success) {
+            log.warn("Publish MessageTemplate fail, id:{}", id);
+            return false;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Publish MessageTemplate success, id:{}", id);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateStatus(Serializable id, Boolean enabled) {
+        if (id == null || enabled == null) {
+            log.warn("id and enabled can't be null");
+            return false;
+        }
+        MessageTemplate entity = new MessageTemplate();
+        entity.setId(Convert.toLong(id));
+        entity.setEnabled(enabled);
+        boolean success = updateById(entity);
+        if (!success) {
+            log.warn("Update MessageTemplate status fail, id:{}, enabled:{}", id, enabled);
+            return false;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Update MessageTemplate status success, id:{}, enabled:{}", id, enabled);
+        }
+        return true;
+    }
 }

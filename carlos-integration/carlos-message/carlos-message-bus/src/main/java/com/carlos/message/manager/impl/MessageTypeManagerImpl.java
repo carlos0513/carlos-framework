@@ -1,5 +1,7 @@
 package com.carlos.message.manager.impl;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseServiceImpl;
@@ -105,6 +107,43 @@ public class MessageTypeManagerImpl extends BaseServiceImpl<MessageTypeMapper, M
         );
         PageInfo<MessageType> page = page(pageInfo(param), wrapper);
         return MybatisPage.convert(page, MessageTypeConvert.INSTANCE::toVO);
+    }
+
+    @Override
+    public MessageTypeDTO getByTypeCode(String typeCode) {
+        if (StrUtil.isBlank(typeCode)) {
+            log.warn("typeCode can't be blank");
+            return null;
+        }
+        LambdaQueryWrapper<MessageType> wrapper = new LambdaQueryWrapper<MessageType>()
+            .eq(MessageType::getTypeCode, typeCode)
+            .eq(MessageType::getDeleted, false);
+        MessageType entity = getOne(wrapper, false);
+        if (entity == null) {
+            log.warn("MessageType not found by typeCode: {}", typeCode);
+            return null;
+        }
+        return MessageTypeConvert.INSTANCE.toDTO(entity);
+    }
+
+    @Override
+    public boolean updateStatus(Serializable id, Boolean enabled) {
+        if (id == null || enabled == null) {
+            log.warn("id and enabled can't be null");
+            return false;
+        }
+        MessageType entity = new MessageType();
+        entity.setId(Convert.toLong(id));
+        entity.setEnabled(enabled);
+        boolean success = updateById(entity);
+        if (!success) {
+            log.warn("Update MessageType status fail, id:{}, enabled:{}", id, enabled);
+            return false;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Update MessageType status success, id:{}, enabled:{}", id, enabled);
+        }
+        return true;
     }
 
 }

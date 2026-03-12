@@ -1,5 +1,7 @@
 package com.carlos.message.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.carlos.core.exception.ServiceException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.message.convert.MessageTemplateConvert;
@@ -11,12 +13,15 @@ import com.carlos.message.pojo.param.MessageTemplateUpdateParam;
 import com.carlos.message.pojo.vo.MessageTemplateVO;
 import com.carlos.message.service.MessageTemplateService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.Map;
 
 
 /**
@@ -31,6 +36,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 @RequestMapping("message/template")
 @Tag(name = "消息模板")
+@Slf4j
 public class MessageTemplateController {
 
     public static final String BASE_NAME = "消息模板";
@@ -74,5 +80,45 @@ public class MessageTemplateController {
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MessageTemplateVO> page(MessageTemplatePageParam param) {
         return templateManager.getPage(param);
+    }
+
+    @GetMapping("getByCode")
+    @Operation(summary = "根据编码查询" + BASE_NAME)
+    @Parameter(name = "templateCode", description = "模板编码", required = true)
+    public MessageTemplateVO getByCode(@RequestParam String templateCode) {
+        if (StrUtil.isBlank(templateCode)) {
+            throw new ServiceException("模板编码不能为空");
+        }
+        MessageTemplateDTO dto = templateService.getByTemplateCode(templateCode);
+        return MessageTemplateConvert.INSTANCE.toVO(dto);
+    }
+
+    @PostMapping("{id}/publish")
+    @Operation(summary = "发布" + BASE_NAME)
+    public void publish(@PathVariable Serializable id) {
+        templateService.publishTemplate(id);
+    }
+
+    @PostMapping("{id}/enable")
+    @Operation(summary = "启用" + BASE_NAME)
+    public void enable(@PathVariable Serializable id) {
+        templateService.enableTemplate(id);
+    }
+
+    @PostMapping("{id}/disable")
+    @Operation(summary = "禁用" + BASE_NAME)
+    public void disable(@PathVariable Serializable id) {
+        templateService.disableTemplate(id);
+    }
+
+    @PostMapping("validate")
+    @Operation(summary = "验证模板参数")
+    public void validate(@RequestBody Map<String, Object> request) {
+        String templateCode = (String) request.get("templateCode");
+        Map<String, Object> params = (Map<String, Object>) request.get("params");
+        if (StrUtil.isBlank(templateCode)) {
+            throw new ServiceException("模板编码不能为空");
+        }
+        templateService.validateTemplateParams(templateCode, params);
     }
 }

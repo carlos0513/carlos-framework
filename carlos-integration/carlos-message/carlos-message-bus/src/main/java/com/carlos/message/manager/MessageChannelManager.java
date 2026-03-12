@@ -8,6 +8,7 @@ import com.carlos.message.pojo.param.MessageChannelPageParam;
 import com.carlos.message.pojo.vo.MessageChannelVO;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -67,4 +68,44 @@ public interface MessageChannelManager extends BaseService<MessageChannel> {
      * @date 2026年3月12日 上午11:17:05
      */
     Paging<MessageChannelVO> getPage(MessageChannelPageParam param);
+
+    /**
+     * 根据渠道编码查询消息渠道
+     *
+     * @param channelCode 渠道编码
+     * @return 消息渠道DTO
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    MessageChannelDTO getByChannelCode(String channelCode);
+
+    /**
+     * 根据渠道类型查询列表
+     *
+     * @param channelType 渠道类型
+     * @return 消息渠道列表
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    List<MessageChannelDTO> listByType(Integer channelType);
+
+    /**
+     * 查询所有可用的渠道
+     *
+     * @return 可用渠道列表
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    List<MessageChannelDTO> getAvailableChannels();
+
+    /**
+     * 更新消息渠道状态
+     *
+     * @param id 主键ID
+     * @param enabled 状态（0-禁用 1-启用 2-故障）
+     * @return boolean
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    boolean updateStatus(Serializable id, Integer enabled);
 }

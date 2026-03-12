@@ -1,5 +1,9 @@
 package com.carlos.message.service;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.carlos.core.exception.ServiceException;
 import com.carlos.message.manager.MessageTemplateManager;
 import com.carlos.message.pojo.dto.MessageTemplateDTO;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -33,6 +38,7 @@ public class MessageTemplateService {
      * @date 2026年3月12日 上午11:17:06
      */
     public void addMessageTemplate(MessageTemplateDTO dto) {
+        validateTemplateCodeUnique(dto.getTemplateCode());
         boolean success = templateManager.add(dto);
         if (!success) {
             // 保存失败的应对措施
@@ -78,4 +84,139 @@ public class MessageTemplateService {
         log.info("Update 'MessageTemplate' data: id:{}", dto.getId());
     }
 
+    /**
+     * 根据模板编码查询消息模板
+     *
+     * @param templateCode 模板编码
+     * @return 消息模板DTO
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    public MessageTemplateDTO getByTemplateCode(String templateCode) {
+        if (StrUtil.isBlank(templateCode)) {
+            throw new ServiceException("模板编码不能为空");
+        }
+        MessageTemplateDTO dto = templateManager.getByTemplateCode(templateCode);
+        if (dto == null) {
+            throw new ServiceException("消息模板不存在: " + templateCode);
+        }
+        return dto;
+    }
+
+    /**
+     * 发布消息模板（草稿->启用）
+     *
+     * @param id 主键ID
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    public void publishTemplate(Serializable id) {
+        MessageTemplateDTO existing = templateManager.getDtoById(id);
+        if (existing == null) {
+            throw new ServiceException("消息模板不存在");
+        }
+        if (existing.getEnabled() != null && existing.getEnabled()) {
+            throw new ServiceException("消息模板已处于发布状态");
+        }
+        boolean success = templateManager.publish(id);
+        if (!success) {
+            throw new ServiceException("发布消息模板失败");
+        }
+        log.info("Publish MessageTemplate: id:{}", id);
+    }
+
+    /**
+     * 启用消息模板
+     *
+     * @param id 主键ID
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    public void enableTemplate(Serializable id) {
+        MessageTemplateDTO existing = templateManager.getDtoById(id);
+        if (existing == null) {
+            throw new ServiceException("消息模板不存在");
+        }
+        if (existing.getEnabled() != null && existing.getEnabled()) {
+            throw new ServiceException("消息模板已处于启用状态");
+        }
+        boolean success = templateManager.updateStatus(id, Boolean.TRUE);
+        if (!success) {
+            throw new ServiceException("启用消息模板失败");
+        }
+        log.info("Enable MessageTemplate: id:{}", id);
+    }
+
+    /**
+     * 禁用消息模板
+     *
+     * @param id 主键ID
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    public void disableTemplate(Serializable id) {
+        MessageTemplateDTO existing = templateManager.getDtoById(id);
+        if (existing == null) {
+            throw new ServiceException("消息模板不存在");
+        }
+        if (existing.getEnabled() != null && !existing.getEnabled()) {
+            throw new ServiceException("消息模板已处于禁用状态");
+        }
+        boolean success = templateManager.updateStatus(id, Boolean.FALSE);
+        if (!success) {
+            throw new ServiceException("禁用消息模板失败");
+        }
+        log.info("Disable MessageTemplate: id:{}", id);
+    }
+
+    /**
+     * 验证模板参数
+     *
+     * @param templateCode 模板编码
+     * @param params 参数Map
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    public void validateTemplateParams(String templateCode, Map<String, Object> params) {
+        if (StrUtil.isBlank(templateCode)) {
+            throw new ServiceException("模板编码不能为空");
+        }
+        MessageTemplateDTO template = getByTemplateCode(templateCode);
+        String paramSchema = template.getParamSchema();
+        if (StrUtil.isBlank(paramSchema)) {
+            return;
+        }
+        JSONObject schemaJson;
+        try {
+            schemaJson = JSONUtil.parseObj(paramSchema);
+        } catch (Exception e) {
+            log.error("Parse param_schema fail, templateCode: {}, schema: {}", templateCode, paramSchema, e);
+            throw new ServiceException("模板参数定义格式错误");
+        }
+        if (params == null) {
+            throw new ServiceException("模板参数不能为空");
+        }
+        for (String key : schemaJson.keySet()) {
+            if (!params.containsKey(key)) {
+                throw new ServiceException("缺少模板参数: " + key);
+            }
+        }
+    }
+
+    /**
+     * 新增时校验templateCode唯一性
+     *
+     * @param templateCode 模板编码
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    public void validateTemplateCodeUnique(String templateCode) {
+        if (StrUtil.isBlank(templateCode)) {
+            throw new ServiceException("模板编码不能为空");
+        }
+        MessageTemplateDTO existing = templateManager.getByTemplateCode(templateCode);
+        if (existing != null) {
+            throw new ServiceException("模板编码已存在: " + templateCode);
+        }
+    }
 }

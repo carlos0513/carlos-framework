@@ -67,4 +67,25 @@ public interface MessageTypeManager extends BaseService<MessageType> {
      * @date 2026年3月12日 上午11:17:05
      */
     Paging<MessageTypeVO> getPage(MessageTypePageParam param);
+
+    /**
+     * 根据类型编码查询消息类型
+     *
+     * @param typeCode 类型编码
+     * @return 消息类型DTO
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    MessageTypeDTO getByTypeCode(String typeCode);
+
+    /**
+     * 更新消息类型状态
+     *
+     * @param id 主键ID
+     * @param enabled 是否启用
+     * @return boolean
+     * @author Carlos
+     * @date 2026年3月12日
+     */
+    boolean updateStatus(Serializable id, Boolean enabled);
 }

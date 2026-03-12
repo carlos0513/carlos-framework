@@ -1,5 +1,7 @@
 package com.carlos.message.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.carlos.core.exception.ServiceException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.message.convert.MessageTypeConvert;
@@ -11,6 +13,7 @@ import com.carlos.message.pojo.param.MessageTypeUpdateParam;
 import com.carlos.message.pojo.vo.MessageTypeVO;
 import com.carlos.message.service.MessageTypeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -74,5 +77,28 @@ public class MessageTypeController {
     @Operation(summary = BASE_NAME + "分页列表")
     public Paging<MessageTypeVO> page(MessageTypePageParam param) {
         return typeManager.getPage(param);
+    }
+
+    @GetMapping("getByCode")
+    @Operation(summary = "根据编码查询" + BASE_NAME)
+    @Parameter(name = "typeCode", description = "类型编码", required = true)
+    public MessageTypeVO getByCode(@RequestParam String typeCode) {
+        if (StrUtil.isBlank(typeCode)) {
+            throw new ServiceException("类型编码不能为空");
+        }
+        MessageTypeDTO dto = typeService.getByTypeCode(typeCode);
+        return MessageTypeConvert.INSTANCE.toVO(dto);
+    }
+
+    @PostMapping("{id}/enable")
+    @Operation(summary = "启用" + BASE_NAME)
+    public void enable(@PathVariable Serializable id) {
+        typeService.enableType(id);
+    }
+
+    @PostMapping("{id}/disable")
+    @Operation(summary = "禁用" + BASE_NAME)
+    public void disable(@PathVariable Serializable id) {
+        typeService.disableType(id);
     }
 }

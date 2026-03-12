@@ -1,7 +1,8 @@
-package com.carlos.message.api.pojo.ao;
+package com.carlos.message.pojo.param;
 
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,7 +16,8 @@ import java.time.LocalDateTime;
  * @date 2026年3月12日 上午11:17:05
  */
 @Data
-public class MessageReceiverAO implements Serializable {
+@Accessors(chain = true)
+public class ApiMessageReceiverParam implements Serializable {
     /** 主键ID */
     private Long id;
     /** 消息ID */

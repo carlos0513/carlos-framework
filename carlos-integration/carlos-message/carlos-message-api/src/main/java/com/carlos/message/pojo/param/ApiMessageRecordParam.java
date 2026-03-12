@@ -1,4 +1,4 @@
-package com.carlos.message.api.pojo.param;
+package com.carlos.message.pojo.param;
 
 
 import lombok.Data;
