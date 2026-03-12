@@ -44,7 +44,7 @@ public abstract class AbstractChannelAdapter implements ChannelAdapter, Initiali
             loadChannelConfig();
         }
         return channelConfig != null &&
-            Objects.equals(channelConfig.getEnabled(), true) &&
+            Objects.equals(channelConfig.getEnabled(), 1) &&
             !Objects.equals(channelConfig.getDeleted(), true);
     }
 

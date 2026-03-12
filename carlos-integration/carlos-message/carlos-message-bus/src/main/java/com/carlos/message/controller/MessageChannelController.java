@@ -75,4 +75,16 @@ public class MessageChannelController {
     public Paging<MessageChannelVO> page(MessageChannelPageParam param) {
         return channelManager.getPage(param);
     }
+
+    @PostMapping("{id}/enable")
+    @Operation(summary = "启用" + BASE_NAME)
+    public void enable(@PathVariable Serializable id) {
+        channelService.enableChannel(id);
+    }
+
+    @PostMapping("{id}/disable")
+    @Operation(summary = "禁用" + BASE_NAME)
+    public void disable(@PathVariable Serializable id) {
+        channelService.disableChannel(id);
+    }
 }

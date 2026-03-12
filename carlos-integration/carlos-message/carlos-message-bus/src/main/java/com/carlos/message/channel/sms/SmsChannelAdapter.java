@@ -78,7 +78,6 @@ public class SmsChannelAdapter extends AbstractChannelAdapter {
             return SendResult.builder()
                 .success(true)
                 .channelMessageId(channelMessageId)
-                .messageId(context.getMessageId())
                 .build();
 
         } catch (Exception e) {

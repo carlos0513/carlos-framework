@@ -157,4 +157,14 @@ public class MessageReceiverManagerImpl extends BaseServiceImpl<MessageReceiverM
             .set(MessageReceiver::getUpdateTime, LocalDateTime.now());
         return baseMapper.update(null, wrapper) > 0;
     }
+
+    @Override
+    public List<MessageReceiver> listScheduledPending(LocalDateTime before) {
+        LambdaQueryWrapper<MessageReceiver> wrapper = new LambdaQueryWrapper<>();
+        wrapper.isNotNull(MessageReceiver::getScheduleTime)
+            .le(MessageReceiver::getScheduleTime, before)
+            .eq(MessageReceiver::getStatus, 0)
+            .orderByAsc(MessageReceiver::getScheduleTime);
+        return baseMapper.selectList(wrapper);
+    }
 }

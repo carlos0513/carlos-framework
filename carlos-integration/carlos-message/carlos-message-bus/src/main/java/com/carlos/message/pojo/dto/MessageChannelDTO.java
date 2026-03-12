@@ -40,7 +40,7 @@ public class MessageChannelDTO {
     /** 权重 */
     private Integer weight;
     /** 是否启用: 0-禁用 1-启用 2-故障 */
-    private Boolean enabled;
+    private Integer enabled;
     /** 创建者编号 */
     private Long createBy;
     /** 创建时间 */

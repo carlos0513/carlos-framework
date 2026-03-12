@@ -78,4 +78,46 @@ public class MessageChannelService {
         log.info("Update 'MessageChannel' data: id:{}", dto.getId());
     }
 
+    /**
+     * 启用消息渠道
+     *
+     * @param id 渠道ID
+     */
+    public void enableChannel(Serializable id) {
+        boolean success = channelManager.updateStatus(id, 1);
+        if (!success) {
+            log.warn("Enable MessageChannel fail, id:{}", id);
+            return;
+        }
+        log.info("Enable MessageChannel success, id:{}", id);
+    }
+
+    /**
+     * 禁用消息渠道
+     *
+     * @param id 渠道ID
+     */
+    public void disableChannel(Serializable id) {
+        boolean success = channelManager.updateStatus(id, 0);
+        if (!success) {
+            log.warn("Disable MessageChannel fail, id:{}", id);
+            return;
+        }
+        log.info("Disable MessageChannel success, id:{}", id);
+    }
+
+    /**
+     * 标记消息渠道为故障状态
+     *
+     * @param id 渠道ID
+     */
+    public void markFaulted(Serializable id) {
+        boolean success = channelManager.updateStatus(id, 2);
+        if (!success) {
+            log.warn("Mark MessageChannel as faulted fail, id:{}", id);
+            return;
+        }
+        log.info("Mark MessageChannel as faulted success, id:{}", id);
+    }
+
 }

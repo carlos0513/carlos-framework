@@ -9,13 +9,17 @@ import com.carlos.datasource.pagination.MybatisPage;
 import com.carlos.datasource.pagination.PageInfo;
 import com.carlos.message.convert.MessageTemplateConvert;
 import com.carlos.message.manager.MessageTemplateManager;
+import com.carlos.message.manager.MessageTypeManager;
 import com.carlos.message.mapper.MessageTemplateMapper;
 import com.carlos.message.pojo.dto.MessageTemplateDTO;
+import com.carlos.message.pojo.dto.MessageTypeDTO;
 import com.carlos.message.pojo.entity.MessageTemplate;
 import com.carlos.message.pojo.param.MessageTemplatePageParam;
 import com.carlos.message.pojo.vo.MessageTemplateVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -32,6 +36,10 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 @Component
 public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateMapper, MessageTemplate> implements MessageTemplateManager {
+
+    @Lazy
+    @Autowired
+    private MessageTypeManager messageTypeManager;
 
     @Override
     public boolean add(MessageTemplateDTO dto) {
@@ -128,7 +136,15 @@ public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateM
             log.warn("MessageTemplate not found by templateCode: {}", templateCode);
             return null;
         }
-        return MessageTemplateConvert.INSTANCE.toDTO(entity);
+        MessageTemplateDTO dto = MessageTemplateConvert.INSTANCE.toDTO(entity);
+        // 填充 typeCode
+        if (dto.getTypeId() != null) {
+            MessageTypeDTO typeDTO = messageTypeManager.getDtoById(dto.getTypeId());
+            if (typeDTO != null) {
+                dto.setTypeCode(typeDTO.getTypeCode());
+            }
+        }
+        return dto;
     }
 
     @Override

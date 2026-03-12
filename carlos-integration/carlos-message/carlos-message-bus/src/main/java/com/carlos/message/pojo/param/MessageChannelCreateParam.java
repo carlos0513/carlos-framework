@@ -46,5 +46,5 @@ public class MessageChannelCreateParam {
     private Integer weight;
     @NotNull(message = "是否启用: 0-禁用 1-启用 2-故障不能为空")
     @Schema(description = "是否启用: 0-禁用 1-启用 2-故障")
-    private Boolean enabled;
+    private Integer enabled;
 }

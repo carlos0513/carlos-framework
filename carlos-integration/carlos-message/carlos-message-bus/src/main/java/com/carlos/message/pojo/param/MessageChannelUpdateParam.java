@@ -42,5 +42,5 @@ public class MessageChannelUpdateParam {
     @Schema(description = "权重")
     private Integer weight;
     @Schema(description = "是否启用: 0-禁用 1-启用 2-故障")
-    private Boolean enabled;
+    private Integer enabled;
 }

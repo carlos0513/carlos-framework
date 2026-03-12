@@ -8,6 +8,7 @@ import com.carlos.message.pojo.param.MessageReceiverPageParam;
 import com.carlos.message.pojo.vo.MessageReceiverVO;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -103,4 +104,12 @@ public interface MessageReceiverManager extends BaseService<MessageReceiver> {
      * @return 是否成功
      */
     boolean incrementFailCount(Long id, String failReason);
+
+    /**
+     * 查询已到期的定时待发消息接收人（scheduleTime <= before 且 status=PENDING）
+     *
+     * @param before 截止时间（通常传入当前时间）
+     * @return 接收人列表
+     */
+    List<MessageReceiver> listScheduledPending(LocalDateTime before);
 }

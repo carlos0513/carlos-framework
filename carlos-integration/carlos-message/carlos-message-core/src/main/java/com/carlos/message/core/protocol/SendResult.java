@@ -41,7 +41,7 @@ public class SendResult implements Serializable {
     /**
      * 错误信息
      */
-    private String errorMsg;
+    private String errorMessage;
 
     /**
      * 耗时（毫秒）
@@ -72,7 +72,7 @@ public class SendResult implements Serializable {
         return SendResult.builder()
                 .success(false)
                 .errorCode(errorCode)
-                .errorMsg(errorMsg)
+            .errorMessage(errorMsg)
                 .build();
     }
 

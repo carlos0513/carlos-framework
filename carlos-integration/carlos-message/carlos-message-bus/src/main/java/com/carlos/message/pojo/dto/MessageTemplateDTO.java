@@ -21,6 +21,8 @@ public class MessageTemplateDTO {
     private Long id;
     /** 消息类型ID */
     private Long typeId;
+    /** 消息类型编码 */
+    private String typeCode;
     /** 模板编码 */
     private String templateCode;
     /** 模板名称 */

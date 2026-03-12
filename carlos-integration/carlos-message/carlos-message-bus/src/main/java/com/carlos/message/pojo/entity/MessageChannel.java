@@ -85,7 +85,7 @@ public class MessageChannel extends Model<MessageChannel> implements Serializabl
      * 是否启用: 0-禁用 1-启用 2-故障
      */
     @TableField(value = "is_enabled")
-    private Boolean enabled;
+    private Integer enabled;
     /**
      * 逻辑删除
      */
