@@ -1,6 +1,7 @@
 package com.carlos.message.manager.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseServiceImpl;
 import com.carlos.datasource.pagination.MybatisPage;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -123,21 +125,36 @@ public class MessageReceiverManagerImpl extends BaseServiceImpl<MessageReceiverM
 
     @Override
     public List<MessageReceiver> listByMessageId(String messageId) {
-        return baseMapper.selectByMessageId(messageId);
+        LambdaQueryWrapper<MessageReceiver> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MessageReceiver::getMessageId, messageId);
+        return baseMapper.selectList(wrapper);
     }
 
     @Override
     public List<MessageReceiver> listByReceiverAndStatus(String receiverId, Integer status) {
-        return baseMapper.selectByReceiverAndStatus(receiverId, status);
+        LambdaQueryWrapper<MessageReceiver> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MessageReceiver::getReceiverId, receiverId)
+            .eq(MessageReceiver::getStatus, status)
+            .orderByDesc(MessageReceiver::getCreateTime);
+        return baseMapper.selectList(wrapper);
     }
 
     @Override
     public boolean updateStatus(Long id, Integer status) {
-        return baseMapper.updateStatus(id, status) > 0;
+        LambdaUpdateWrapper<MessageReceiver> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(MessageReceiver::getId, id)
+            .set(MessageReceiver::getStatus, status)
+            .set(MessageReceiver::getUpdateTime, LocalDateTime.now());
+        return baseMapper.update(null, wrapper) > 0;
     }
 
     @Override
     public boolean incrementFailCount(Long id, String failReason) {
-        return baseMapper.incrementFailCount(id, failReason) > 0;
+        LambdaUpdateWrapper<MessageReceiver> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(MessageReceiver::getId, id)
+            .setSql("fail_count = fail_count + 1")
+            .set(MessageReceiver::getFailReason, failReason)
+            .set(MessageReceiver::getUpdateTime, LocalDateTime.now());
+        return baseMapper.update(null, wrapper) > 0;
     }
 }

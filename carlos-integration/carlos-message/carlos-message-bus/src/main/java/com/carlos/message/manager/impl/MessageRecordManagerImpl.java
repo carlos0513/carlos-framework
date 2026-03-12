@@ -17,7 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -124,12 +127,21 @@ public class MessageRecordManagerImpl extends BaseServiceImpl<MessageRecordMappe
 
     @Override
     public MessageRecord getByMessageId(String messageId) {
-        return baseMapper.selectByMessageId(messageId);
+        LambdaQueryWrapper<MessageRecord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MessageRecord::getMessageId, messageId)
+            .eq(MessageRecord::getDeleted, 0);
+        return baseMapper.selectOne(wrapper);
     }
 
     @Override
     public List<Long> getExpiredIds(int days) {
-        return baseMapper.selectExpiredIds(days);
+        LocalDateTime expireTime = LocalDateTime.now().minus(days, ChronoUnit.DAYS);
+        LambdaQueryWrapper<MessageRecord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.select(MessageRecord::getId)
+            .lt(MessageRecord::getCreateTime, expireTime);
+        return baseMapper.selectList(wrapper).stream()
+            .map(MessageRecord::getId)
+            .collect(Collectors.toList());
     }
 
     @Override

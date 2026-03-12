@@ -3,8 +3,6 @@ package com.carlos.message.mapper;
 import com.carlos.message.pojo.entity.MessageTemplate;
 import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>
@@ -17,6 +15,5 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface MessageTemplateMapper extends MPJBaseMapper<MessageTemplate> {
 
-    @Select("SELECT * FROM message_template WHERE template_code = #{templateCode} AND is_deleted = 0")
-    MessageTemplate selectByCode(@Param("templateCode") String templateCode);
+
 }
