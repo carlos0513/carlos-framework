@@ -33,7 +33,7 @@ public class Result<T> implements Serializable {
     /**
      * 是否成功
      */
-    private Boolean success;
+    private boolean success;
 
     /**
      * 响应信息，用来说明响应情况

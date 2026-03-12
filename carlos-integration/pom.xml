@@ -108,7 +108,7 @@
             </dependency>
             <dependency>
                 <groupId>com.carlos.message</groupId>
-                <artifactId>carlos-message-server</artifactId>
+              <artifactId>carlos-message-bus</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

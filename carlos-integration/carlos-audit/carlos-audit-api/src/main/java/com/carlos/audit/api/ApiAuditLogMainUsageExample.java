@@ -66,7 +66,7 @@ public class ApiAuditLogMainUsageExample {
         // 调用 Feign 接口保存（异步）
         Result<AuditLogMainAO> result = auditLogClient.saveAuditLog(param);
 
-        if (result.getSuccess()) {
+        if (result.isSuccess()) {
             log.info("审计日志保存成功，ID: {}", result.getData().getId());
         } else {
             log.warn("审计日志保存失败: {}", result.getMessage());
@@ -100,7 +100,7 @@ public class ApiAuditLogMainUsageExample {
         // 调用 Feign 接口保存（同步，超时5秒）
         Result<AuditLogMainAO> result = auditLogClient.saveAuditLogSync(param, 5000);
 
-        if (result.getSuccess()) {
+        if (result.isSuccess()) {
             log.info("重要审计日志同步保存成功，ID: {}", result.getData().getId());
         } else {
             log.error("重要审计日志同步保存失败: {}", result.getMessage());
@@ -139,7 +139,7 @@ public class ApiAuditLogMainUsageExample {
         // 批量保存（异步）
         Result<Void> result = auditLogClient.batchSaveAuditLog(params);
 
-        if (result.getSuccess()) {
+        if (result.isSuccess()) {
             log.info("批量审计日志保存成功，数量: {}", params.size());
         } else {
             log.warn("批量审计日志保存失败: {}", result.getMessage());
@@ -162,7 +162,7 @@ public class ApiAuditLogMainUsageExample {
             AuditLogStateEnum.SUCCESS// state（可选，默认SUCCESS）
         );
 
-        if (result.getSuccess()) {
+        if (result.isSuccess()) {
             log.info("简单审计日志保存成功，ID: {}", result.getData().getId());
         } else {
             log.warn("简单审计日志保存失败: {}", result.getMessage());

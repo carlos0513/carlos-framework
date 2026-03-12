@@ -214,7 +214,7 @@ public class CodeGeneratorController extends BaseController {
         templateCombo.getSelectionModel().select(0);
 
         // 设置默认值
-        hostField.setText("192.168.3.10");
+        hostField.setText("100.73.89.3");
         portField.setText("13306");
         usernameField.setText("carlos");
         databaseField.setText("carlos-framework");

@@ -131,7 +131,6 @@ carlos-framework/                          # 根聚合 POM
 
 - `carlos-spring-boot-starter-web`: Spring Boot 自动配置和 starter 支持
 - `carlos-spring-cloud-starter`: Spring Cloud Alibaba 集成 (Nacos, Sentinel)
-- `carlos-spring-boot-starter-gateway`: Spring Cloud Gateway 的 API 网关工具
 - `carlos-spring-boot-starter-json`: JSON 序列化 (Fastjson 2.0.60)
 
 *数据访问：*

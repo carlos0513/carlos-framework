@@ -61,7 +61,6 @@ carlos-framework/                          # 根聚合器 (carlos-framework)
 │   ├── carlos-spring-boot-starter-redis/          # Redis + Redisson + Caffeine
 │   ├── carlos-spring-boot-starter-oauth2/         # OAuth2 认证授权
 │   ├── carlos-spring-boot-starter-encrypt/        # 国密加密 (SM2/SM4)
-│   ├── carlos-spring-boot-starter-gateway/        # API 网关
 │   ├── carlos-spring-boot-starter-minio/          # MinIO 对象存储
 │   ├── carlos-spring-boot-starter-flowable/       # 工作流引擎
 │   └── ... (其他 13 个 Starter 模块)
