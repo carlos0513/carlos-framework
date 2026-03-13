@@ -5,6 +5,7 @@ import com.carlos.core.response.Result;
 import com.carlos.message.convert.MessageConvert;
 import com.carlos.message.pojo.dto.MessageRecordDTO;
 import com.carlos.message.pojo.param.MessageCreateParam;
+import com.carlos.message.pojo.param.MessagePageParam;
 import com.carlos.message.pojo.vo.MessageRecordVO;
 import com.carlos.message.service.MessageQueryService;
 import com.carlos.message.service.MessageSendService;
@@ -76,9 +77,9 @@ public class MessageController {
     @GetMapping("/page")
     @Operation(summary = "分页查询消息记录")
     public Result<Paging<MessageRecordVO>> page(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Result<Paging<MessageRecordDTO>> result = messageQueryService.page(page, size);
+        @RequestParam MessagePageParam param) {
+
+        Result<Paging<MessageRecordDTO>> result = messageQueryService.page(param);
         if (!result.isSuccess()) {
             return Result.fail(result.getMessage());
         }

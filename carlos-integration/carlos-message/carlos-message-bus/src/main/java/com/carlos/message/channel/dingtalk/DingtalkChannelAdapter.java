@@ -46,7 +46,7 @@ public class DingtalkChannelAdapter extends AbstractChannelAdapter {
             // 获取接收者ID（钉钉用户ID）
             String userId = context.getReceiverId();
             if (userId == null || userId.isEmpty()) {
-                return SendResult.failed("接收者ID不能为空");
+                return SendResult.fail("接收者ID不能为空");
             }
 
             // 获取消息标题和内容
@@ -54,7 +54,7 @@ public class DingtalkChannelAdapter extends AbstractChannelAdapter {
             String content = context.getMessageContent();
 
             if (content == null || content.isEmpty()) {
-                return SendResult.failed("消息内容不能为空");
+                return SendResult.fail("消息内容不能为空");
             }
 
             // TODO: 集成钉钉 SDK
@@ -74,12 +74,12 @@ public class DingtalkChannelAdapter extends AbstractChannelAdapter {
             return SendResult.builder()
                 .success(true)
                 .channelMessageId(channelMessageId)
-                .messageId(context.getMessageId())
+                // .messageId(context.getMessageId())
                 .build();
 
         } catch (Exception e) {
             log.error("钉钉消息发送失败", e);
-            return SendResult.failed("钉钉消息发送异常: " + e.getMessage());
+            return SendResult.fail("钉钉消息发送异常: " + e.getMessage());
         }
     }
 }

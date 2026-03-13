@@ -49,13 +49,13 @@ public class SmsChannelAdapter extends AbstractChannelAdapter {
             // 获取接收号码
             String phoneNumber = context.getReceiverNumber();
             if (phoneNumber == null || phoneNumber.isEmpty()) {
-                return SendResult.failed("接收号码不能为空");
+                return SendResult.fail("接收号码不能为空");
             }
 
             // 获取短信内容
             String content = context.getMessageContent();
             if (content == null || content.isEmpty()) {
-                return SendResult.failed("短信内容不能为空");
+                return SendResult.fail("短信内容不能为空");
             }
 
             // TODO: 集成实际的短信服务商 SDK（阿里云、腾讯云等）
@@ -69,7 +69,7 @@ public class SmsChannelAdapter extends AbstractChannelAdapter {
             // if (response.isSuccess()) {
             //     return SendResult.success(response.getMessageId());
             // } else {
-            //     return SendResult.failed(response.getErrorMessage());
+            //     return SendResult.fail(response.getErrorMessage());
             // }
 
             // 模拟成功，生成渠道消息ID
@@ -82,7 +82,7 @@ public class SmsChannelAdapter extends AbstractChannelAdapter {
 
         } catch (Exception e) {
             log.error("短信发送失败", e);
-            return SendResult.failed("短信发送异常: " + e.getMessage());
+            return SendResult.fail("短信发送异常: " + e.getMessage());
         }
     }
 }

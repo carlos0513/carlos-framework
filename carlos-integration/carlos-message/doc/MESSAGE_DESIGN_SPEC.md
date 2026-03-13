@@ -731,12 +731,12 @@ public abstract class AbstractChannelAdapter implements ChannelAdapter, Initiali
         try {
             // 1. 检查渠道状态
             if (!isAvailable()) {
-                return SendResult.failed("渠道不可用: " + channelCode);
+                return SendResult.fail("渠道不可用: " + channelCode);
             }
             
             // 2. 限流检查
             if (!rateLimiter.tryAcquire(channelCode, 1)) {
-                return SendResult.failed("触发限流: " + channelCode);
+                return SendResult.fail("触发限流: " + channelCode);
             }
             
             // 3. 执行发送
@@ -754,7 +754,7 @@ public abstract class AbstractChannelAdapter implements ChannelAdapter, Initiali
             sample.stop(meterRegistry.timer("message.send", 
                 "channel", channelCode,
                 "status", "error"));
-            return SendResult.failed("发送异常: " + e.getMessage());
+            return SendResult.fail("发送异常: " + e.getMessage());
         }
     }
     

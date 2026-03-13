@@ -44,8 +44,7 @@ public abstract class AbstractChannelAdapter implements ChannelAdapter, Initiali
             loadChannelConfig();
         }
         return channelConfig != null &&
-            Objects.equals(channelConfig.getEnabled(), 1) &&
-            !Objects.equals(channelConfig.getDeleted(), true);
+            Objects.equals(channelConfig.getEnabled(), 1);
     }
 
     /**
@@ -65,11 +64,11 @@ public abstract class AbstractChannelAdapter implements ChannelAdapter, Initiali
     @Override
     public SendResult send(MessageContext context) {
         if (!isAvailable()) {
-            return SendResult.failed("渠道不可用: " + getChannelCode());
+            return SendResult.fail("渠道不可用: " + getChannelCode());
         }
 
         if (!supports(context.getMessageType())) {
-            return SendResult.failed("渠道不支持该消息类型: " + context.getMessageType());
+            return SendResult.fail("渠道不支持该消息类型: " + context.getMessageType());
         }
 
         try {
@@ -80,7 +79,7 @@ public abstract class AbstractChannelAdapter implements ChannelAdapter, Initiali
             return result;
         } catch (Exception e) {
             log.error("消息发送异常, channel={}, messageId={}", getChannelCode(), context.getMessageId(), e);
-            return SendResult.failed("发送异常: " + e.getMessage());
+            return SendResult.fail("发送异常: " + e.getMessage());
         }
     }
 
