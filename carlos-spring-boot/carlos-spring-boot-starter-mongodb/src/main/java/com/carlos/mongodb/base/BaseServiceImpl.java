@@ -8,12 +8,16 @@ import com.carlos.core.pagination.PageConvert;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamPage;
 import com.carlos.core.util.PropertyNamer;
+import com.carlos.mongodb.MetaObject;
+import com.carlos.mongodb.MetaObjectHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -22,29 +26,39 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 公共Service实现类
+ * 公共 Service 实现类
+ * 提供 MongoDB 的基础 CRUD 操作和字段自动填充功能
  *
  * @author Carlos
  * @date 2021/12/22 19:09
  */
 @SuppressWarnings("unchecked")
-public class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID>
+public abstract class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID extends Serializable>
     implements BaseService<T, ID> {
 
     /**
-     * 实体类型(Service对应的实体类)
+     * 实体类型（Service 对应的实体类）
      */
     private Class<T> entityClass;
 
     @Autowired
     protected M baseRepository;
 
+    @Autowired(required = false)
+    protected MetaObjectHandler metaObjectHandler;
+
+    @Autowired(required = false)
+    protected MongoTemplate mongoTemplate;
+
     {
-        final Class<T> clazz = (Class<T>) this.getClass();
+        final Class<?> clazz = this.getClass();
         final Type type = clazz.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             final Type[] p = ((ParameterizedType) type).getActualTypeArguments();
-            this.entityClass = (Class<T>) p[1];
+            // 注意：这里取第1个，因为第0个是 M（Repository）
+            if (p.length > 1) {
+                this.entityClass = (Class<T>) p[1];
+            }
         }
     }
 
@@ -60,7 +74,7 @@ public class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID>
 
     @Override
     public Pageable pageable(final ParamPage param) {
-        return PageRequest.of((int) param.getCurrent() - 1, (int) param.getSize());
+        return PageRequest.of(param.getCurrent() - 1, param.getSize());
     }
 
     @Override
@@ -69,14 +83,14 @@ public class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID>
         final Pageable pageable = page.getPageable();
         pageInfo.setTotal((int) page.getTotalElements());
         pageInfo.setRecords(convert.convert(page.getContent()));
-        pageInfo.setCurrent(pageable.getPageNumber());
+        pageInfo.setCurrent(pageable.getPageNumber() + 1); // MongoDB 分页从 0 开始，这里+1
         pageInfo.setSize(page.getSize());
         pageInfo.setPages(page.getTotalPages());
         return pageInfo;
     }
 
     /**
-     * 字段映射
+     * 字段映射缓存
      */
     private final Map<Func1<T, ?>, String> COLUMN_CACHE = new ConcurrentHashMap<>();
 
@@ -88,7 +102,7 @@ public class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID>
         }
         final SerializedLambda serializedLambda = LambdaUtil.resolve(lambda);
         final String methodName = serializedLambda.getImplMethodName();
-        // 从lambda信息取出method、field、class等
+        // 从 lambda 信息取出 method、field、class 等
         final String property = PropertyNamer.methodToProperty(methodName);
         final Field field;
 
@@ -97,10 +111,10 @@ public class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID>
             final Class<T> clazz = ClassUtil.loadClass(className, false);
             field = clazz.getDeclaredField(property);
         } catch (final NoSuchFieldException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Field not found: " + property, e);
         }
 
-        // 从field取出字段名，可以根据实际情况调整
+        // 从 field 取出字段名，优先使用 @Field 注解的值
         final org.springframework.data.mongodb.core.mapping.Field fieldAnnotation =
             field.getAnnotation(org.springframework.data.mongodb.core.mapping.Field.class);
         if (fieldAnnotation != null && fieldAnnotation.value().length() > 0) {
@@ -112,22 +126,101 @@ public class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID>
         return columnName;
     }
 
-    public T save(final T entity) {
-        // TODO: Carlos 2021/12/24 在此处对对象进行默认赋值
-        // Field[] fields = ReflectUtil.getFields(entityClass);
-        // Arrays.stream(fields).filter(field -> {
-        //     FieldFill annotation = field.getAnnotation(FieldFill.class);
-        //     if (annotation ==null) {
-        //         return false;
-        //     }
-        //     if (annotation.strategy() == FieldFillStrategy.INSERT || annotation.strategy() ==
-        // FieldFillStrategy.INSERT_UPDATE) {
-        //         return true;
-        //     }
-        //     return false;
-        // }).forEach(field -> {
-        //     ReflectUtil.setFieldValue(entity, field, null);
-        // });
+    @Override
+    public T save(T entity) {
+        // 执行插入字段自动填充
+        if (metaObjectHandler != null) {
+            MetaObject metaObject = new MetaObject(entity);
+            metaObjectHandler.insertFill(metaObject);
+        }
         return this.baseRepository.save(entity);
+    }
+
+    /**
+     * 更新实体（带字段自动填充）
+     *
+     * @param entity 实体对象
+     * @return 更新后的实体
+     */
+    public T update(T entity) {
+        // 执行更新字段自动填充
+        if (metaObjectHandler != null) {
+            MetaObject metaObject = new MetaObject(entity);
+            metaObjectHandler.updateFill(metaObject);
+        }
+        return this.baseRepository.save(entity);
+    }
+
+    /**
+     * 批量保存（带字段自动填充）
+     *
+     * @param entityList 实体列表
+     * @return 保存后的实体列表
+     */
+    @Override
+    public java.util.List<T> saveBatch(java.util.List<T> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return entityList;
+        }
+        // 对每个实体执行字段填充
+        if (metaObjectHandler != null) {
+            for (T entity : entityList) {
+                MetaObject metaObject = new MetaObject(entity);
+                metaObjectHandler.insertFill(metaObject);
+            }
+        }
+        return this.baseRepository.saveAll(entityList);
+    }
+
+    /**
+     * 获取 MongoTemplate（用于复杂查询）
+     *
+     * @return MongoTemplate
+     */
+    protected MongoTemplate getMongoTemplate() {
+        return this.mongoTemplate;
+    }
+
+    /**
+     * 获取元对象处理器
+     *
+     * @return MetaObjectHandler
+     */
+    protected MetaObjectHandler getMetaObjectHandler() {
+        return this.metaObjectHandler;
+    }
+
+    /**
+     * 创建元对象
+     *
+     * @param entity 实体对象
+     * @return MetaObject
+     */
+    protected MetaObject createMetaObject(Object entity) {
+        return new MetaObject(entity);
+    }
+
+    /**
+     * 处理实体字段填充（插入）
+     *
+     * @param entity 实体对象
+     */
+    protected void handleInsertFill(T entity) {
+        if (metaObjectHandler != null) {
+            MetaObject metaObject = new MetaObject(entity);
+            metaObjectHandler.insertFill(metaObject);
+        }
+    }
+
+    /**
+     * 处理实体字段填充（更新）
+     *
+     * @param entity 实体对象
+     */
+    protected void handleUpdateFill(T entity) {
+        if (metaObjectHandler != null) {
+            MetaObject metaObject = new MetaObject(entity);
+            metaObjectHandler.updateFill(metaObject);
+        }
     }
 }

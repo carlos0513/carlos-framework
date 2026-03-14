@@ -1,9 +1,49 @@
-##############################  mongodb 配置 start  ###########################
+##############################  MongoDB 配置 Start  ##############################
 ---
 spring:
   data:
     mongodb:
-      database: zk_resource_mng
-      host: 192.168.1.200
-      port: 17017
-##############################  mongodb 配置 end   ###########################
+      # MongoDB 连接配置
+      # 方式1：使用 URI（推荐）
+      # uri: mongodb://username:password@localhost:27017/database?authSource=admin
+      
+      # 方式2：分开配置
+      host: localhost
+      port: 27017
+      database: carlos_db
+      # username: 
+      # password: 
+      authentication-database: admin
+      
+      # 连接池配置
+      auto-index-creation: true
+      
+      # 高级连接选项（通过 URI 配置）
+      # uri: mongodb://user:pass@host1:27017,host2:27017,host3:27017/database?replicaSet=rs0&w=majority
+
+carlos:
+  mongodb:
+    # 是否启用 MongoDB 模块
+    enabled: true
+    
+    # 是否启用字段自动填充（createTime, updateTime, createBy, updateBy）
+    field-fill-enabled: true
+    
+    # 字段名配置（可根据项目需求自定义）
+    create-time-field: createTime      # 创建时间字段名
+    update-time-field: updateTime      # 更新时间字段名
+    create-by-field: createBy          # 创建人字段名
+    update-by-field: updateBy          # 更新人字段名
+    deleted-field: deleted             # 逻辑删除字段名
+    version-field: version             # 版本号字段名
+
+# 多数据源配置示例
+# ---
+# spring:
+#   data:
+#     mongodb:
+#       primary:
+#         uri: mongodb://localhost:27017/primary_db
+#       secondary:
+#         uri: mongodb://localhost:27017/secondary_db
+##############################  MongoDB 配置 End  ##############################

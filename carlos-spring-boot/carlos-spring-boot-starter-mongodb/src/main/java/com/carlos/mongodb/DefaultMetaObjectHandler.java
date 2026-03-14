@@ -1,111 +1,141 @@
 package com.carlos.mongodb;
 
 import com.carlos.core.interfaces.ApplicationExtend;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 /**
- * 字段填充策略
+ * 字段填充策略默认实现
  *
  * @author Carlos
  * @date 2021/2/18 14:25
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultMetaObjectHandler implements MetaObjectHandler {
 
-    private ApplicationExtend requestExtend;
-
-    private MybatisCommonField commonField;
+    private final ApplicationExtend requestExtend;
+    private final MybatisCommonField commonField;
 
     @Override
-    public void insertFill(final MetaObject metaObject) {
-        // 填充创建时间
-        final String createTimeFiledName = this.commonField.createTimeFiledName();
-        if (StringUtils.isNoneBlank(createTimeFiledName)) {
-            final Class<?> timeFiledType = this.commonField.createTimeFiledType();
-            // if (timeFiledType.equals(Date.class)) {
-            //     this.strictInsertFill(metaObject, createTimeFiledName, Date::new, Date.class);
-            // }
-            // if (timeFiledType.equals(LocalDateTime.class)) {
-            //     this.strictInsertFill(metaObject, createTimeFiledName, LocalDateTime::now,
-            // LocalDateTime.class);
-            // }
+    public void insertFill(MetaObject metaObject) {
+        if (log.isDebugEnabled()) {
+            log.debug("开始执行插入字段自动填充");
         }
+
+        // 填充创建时间
+        fillCreateTime(metaObject);
+
+        // 填充更新时间
+        fillUpdateTime(metaObject);
 
         // 填充创建人
-        final String createUserFiledName = this.commonField.createUserFiledName();
-        final Serializable userId = this.getUserId();
-        if (StringUtils.isNotBlank(createUserFiledName) && userId != null) {
-            while (true) {
-                // if (userId instanceof Long) {
-                //     this.strictInsertFill(metaObject, createUserFiledName, () -> (Long) userId,
-                // Long.class);
-                //     break;
-                // }
-                // if (userId instanceof String) {
-                //     this.strictInsertFill(metaObject, createUserFiledName, () -> (String) userId,
-                // String.class);
-                //     break;
-                // }
-                // if (userId instanceof Integer) {
-                //     this.strictInsertFill(metaObject, createUserFiledName, () -> (Integer) userId,
-                // Integer.class);
-                //     break;
-                // }
-                // if (userId instanceof BigInteger) {
-                //     this.strictInsertFill(metaObject, createUserFiledName, () -> (BigInteger) userId,
-                // BigInteger.class);
-                //     break;
-                // }
-            }
-        }
+        fillCreateBy(metaObject);
+
+        // 填充更新人
+        fillUpdateBy(metaObject);
 
         if (log.isDebugEnabled()) {
-            log.debug("insert default field: ");
+            log.debug("插入字段自动填充完成");
         }
     }
 
     @Override
-    public void updateFill(final MetaObject metaObject) {
-        final String updateTimeFiledName = this.commonField.updateTimeFiledName();
-        if (StringUtils.isNoneBlank(updateTimeFiledName)) {
-            final Class<?> timeFiledType = this.commonField.updateTimeFiledType();
-            // if (timeFiledType.equals(Date.class)) {
-            //     this.strictUpdateFill(metaObject, updateTimeFiledName, Date::new, Date.class);
-            // }
-            // if (timeFiledType.equals(LocalDateTime.class)) {
-            //     this.strictUpdateFill(metaObject, updateTimeFiledName, LocalDateTime::now,
-            // LocalDateTime.class);
-            // }
+    public void updateFill(MetaObject metaObject) {
+        if (log.isDebugEnabled()) {
+            log.debug("开始执行更新字段自动填充");
         }
 
-        final String updateUserFiledName = this.commonField.updateUserFiledName();
-        final Serializable userId = this.getUserId();
-        if (StringUtils.isNotBlank(updateUserFiledName) && userId != null) {
-            // if (userId instanceof Long) {
-            //     this.strictUpdateFill(metaObject, updateUserFiledName, () -> (Long) userId,
-            // Long.class);
-            // }
-            // if (userId instanceof String) {
-            //     this.strictUpdateFill(metaObject, updateUserFiledName, () -> (String) userId,
-            // String.class);
-            // }
-            // if (userId instanceof Integer) {
-            //     this.strictUpdateFill(metaObject, updateUserFiledName, () -> (Integer) userId,
-            // Integer.class);
-            // }
-            // if (userId instanceof BigInteger) {
-            //     this.strictUpdateFill(metaObject, updateUserFiledName, () -> (BigInteger) userId,
-            // BigInteger.class);
-            // }
-        }
+        // 填充更新时间
+        fillUpdateTime(metaObject);
+
+        // 填充更新人
+        fillUpdateBy(metaObject);
 
         if (log.isDebugEnabled()) {
-            log.debug("update default field: ");
+            log.debug("更新字段自动填充完成");
+        }
+    }
+
+    /**
+     * 填充创建时间
+     */
+    private void fillCreateTime(MetaObject metaObject) {
+        String fieldName = commonField.createTimeFiledName();
+        if (StringUtils.isBlank(fieldName)) {
+            return;
+        }
+
+        Class<?> fieldType = commonField.createTimeFiledType();
+        fillTime(metaObject, fieldName, fieldType);
+    }
+
+    /**
+     * 填充更新时间
+     */
+    private void fillUpdateTime(MetaObject metaObject) {
+        String fieldName = commonField.updateTimeFiledName();
+        if (StringUtils.isBlank(fieldName)) {
+            return;
+        }
+
+        Class<?> fieldType = commonField.updateTimeFiledType();
+        fillTime(metaObject, fieldName, fieldType);
+    }
+
+    /**
+     * 填充创建人
+     */
+    private void fillCreateBy(MetaObject metaObject) {
+        String fieldName = commonField.createUserFiledName();
+        if (StringUtils.isBlank(fieldName)) {
+            return;
+        }
+
+        Serializable userId = getUserId();
+        if (userId == null) {
+            return;
+        }
+
+        fillUserId(metaObject, fieldName, userId);
+    }
+
+    /**
+     * 填充更新人
+     */
+    private void fillUpdateBy(MetaObject metaObject) {
+        String fieldName = commonField.updateUserFiledName();
+        if (StringUtils.isBlank(fieldName)) {
+            return;
+        }
+
+        Serializable userId = getUserId();
+        if (userId == null) {
+            return;
+        }
+
+        fillUserId(metaObject, fieldName, userId);
+    }
+
+    /**
+     * 根据用户ID类型填充
+     */
+    private void fillUserId(MetaObject metaObject, String fieldName, Serializable userId) {
+        if (userId instanceof Long) {
+            strictFill(metaObject, fieldName, () -> (Long) userId);
+        } else if (userId instanceof String) {
+            strictFill(metaObject, fieldName, () -> (String) userId);
+        } else if (userId instanceof Integer) {
+            strictFill(metaObject, fieldName, () -> (Integer) userId);
+        } else if (userId instanceof BigInteger) {
+            strictFill(metaObject, fieldName, () -> (BigInteger) userId);
+        } else {
+            // 其他类型直接填充
+            strictFill(metaObject, fieldName, () -> userId);
         }
     }
 
@@ -113,8 +143,6 @@ public class DefaultMetaObjectHandler implements MetaObjectHandler {
      * 获取当前登录用户id
      *
      * @return java.io.Serializable
-     * @author Carlos
-     * @date 2021/11/12 13:52
      */
     private Serializable getUserId() {
         if (this.requestExtend == null) {
