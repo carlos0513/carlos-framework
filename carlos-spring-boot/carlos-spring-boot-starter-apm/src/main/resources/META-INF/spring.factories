@@ -1,0 +1,3 @@
+# Spring Boot 2.7+ 自动配置（备用，新格式优先使用 imports 文件）
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.carlos.apm.config.ApmConfig

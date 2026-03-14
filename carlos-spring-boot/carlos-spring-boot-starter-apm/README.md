@@ -1,21 +1,28 @@
-# carlos-apm
+# carlos-spring-boot-starter-apm
 
 ## 模块简介
 
-`carlos-apm` 是 Carlos 框架的应用性能监控（APM）集成模块，提供了对 SkyWalking 9.7.0 和 Spring Cloud Sleuth（基于
-Brave）的集成支持。该模块实现了分布式追踪、链路监控、性能指标收集等功能，帮助开发者和运维人员监控微服务系统的运行状态。
+`carlos-spring-boot-starter-apm` 是 Carlos 框架的应用性能监控（APM）集成模块，提供了对 SkyWalking 和 Spring Cloud Sleuth（基于
+Micrometer Tracing + Brave）的集成支持。该模块实现了分布式追踪、链路监控、性能指标收集等功能，帮助开发者和运维人员监控微服务系统的运行状态。
 
 ## 主要功能
 
 ### 1. 分布式追踪支持
 
-集成 Spring Cloud Sleuth（基于 Brave）提供分布式追踪能力，自动为每个请求生成唯一的 Trace ID 和 Span ID：
+集成 Spring Cloud Sleuth（基于 Micrometer Tracing + Brave）提供分布式追踪能力，自动为每个请求生成唯一的 Trace ID 和 Span
+ID：
 
 ```java
 import com.carlos.apm.TraceUtil;
 
-// 获取当前请求的 Trace ID
-String traceId = TraceUtil.getTraceId();
+// 获取当前请求的 Trace ID（优先 Sleuth，其次 SkyWalking）
+String traceId = TraceUtil.getUnifiedTraceId();
+
+// 获取 Sleuth Trace ID
+String sleuthTraceId = TraceUtil.getTraceId();
+
+// 获取 SkyWalking Trace ID
+String swTraceId = TraceUtil.getSkyWalkingTraceId();
 
 // 获取当前 Span 的 ID
 String spanId = TraceUtil.getSpanId();
@@ -26,7 +33,7 @@ log.info("[TraceId: {}] 用户操作记录", traceId);
 
 ### 2. SkyWalking 集成
 
-集成 Apache SkyWalking 9.7.0，提供完整的 APM 功能：
+集成 Apache SkyWalking Toolkit，提供完整的 APM 功能：
 
 - **分布式追踪**：跨服务的调用链路追踪
 - **服务拓扑图**：可视化展示服务间依赖关系
@@ -34,48 +41,63 @@ log.info("[TraceId: {}] 用户操作记录", traceId);
 - **日志关联**：日志与追踪信息自动关联
 - **告警监控**：基于规则的异常告警
 
-### 3. 追踪工具类
-
-提供 `TraceUtil` 工具类，方便在代码中获取追踪信息：
-
 ```java
-/**
- * 获取当前 Trace ID
- */
-public static String getTraceId() {
-    Tracer tracer = SpringUtil.getBean(Tracer.class);
-    Span currentSpan = tracer.currentSpan();
-    if (currentSpan != null) {
-        return currentSpan.context().traceIdString();
-    }
-    return "";
+import com.carlos.apm.skywalking.util.SkyWalkingUtil;
+
+// 获取 SkyWalking Trace ID
+String traceId = SkyWalkingUtil.getTraceId();
+
+// 检查是否在追踪上下文中
+if (SkyWalkingUtil.inTraceContext()) {
+    // 添加自定义标签
+    SkyWalkingUtil.setTag("user.id", "12345");
+    SkyWalkingUtil.setTag("business.module", "ORDER");
+    
+    // 记录事件
+    SkyWalkingUtil.logInfo("订单创建成功");
+    
+    // 记录错误
+    SkyWalkingUtil.setError("订单处理异常");
 }
 
-/**
- * 获取当前 Span ID
- */
-public static String getSpanId() {
-    Tracer tracer = SpringUtil.getBean(Tracer.class);
-    Span currentSpan = tracer.currentSpan();
-    if (currentSpan != null) {
-        return currentSpan.context().spanIdString();
-    }
-    return "";
-}
+// 获取完整上下文信息
+String fullContext = SkyWalkingUtil.getFullContext();
+// 输出: traceId|segmentId|spanId
 ```
 
-### 4. 日志与追踪关联
+### 3. MDC 日志上下文
 
-通过 SkyWalking Logback 插件，自动将追踪信息注入到日志中：
+自动将 Trace ID 注入到 MDC（Mapped Diagnostic Context），方便在日志中统一输出：
+
+```java
+import com.carlos.apm.mdc.MdcUtil;
+
+// 手动设置 Trace ID 到 MDC
+MdcUtil.setTraceId();
+MdcUtil.setSkyWalkingTraceId();
+
+// 获取 MDC 中的 Trace ID
+String traceId = MdcUtil.getTraceId();
+
+// 设置自定义值
+MdcUtil.put("requestId", requestId);
+String value = MdcUtil.get("requestId");
+
+// 清理 MDC（请求结束时自动清理）
+MdcUtil.clear();
+```
+
+**logback-spring.xml 配置示例**：
 
 ```xml
-<!-- logback-spring.xml 配置示例 -->
 <configuration>
+    <!-- 日志格式，包含 Trace ID -->
+    <property name="LOG_PATTERN" 
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%thread] %-5level %logger{36} - %msg%n" />
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%tid] [%thread] %-5level %logger{36} - %msg%n</pattern>
-            </layout>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
@@ -85,35 +107,82 @@ public static String getSpanId() {
 </configuration>
 ```
 
-日志输出格式：
-
+日志输出示例：
 ```
-2023-01-01 12:00:00.123 [TID:1234567890abcdef] [main] INFO  com.carlos.controller.UserController - 用户查询成功
+2024-12-09 14:30:25.123 [a1b2c3d4e5f6g7h8] [http-nio-8080-exec-1] INFO  c.c.service.UserService - 用户查询成功
 ```
 
-### 5. 自定义追踪标签
+### 4. @TraceTag 注解
 
-支持在代码中添加自定义追踪标签，便于业务监控：
+通过注解方式在方法上添加自定义追踪标签：
 
 ```java
-import brave.Tracer;
-import brave.Span;
-import cn.hutool.extra.spring.SpringUtil;
+import com.carlos.apm.annotation.TraceTag;
 
-// 添加自定义标签到当前 Span
-Tracer tracer = SpringUtil.getBean(Tracer.class);
-Span currentSpan = tracer.currentSpan();
-if (currentSpan != null) {
-    currentSpan.tag("user.id", "123");
-    currentSpan.tag("operation.type", "CREATE");
-    currentSpan.tag("business.module", "USER_MANAGEMENT");
+@Service
+public class OrderService {
+
+    // 简单的标签添加
+    @TraceTag(key = "order.action", value = "'create'")
+    public Order createOrder(OrderParam param) {
+        // 业务逻辑
+        return order;
+    }
+
+    // 使用 SpEL 表达式引用参数
+    @TraceTag(key = "user.id", value = "#userId")
+    @TraceTag(key = "order.amount", value = "#param.amount")
+    public Order createOrder(Long userId, OrderParam param) {
+        // 业务逻辑
+        return order;
+    }
+
+    // 引用返回值
+    @TraceTag(key = "order.id", value = "#result.id")
+    @TraceTag(key = "order.status", value = "#result.status")
+    public Order processOrder(OrderParam param) {
+        // 业务逻辑
+        return order;
+    }
+
+    // 带条件的标签（满足条件时才添加）
+    @TraceTag(key = "order.vip", value = "'true'", condition = "#userId > 10000")
+    public Order createVipOrder(Long userId, OrderParam param) {
+        // 业务逻辑
+        return order;
+    }
+}
+```
+
+### 5. 追踪上下文工具类
+
+`TraceUtil` 提供统一的追踪信息获取接口：
+
+```java
+import com.carlos.apm.TraceUtil;
+
+// 检查是否在追踪上下文中
+if (TraceUtil.isInTraceContext()) {
+    // 获取统一 Trace ID（优先 Sleuth）
+    String traceId = TraceUtil.getUnifiedTraceId();
+    
+    // 获取 Sleuth Trace ID
+    String sleuthId = TraceUtil.getTraceId();
+    
+    // 获取 SkyWalking Trace ID
+    String swId = TraceUtil.getSkyWalkingTraceId();
+    
+    // 获取完整追踪信息
+    String traceInfo = TraceUtil.getTraceInfo();
+    // 输出: TraceContext{sleuth={traceId='xxx', spanId='yyy', parentId='zzz'}, skywalking={...}}
 }
 
-// 或者使用注解方式（需结合自定义AOP）
-@TraceTag(key = "user.id", value = "#user.id")
-public Result<User> createUser(@RequestBody User user) {
-    // 业务逻辑
-}
+// 添加标签到当前 Span
+TraceUtil.tag("business.module", "PAYMENT");
+TraceUtil.tag("order.id", orderId);
+
+// 添加事件注解
+TraceUtil.annotate("Payment completed");
 ```
 
 ## 快速开始
@@ -123,491 +192,285 @@ public Result<User> createUser(@RequestBody User user) {
 ```xml
 <dependency>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-apm</artifactId>
+    <artifactId>carlos-spring-boot-starter-apm</artifactId>
     <version>${carlos.version}</version>
 </dependency>
 ```
 
-### 2. SkyWalking 配置
-
-在 `application.yml` 中配置 SkyWalking Agent：
+### 2. 配置 application.yml
 
 ```yaml
-# SkyWalking 配置
-spring:
-  application:
-    name: user-service  # 服务名称，用于在SkyWalking中标识
-
-# SkyWalking Agent 配置（通过环境变量或JVM参数）
-# -javaagent:/path/to/skywalking-agent.jar
-# -Dskywalking.agent.service_name=${spring.application.name}
-# -Dskywalking.collector.backend_service=localhost:11800
+carlos:
+  apm:
+    # 是否启用 APM 模块
+    enabled: true
+    
+    # Sleuth 配置
+    sleuth:
+      enabled: true
+      # 采样率 (0.0 - 1.0)，生产环境建议 0.1
+      probability: 1.0
+      # 传播类型
+      propagation-type:
+        - B3
+      # 是否启用 Web 追踪
+      web-enabled: true
+      # 跳过的 URL 路径
+      skip-paths:
+        - /actuator/**
+        - /health
+        - /favicon.ico
+    
+    # SkyWalking 配置
+    skywalking:
+      enabled: true
+      # 是否启用日志上报
+      log-report-enabled: true
+    
+    # MDC 配置
+    mdc:
+      enabled: true
+      # Trace ID 在 MDC 中的 key
+      trace-id-key: traceId
+      # Span ID 在 MDC 中的 key
+      span-id-key: spanId
+      # 是否将 Trace ID 添加到响应头
+      add-to-response: true
+      # 响应头名称
+      response-header-name: X-Trace-Id
 ```
 
-或者通过环境变量配置：
+### 3. SkyWalking Agent 配置
+
+SkyWalking Agent 需要单独配置和启动：
+
+```bash
+# JVM 启动参数
+-javaagent:/path/to/skywalking-agent.jar
+-Dskywalking.agent.service_name=your-service-name
+-Dskywalking.collector.backend_service=localhost:11800
+```
+
+或者使用环境变量：
 
 ```bash
 # Linux/Mac
-export SW_AGENT_NAME=user-service
+export SW_AGENT_NAME=your-service-name
 export SW_AGENT_COLLECTOR_BACKEND_SERVICES=localhost:11800
 
 # Windows
-set SW_AGENT_NAME=user-service
+set SW_AGENT_NAME=your-service-name
 set SW_AGENT_COLLECTOR_BACKEND_SERVICES=localhost:11800
 ```
 
-### 3. Sleuth 配置
+## 配置项说明
 
-Spring Cloud Sleuth 自动配置，无需额外配置：
+### Sleuth 配置项
 
-```yaml
-spring:
-  sleuth:
-    enabled: true
-    sampler:
-      probability: 1.0  # 采样率，1.0表示100%采样，生产环境可适当降低
+| 配置项                                  | 类型      | 默认值      | 说明             |
+|--------------------------------------|---------|----------|----------------|
+| `carlos.apm.sleuth.enabled`          | boolean | `true`   | 是否启用 Sleuth 追踪 |
+| `carlos.apm.sleuth.probability`      | double  | `1.0`    | 采样率 (0.0-1.0)  |
+| `carlos.apm.sleuth.propagation-type` | List    | `["B3"]` | 传播类型           |
+| `carlos.apm.sleuth.web-enabled`      | boolean | `true`   | 是否启用 Web 追踪    |
+| `carlos.apm.sleuth.async-enabled`    | boolean | `true`   | 是否启用异步追踪       |
+| `carlos.apm.sleuth.skip-paths`       | List    | 见上方      | 跳过的 URL 路径     |
 
-  cloud:
-    sleuth:
-      propagation:
-        # 传播类型，支持B3、W3C等
-        type: B3
-```
+### SkyWalking 配置项
 
-### 4. 基本使用示例
+| 配置项                                        | 类型      | 默认值    | 说明                 |
+|--------------------------------------------|---------|--------|--------------------|
+| `carlos.apm.skywalking.enabled`            | boolean | `true` | 是否启用 SkyWalking 支持 |
+| `carlos.apm.skywalking.log-report-enabled` | boolean | `true` | 是否启用日志上报           |
 
-#### 在控制器中使用追踪信息：
+### MDC 配置项
+
+| 配置项                                   | 类型      | 默认值          | 说明                    |
+|---------------------------------------|---------|--------------|-----------------------|
+| `carlos.apm.mdc.enabled`              | boolean | `true`       | 是否启用 MDC              |
+| `carlos.apm.mdc.trace-id-key`         | String  | `traceId`    | Trace ID 在 MDC 中的 key |
+| `carlos.apm.mdc.span-id-key`          | String  | `spanId`     | Span ID 在 MDC 中的 key  |
+| `carlos.apm.mdc.add-to-response`      | boolean | `true`       | 是否添加到响应头              |
+| `carlos.apm.mdc.response-header-name` | String  | `X-Trace-Id` | 响应头名称                 |
+
+## 使用示例
+
+### 在 Controller 中使用
 
 ```java
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/order")
 @Slf4j
-public class UserController {
+@RequiredArgsConstructor
+public class OrderController {
 
-    @Autowired
-    private UserService userService;
+    private final OrderService orderService;
 
     @GetMapping("/{id}")
-    public Result<User> getUserById(@PathVariable Long id) {
-        // 获取当前追踪信息
-        String traceId = TraceUtil.getTraceId();
-        String spanId = TraceUtil.getSpanId();
-
-        log.info("[TraceId: {}, SpanId: {}] 查询用户信息，用户ID: {}", traceId, spanId, id);
-
-        User user = userService.getUserById(id);
-
-        // 添加业务标签到追踪
-        Tracer tracer = SpringUtil.getBean(Tracer.class);
-        Span currentSpan = tracer.currentSpan();
-        if (currentSpan != null && user != null) {
-            currentSpan.tag("user.id", user.getId().toString());
-            currentSpan.tag("user.name", user.getUsername());
-        }
-
-        return Result.ok(user);
+    public Result<Order> getOrder(@PathVariable Long id) {
+        String traceId = TraceUtil.getUnifiedTraceId();
+        log.info("[TraceId: {}] 查询订单，ID: {}", traceId, id);
+        
+        Order order = orderService.getOrder(id);
+        return Result.ok(order);
     }
 
     @PostMapping("/create")
-    public Result<User> createUser(@RequestBody @Valid CreateUserRequest request) {
-        String traceId = TraceUtil.getTraceId();
-        log.info("[TraceId: {}] 创建用户，用户名: {}", traceId, request.getUsername());
-
-        User user = userService.createUser(request);
-
-        // 记录业务操作
-        log.info("[TraceId: {}] 用户创建成功，用户ID: {}", traceId, user.getId());
-
-        return Result.ok(user);
+    @TraceTag(key = "order.action", value = "'create'")
+    @TraceTag(key = "order.userId", value = "#param.userId")
+    public Result<Order> createOrder(@RequestBody @Valid OrderParam param) {
+        String traceId = TraceUtil.getUnifiedTraceId();
+        log.info("[TraceId: {}] 创建订单，用户: {}", traceId, param.getUserId());
+        
+        Order order = orderService.createOrder(param);
+        
+        // 添加业务标签
+        TraceUtil.tag("order.id", order.getId().toString());
+        TraceUtil.tag("order.amount", order.getAmount().toString());
+        
+        return Result.ok(order);
     }
 }
 ```
 
-#### 在服务层使用追踪：
+### 在 Service 中使用
 
 ```java
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService {
+@RequiredArgsConstructor
+public class OrderService {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final OrderMapper orderMapper;
 
-    @Autowired
-    private OrderService orderService;
-
-    @Override
-    public User getUserById(Long id) {
-        String traceId = TraceUtil.getTraceId();
-
-        log.debug("[TraceId: {}] 开始查询用户，ID: {}", traceId, id);
-
-        // 模拟跨服务调用
-        List<Order> orders = orderService.getUserOrders(id);
-        log.debug("[TraceId: {}] 获取用户订单数量: {}", traceId, orders.size());
-
-        User user = userMapper.selectById(id);
-
-        log.debug("[TraceId: {}] 用户查询完成，用户名: {}", traceId,
-                 user != null ? user.getUsername() : "null");
-
-        return user;
+    @TraceTag(key = "order.query.id", value = "#id")
+    public Order getOrder(Long id) {
+        String traceId = TraceUtil.getUnifiedTraceId();
+        log.debug("[TraceId: {}] 开始查询订单", traceId);
+        
+        Order order = orderMapper.selectById(id);
+        
+        if (order != null) {
+            TraceUtil.tag("order.status", order.getStatus());
+            TraceUtil.annotate("Order found");
+        } else {
+            TraceUtil.annotate("Order not found");
+        }
+        
+        return order;
     }
 
-    @Override
     @Transactional
-    public User createUser(CreateUserRequest request) {
-        String traceId = TraceUtil.getTraceId();
-
-        // 记录详细的操作步骤
-        log.info("[TraceId: {}] 开始创建用户，用户名: {}", traceId, request.getUsername());
-
-        // 参数校验
-        if (userMapper.existsByUsername(request.getUsername())) {
-            log.warn("[TraceId: {}] 用户名已存在: {}", traceId, request.getUsername());
-            throw new BusinessException("用户名已存在");
-        }
-
-        // 创建用户
-        User user = new User();
-        BeanUtils.copyProperties(request, user);
-        user.setCreateTime(LocalDateTime.now());
-
-        int result = userMapper.insert(user);
-
-        if (result > 0) {
-            log.info("[TraceId: {}] 用户创建成功，用户ID: {}", traceId, user.getId());
-
-            // 添加追踪标签
-            Tracer tracer = SpringUtil.getBean(Tracer.class);
-            Span currentSpan = tracer.currentSpan();
-            if (currentSpan != null) {
-                currentSpan.tag("created.user.id", user.getId().toString());
-                currentSpan.tag("created.user.name", user.getUsername());
-                currentSpan.annotate("User creation completed");
-            }
-        } else {
-            log.error("[TraceId: {}] 用户创建失败", traceId);
-        }
-
-        return user;
+    @TraceTag(key = "order.created.id", value = "#result.id")
+    @TraceTag(key = "order.created.amount", value = "#result.totalAmount")
+    public Order createOrder(OrderParam param) {
+        // 业务逻辑
+        Order order = new Order();
+        // ... 处理逻辑
+        
+        // SkyWalking 标签
+        SkyWalkingUtil.setTag("order.type", param.getOrderType());
+        SkyWalkingUtil.logInfo("订单创建成功: " + order.getId());
+        
+        return order;
     }
 }
 ```
 
-#### 日志配置示例（logback-spring.xml）：
+## 日志配置
+
+### 标准 Logback 配置
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!-- SkyWalking TraceId 布局 -->
-    <property name="LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%tid] [%thread] %-5level %logger{36} - %msg%n" />
+    <!-- 引入模块提供的默认配置（可选） -->
+    <include resource="config/logback-skywalking.xml" optional="true"/>
 
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}] [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-    </appender>
-
-    <!-- 文件输出 -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/application.log</file>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/application.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-    </appender>
-
-    <!-- 异步输出 -->
-    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="FILE" />
-        <queueSize>512</queueSize>
-        <discardingThreshold>0</discardingThreshold>
     </appender>
 
     <!-- SkyWalking GRPC 日志上报 -->
-    <appender name="GRPC_LOG" class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.log.GRPCLogClientAppender">
+    <appender name="SKYWALKING" class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.log.GRPCLogClientAppender">
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
-                <pattern>${LOG_PATTERN}</pattern>
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.mdc.TraceIdMDCPatternLogbackLayout">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{tid}] [%thread] %-5level %logger{50} - %msg%n</Pattern>
             </layout>
         </encoder>
     </appender>
 
-    <!-- 日志级别配置 -->
-    <logger name="com.carlos" level="DEBUG" />
-    <logger name="org.springframework" level="INFO" />
-    <logger name="org.apache.skywalking" level="INFO" />
-
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="ASYNC_FILE" />
-        <appender-ref ref="GRPC_LOG" />
+        <appender-ref ref="SKYWALKING" />
     </root>
 </configuration>
 ```
 
-## 详细功能说明
-
-### 1. 追踪信息传播
-
-支持多种追踪信息传播格式：
-
-- **B3格式**：Zipkin 标准的传播格式
-- **W3C TraceContext**：W3C 标准的传播格式
-- **SkyWalking**：SkyWalking 专有格式
-- **Jaeger**：Jaeger 传播格式
-
-配置示例：
-
-```yaml
-spring:
-  cloud:
-    sleuth:
-      propagation:
-        type: B3,W3C  # 支持多种格式，按顺序尝试
-```
-
-### 2. 采样率控制
-
-支持按概率采样，控制追踪数据量：
-
-```yaml
-spring:
-  sleuth:
-    sampler:
-      probability: 0.1  # 10%的请求会被追踪，适用于高并发场景
-
-# 或者使用速率限制采样
-sampler:
-  rate: 100  # 每秒最多采样100个请求
-```
-
-### 3. 自定义追踪过滤器
-
-可以自定义追踪过滤器，控制哪些请求需要追踪：
-
-```java
-@Configuration
-public class TraceFilterConfig {
-
-    @Bean
-    public FilterRegistrationBean<TraceFilter> traceFilter() {
-        FilterRegistrationBean<TraceFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new TraceFilter());
-        registration.addUrlPatterns("/*");
-        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return registration;
-    }
-
-    public static class TraceFilter implements Filter {
-
-        @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-                throws IOException, ServletException {
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-            // 排除健康检查等不需要追踪的端点
-            String path = httpRequest.getRequestURI();
-            if (path.startsWith("/actuator/health") || path.startsWith("/favicon.ico")) {
-                chain.doFilter(request, response);
-                return;
-            }
-
-            // 继续处理
-            chain.doFilter(request, response);
-        }
-    }
-}
-```
-
-### 4. 业务追踪标签
-
-支持为业务操作添加自定义标签，便于后续分析和查询：
-
-```java
-@Component
-public class BusinessTracer {
-
-    @Autowired
-    private Tracer tracer;
-
-    /**
-     * 为当前 Span 添加业务标签
-     */
-    public void addBusinessTag(String key, String value) {
-        Span currentSpan = tracer.currentSpan();
-        if (currentSpan != null) {
-            currentSpan.tag("business." + key, value);
-        }
-    }
-
-    /**
-     * 记录业务事件
-     */
-    public void recordBusinessEvent(String eventName, Map<String, String> attributes) {
-        Span currentSpan = tracer.currentSpan();
-        if (currentSpan != null) {
-            currentSpan.annotate("business.event." + eventName);
-            if (attributes != null) {
-                attributes.forEach((key, value) ->
-                    currentSpan.tag("business.event." + eventName + "." + key, value));
-            }
-        }
-    }
-
-    /**
-     * 开始业务操作
-     */
-    public Span startBusinessOperation(String operationName) {
-        return tracer.nextSpan()
-            .name("business." + operationName)
-            .tag("business.operation.start.time", LocalDateTime.now().toString())
-            .start();
-    }
-}
-```
-
-### 5. 性能指标收集
-
-集成 Micrometer 和 SkyWalking，自动收集以下指标：
-
-- **HTTP 请求指标**：响应时间、状态码、吞吐量
-- **数据库指标**：SQL 执行时间、连接池状态
-- **缓存指标**：Redis 操作时间、命中率
-- **JVM 指标**：内存使用、GC 时间、线程状态
-- **自定义业务指标**：业务操作次数、成功率
-
-## 配置项说明
-
-### 1. SkyWalking 配置项
-
-| 配置项  | 环境变量                                  | 默认值                  | 说明                   |
-|------|---------------------------------------|----------------------|----------------------|
-| 服务名称 | `SW_AGENT_NAME`                       | -                    | 在 SkyWalking 中显示的服务名 |
-| 后端地址 | `SW_AGENT_COLLECTOR_BACKEND_SERVICES` | `127.0.0.1:11800`    | SkyWalking OAP 服务器地址 |
-| 采样率  | `SW_AGENT_SAMPLE`                     | `10000`              | 采样率，每 N 个请求采样 1 个    |
-| 日志级别 | `SW_LOGGING_LEVEL`                    | `INFO`               | Agent 日志级别           |
-| 日志文件 | `SW_LOGGING_FILE_NAME`                | `skywalking-api.log` | 日志文件路径               |
-
-### 2. Sleuth 配置项
-
-| 配置项                                    | 类型      | 默认值    | 说明            |
-|----------------------------------------|---------|--------|---------------|
-| `spring.sleuth.enabled`                | boolean | `true` | 是否启用 Sleuth   |
-| `spring.sleuth.sampler.probability`    | double  | `1.0`  | 采样概率（0.0-1.0） |
-| `spring.cloud.sleuth.propagation.type` | String  | `B3`   | 传播类型          |
-| `spring.sleuth.web.enabled`            | boolean | `true` | 是否启用 Web 追踪   |
-| `spring.sleuth.messaging.enabled`      | boolean | `true` | 是否启用消息队列追踪    |
-
-### 3. 日志配置项
-
-| 配置项       | 说明                                                              |
-|-----------|-----------------------------------------------------------------|
-| `%tid`    | SkyWalking Trace ID（需要在 layout 中使用 TraceIdPatternLogbackLayout） |
-| `%TID`    | 大写的 Trace ID                                                    |
-| `%sw_ctx` | 完整的 SkyWalking 上下文                                              |
-
 ## 依赖项
 
-- `carlos-spring-boot-core`：基础工具类
-- `micrometer-tracing-bridge-brave`：Spring Cloud Sleuth（Brave 实现）
-- `apm-toolkit-trace`：SkyWalking 追踪工具包
-- `apm-toolkit-logback-1.x`：SkyWalking Logback 集成
-- `spring-boot-starter-actuator`：Actuator 端点（可选，用于指标）
-- `micrometer-registry-prometheus`：Prometheus 指标（可选）
+| 依赖                                | 说明                          |
+|-----------------------------------|-----------------------------|
+| `carlos-spring-boot-core`         | Carlos 核心模块                 |
+| `micrometer-tracing-bridge-brave` | Micrometer Tracing Brave 实现 |
+| `spring-boot-starter-actuator`    | Actuator 指标监控（可选）           |
+| `apm-toolkit-trace`               | SkyWalking 追踪工具包            |
+| `apm-toolkit-logback-1.x`         | SkyWalking Logback 集成       |
+| `apm-toolkit-webflux`             | SkyWalking WebFlux 支持（可选）   |
+| `aspectjweaver`                   | AOP 切面支持                    |
+| `spring-expression`               | SpEL 表达式解析                  |
 
 ## 注意事项
 
-### 1. 性能考虑
+### 1. SkyWalking Agent 要求
 
-- 全量采样（probability=1.0）在高并发场景下可能影响性能
-- 建议生产环境设置适当的采样率（如 0.1）
-- 异步日志上报可以减少对业务的影响
-- 定期清理旧的追踪数据，避免存储压力
+- SkyWalking Toolkit 需要在 SkyWalking Agent 启动后才能正常工作
+- 未接入 Agent 时，相关方法会返回默认值（如 "N/A"）
+- 建议使用 `SkyWalkingUtil.inTraceContext()` 检查是否在追踪上下文中
 
-### 2. 部署要求
+### 2. 采样率配置
 
-- SkyWalking Agent 需要单独部署和配置
-- 确保网络能够访问 SkyWalking OAP 服务器
-- 多实例部署时，每个实例需要相同的服务名称
-- 考虑使用 Sidecar 模式部署 Agent
+- 开发环境：建议全量采样（probability=1.0）
+- 生产环境：建议适当降低采样率（如 0.1）
+- 可以通过动态配置实时调整采样率
 
-### 3. 使用建议
+### 3. 性能考虑
 
-- 为关键业务路径添加详细的追踪标签
-- 统一日志格式，确保 Trace ID 能够正确提取
-- 结合告警系统，对异常追踪进行监控
-- 定期分析追踪数据，优化系统性能
+- TraceTag 切面使用 SpEL 表达式解析，复杂表达式可能影响性能
+- 建议在高频调用的方法上使用简单的标签
+- 使用 condition 属性避免不必要的标签计算
 
-### 4. 常见问题
+### 4. MDC 线程安全
 
-**Q: Trace ID 获取为空怎么办？**
-A: 检查以下事项：
-
-1. 确认 Sleuth 依赖已正确引入
-2. 确认 `spring.sleuth.enabled=true`
-3. 确认当前线程有活跃的 Span（通常需要在 Web 请求上下文中）
-4. 检查是否有自定义的过滤器或拦截器影响了追踪传播
-
-**Q: SkyWalking 数据没有上报怎么办？**
-A: 检查以下事项：
-
-1. 确认 SkyWalking Agent 已正确配置并启动
-2. 确认网络可以访问 OAP 服务器（默认 11800 端口）
-3. 查看 Agent 日志，确认没有连接错误
-4. 确认服务名称配置正确
-
-**Q: 如何自定义采样策略？**
-A: 实现自定义的 `Sampler`：
-
-```java
-@Bean
-public Sampler customSampler() {
-    return new Sampler() {
-        @Override
-        public boolean isSampled(long traceId) {
-            // 自定义采样逻辑
-            // 例如：只采样特定路径的请求
-            HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            String path = request.getRequestURI();
-            return path.startsWith("/api/");
-        }
-    };
-}
-```
-
-**Q: 如何集成其他 APM 系统？**
-A: 模块支持通过 Sleuth 的扩展点集成其他系统：
-
-```java
-@Bean
-public BravePropagation.Factory propagationFactory() {
-    // 自定义传播工厂，支持其他格式
-    return new BravePropagation.FactoryBuilder()
-        .addType(B3Propagation.FACTORY)
-        .addType(W3CPropagation.FACTORY)
-        .build();
-}
-```
+- MDC 是基于 ThreadLocal 的实现
+- 在异步/线程池场景下需要手动传递 MDC 上下文
+- 模块自动处理 Web 请求的 MDC 清理
 
 ## 版本要求
 
 - JDK 17+
-- Spring Boot 3.5.8+
-- Spring Cloud 2023.0.6+
-- SkyWalking Agent 9.7.0+
+- Spring Boot 3.5.9+
+- Spring Cloud 2025.0.1+
+- SkyWalking Agent 9.5.0+
 - Micrometer Tracing 1.2+
 
 ## 相关模块
 
-- **carlos-spring-boot-core**：基础工具类、工具类依赖
-- **carlos-log**：日志记录，与追踪信息结合
+- **carlos-spring-boot-core**：基础工具类
+- **carlos-spring-boot-starter-log**：日志记录，与追踪信息结合
 - **carlos-spring-cloud-starter**：微服务基础，分布式追踪依赖
-- **carlos-gateway**：API 网关，网关层追踪支持
+- **carlos-spring-boot-starter-gateway**：API 网关，网关层追踪支持
+
+## 更新日志
+
+### 3.0.0-SNAPSHOT
+
+- 升级至 Spring Boot 3.x
+- 升级 Micrometer Tracing 1.2+
+- 新增 @TraceTag 注解支持
+- 新增 MDC 上下文自动管理
+- 新增 SkyWalkingUtil 工具类
+- 完善配置属性支持
