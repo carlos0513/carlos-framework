@@ -60,6 +60,18 @@ public class DisruptorProperties {
         BLOCKING,
         SLEEPING,
         YIELDING,
-        BUSY_SPIN
+        BUSY_SPIN;
+
+        /**
+         * 转换为 Disruptor WaitStrategy
+         */
+        public com.lmax.disruptor.WaitStrategy toStrategy() {
+            return switch (this) {
+                case BLOCKING -> new com.lmax.disruptor.BlockingWaitStrategy();
+                case SLEEPING -> new com.lmax.disruptor.SleepingWaitStrategy();
+                case YIELDING -> new com.lmax.disruptor.YieldingWaitStrategy();
+                case BUSY_SPIN -> new com.lmax.disruptor.BusySpinWaitStrategy();
+            };
+        }
     }
 }
