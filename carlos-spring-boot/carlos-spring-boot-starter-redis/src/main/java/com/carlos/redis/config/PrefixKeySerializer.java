@@ -23,7 +23,7 @@ public class PrefixKeySerializer extends StringRedisSerializer {
     @Override
     public String deserialize(@Nullable byte[] bytes) {
         String key = super.deserialize(bytes);
-        if (!cacheProperties.isUserPrefix()) {
+        if (!cacheProperties.isUsePrefix()) {
             return key;
         }
         if (StringUtils.isNotBlank(key)) {
@@ -36,7 +36,7 @@ public class PrefixKeySerializer extends StringRedisSerializer {
 
     @Override
     public byte[] serialize(@Nullable String string) {
-        if (!cacheProperties.isUserPrefix()) {
+        if (!cacheProperties.isUsePrefix()) {
             return super.serialize(string);
         }
         String keyPrefix = cacheProperties.getKeyPrefix();

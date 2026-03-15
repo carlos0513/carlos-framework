@@ -1,25 +1,10 @@
 package com.carlos.redis.config;
 
-import cn.hutool.core.date.DatePattern;
-import com.carlos.json.util.ConvertUtil;
-import com.carlos.redis.lua.LuaScriptHolder;
-import com.carlos.redis.lua.LuaScriptLoader;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.carlos.redis.serialize.ConfigurableRedisSerializer;
+import com.carlos.redis.serialize.RedisSerializerStrategy;
+import com.carlos.redis.serialize.SerializerFactory;
+import com.carlos.redis.serialize.SerializerType;
+import com.carlos.redis.util.CacheKeyGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,20 +24,10 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.*;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.lang.Nullable;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.io.IOException;
-import java.math.BigInteger;
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p>
@@ -69,267 +44,182 @@ import java.util.List;
 @AutoConfigureBefore({RedisLettuceConnectionConfiguration.class, RedisAutoConfiguration.class})
 @EnableConfigurationProperties(CacheProperties.class)
 public class RedisCacheConfig extends CachingConfigurerSupport {
-    private final LettuceConnectionFactory factory;
 
+    private final LettuceConnectionFactory factory;
     private final CacheProperties cacheProperties;
 
+    /**
+     * 创建序列化策略
+     */
+    @Bean
+    public RedisSerializerStrategy redisSerializerStrategy() {
+        SerializerType type = cacheProperties.getSerializer();
+        log.info("Initializing Redis serializer: {} ({})", type.getCode(), type.getDescription());
+        return SerializerFactory.getSerializer(type);
+    }
+
+    /**
+     * 创建 Redis 序列化器
+     */
+    @Bean
+    public ConfigurableRedisSerializer configurableRedisSerializer(RedisSerializerStrategy strategy) {
+        return new ConfigurableRedisSerializer(strategy);
+    }
 
     @Bean
     @Primary
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, Object> redisTemplate(ConfigurableRedisSerializer valueSerializer) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
-        // kv 序列化
-        template.setKeySerializer(keySerializer());
-        template.setValueSerializer(valueSerializer());
+        // key 序列化使用 String
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        template.setKeySerializer(keySerializer);
+        template.setHashKeySerializer(keySerializer);
 
-        // hash 序列化
-        template.setHashKeySerializer(keySerializer());
-        template.setHashValueSerializer(valueSerializer());
+        // value 序列化使用配置的序列化器
+        template.setValueSerializer(valueSerializer);
+        template.setHashValueSerializer(valueSerializer);
 
         template.afterPropertiesSet();
+        log.info("RedisTemplate initialized with {} serializer", valueSerializer.getSerializerType());
         return template;
     }
 
     @Bean("onlyMasterTemplate")
-    public RedisTemplate<String, Object> onlyMasterTemplate(@Qualifier("masterOnlyFactory") LettuceConnectionFactory factory) {
+    public RedisTemplate<String, Object> onlyMasterTemplate(
+        @Qualifier("masterOnlyFactory") LettuceConnectionFactory factory,
+        ConfigurableRedisSerializer valueSerializer) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
-        // kv 序列化
-        template.setKeySerializer(keySerializer());
-        template.setValueSerializer(valueSerializer());
-
-        // hash 序列化
-        template.setHashKeySerializer(keySerializer());
-        template.setHashValueSerializer(valueSerializer());
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        template.setKeySerializer(keySerializer);
+        template.setHashKeySerializer(keySerializer);
+        template.setValueSerializer(valueSerializer);
+        template.setHashValueSerializer(valueSerializer);
         template.afterPropertiesSet();
         return template;
     }
 
     /**
-     * 键序列化器
+     * 键序列化器（支持前缀）
      */
     @Bean
     public PrefixKeySerializer keySerializer() {
         return new PrefixKeySerializer(cacheProperties);
     }
 
-    public static class Deserializer extends JsonDeserializer<LocalDateTime> {
-
-        @Override
-        public LocalDateTime deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-            String date = jp.getText();
-            return ConvertUtil.string2LocalDateTime(date);
-        }
-    }
-
     /**
-     * 值序列化器
-     */
-    @Bean
-    public RedisSerializer<Object> valueSerializer() {
-        // jackson 序列化器
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-
-        SimpleModule simpleModule = new SimpleModule();
-        // 解决前端js处理大数字丢失精度问题，将Long和BigInteger转换成string
-        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
-        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
-
-        // jdk8日期序列化和反序列化设置
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class,
-            new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_MS_PATTERN)));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new Deserializer());
-
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
-
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        /* 在ObjectMapper对象设置忽略多余属性 */
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper
-            .registerModule(simpleModule)
-            .registerModule(javaTimeModule)
-            .registerModule(new ParameterNamesModule());
-        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL,
-            JsonTypeInfo.As.WRAPPER_ARRAY);
-
-        serializer.setObjectMapper(objectMapper);
-
-        return serializer;
-    }
-
-    /**
-     * 通用方法key生成器
-     *
-     * @author carlos
-     * @date 2020/4/13 13:28
+     * 通用方法 key 生成器
+     * <p>
+     * 修复了原有问题：
+     * 1. 使用 Arrays.deepToString 导致 Key 过长
+     * 2. 没有长度限制
+     * </p>
      */
     @Bean
     @Override
     public KeyGenerator keyGenerator() {
-        return (target, method, params) -> {
-            StringBuilder redisKey = new StringBuilder();
-            redisKey.append(target.getClass().getName()).append("-");
-            redisKey.append(method.getName());
-            if (params.length > 0) {
-                redisKey.append("-").append(Arrays.deepToString(params));
-            }
-            return redisKey.toString();
-        };
+        return (target, method, params) -> CacheKeyGenerator.generate(
+            target, method.getName(), params,
+            cacheProperties.getKeyMaxLength(),
+            cacheProperties.getKeyOverflowStrategy()
+        );
     }
 
     @Bean
     @Override
     public CacheManager cacheManager() {
-        // 生成一个默认配置，通过config对象即可对缓存进行自定义配置
+        ConfigurableRedisSerializer valueSerializer = configurableRedisSerializer(redisSerializerStrategy());
+
+        // 生成一个默认配置，通过 config 对象即可对缓存进行自定义配置
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
             // 配置注解缓存键值序列化方式
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
-            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer()))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer))
             // 缓存不失效
             .entryTtl(Duration.ofSeconds(-1));
+
         // 配置键缓存前缀
-        if (cacheProperties.isUserPrefix()) {
-            config.prefixCacheNameWith(cacheProperties.getKeyPrefix())
-                .usePrefix();
+        if (cacheProperties.isUsePrefix()) {
+            config = config.prefixCacheNameWith(cacheProperties.getKeyPrefix());
         }
 
-
-        // // 设置一个初始化的缓存空间set集合
-        // Set<String> cacheNames = new HashSet<>();
-        // cacheNames.add("my-redis-cache1");
-        // cacheNames.add("my-redis-cache2");
-        //
-        // // 对每个缓存空间应用不同的配置
-        // Map<String, RedisCacheConfiguration> configMap = new HashMap<>(10);
-        // configMap.put("my-redis-cache1", config);
-        // configMap.put("my-redis-cache2", config.entryTtl(Duration.ofSeconds(120)));
-
-        // 使用自定义的缓存配置初始化一个cacheManager
+        // 使用自定义的缓存配置初始化一个 cacheManager
         return RedisCacheManager.builder(factory)
             .cacheDefaults(config)
-            // 注意这两句的调用顺序，一定要先调用该方法设置初始化的缓存名，再初始化相关的配置
-            // .initialCacheNames(cacheNames)
-            // .withInitialCacheConfigurations(configMap)
             .build();
     }
 
-
     /**
      * 自定义缓存异常处理
+     * <p>
+     * 异常处理策略：
+     * 1. 读取异常：记录日志，不抛异常，允许降级到数据库查询
+     * 2. 写入异常：记录日志，不影响主业务流程
+     * 3. 删除/清除异常：记录日志，不影响主业务流程
+     * </p>
      *
-     * @return org.springframework.cache.interceptor.CacheErrorHandler
-     * @author carlos
-     * @date 2021/9/23 16:36
+     * @return CacheErrorHandler
      */
     @Bean
     @Override
     public CacheErrorHandler errorHandler() {
-        if (log.isDebugEnabled()) {
-            log.debug("Initialize custom cache exception handler:{}", "CacheErrorHandler");
-        }
         return new CacheErrorHandler() {
-            // TODO: carlos 2021/9/23 需要决定是抛异常还是日志记录
             @Override
             public void handleCacheGetError(RuntimeException e, Cache cache, Object key) {
-                log.error("Redis occur handleCacheGetError：key -> [{}]", key, e);
+                log.error("Redis cache get error, cacheName: {}, key: {}", cache.getName(), key, e);
+                // 不抛异常，让业务层降级处理
             }
 
             @Override
             public void handleCachePutError(RuntimeException e, Cache cache, Object key, Object value) {
-                log.error("Redis occur handleCachePutError：key -> [{}]；value -> [{}]", key, value, e);
+                log.error("Redis cache put error, cacheName: {}, key: {}, value type: {}",
+                    cache.getName(), key, value != null ? value.getClass().getName() : "null", e);
+                // 不抛异常，缓存更新失败不影响主业务
             }
 
             @Override
             public void handleCacheEvictError(RuntimeException e, Cache cache, Object key) {
-                log.error("Redis occur handleCacheEvictError：key -> [{}]", key, e);
+                log.error("Redis cache evict error, cacheName: {}, key: {}", cache.getName(), key, e);
+                // 不抛异常，缓存删除失败不影响主业务
             }
 
             @Override
             public void handleCacheClearError(RuntimeException e, Cache cache) {
-                log.error("Redis occur handleCacheClearError：", e);
+                log.error("Redis cache clear error, cacheName: {}", cache.getName(), e);
+                // 不抛异常
             }
         };
     }
 
+    // region----------------------  数据结构操作 Bean  ------------------------
 
-    /**
-     * 对hash类型的数据操作
-     *
-     * @param redisTemplate redisTemplate
-     * @return HashOperations<String, String, Object>
-     */
     @Bean
     public HashOperations<String, String, Object> hashOperations(RedisTemplate<String, Object> redisTemplate) {
         return redisTemplate.opsForHash();
     }
 
-    /**
-     * 对redis字符串类型数据操作
-     *
-     * @param redisTemplate redisTemplate
-     * @return ValueOperations<String, Object>
-     */
     @Bean
     public ValueOperations<String, Object> valueOperations(RedisTemplate<String, Object> redisTemplate) {
         return redisTemplate.opsForValue();
     }
 
-    /**
-     * 对链表类型的数据操作
-     *
-     * @param redisTemplate redisTemplate
-     * @return ListOperations<String, Object>
-     */
     @Bean
     public ListOperations<String, Object> listOperations(RedisTemplate<String, Object> redisTemplate) {
         return redisTemplate.opsForList();
     }
 
-    /**
-     * 对无序集合类型的数据操作
-     *
-     * @param redisTemplate redisTemplate
-     * @return SetOperations<String, Object>
-     */
     @Bean
     public SetOperations<String, Object> setOperations(RedisTemplate<String, Object> redisTemplate) {
         return redisTemplate.opsForSet();
     }
 
-    /**
-     * 对有序集合类型的数据操作
-     *
-     * @param redisTemplate redisTemplate
-     * @return ZSetOperations<String, Object>
-     */
     @Bean
     public ZSetOperations<String, Object> zSetOperations(RedisTemplate<String, Object> redisTemplate) {
         return redisTemplate.opsForZSet();
     }
 
-
-    /**
-     * 脚本加载器
-     *
-     * @param holders 脚本加载器
-     * @return LuaScriptLoader
-     */
-    // @Bean
-    public LuaScriptLoader luaScriptLoader(@Nullable List<LuaScriptHolder> holders) {
-        return new LuaScriptLoader(holders);
-    }
+    // endregion
 }

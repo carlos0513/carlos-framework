@@ -13,7 +13,7 @@
 
   <artifactId>carlos-spring-boot-starter-redis</artifactId>
 
-  <description>Redis缓存模块，集成Redisson分布式锁和Caffeine本地缓存，支持多级缓存</description>
+  <description>Redis缓存模块，集成Redisson分布式锁和Caffeine本地缓存，支持多级缓存和多种序列化方式</description>
 
   <dependencies>
     <!-- carlos-spring-boot-core -->
@@ -62,6 +62,21 @@
     <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>fastjson</artifactId>
+    </dependency>
+
+    <!-- Kryo 高性能二进制序列化（可选） -->
+    <dependency>
+      <groupId>com.esotericsoftware</groupId>
+      <artifactId>kryo</artifactId>
+      <version>5.6.2</version>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Micrometer 监控指标（可选） -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+      <optional>true</optional>
     </dependency>
 
   </dependencies>
