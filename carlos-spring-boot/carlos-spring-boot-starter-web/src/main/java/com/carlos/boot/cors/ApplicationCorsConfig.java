@@ -1,6 +1,7 @@
 package com.carlos.boot.cors;
 
 
+import cn.hutool.core.collection.CollUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,6 +13,9 @@ import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 跨域配置 默认开启
@@ -33,7 +37,12 @@ public class ApplicationCorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         // 跨域配置
         config.setAllowCredentials(corsProperties.isAllowCredentials());
-        config.setAllowedOriginPatterns(corsProperties.getAllowedOriginsPattens());
+        // Spring Boot 3.x 中 allowedOriginPatterns 不能为空，需设置默认值
+        List<String> originPatterns = corsProperties.getAllowedOriginsPattens();
+        if (CollUtil.isEmpty(originPatterns)) {
+            originPatterns = Collections.singletonList("*");
+        }
+        config.setAllowedOriginPatterns(originPatterns);
         config.setAllowedHeaders(corsProperties.getAllowedHeaders());
         config.setAllowedMethods(corsProperties.getAllowedMethods());
         // config.setExposedHeaders(corsProperties.getExposedHeaders());

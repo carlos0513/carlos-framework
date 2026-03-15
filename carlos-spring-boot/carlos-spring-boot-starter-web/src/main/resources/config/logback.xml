@@ -7,7 +7,7 @@
 
   <property name="LOG_PATH" value="${LOG_PATH:-.}"/>
 
-  <contextName>${CONTEXT_NAME}</contextName>
+  <contextName>${CONTEXT_NAME:-carlos-framework}</contextName>
 
   <!-- 彩色日志 -->
   <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
