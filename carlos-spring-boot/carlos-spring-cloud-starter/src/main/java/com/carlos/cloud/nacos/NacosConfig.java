@@ -1,19 +1,98 @@
 package com.carlos.cloud.nacos;
 
+import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+
+import java.util.Map;
 
 /**
  * <p>
- * Nacos相关配置
+ * Nacos 扩展配置
+ * </p>
+ *
+ * <p>
+ * 提供 Nacos 服务注册发现、配置中心的增强功能，包括：
+ * <ul>
+ *   <li>服务元数据自动注册</li>
+ *   <li>服务实例变更监听</li>
+ *   <li>自定义心跳配置</li>
+ * </ul>
  * </p>
  *
  * @author carlos
  * @date 2021/12/7 15:04
  */
+@Slf4j
 @Configuration
 @AllArgsConstructor
+@EnableConfigurationProperties(NacosCloudProperties.class)
+@ConditionalOnClass(DiscoveryClient.class)
 public class NacosConfig {
 
+    private final NacosCloudProperties nacosCloudProperties;
+    private final Environment environment;
 
+    /**
+     * 服务注册监听器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "carlos.cloud.nacos", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public NacosServiceRegistryListener nacosServiceRegistryListener() {
+        log.info("初始化 Nacos 服务注册监听器");
+        return new NacosServiceRegistryListener();
+    }
+
+    /**
+     * 服务实例变更监听器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "carlos.cloud.nacos.subscription", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public NacosServiceInstanceListener nacosServiceInstanceListener() {
+        log.info("初始化 Nacos 服务实例变更监听器");
+        return new NacosServiceInstanceListener();
+    }
+
+    /**
+     * 初始化 Nacos 元数据
+     */
+    public void initNacosMetadata(NacosRegistration registration) {
+        if (registration == null) {
+            return;
+        }
+
+        Map<String, String> metadata = registration.getMetadata();
+
+        // 添加版本号
+        metadata.put("version", nacosCloudProperties.getVersion());
+
+        // 添加区域
+        metadata.put("region", nacosCloudProperties.getRegion());
+
+        // 添加权重
+        metadata.put("weight", String.valueOf(nacosCloudProperties.getWeight()));
+
+        // 添加 Spring Profiles
+        String[] profiles = environment.getActiveProfiles();
+        if (profiles.length > 0) {
+            metadata.put("profiles", String.join(",", profiles));
+        }
+
+        // 添加自定义元数据
+        if (nacosCloudProperties.getMetadata() != null) {
+            metadata.putAll(nacosCloudProperties.getMetadata());
+        }
+
+        log.info("Nacos 元数据初始化完成: {}", metadata);
+    }
 }

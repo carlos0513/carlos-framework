@@ -2,9 +2,9 @@
 
 ## 模块简介
 
-`carlos-spring-cloud-starter` 是 Carlos 框架的 Spring Cloud Alibaba
-集成模块，提供了微服务架构所需的核心组件集成，包括服务发现、配置管理、服务调用、负载均衡和容错保护等功能。基于 Spring Cloud
-Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.8+。
+`carlos-spring-cloud-starter` 是 Carlos Framework 的 Spring Cloud Alibaba
+集成模块，提供了微服务架构所需的核心组件集成，包括服务发现、配置管理、服务调用、负载均衡、熔断降级和分布式事务等功能。基于
+Spring Cloud Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.9+。
 
 ## 主要功能
 
@@ -47,63 +47,64 @@ public interface UserServiceClient {
 }
 ```
 
-#### Feign 配置类
+#### Feign 配置属性
 
 ```yaml
-# Feign 日志配置
 carlos:
   feign:
     log:
       enable: true          # 启用 Feign 日志
       level: FULL           # 日志级别: NONE, BASIC, HEADERS, FULL
+    
+    retry:
+      enabled: true         # 启用重试
+      period: 100           # 重试间隔(ms)
+      max-period: 1000      # 最大重试间隔(ms)
+      max-attempts: 3       # 最大重试次数
+    
+    header:
+      pass-authorization: true   # 传递 Authorization
+      pass-request-id: true      # 传递 X-Request-Id
+      pass-tenant-id: true       # 传递 X-Tenant-Id
+      pass-user-id: true         # 传递 X-User-Id
+      pass-headers:              # 额外传递的请求头
+        - X-Custom-Header
+    
+    pool:
+      enabled: true         # 启用连接池
+      max-idle: 50          # 最大空闲连接
+      keep-alive-duration: 5  # 连接保持时长(分钟)
+      connect-timeout: 5000   # 连接超时(ms)
+      read-timeout: 10000     # 读取超时(ms)
 
-# Feign 客户端配置
+# Feign 客户端默认配置
 feign:
   client:
     config:
       default:
-        connect-timeout: 5000   # 连接超时(ms)
-        read-timeout: 10000     # 读取超时(ms)
-        logger-level: full      # 日志级别
+        connect-timeout: 5000
+        read-timeout: 10000
+  okhttp:
+    enabled: true
 ```
 
-#### 请求拦截器
-
-自动传递请求头信息：
+#### Feign 上下文传递（异步场景）
 
 ```java
-// 原始请求中的以下头部会自动传递到 Feign 调用
-// - Authorization: 认证令牌
-// - X-User-Id: 用户 ID
-// - X-Request-Id: 请求 ID
-// - X-Tenant-Id: 租户 ID
+// 在异步调用前设置上下文
+Map<String, String> context = new HashMap<>();
+context.put("X-Tenant-Id", "tenant_001");
+context.put("X-User-Id", "user_123");
+FeignRequestInterceptor.setContext(context);
 
-// 自动添加 RPC 标记头部
-// RPC-Header: true (用于标识 Feign 调用)
+// 执行 Feign 调用
+userServiceClient.getUser(1L);
+
+// 清理上下文
+FeignRequestInterceptor.clearContext();
 ```
 
-### 3. 负载均衡
-
-集成 Spring Cloud LoadBalancer：
-
-```yaml
-# 负载均衡配置
-spring:
-  cloud:
-    loadbalancer:
-      enabled: true
-      health-check:
-        interval: 30s      # 健康检查间隔
-        initial-delay: 0s  # 初始延迟
-
-      # 缓存配置
-      cache:
-        enabled: true
-        caffeine:
-          spec: maximumSize=1000,expireAfterWrite=30s
-```
-
-### 4. Nacos 服务发现与配置
+### 3. Nacos 服务发现与配置
 
 #### 服务注册与发现
 
@@ -132,24 +133,29 @@ spring:
             refresh: true
 ```
 
-#### 配置管理
+#### Nacos 扩展配置
 
-```java
-@RefreshScope  // 支持动态刷新
-@Component
-public class DynamicConfig {
-
-    @Value("${custom.property:default}")
-    private String property;
-
-    @PostConstruct
-    public void init() {
-        log.info("Property value: {}", property);
-    }
-}
+```yaml
+carlos:
+  cloud:
+    nacos:
+      enabled: true              # 启用扩展功能
+      version: 1.0.0             # 服务版本
+      region: default            # 服务区域
+      weight: 1.0                # 服务权重
+      metadata:                  # 自定义元数据
+        team: backend
+        project: user-center
+      heartbeat:
+        interval: 5000           # 心跳间隔(ms)
+        timeout: 15000           # 心跳超时(ms)
+        delete-timeout: 30000    # 服务删除超时(ms)
+      subscription:
+        enabled: true            # 启用服务订阅监听
+        log-change: true         # 服务变更时打印日志
 ```
 
-### 5. Sentinel 熔断降级
+### 4. Sentinel 熔断降级
 
 #### 流量控制与熔断
 
@@ -163,10 +169,6 @@ spring:
         port: 8719                                       # 客户端端口
       filter:
         enabled: true                                    # 启用过滤器
-      metric:
-        charset: UTF-8                                   # 字符集
-
-      # 数据源配置
       datasource:
         flow:
           nacos:
@@ -179,7 +181,7 @@ spring:
 #### 熔断规则配置
 
 ```java
-// 1. 在 Controller 中使用 @SentinelResource
+// 在 Controller 中使用 @SentinelResource
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -205,10 +207,10 @@ public class UserController {
     }
 }
 
-// 2. 在 Feign 客户端中使用 fallback
+// 在 Feign 客户端中使用 fallback
 @FeignClient(
     name = "order-service",
-    fallback = OrderServiceFallback.class
+    fallbackFactory = OrderServiceFallbackFactory.class
 )
 public interface OrderServiceClient {
     @GetMapping("/api/orders/user/{userId}")
@@ -216,286 +218,149 @@ public interface OrderServiceClient {
 }
 
 @Component
-public class OrderServiceFallback implements OrderServiceClient {
+@Slf4j
+public class OrderServiceFallbackFactory implements FallbackFactory<OrderServiceClient> {
     @Override
-    public Result<List<Order>> getUserOrders(Long userId) {
-        log.warn("Order service fallback triggered for user: {}", userId);
-        return Result.ok(Collections.emptyList());
+    public OrderServiceClient create(Throwable cause) {
+        log.error("Order service fallback", cause);
+        return userId -> Result.ok(Collections.emptyList());
     }
 }
 ```
 
-### 6. 统一异常处理
+### 5. Seata 分布式事务
 
-#### Feign 异常解码器
+#### 启用 Seata
 
-```java
-// Feign 调用异常时，自动解码为统一的异常格式
-@RestControllerAdvice
-public class FeignGlobalExceptionHandler {
-
-    @ExceptionHandler(FeignException.class)
-    public Result<Void> handleFeignException(FeignException e) {
-        // 解析 Feign 异常，返回标准格式
-        return Result.fail(StatusCode.SERVICE_UNAVAILABLE, "服务调用失败");
-    }
-}
+```yaml
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: default_tx_group
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+  client:
+    rm:
+      async-commit-buffer-limit: 10000
+      report-retry-count: 5
+      table-meta-check-enable: false
+      report-success-enable: false
+      saga-branch-register-enable: false
+    tm:
+      commit-retry-count: 5
+      rollback-retry-count: 5
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: ${NACOS_SERVER:localhost:8848}
+      namespace: seata
+      group: SEATA_GROUP
 ```
 
-### 7. 实际应用场景
-
-#### 场景 1：微服务间调用
-
-```java
-// 用户服务
-@RestController
-@RequestMapping("/api/user")
-public class UserController {
-
-    @Autowired
-    private OrderServiceClient orderService;
-
-    @GetMapping("/{id}/orders")
-    public Result<UserWithOrders> getUserWithOrders(@PathVariable Long id) {
-        User user = userService.getById(id);
-        Result<List<Order>> ordersResult = orderService.getUserOrders(id);
-
-        UserWithOrders result = new UserWithOrders();
-        result.setUser(user);
-        result.setOrders(ordersResult.getData());
-
-        return Result.ok(result);
-    }
-}
-```
-
-#### 场景 2：配置中心动态配置
-
-```java
-@RestController
-@RefreshScope
-public class ConfigController {
-
-    @Value("${dynamic.feature.enabled:false}")
-    private Boolean featureEnabled;
-
-    @Value("${dynamic.rate.limit:100}")
-    private Integer rateLimit;
-
-    @GetMapping("/config")
-    public Result<ConfigInfo> getConfig() {
-        ConfigInfo info = new ConfigInfo();
-        info.setFeatureEnabled(featureEnabled);
-        info.setRateLimit(rateLimit);
-        return Result.ok(info);
-    }
-}
-```
-
-#### 场景 3：服务熔断与降级
+#### 使用分布式事务
 
 ```java
 @Service
-public class PaymentService {
+@Slf4j
+public class OrderService {
 
-    @SentinelResource(
-        value = "processPayment",
-        blockHandler = "processPaymentBlock",
-        fallback = "processPaymentFallback"
-    )
-    public Result<Payment> processPayment(PaymentDTO payment) {
-        // 调用支付网关
-        return paymentGateway.process(payment);
-    }
+    @Autowired
+    private StockServiceClient stockService;
 
-    public Result<Payment> processPaymentBlock(PaymentDTO payment, BlockException ex) {
-        // 限流处理
-        return Result.fail(StatusCode.TOO_MANY_REQUESTS, "系统繁忙，请稍后重试");
-    }
+    @Autowired
+    private AccountServiceClient accountService;
 
-    public Result<Payment> processPaymentFallback(PaymentDTO payment, Throwable ex) {
-        // 降级处理
-        log.error("Payment service fallback", ex);
-        return Result.fail(StatusCode.SERVICE_UNAVAILABLE, "支付服务暂不可用");
-    }
-}
-```
+    @Autowired
+    private OrderMapper orderMapper;
 
-#### 场景 4：服务注册与发现
-
-```java
-@SpringBootApplication
-@SpringCloudApplication
-public class UserServiceApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(UserServiceApplication.class, args);
-    }
-
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    @Bean
-    public CommandLineRunner checkRegistration(DiscoveryClient discoveryClient) {
-        return args -> {
-            List<String> services = discoveryClient.getServices();
-            log.info("Registered services: {}", services);
-
-            List<ServiceInstance> instances = discoveryClient.getInstances("user-service");
-            log.info("User service instances: {}", instances);
-        };
+    /**
+     * 创建订单 - 全局事务
+     */
+    @GlobalTransactional(name = "create-order", rollbackFor = Exception.class)
+    public Result<Order> createOrder(OrderDTO orderDTO) {
+        // 1. 扣减库存
+        stockService.deduct(orderDTO.getSkuId(), orderDTO.getQuantity());
+        
+        // 2. 扣减账户余额
+        accountService.debit(orderDTO.getUserId(), orderDTO.getAmount());
+        
+        // 3. 创建订单
+        Order order = new Order();
+        BeanUtils.copyProperties(orderDTO, order);
+        orderMapper.insert(order);
+        
+        log.info("创建订单成功, 订单ID: {}", order.getId());
+        return Result.ok(order);
     }
 }
 ```
 
-### 8. 配置说明
+### 6. 负载均衡
 
-#### 完整配置示例
+#### 配置负载均衡策略
 
 ```yaml
-# 应用配置
-spring:
-  application:
-    name: user-service
-  profiles:
-    active: dev
-
-  # Nacos 配置
+carlos:
   cloud:
-    nacos:
-      # 服务发现
-      discovery:
-        server-addr: ${NACOS_SERVER:localhost:8848}
-        namespace: ${NACOS_NAMESPACE:dev}
-        group: ${NACOS_GROUP:SERVICES}
-        metadata:
-          version: 1.0.0
-          region: beijing
-          weight: 1
-        # 注册配置
-        ip: ${SERVER_IP:}
-        port: ${SERVER_PORT:8080}
-        # 心跳配置
-        heart-beat-interval: 5000
-        heart-beat-timeout: 15000
-        ip-delete-timeout: 30000
-
-      # 配置中心
-      config:
-        server-addr: ${NACOS_SERVER:localhost:8848}
-        namespace: ${NACOS_NAMESPACE:dev}
-        group: ${NACOS_GROUP:CONFIG}
-        file-extension: yaml
-        refresh-enabled: true
-        # 扩展配置
-        shared-configs:
-          - data-id: common-config.yaml
-            group: DEFAULT_GROUP
-            refresh: true
-          - data-id: redis-config.yaml
-            group: DEFAULT_GROUP
-            refresh: true
-        # 配置项
-        name: ${spring.application.name}
-        prefix: ${spring.application.name}
-
-    # Sentinel 配置
-    sentinel:
-      enabled: true
-      eager: true
-      transport:
-        dashboard: ${SENTINEL_DASHBOARD:localhost:8080}
-        port: 8719
-      filter:
-        enabled: true
-        url-patterns: /**
-      # 数据源
-      datasource:
-        # 流控规则
-        flow:
-          nacos:
-            server-addr: ${NACOS_SERVER:localhost:8848}
-            data-id: ${spring.application.name}-flow-rules
-            group-id: SENTINEL_GROUP
-            rule-type: flow
-        # 降级规则
-        degrade:
-          nacos:
-            server-addr: ${NACOS_SERVER:localhost:8848}
-            data-id: ${spring.application.name}-degrade-rules
-            group-id: SENTINEL_GROUP
-            rule-type: degrade
-        # 系统规则
-        system:
-          nacos:
-            server-addr: ${NACOS_SERVER:localhost:8848}
-            data-id: ${spring.application.name}-system-rules
-            group-id: SENTINEL_GROUP
-            rule-type: system
-        # 授权规则
-        authority:
-          nacos:
-            server-addr: ${NACOS_SERVER:localhost:8848}
-            data-id: ${spring.application.name}-authority-rules
-            group-id: SENTINEL_GROUP
-            rule-type: authority
-        # 热点规则
-        param-flow:
-          nacos:
-            server-addr: ${NACOS_SERVER:localhost:8848}
-            data-id: ${spring.application.name}-param-flow-rules
-            group-id: SENTINEL_GROUP
-            rule-type: param-flow
-
-    # 负载均衡
     loadbalancer:
       enabled: true
-      health-check:
-        interval: 30s
-        initial-delay: 0s
+      strategy: roundrobin   # 轮询: roundrobin, 随机: random
       cache:
         enabled: true
-        caffeine:
-          spec: maximumSize=1000,expireAfterWrite=30s
-
-# Feign 配置
-feign:
-  client:
-    config:
-      default:
-        connect-timeout: 5000
-        read-timeout: 10000
-        logger-level: full
-  compression:
-    request:
-      enabled: true
-      mime-types: text/xml,application/xml,application/json
-      min-request-size: 2048
-    response:
-      enabled: true
-
-  # 使用 OkHttp 客户端
-  okhttp:
-    enabled: true
-  httpclient:
-    enabled: false
-
-# Carlos Feign 配置
-carlos:
-  feign:
-    log:
-      enable: true
-      level: FULL
-
-# 服务端口
-server:
-  port: 8080
-  servlet:
-    context-path: /
+        ttl: 30
+        max-size: 1000
+      health-check:
+        enabled: true
+        interval: 30000
+        initial-delay: 0
 ```
+
+### 7. 服务上下文传递
+
+```java
+// 设置上下文
+ServiceContext.setTenantId("tenant_001");
+ServiceContext.setUserId("user_123");
+ServiceContext.setRequestId(UUID.randomUUID().toString());
+
+// 获取上下文
+String tenantId = ServiceContext.getTenantId();
+String userId = ServiceContext.getUserId();
+
+// 清除上下文
+ServiceContext.clear();
+```
+
+### 8. 统一异常处理
+
+模块已内置统一的 Feign 异常处理和 Sentinel 限流异常处理，返回标准响应格式：
+
+```json
+{
+  "code": 429,
+  "message": "访问过于频繁，请稍后重试",
+  "data": null
+}
+```
+
+### 9. 健康检查
+
+模块自动集成 Spring Boot Actuator 健康检查：
+
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+```
+
+访问 `/actuator/health` 查看服务健康状态。
 
 ## 依赖引入
 
@@ -514,10 +379,12 @@ server:
 - **Spring Cloud Alibaba Nacos Discovery**: 服务发现
 - **Spring Cloud Alibaba Nacos Config**: 配置管理
 - **Spring Cloud Alibaba Sentinel**: 熔断降级
+- **Spring Cloud Alibaba Seata**: 分布式事务
 - **Feign OkHttp**: HTTP 客户端
 - **Caffeine**: 缓存库
 - **carlos-spring-boot-core**: 核心基础模块
 - **carlos-spring-boot-starter-web**: Spring Boot 集成
+- **SkyWalking Toolkit**: 链路追踪支持
 
 ## 使用指南
 
@@ -537,129 +404,159 @@ public class UserServiceApplication {
 // 4. 实现业务逻辑
 ```
 
-### 2. 自定义配置
+### 2. 最佳实践
+
+#### Feign 客户端定义规范
 
 ```java
-@Configuration
-public class CustomFeignConfig {
+// API 接口定义在 {service}-api 模块
+@FeignClient(
+    name = "order-service",
+    path = "/api/order",
+    fallbackFactory = OrderServiceClientFallbackFactory.class
+)
+public interface OrderServiceClient {
+    
+    @GetMapping("/{id}")
+    Result<OrderAO> getById(@PathVariable("id") Long id);
+    
+    @PostMapping
+    Result<OrderAO> create(@RequestBody OrderCreateParam param);
+}
 
-    @Bean
-    public RequestInterceptor customInterceptor() {
-        return template -> {
-            // 添加自定义头部
-            template.header("X-Custom-Header", "custom-value");
+// 熔断降级实现在 {service}-bus 模块
+@Component
+@Slf4j
+public class OrderServiceClientFallbackFactory implements FallbackFactory<OrderServiceClient> {
+    @Override
+    public OrderServiceClient create(Throwable cause) {
+        return new OrderServiceClient() {
+            @Override
+            public Result<OrderAO> getById(Long id) {
+                log.error("获取订单失败, id={}", id, cause);
+                return Result.fail("订单服务暂时不可用");
+            }
+            
+            @Override
+            public Result<OrderAO> create(OrderCreateParam param) {
+                log.error("创建订单失败", cause);
+                return Result.fail("订单服务暂时不可用");
+            }
         };
-    }
-
-    @Bean
-    public Retryer feignRetryer() {
-        // 自定义重试策略
-        return new Retryer.Default(100, 1000, 3);
     }
 }
 ```
 
-### 3. 健康检查
+#### 配置中心使用
 
 ```java
-@Component
-public class ServiceHealthIndicator implements HealthIndicator {
+@RestController
+@RefreshScope  // 支持配置动态刷新
+public class ConfigController {
 
-    @Override
-    public Health health() {
-        // 自定义健康检查逻辑
-        boolean isHealthy = checkServiceHealth();
+    @Value("${dynamic.feature.enabled:false}")
+    private Boolean featureEnabled;
 
-        if (isHealthy) {
-            return Health.up()
-                .withDetail("service", "running")
-                .withDetail("timestamp", System.currentTimeMillis())
-                .build();
-        } else {
-            return Health.down()
-                .withDetail("service", "unavailable")
-                .withDetail("error", "service check failed")
-                .build();
-        }
+    @GetMapping("/config")
+    public Result<ConfigInfo> getConfig() {
+        return Result.ok(new ConfigInfo(featureEnabled));
     }
 }
+```
+
+## 配置参考
+
+### 完整配置示例
+
+```yaml
+spring:
+  application:
+    name: user-service
+  profiles:
+    active: dev
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: dev
+        group: SERVICES
+        metadata:
+          version: 1.0.0
+      config:
+        server-addr: localhost:8848
+        namespace: dev
+        file-extension: yaml
+        refresh-enabled: true
+        shared-configs:
+          - data-id: common-config.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+
+    sentinel:
+      enabled: true
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+      datasource:
+        flow:
+          nacos:
+            server-addr: localhost:8848
+            data-id: ${spring.application.name}-flow-rules
+            group-id: SENTINEL_GROUP
+            rule-type: flow
+
+  loadbalancer:
+    enabled: true
+
+seata:
+  enabled: true
+  tx-service-group: default_tx_group
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+
+carlos:
+  feign:
+    log:
+      enable: true
+      level: FULL
+    retry:
+      enabled: true
+      max-attempts: 3
+    pool:
+      enabled: true
+      max-idle: 50
 ```
 
 ## 注意事项
 
 1. **Nacos 版本兼容性**: 确保 Nacos 版本与 Spring Cloud Alibaba 版本兼容
 2. **Sentinel 控制台**: 生产环境建议部署 Sentinel 控制台进行监控
-3. **配置刷新**: 使用 `@RefreshScope` 注解的 Bean 支持配置动态刷新
-4. **服务发现延迟**: 服务注册和发现可能存在短暂延迟
-5. **Feign 超时**: 根据网络情况合理配置 Feign 超时时间
-6. **负载均衡缓存**: 负载均衡结果会缓存，更新服务实例可能延迟
+3. **Seata TC 服务**: 使用分布式事务前确保 Seata TC 服务已启动
+4. **配置刷新**: 使用 `@RefreshScope` 注解的 Bean 支持配置动态刷新
+5. **服务发现延迟**: 服务注册和发现可能存在短暂延迟
+6. **Feign 超时**: 根据网络情况合理配置 Feign 超时时间
 7. **Sentinel 规则持久化**: 建议将 Sentinel 规则持久化到 Nacos 配置中心
 8. **多环境支持**: 通过 namespace 和 group 支持多环境隔离
-9. **服务治理**: 结合 APM 工具进行服务链路追踪
+9. **链路追踪**: 结合 SkyWalking 进行服务链路追踪
 10. **监控告警**: 配置服务健康监控和告警机制
-
-## 性能优化
-
-1. **连接池配置**: 配置 OkHttp 连接池提升性能
-2. **负载均衡缓存**: 调整负载均衡缓存策略
-3. **Feign 压缩**: 启用 Feign 请求响应压缩
-4. **服务实例缓存**: 合理配置服务实例缓存时间
-5. **线程池优化**: 根据业务量调整线程池参数
-
-## 故障排除
-
-### 常见问题
-
-1. **服务注册失败**
-    - 检查 Nacos 服务器是否可达
-    - 验证 namespace 和 group 配置
-    - 检查服务端口是否被占用
-
-2. **Feign 调用超时**
-    - 调整 connect-timeout 和 read-timeout
-    - 检查网络连接
-    - 确认目标服务是否正常
-
-3. **配置刷新不生效**
-    - 检查 `@RefreshScope` 注解是否正确使用
-    - 确认配置已推送到 Nacos
-    - 查看应用日志确认接收到配置变更
-
-4. **Sentinel 规则不生效**
-    - 检查 Sentinel 控制台连接
-    - 验证规则格式是否正确
-    - 确认应用已正确集成 Sentinel
-
-### 日志分析
-
-```bash
-# 查看服务注册日志
-grep "nacos registry" logs/application.log
-
-# 查看 Feign 调用日志
-grep "feign" logs/application.log
-
-# 查看 Sentinel 日志
-grep "sentinel" logs/application.log
-
-# 查看配置刷新日志
-grep "refresh" logs/application.log
-```
 
 ## 版本要求
 
 - **JDK**: 17+
-- **Spring Boot**: 3.5.8+
+- **Spring Boot**: 3.5.9+
 - **Spring Cloud**: 2025.0.1+
 - **Spring Cloud Alibaba**: 2025.0.0.0+
 - **Nacos**: 2.2.3+
 - **Sentinel**: 1.8.7+
+- **Seata**: 2.5.0+
 - **Maven**: 3.8+
 
 ## 相关模块
 
 - `carlos-spring-boot-core`: 核心基础模块
 - `carlos-spring-boot-starter-web`: Spring Boot 集成
-- `carlos-gateway`: API 网关
-- `carlos-apm`: APM 监控
-- `carlos-spring-boot-starter-redis`: Redis 缓存
+- `carlos-spring-boot-starter-mybatis`: 数据访问
+- `carlos-spring-boot-starter-redis`: 缓存服务
+- `carlos-spring-boot-starter-oauth2`: 认证授权
