@@ -9,10 +9,8 @@ import com.google.common.collect.Lists;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.connection.RedisClusterConnection;
-import org.springframework.data.redis.connection.RedisClusterNode;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.ReturnType;
+import org.springframework.data.domain.Range;
+import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
@@ -620,7 +618,7 @@ public class RedisUtil {
      * @return true成功 false 失败
      */
     public static boolean setValueBit(
-        @NonNull String key, long offset, @NonNull boolean value) {
+        @NonNull String key, long offset, boolean value) {
         try {
             valueOperations.setBit(key, offset, value);
             return true;
@@ -637,7 +635,7 @@ public class RedisUtil {
      * @param offset 偏移量
      * @return 值
      */
-    public static Object getValueBit(@NonNull String key, @NonNull long offset) {
+    public static Object getValueBit(@NonNull String key, long offset) {
         try {
             return valueOperations.getBit(key, offset);
         } catch (Throwable e) {
@@ -809,32 +807,6 @@ public class RedisUtil {
             log.error("RedisUtil getValueList error,", e);
             return null;
         }
-    }
-
-    /**
-     * 模糊查找 Value Set
-     *
-     * @param pattern key通配符
-     * @return java.util.Set<T>
-     * @author Carlos
-     * @date 2024/3/8 15:24
-     */
-    public static <T> Set<T> getValueSet(String pattern) {
-        if (StrUtil.isBlank(pattern)) {
-            return null;
-        }
-        Set<String> keys = keys(pattern);
-        if (CollUtil.isEmpty(keys)) {
-            return null;
-        }
-        List<T> list = getValueList(keys);
-        if (CollUtil.isEmpty(list)) {
-            return null;
-        }
-        scanKeys(pattern, 500, key -> {
-
-        });
-        return new HashSet<>(list);
     }
 
     /**
@@ -1155,7 +1127,7 @@ public class RedisUtil {
      * @param timeout 时间(秒)
      * @return {boolean}
      */
-    public static boolean putHash(@NonNull String key, @NonNull Map<String, Object> map, @NonNull long timeout) {
+    public static boolean putHash(@NonNull String key, @NonNull Map<String, Object> map, long timeout) {
         putHash(key, map);
         if (timeout > 0) {
             setExpire(key, timeout);
@@ -1190,7 +1162,7 @@ public class RedisUtil {
      * @param timeout 时间(秒) 注意:如果已存在的hash表有时间,这里将会替换原有的时间
      * @return {boolean}
      */
-    public static <T> boolean putHash(@NonNull String key, @NonNull String item, @NonNull T value, @NonNull long timeout) {
+    public static <T> boolean putHash(@NonNull String key, @NonNull String item, @NonNull T value, long timeout) {
         putHash(key, item, value);
         if (timeout > 0) {
             setExpire(key, timeout);
@@ -1220,7 +1192,7 @@ public class RedisUtil {
      * @param by   要增加几(大于0)
      * @return 加上指定值之后 key 的值
      */
-    public static double incrementHash(@NonNull String key, @NonNull String item, @NonNull double by) {
+    public static double incrementHash(@NonNull String key, @NonNull String item, double by) {
         return hashOperations.increment(key, item, by);
     }
 
@@ -1248,7 +1220,7 @@ public class RedisUtil {
      * @param by   要减少记(小于0)
      * @return 减少指定值之后 key 的值
      */
-    public static long decrementHash(@NonNull String key, @NonNull String item, @NonNull long by) {
+    public static double decrementHash(@NonNull String key, @NonNull String item, long by) {
         return incrementHash(key, item, -by);
     }
     // endregion----------------------   Hash操作 end   ------------------------
@@ -1594,29 +1566,26 @@ public class RedisUtil {
      * @param args    ARGV 数组
      * @return 执行结果
      */
-    @SuppressWarnings("unchecked")
     public static <T> T lua(RedisScript<T> script, List<String> keys, Object... args) {
-        return (T) redisMasterTemplate.execute(script,
-            redisTemplate.getStringSerializer(),  // Key序列化器
-            redisTemplate.getStringSerializer(),
-            keys,
-            args);
+        return redisMasterTemplate.execute(script, keys, args);
     }
 
     /**
      * 执行已预加载的 Lua（SHA 模式）
      *
      * @param sha         预加载得到的 SHA1
+     * @param returnType  返回值类型
      * @param numKeys     key个数
      * @param keysAndArgs KEY  ARGV 数组
-     * @param <T>      返回泛型
+     * @param <T>         返回泛型
+     * @return 执行结果
      */
     public static <T> T evalSha(String sha, ReturnType returnType, int numKeys, byte[]... keysAndArgs) {
-        RedisConnection conn = redisMasterTemplate.getConnectionFactory().getConnection();
         try {
-            return redisMasterTemplate.execute(script, keys, args);
+            return redisMasterTemplate.execute((RedisCallback<T>) conn ->
+                conn.evalSha(sha, returnType, numKeys, keysAndArgs));
         } catch (Exception e) {
-            log.error("Redis lua error", e);
+            log.error("Redis evalSha error, sha: {}", sha, e);
             return null;
         }
     }
@@ -1671,5 +1640,1214 @@ public class RedisUtil {
         return lua(script, Collections.singletonList(key), Collections.singletonList(arg), retType);
     }
 
+    // endregion----------------------   Lua 脚本工具 end   ------------------------
+
+    // region----------------------  分布式锁 start  ------------------------
+
+    /**
+     * 尝试获取分布式锁（SET key value NX EX）
+     *
+     * @param lockKey       锁 key
+     * @param requestId     请求标识（用于安全释放锁，如 UUID）
+     * @param expireSeconds 过期时间（秒）
+     * @return true 获取成功，false 获取失败
+     */
+    public static boolean tryLock(@NonNull String lockKey, @NonNull String requestId, long expireSeconds) {
+        try {
+            Boolean success = valueOperations.setIfAbsent(lockKey, requestId, expireSeconds, TimeUnit.SECONDS);
+            return Boolean.TRUE.equals(success);
+        } catch (Exception e) {
+            log.error("Redis tryLock error, lockKey: {}", lockKey, e);
+            return false;
+        }
+    }
+
+    /**
+     * 尝试获取分布式锁（带重试）
+     *
+     * @param lockKey        锁 key
+     * @param requestId      请求标识
+     * @param expireSeconds  过期时间（秒）
+     * @param retryTimes     重试次数
+     * @param retryInterval  重试间隔（毫秒）
+     * @return true 获取成功，false 获取失败
+     */
+    public static boolean tryLock(@NonNull String lockKey, @NonNull String requestId, long expireSeconds,
+                                  int retryTimes, long retryInterval) {
+        for (int i = 0; i <= retryTimes; i++) {
+            if (tryLock(lockKey, requestId, expireSeconds)) {
+                return true;
+            }
+            if (i < retryTimes) {
+                try {
+                    Thread.sleep(retryInterval);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 释放分布式锁（使用 Lua 脚本确保原子性）
+     * <p>只有锁的持有者才能释放锁</p>
+     *
+     * @param lockKey   锁 key
+     * @param requestId 请求标识（必须与加锁时一致）
+     * @return true 释放成功，false 释放失败或不是锁的持有者
+     */
+    public static boolean unlock(@NonNull String lockKey, @NonNull String requestId) {
+        // Lua 脚本：只有 value 匹配时才删除 key
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+        try {
+            RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
+            Long result = redisMasterTemplate.execute(redisScript, Collections.singletonList(lockKey), requestId);
+            return result != null && result > 0;
+        } catch (Exception e) {
+            log.error("Redis unlock error, lockKey: {}", lockKey, e);
+            return false;
+        }
+    }
+
+    /**
+     * 续期分布式锁（看门狗机制）
+     * <p>只有锁的持有者才能续期</p>
+     *
+     * @param lockKey       锁 key
+     * @param requestId     请求标识
+     * @param expireSeconds 新的过期时间（秒）
+     * @return true 续期成功，false 续期失败或锁不存在/不属于当前持有者
+     */
+    public static boolean renewLock(@NonNull String lockKey, @NonNull String requestId, long expireSeconds) {
+        // Lua 脚本：只有 value 匹配时才续期
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('expire', KEYS[1], ARGV[2]) else return 0 end";
+        try {
+            RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
+            Long result = redisMasterTemplate.execute(redisScript, Collections.singletonList(lockKey), requestId, String.valueOf(expireSeconds));
+            return result != null && result > 0;
+        } catch (Exception e) {
+            log.error("Redis renewLock error, lockKey: {}", lockKey, e);
+            return false;
+        }
+    }
+
+    /**
+     * 检查锁是否被当前请求持有
+     *
+     * @param lockKey   锁 key
+     * @param requestId 请求标识
+     * @return true 是当前持有者，false 不是持有者或锁不存在
+     */
+    public static boolean isLockHolder(@NonNull String lockKey, @NonNull String requestId) {
+        try {
+            Object value = valueOperations.get(lockKey);
+            return requestId.equals(value);
+        } catch (Exception e) {
+            log.error("Redis isLockHolder error, lockKey: {}", lockKey, e);
+            return false;
+        }
+    }
+
+    /**
+     * 获取锁的剩余过期时间
+     *
+     * @param lockKey 锁 key
+     * @return 剩余秒数，-1 表示未设置过期时间，-2 表示 key 不存在
+     */
+    public static Long getLockTtl(@NonNull String lockKey) {
+        return getExpire(lockKey);
+    }
+
+    // endregion----------------------   分布式锁 end   ------------------------
+
+    // region----------------------  ZSet 操作 start  ------------------------
+
+    /**
+     * 向有序集合添加成员
+     *
+     * @param key   键
+     * @param value 值
+     * @param score 分数
+     * @return true 添加成功，false 添加失败
+     */
+    public static <T> boolean addZSet(@NonNull String key, @NonNull T value, double score) {
+        try {
+            Boolean added = zSetOperations.add(key, value, score);
+            return Boolean.TRUE.equals(added);
+        } catch (Exception e) {
+            log.error("Redis addZSet error, key: {}", key, e);
+            return false;
+        }
+    }
+
+    /**
+     * 向有序集合添加成员（带过期时间）
+     *
+     * @param key     键
+     * @param value   值
+     * @param score   分数
+     * @param timeout 过期时间（秒）
+     * @return true 添加成功
+     */
+    public static <T> boolean addZSet(@NonNull String key, @NonNull T value, double score, long timeout) {
+        boolean added = addZSet(key, value, score);
+        if (added && timeout > 0) {
+            setExpire(key, timeout);
+        }
+        return added;
+    }
+
+    /**
+     * 批量添加成员到有序集合
+     *
+     * @param key          键
+     * @param typedTuples  成员和分数集合
+     * @return 添加成功的数量
+     */
+    public static Long addZSet(@NonNull String key, @NonNull Set<ZSetOperations.TypedTuple<Object>> typedTuples) {
+        try {
+            Long added = zSetOperations.add(key, typedTuples);
+            return added != null ? added : 0L;
+        } catch (Exception e) {
+            log.error("Redis addZSet batch error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 移除有序集合中的成员
+     *
+     * @param key    键
+     * @param values 要移除的值
+     * @return 移除成功的数量
+     */
+    public static Long removeZSet(@NonNull String key, Object... values) {
+        try {
+            Long removed = zSetOperations.remove(key, values);
+            return removed != null ? removed : 0L;
+        } catch (Exception e) {
+            log.error("Redis removeZSet error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 增加成员的分数
+     *
+     * @param key   键
+     * @param value 值
+     * @param delta 增量
+     * @return 增加后的分数
+     */
+    public static Double incrementZSet(@NonNull String key, @NonNull Object value, double delta) {
+        try {
+            return zSetOperations.incrementScore(key, value, delta);
+        } catch (Exception e) {
+            log.error("Redis incrementZSet error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取有序集合中指定成员的分数
+     *
+     * @param key   键
+     * @param value 值
+     * @return 分数，成员不存在返回 null
+     */
+    public static Double scoreZSet(@NonNull String key, @NonNull Object value) {
+        try {
+            return zSetOperations.score(key, value);
+        } catch (Exception e) {
+            log.error("Redis scoreZSet error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取成员在有序集合中的排名（从 0 开始，分数从小到大）
+     *
+     * @param key   键
+     * @param value 值
+     * @return 排名，不存在返回 null
+     */
+    public static Long rankZSet(@NonNull String key, @NonNull Object value) {
+        try {
+            return zSetOperations.rank(key, value);
+        } catch (Exception e) {
+            log.error("Redis rankZSet error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取成员在有序集合中的排名（从 0 开始，分数从大到小）
+     *
+     * @param key   键
+     * @param value 值
+     * @return 排名，不存在返回 null
+     */
+    public static Long reverseRankZSet(@NonNull String key, @NonNull Object value) {
+        try {
+            return zSetOperations.reverseRank(key, value);
+        } catch (Exception e) {
+            log.error("Redis reverseRankZSet error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取指定范围内的成员（分数从小到大）
+     *
+     * @param key   键
+     * @param start 起始位置（包含）
+     * @param end   结束位置（包含，-1 表示最后一个）
+     * @return 成员集合
+     */
+    public static <T> Set<T> rangeZSet(@NonNull String key, long start, long end) {
+        try {
+            return (Set<T>) zSetOperations.range(key, start, end);
+        } catch (Exception e) {
+            log.error("Redis rangeZSet error, key: {}", key, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取指定范围内的成员（分数从大到小）
+     *
+     * @param key   键
+     * @param start 起始位置（包含）
+     * @param end   结束位置（包含，-1 表示最后一个）
+     * @return 成员集合
+     */
+    public static <T> Set<T> reverseRangeZSet(@NonNull String key, long start, long end) {
+        try {
+            return (Set<T>) zSetOperations.reverseRange(key, start, end);
+        } catch (Exception e) {
+            log.error("Redis reverseRangeZSet error, key: {}", key, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取指定范围内的成员和分数（分数从小到大）
+     *
+     * @param key   键
+     * @param start 起始位置
+     * @param end   结束位置
+     * @return 成员和分数集合
+     */
+    public static Set<ZSetOperations.TypedTuple<Object>> rangeZSetWithScores(@NonNull String key, long start, long end) {
+        try {
+            return zSetOperations.rangeWithScores(key, start, end);
+        } catch (Exception e) {
+            log.error("Redis rangeZSetWithScores error, key: {}", key, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取指定分数范围内的成员（分数从小到大）
+     *
+     * @param key 键
+     * @param min 最小分数
+     * @param max 最大分数
+     * @return 成员集合
+     */
+    public static <T> Set<T> rangeByScoreZSet(@NonNull String key, double min, double max) {
+        try {
+            return (Set<T>) zSetOperations.rangeByScore(key, min, max);
+        } catch (Exception e) {
+            log.error("Redis rangeByScoreZSet error, key: {}", key, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取指定分数范围内的成员（分数从大到小）
+     *
+     * @param key 键
+     * @param min 最小分数
+     * @param max 最大分数
+     * @return 成员集合
+     */
+    public static <T> Set<T> reverseRangeByScoreZSet(@NonNull String key, double min, double max) {
+        try {
+            return (Set<T>) zSetOperations.reverseRangeByScore(key, min, max);
+        } catch (Exception e) {
+            log.error("Redis reverseRangeByScoreZSet error, key: {}", key, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取指定分数范围内的成员数量
+     *
+     * @param key 键
+     * @param min 最小分数
+     * @param max 最大分数
+     * @return 数量
+     */
+    public static Long countZSet(@NonNull String key, double min, double max) {
+        try {
+            return zSetOperations.count(key, min, max);
+        } catch (Exception e) {
+            log.error("Redis countZSet error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 获取有序集合的大小
+     *
+     * @param key 键
+     * @return 大小
+     */
+    public static Long sizeZSet(@NonNull String key) {
+        try {
+            return zSetOperations.size(key);
+        } catch (Exception e) {
+            log.error("Redis sizeZSet error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 移除指定排名范围内的成员
+     *
+     * @param key   键
+     * @param start 起始排名
+     * @param end   结束排名
+     * @return 移除的数量
+     */
+    public static Long removeRangeZSet(@NonNull String key, long start, long end) {
+        try {
+            Long removed = zSetOperations.removeRange(key, start, end);
+            return removed != null ? removed : 0L;
+        } catch (Exception e) {
+            log.error("Redis removeRangeZSet error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 移除指定分数范围内的成员
+     *
+     * @param key 键
+     * @param min 最小分数
+     * @param max 最大分数
+     * @return 移除的数量
+     */
+    public static Long removeRangeByScoreZSet(@NonNull String key, double min, double max) {
+        try {
+            Long removed = zSetOperations.removeRangeByScore(key, min, max);
+            return removed != null ? removed : 0L;
+        } catch (Exception e) {
+            log.error("Redis removeRangeByScoreZSet error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    // endregion----------------------   ZSet 操作 end   ------------------------
+
+    // region----------------------  List 操作完善 start  ------------------------
+
+    /**
+     * 从列表左侧弹出元素
+     *
+     * @param key 键
+     * @return 弹出的元素，不存在返回 null
+     */
+    public static <T> T leftPopList(@NonNull String key) {
+        try {
+            return (T) listOperations.leftPop(key);
+        } catch (Exception e) {
+            log.error("Redis leftPopList error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 从列表左侧阻塞弹出元素
+     *
+     * @param key     键
+     * @param timeout 超时时间
+     * @param unit    时间单位
+     * @return 弹出的元素，超时返回 null
+     */
+    public static <T> T leftPopList(@NonNull String key, long timeout, TimeUnit unit) {
+        try {
+            return (T) listOperations.leftPop(key, timeout, unit);
+        } catch (Exception e) {
+            log.error("Redis leftPopList block error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 从列表右侧弹出元素
+     *
+     * @param key 键
+     * @return 弹出的元素，不存在返回 null
+     */
+    public static <T> T rightPopList(@NonNull String key) {
+        try {
+            return (T) listOperations.rightPop(key);
+        } catch (Exception e) {
+            log.error("Redis rightPopList error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 从列表右侧阻塞弹出元素
+     *
+     * @param key     键
+     * @param timeout 超时时间
+     * @param unit    时间单位
+     * @return 弹出的元素，超时返回 null
+     */
+    public static <T> T rightPopList(@NonNull String key, long timeout, TimeUnit unit) {
+        try {
+            return (T) listOperations.rightPop(key, timeout, unit);
+        } catch (Exception e) {
+            log.error("Redis rightPopList block error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 从 sourceKey 右侧弹出元素并压入 destinationKey 左侧（原子操作）
+     *
+     * @param sourceKey      源列表
+     * @param destinationKey 目标列表
+     * @return 弹出的元素
+     */
+    public static <T> T rightPopAndLeftPush(@NonNull String sourceKey, @NonNull String destinationKey) {
+        try {
+            return (T) listOperations.rightPopAndLeftPush(sourceKey, destinationKey);
+        } catch (Exception e) {
+            log.error("Redis rightPopAndLeftPush error, sourceKey: {}, destinationKey: {}", sourceKey, destinationKey, e);
+            return null;
+        }
+    }
+
+    /**
+     * 从 sourceKey 右侧阻塞弹出元素并压入 destinationKey 左侧
+     *
+     * @param sourceKey      源列表
+     * @param destinationKey 目标列表
+     * @param timeout        超时时间
+     * @param unit           时间单位
+     * @return 弹出的元素
+     */
+    public static <T> T rightPopAndLeftPush(@NonNull String sourceKey, @NonNull String destinationKey,
+                                            long timeout, TimeUnit unit) {
+        try {
+            return (T) listOperations.rightPopAndLeftPush(sourceKey, destinationKey, timeout, unit);
+        } catch (Exception e) {
+            log.error("Redis rightPopAndLeftPush block error, sourceKey: {}, destinationKey: {}",
+                sourceKey, destinationKey, e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取列表大小
+     *
+     * @param key 键
+     * @return 列表大小
+     */
+    public static Long sizeList(@NonNull String key) {
+        try {
+            return listOperations.size(key);
+        } catch (Exception e) {
+            log.error("Redis sizeList error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 从列表中移除元素
+     *
+     * @param key   键
+     * @param count 移除数量（0=全部，正数=从左往右，负数=从右往左）
+     * @param value 要移除的值
+     * @return 实际移除的数量
+     */
+    public static Long removeList(@NonNull String key, long count, Object value) {
+        try {
+            Long removed = listOperations.remove(key, count, value);
+            return removed != null ? removed : 0L;
+        } catch (Exception e) {
+            log.error("Redis removeList error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 修剪列表，只保留指定范围内的元素
+     *
+     * @param key   键
+     * @param start 起始位置
+     * @param end   结束位置
+     * @return true 成功
+     */
+    public static boolean trimList(@NonNull String key, long start, long end) {
+        try {
+            listOperations.trim(key, start, end);
+            return true;
+        } catch (Exception e) {
+            log.error("Redis trimList error, key: {}", key, e);
+            return false;
+        }
+    }
+
+    /**
+     * 获取元素在列表中的索引
+     *
+     * @param key   键
+     * @param value 值
+     * @return 索引位置，不存在返回 null
+     */
+    public static Long indexOfList(@NonNull String key, Object value) {
+        try {
+            return listOperations.indexOf(key, value);
+        } catch (Exception e) {
+            log.error("Redis indexOfList error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 设置列表中指定位置的值
+     *
+     * @param key   键
+     * @param index 索引
+     * @param value 值
+     * @return true 成功
+     */
+    public static <T> boolean setList(@NonNull String key, long index, T value) {
+        try {
+            listOperations.set(key, index, value);
+            return true;
+        } catch (Exception e) {
+            log.error("Redis setList error, key: {}", key, e);
+            return false;
+        }
+    }
+
+    /**
+     * 获取列表中指定位置的元素
+     *
+     * @param key   键
+     * @param index 索引
+     * @return 元素
+     */
+    public static <T> T indexList(@NonNull String key, long index) {
+        try {
+            return (T) listOperations.index(key, index);
+        } catch (Exception e) {
+            log.error("Redis indexList error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    // endregion----------------------   List 操作完善 end   ------------------------
+
+    // region----------------------  Set 运算 start  ------------------------
+
+    /**
+     * 获取两个集合的交集
+     *
+     * @param key1 集合1
+     * @param key2 集合2
+     * @return 交集
+     */
+    public static <T> Set<T> intersectSet(@NonNull String key1, @NonNull String key2) {
+        try {
+            return (Set<T>) setOperations.intersect(key1, key2);
+        } catch (Exception e) {
+            log.error("Redis intersectSet error, key1: {}, key2: {}", key1, key2, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取多个集合的交集
+     *
+     * @param keys 集合 key 列表
+     * @return 交集
+     */
+    public static <T> Set<T> intersectSet(Collection<String> keys) {
+        try {
+            return (Set<T>) setOperations.intersect(keys);
+        } catch (Exception e) {
+            log.error("Redis intersectSet error, keys: {}", keys, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取两个集合的交集并存储到新集合
+     *
+     * @param destKey 目标集合
+     * @param key1    集合1
+     * @param key2    集合2
+     * @return 交集大小
+     */
+    public static Long intersectAndStoreSet(@NonNull String destKey, @NonNull String key1, @NonNull String key2) {
+        try {
+            Long size = setOperations.intersectAndStore(key1, key2, destKey);
+            return size != null ? size : 0L;
+        } catch (Exception e) {
+            log.error("Redis intersectAndStoreSet error, key1: {}, key2: {}", key1, key2, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 获取两个集合的并集
+     *
+     * @param key1 集合1
+     * @param key2 集合2
+     * @return 并集
+     */
+    public static <T> Set<T> unionSet(@NonNull String key1, @NonNull String key2) {
+        try {
+            return (Set<T>) setOperations.union(key1, key2);
+        } catch (Exception e) {
+            log.error("Redis unionSet error, key1: {}, key2: {}", key1, key2, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取多个集合的并集
+     *
+     * @param keys 集合 key 列表
+     * @return 并集
+     */
+    public static <T> Set<T> unionSet(Collection<String> keys) {
+        try {
+            return (Set<T>) setOperations.union(keys);
+        } catch (Exception e) {
+            log.error("Redis unionSet error, keys: {}", keys, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取两个集合的并集并存储到新集合
+     *
+     * @param destKey 目标集合
+     * @param key1    集合1
+     * @param key2    集合2
+     * @return 并集大小
+     */
+    public static Long unionAndStoreSet(@NonNull String destKey, @NonNull String key1, @NonNull String key2) {
+        try {
+            Long size = setOperations.unionAndStore(key1, key2, destKey);
+            return size != null ? size : 0L;
+        } catch (Exception e) {
+            log.error("Redis unionAndStoreSet error, key1: {}, key2: {}", key1, key2, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 获取两个集合的差集（key1 中有但 key2 中没有）
+     *
+     * @param key1 集合1
+     * @param key2 集合2
+     * @return 差集
+     */
+    public static <T> Set<T> differenceSet(@NonNull String key1, @NonNull String key2) {
+        try {
+            return (Set<T>) setOperations.difference(key1, key2);
+        } catch (Exception e) {
+            log.error("Redis differenceSet error, key1: {}, key2: {}", key1, key2, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取多个集合的差集
+     *
+     * @param key      基准集合
+     * @param otherKeys 其他集合
+     * @return 差集
+     */
+    public static <T> Set<T> differenceSet(@NonNull String key, Collection<String> otherKeys) {
+        try {
+            return (Set<T>) setOperations.difference(key, otherKeys);
+        } catch (Exception e) {
+            log.error("Redis differenceSet error, key: {}, otherKeys: {}", key, otherKeys, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 获取两个集合的差集并存储到新集合
+     *
+     * @param destKey 目标集合
+     * @param key1    集合1
+     * @param key2    集合2
+     * @return 差集大小
+     */
+    public static Long differenceAndStoreSet(@NonNull String destKey, @NonNull String key1, @NonNull String key2) {
+        try {
+            Long size = setOperations.differenceAndStore(key1, key2, destKey);
+            return size != null ? size : 0L;
+        } catch (Exception e) {
+            log.error("Redis differenceAndStoreSet error, key1: {}, key2: {}", key1, key2, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 随机获取一个元素（不移除）
+     *
+     * @param key 键
+     * @return 随机元素
+     */
+    public static <T> T randomMemberSet(@NonNull String key) {
+        try {
+            return (T) setOperations.randomMember(key);
+        } catch (Exception e) {
+            log.error("Redis randomMemberSet error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 随机获取多个元素（不移除，可能有重复）
+     *
+     * @param key   键
+     * @param count 数量
+     * @return 随机元素列表
+     */
+    public static <T> List<T> randomMembersSet(@NonNull String key, long count) {
+        try {
+            return (List<T>) setOperations.randomMembers(key, count);
+        } catch (Exception e) {
+            log.error("Redis randomMembersSet error, key: {}", key, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * 随机获取多个不重复元素（不移除）
+     *
+     * @param key   键
+     * @param count 数量
+     * @return 随机元素集合
+     */
+    public static <T> Set<T> distinctRandomMembersSet(@NonNull String key, long count) {
+        try {
+            return (Set<T>) setOperations.distinctRandomMembers(key, count);
+        } catch (Exception e) {
+            log.error("Redis distinctRandomMembersSet error, key: {}", key, e);
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * 随机移除并返回指定数量的元素
+     *
+     * @param key   键
+     * @param count 数量
+     * @return 移除的元素列表
+     */
+    public static <T> List<T> popSet(@NonNull String key, long count) {
+        try {
+            return (List<T>) setOperations.pop(key, count);
+        } catch (Exception e) {
+            log.error("Redis popSet error, key: {}", key, e);
+            return Collections.emptyList();
+        }
+    }
+
+    // endregion----------------------   Set 运算 end   ------------------------
+
+    // region----------------------  位图操作 start  ------------------------
+
+    /**
+     * 设置位图中指定偏移量的值
+     *
+     * @param key    键
+     * @param offset 偏移量（从 0 开始）
+     * @param value  true/false
+     * @return 设置前的值
+     */
+    public static Boolean setBit(@NonNull String key, long offset, boolean value) {
+        try {
+            return valueOperations.setBit(key, offset, value);
+        } catch (Exception e) {
+            log.error("Redis setBit error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取位图中指定偏移量的值
+     *
+     * @param key    键
+     * @param offset 偏移量
+     * @return true/false
+     */
+    public static Boolean getBit(@NonNull String key, long offset) {
+        try {
+            return valueOperations.getBit(key, offset);
+        } catch (Exception e) {
+            log.error("Redis getBit error, key: {}", key, e);
+            return null;
+        }
+    }
+
+    /**
+     * 统计位图中值为 1 的位数
+     *
+     * @param key 键
+     * @return 1 的数量
+     */
+    public static Long bitCount(@NonNull String key) {
+        try {
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.bitCount(rawKey(key)));
+        } catch (Exception e) {
+            log.error("Redis bitCount error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 统计位图中指定字节范围内值为 1 的位数
+     *
+     * @param key   键
+     * @param start 起始字节
+     * @param end   结束字节
+     * @return 1 的数量
+     */
+    public static Long bitCount(@NonNull String key, long start, long end) {
+        try {
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.bitCount(rawKey(key), start, end));
+        } catch (Exception e) {
+            log.error("Redis bitCount range error, key: {}", key, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 位图与运算（BITOP AND）
+     *
+     * @param destKey 目标 key
+     * @param keys    源 key 数组
+     * @return 结果位图的大小（字节数）
+     */
+    public static Long bitOpAnd(@NonNull String destKey, String... keys) {
+        try {
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> {
+                byte[][] rawKeys = Arrays.stream(keys).map(RedisUtil::rawKey).toArray(byte[][]::new);
+                return (long) conn.bitOp(RedisStringCommands.BitOperation.AND, rawKey(destKey), rawKeys);
+            });
+        } catch (Exception e) {
+            log.error("Redis bitOpAnd error, destKey: {}", destKey, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 位图或运算（BITOP OR）
+     *
+     * @param destKey 目标 key
+     * @param keys    源 key 数组
+     * @return 结果位图的大小（字节数）
+     */
+    public static Long bitOpOr(@NonNull String destKey, String... keys) {
+        try {
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> {
+                byte[][] rawKeys = Arrays.stream(keys).map(RedisUtil::rawKey).toArray(byte[][]::new);
+                return (long) conn.bitOp(RedisStringCommands.BitOperation.OR, rawKey(destKey), rawKeys);
+            });
+        } catch (Exception e) {
+            log.error("Redis bitOpOr error, destKey: {}", destKey, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 位图异或运算（BITOP XOR）
+     *
+     * @param destKey 目标 key
+     * @param keys    源 key 数组
+     * @return 结果位图的大小（字节数）
+     */
+    public static Long bitOpXor(@NonNull String destKey, String... keys) {
+        try {
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> {
+                byte[][] rawKeys = Arrays.stream(keys).map(RedisUtil::rawKey).toArray(byte[][]::new);
+                return (long) conn.bitOp(RedisStringCommands.BitOperation.XOR, rawKey(destKey), rawKeys);
+            });
+        } catch (Exception e) {
+            log.error("Redis bitOpXor error, destKey: {}", destKey, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 位图非运算（BITOP NOT）
+     *
+     * @param destKey 目标 key
+     * @param key     源 key
+     * @return 结果位图的大小（字节数）
+     */
+    public static Long bitOpNot(@NonNull String destKey, String key) {
+        try {
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn ->
+                (long) conn.bitOp(RedisStringCommands.BitOperation.NOT, rawKey(destKey), rawKey(key)));
+        } catch (Exception e) {
+            log.error("Redis bitOpNot error, destKey: {}", destKey, e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 查找第一个值为指定 bit 的位置
+     *
+     * @param key 键
+     * @param bit true/false
+     * @return 位置，不存在返回 -1
+     */
+    public static Long bitPos(@NonNull String key, boolean bit) {
+        try {
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.bitPos(rawKey(key), bit));
+        } catch (Exception e) {
+            log.error("Redis bitPos error, key: {}", key, e);
+            return -1L;
+        }
+    }
+
+    /**
+     * 在指定字节范围内查找第一个值为指定 bit 的位置
+     *
+     * @param key   键
+     * @param bit   true/false
+     * @param start 起始字节
+     * @param end   结束字节
+     * @return 位置，不存在返回 -1
+     */
+    public static Long bitPos(@NonNull String key, boolean bit, long start, long end) {
+        try {
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.bitPos(rawKey(key), bit, Range.closed(start, end)));
+        } catch (Exception e) {
+            log.error("Redis bitPos range error, key: {}", key, e);
+            return -1L;
+        }
+    }
+
+    // endregion----------------------   位图操作 end   ------------------------
+
+    // region----------------------  HyperLogLog start  ------------------------
+
+    /**
+     * 添加元素到 HyperLogLog
+     *
+     * @param key      键
+     * @param elements 元素数组
+     * @return true 添加了新元素，false 未添加新元素（可能已存在）
+     */
+    public static boolean addHyperLogLog(@NonNull String key, Object... elements) {
+        try {
+            Long added = redisTemplate.opsForHyperLogLog().add(key, elements);
+            return added != null && added > 0;
+        } catch (Exception e) {
+            log.error("Redis addHyperLogLog error, key: {}", key, e);
+            return false;
+        }
+    }
+
+    /**
+     * 获取 HyperLogLog 的基数估算值
+     *
+     * @param keys 键数组
+     * @return 基数估算值
+     */
+    public static Long sizeHyperLogLog(String... keys) {
+        try {
+            return redisTemplate.opsForHyperLogLog().size(keys);
+        } catch (Exception e) {
+            log.error("Redis sizeHyperLogLog error, keys: {}", Arrays.toString(keys), e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 合并多个 HyperLogLog 到新 key
+     *
+     * @param destKey     目标 key
+     * @param sourceKeys  源 key 数组
+     * @return true 成功
+     */
+    public static boolean unionHyperLogLog(@NonNull String destKey, String... sourceKeys) {
+        try {
+            Long result = redisTemplate.opsForHyperLogLog().union(destKey, sourceKeys);
+            return result != null;
+        } catch (Exception e) {
+            log.error("Redis unionHyperLogLog error, destKey: {}", destKey, e);
+            return false;
+        }
+    }
+
+    /**
+     * 删除 HyperLogLog
+     *
+     * @param key 键
+     * @return true 成功
+     */
+    public static boolean deleteHyperLogLog(@NonNull String key) {
+        return delete(key);
+    }
+
+    // endregion----------------------   HyperLogLog end   ------------------------
+
+    // region----------------------  通用方法完善 start  ------------------------
+
+    /**
+     * 重命名 key
+     *
+     * @param oldKey 旧 key
+     * @param newKey 新 key
+     * @return true 成功
+     */
+    public static boolean renameKey(@NonNull String oldKey, @NonNull String newKey) {
+        try {
+            redisTemplate.rename(oldKey, newKey);
+            return true;
+        } catch (Exception e) {
+            log.error("Redis renameKey error, oldKey: {}, newKey: {}", oldKey, newKey, e);
+            return false;
+        }
+    }
+
+    /**
+     * 仅当 newKey 不存在时才重命名
+     *
+     * @param oldKey 旧 key
+     * @param newKey 新 key
+     * @return true 成功，false newKey 已存在
+     */
+    public static boolean renameKeyIfAbsent(@NonNull String oldKey, @NonNull String newKey) {
+        try {
+            Boolean renamed = redisTemplate.renameIfAbsent(oldKey, newKey);
+            return Boolean.TRUE.equals(renamed);
+        } catch (Exception e) {
+            log.error("Redis renameKeyIfAbsent error, oldKey: {}, newKey: {}", oldKey, newKey, e);
+            return false;
+        }
+    }
+
+    /**
+     * 将 key 移动到指定数据库
+     *
+     * @param key     键
+     * @param dbIndex 数据库索引
+     * @return true 成功
+     */
+    public static boolean moveKey(@NonNull String key, int dbIndex) {
+        try {
+            Boolean moved = redisTemplate.move(key, dbIndex);
+            return Boolean.TRUE.equals(moved);
+        } catch (Exception e) {
+            log.error("Redis moveKey error, key: {}, dbIndex: {}", key, dbIndex, e);
+            return false;
+        }
+    }
+
+    /**
+     * 获取随机 key
+     *
+     * @return 随机 key，不存在返回 null
+     */
+    public static String randomKey() {
+        try {
+            return redisTemplate.randomKey();
+        } catch (Exception e) {
+            log.error("Redis randomKey error", e);
+            return null;
+        }
+    }
+
+    /**
+     * 移除 key 的过期时间，使其永久有效
+     *
+     * @param key 键
+     * @return true 成功
+     */
+    public static boolean persistKey(@NonNull String key) {
+        try {
+            Boolean persisted = redisTemplate.persist(key);
+            return Boolean.TRUE.equals(persisted);
+        } catch (Exception e) {
+            log.error("Redis persistKey error, key: {}", key, e);
+            return false;
+        }
+    }
+
+    /**
+     * 获取当前数据库的 key 数量
+     *
+     * @return key 数量
+     */
+    public static Long getDbSize() {
+        try {
+            return redisMasterTemplate.execute(RedisServerCommands::dbSize);
+        } catch (Exception e) {
+            log.error("Redis getDbSize error", e);
+            return 0L;
+        }
+    }
+
+    /**
+     * 原子设置值并同时设置过期时间（SET key value EX seconds NX）
+     *
+     * @param key     键
+     * @param value   值
+     * @param seconds 过期时间（秒）
+     * @return true 设置成功，false 键已存在
+     */
+    public static <T> boolean setValueWithSetNxEx(@NonNull String key, @NonNull T value, long seconds) {
+        try {
+            Boolean set = valueOperations.setIfAbsent(key, value, seconds, TimeUnit.SECONDS);
+            return Boolean.TRUE.equals(set);
+        } catch (Exception e) {
+            log.error("Redis setValueWithSetNxEx error, key: {}", key, e);
+            return false;
+        }
+    }
+
+    /**
+     * 比较并设置值（CAS 操作）
+     *
+     * @param key      键
+     * @param expected 期望值
+     * @param newValue 新值
+     * @return true 设置成功（原值匹配），false 设置失败
+     */
+    public static <T> boolean compareAndSet(@NonNull String key, T expected, T newValue) {
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then redis.call('set', KEYS[1], ARGV[2]) return 1 else return 0 end";
+        try {
+            RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
+            Long result = redisMasterTemplate.execute(redisScript, Collections.singletonList(key), expected, newValue);
+            return result != null && result > 0;
+        } catch (Exception e) {
+            log.error("Redis compareAndSet error, key: {}", key, e);
+            return false;
+        }
+    }
+
+    // endregion----------------------   通用方法完善 end   ------------------------
 
 }
