@@ -37,19 +37,19 @@ public class AccessTokenAuthFilter implements GlobalFilter, Ordered {
         }
 
         return webClientBuilder.build().get().uri(CHECK_TOKEN_URI + "?token=" + token)
-                .retrieve().bodyToMono(Map.class).flatMap(response -> {
-                    // 2. 验证通过后注入appId
-                    String appId = (String) response.get("data");
-                    ServerHttpRequest newRequest = exchange.getRequest().mutate()
-                            .header("X-App-Id", appId)
-                            .header("X-App-Key", appId)
-                            .header("X-App-Name", appId)
-                            .build();
-                    ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
-                    return chain.filter(newExchange);
-                }).onErrorResume(e -> {
-                    throw new ServiceException(StatusCode.NOT_PERMISSION);
-                });
+            .retrieve().bodyToMono(Map.class).flatMap(response -> {
+                // 2. 验证通过后注入appId
+                String appId = (String) response.get("data");
+                ServerHttpRequest newRequest = exchange.getRequest().mutate()
+                    .header("X-App-Id", appId)
+                    .header("X-App-Key", appId)
+                    .header("X-App-Name", appId)
+                    .build();
+                ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
+                return chain.filter(newExchange);
+            }).onErrorResume(e -> {
+                throw new ServiceException(StatusCode.NOT_PERMISSION);
+            });
     }
 
 

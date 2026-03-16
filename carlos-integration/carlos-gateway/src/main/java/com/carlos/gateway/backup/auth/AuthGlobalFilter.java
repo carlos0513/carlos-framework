@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
-    private final GatewayAuthProperties authProperties;
+    private final com.carlos.gateway.auth.GatewayAuthProperties authProperties;
 
 
     @Override

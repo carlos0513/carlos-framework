@@ -28,11 +28,11 @@ public class GatewayAuthProperties implements InitializingBean {
      * 默认认证白名单
      */
     private final static Set<String> DEFAULT_WHITE = Sets
-            .newHashSet(
-                    "/csrf",
-                    "/auth/oauth/token",
-                    "/auth/rsa/public"
-            );
+        .newHashSet(
+            "/csrf",
+            "/auth/oauth/token",
+            "/auth/rsa/public"
+        );
 
     /**
      * 是否开启认证   authenticate

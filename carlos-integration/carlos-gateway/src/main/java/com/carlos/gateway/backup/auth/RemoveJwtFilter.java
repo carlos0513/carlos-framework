@@ -25,7 +25,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class RemoveJwtFilter implements WebFilter {
 
-    private final GatewayAuthProperties authProperties;
+    private final com.carlos.gateway.auth.GatewayAuthProperties authProperties;
 
 
     @Override

@@ -46,10 +46,10 @@ public class RoleCheckGlobalFilter implements GlobalFilter {
         URI uri = request.getURI();
         String path = uri.getPath();
         // 获取菜单和api映射关系
-        List<MenuApiMapping> mapping = gatewayProperties.getMappings();
+        List<com.carlos.gateway.auth.MenuApiMapping> mapping = gatewayProperties.getMappings();
         HashSet<String> needleMenu = Sets.newHashSet();
-        for (MenuApiMapping entry : mapping) {
-            for (ApiInfo apiInfo : entry.getApis()) {
+        for (com.carlos.gateway.auth.MenuApiMapping entry : mapping) {
+            for (com.carlos.gateway.auth.ApiInfo apiInfo : entry.getApis()) {
                 if (apiInfo.getMethod().equals(method) && PathMatchUtil.match(apiInfo.getUrl(), path)) {
                     needleMenu.add(entry.getMenuPath());
                 }
@@ -72,9 +72,9 @@ public class RoleCheckGlobalFilter implements GlobalFilter {
         if (RedisUtil.hasKey(tokenKey)) {
             // 如果有缓存，则直接从缓存中获取
             String cacheValue = RedisUtil.getValue(tokenKey);
-            List<UserMenu> menus = JSONUtil.toList(cacheValue, UserMenu.class);
+            List<com.carlos.gateway.auth.UserMenu> menus = JSONUtil.toList(cacheValue, com.carlos.gateway.auth.UserMenu.class);
             // 获取当前请求的菜单ID
-            for (UserMenu menu : menus) {
+            for (com.carlos.gateway.auth.UserMenu menu : menus) {
                 if (needleMenu.stream().anyMatch(m -> m.equals(menu.getPath()))) {
                     return chain.filter(exchange);
                 }

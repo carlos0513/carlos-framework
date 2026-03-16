@@ -18,11 +18,11 @@ import org.springframework.core.annotation.Order;
  * @date 2021/11/4 9:43
  */
 @Configuration
-@EnableConfigurationProperties(GatewayAuthProperties.class)
+@EnableConfigurationProperties(com.carlos.gateway.auth.GatewayAuthProperties.class)
 @AllArgsConstructor
 public class GatewayAuthConfig {
 
-    private final GatewayAuthProperties authProperties;
+    private final com.carlos.gateway.auth.GatewayAuthProperties authProperties;
 
     /**
      * 注册全局认证过滤器
@@ -30,14 +30,14 @@ public class GatewayAuthConfig {
     @Bean
     @Order(GlobalFilterOrder.ORDER_FIRST)
     public GlobalFilter authGlobalFilter() {
-        return new AuthGlobalFilter(authProperties);
+        return new com.carlos.gateway.auth.AuthGlobalFilter(authProperties);
     }
 
     /**
      * token去除过滤器
      */
     @Bean
-    public RemoveJwtFilter removeJwtFilter() {
-        return new RemoveJwtFilter(authProperties);
+    public com.carlos.gateway.auth.RemoveJwtFilter removeJwtFilter() {
+        return new com.carlos.gateway.auth.RemoveJwtFilter(authProperties);
     }
 }

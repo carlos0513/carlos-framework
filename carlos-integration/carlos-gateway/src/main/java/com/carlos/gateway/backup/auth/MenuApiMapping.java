@@ -22,5 +22,5 @@ public class MenuApiMapping {
     /** 菜单路径 */
     private String menuPath;
     /** 接口路径 */
-    private List<ApiInfo> apis;
+    private List<com.carlos.gateway.auth.ApiInfo> apis;
 }
