@@ -2,13 +2,41 @@
 ---
 carlos:
   encrypt:
+    # SM4 国密对称加密配置
     sm4:
-      enabled: true
-      encrypt-mode: cbc
-      key: asdfghjklmnbvcx,
-      iv: mnbvcxzpoiuytre1
+      enabled: true                      # 启用 SM4 加密
+      encrypt-mode: cbc                  # 加密模式：cbc 或 ecb
+      key: asdfghjklmnbvcx,             # 密钥（16 字节，不足会自动 MD5 处理）
+      iv: mnbvcxzpoiuytre1               # 初始化向量（CBC 模式必需，16 字节）
+      store-type: base64                 # 存储格式：base64 或 hex
+
+    # SM2 国密非对称加密配置
     sm2:
-      enabled: true
+      enabled: true                      # 启用 SM2 加密
       public-key: 0403c7a7250306531238d49c2e0146e48217f2d65b28ed1d61565bd40472c7516bc78574de0a89f9067328558d656ecdc2504f49bb2bd843a9cfa9b404463ed453
       private-key: 3134665e1e009bab370738fd5ff1dabc7f390b683885c321f1523f4f725e8aa1
+      store-type: base64                 # 存储格式：base64 或 hex
+
+    # AES 对称加密配置（可选）
+    aes:
+      enabled: false                     # 启用 AES 加密
+      key-size: 256                      # 密钥长度：128/192/256
+      encrypt-mode: cbc                  # 加密模式：cbc、ecb、gcm 等
+      padding: pkcs5padding              # 填充方式
+      key:                               # 密钥（16/24/32 字节）
+      iv:                                # 初始化向量（CBC 模式需要）
+
+    # RSA 非对称加密配置（可选）
+    rsa:
+      enabled: false                     # 启用 RSA 加密
+      key-size: 2048                     # 密钥长度：1024/2048/3072/4096
+      public-key:                        # 公钥（Base64 格式）
+      private-key:                       # 私钥（Base64 格式）
+
+    # 哈希算法配置（可选）
+    hash:
+      default-algorithm: sm3             # 默认哈希算法：md5/sha1/sha256/sha512/sm3
+      salt-enabled: true                 # 是否启用加盐
+      salt:                              # 全局盐值
+
 ##############################  encrypt配置 end   ###########################
