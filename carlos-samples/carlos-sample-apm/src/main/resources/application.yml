@@ -1,0 +1,48 @@
+server:
+  port: 9813
+
+spring:
+  application:
+    name: carlos-sample-apm
+
+carlos:
+  apm:
+    # 是否启用 APM 模块
+    enabled: true
+    # Sleuth 配置
+    sleuth:
+      enabled: true
+      # 采样率 (0.0 - 1.0)，1.0 表示全量采样，生产环境建议 0.1
+      probability: 1.0
+      # 传播类型
+      propagation-type:
+        - B3
+      # 是否启用 Web 追踪
+      web-enabled: true
+      # 跳过的 URL 路径
+      skip-paths:
+        - /actuator/**
+        - /health
+        - /favicon.ico
+    # SkyWalking 配置
+    skywalking:
+      enabled: true
+      # 是否启用日志上报
+      log-report-enabled: true
+    # MDC 配置
+    mdc:
+      enabled: true
+      # Trace ID 在 MDC 中的 key
+      trace-id-key: traceId
+      # Span ID 在 MDC 中的 key
+      span-id-key: spanId
+      # 是否将 Trace ID 添加到响应头
+      add-to-response: true
+      # 响应头名称
+      response-header-name: X-Trace-Id
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.carlos: debug

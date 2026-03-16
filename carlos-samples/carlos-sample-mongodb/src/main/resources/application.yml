@@ -1,0 +1,32 @@
+server:
+  port: 9818
+
+spring:
+  application:
+    name: carlos-sample-mongodb
+  data:
+    mongodb:
+      # MongoDB 连接配置
+      uri: mongodb://localhost:27017/carlos_sample
+      # 或者使用分片配置
+      # host: localhost
+      # port: 27017
+      # database: carlos_sample
+      # username: 
+      # password: 
+
+# Carlos 框架配置
+carlos:
+  boot:
+    cors:
+      allowed-origins:
+        - "*"
+    enums:
+      enabled: true
+      scan-package: com.carlos
+
+# 日志配置
+logging:
+  level:
+    com.carlos.mongodb: debug
+    org.springframework.data.mongodb: debug

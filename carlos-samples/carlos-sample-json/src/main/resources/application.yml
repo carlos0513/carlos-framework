@@ -1,0 +1,15 @@
+# JSON 序列化示例应用配置
+server:
+  port: 9813
+
+spring:
+  application:
+    name: carlos-sample-json
+
+# 日志配置
+logging:
+  level:
+    com.carlos.sample.json: debug
+    org.springframework.web: info
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

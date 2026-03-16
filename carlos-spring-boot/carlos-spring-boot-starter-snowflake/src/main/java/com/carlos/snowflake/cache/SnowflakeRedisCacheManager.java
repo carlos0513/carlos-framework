@@ -42,7 +42,7 @@ public class SnowflakeRedisCacheManager implements SnowflakeCacheManager {
         bean.setExpireTime(bean.getCreateTime().plusSeconds(redisExpire.getSeconds()));
         long refresh = redisExpire.getSeconds() - 30 * 60;
         snowflakeRedisKey = properties.getNamespace() + StrUtil.COLON + bean.getWorkerId() + StrUtil.UNDERLINE + bean.getDataCenterId();
-        Boolean save = RedisUtil.setIfAbsent(snowflakeRedisKey, bean, properties.getRedisExpire().getSeconds());
+        Boolean save = RedisUtil.setIfAbsent(snowflakeRedisKey, bean, properties.getRedisExpire().getSeconds(), TimeUnit.SECONDS);
         if (save != null || save) {
             // 执行定期更新
             ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,

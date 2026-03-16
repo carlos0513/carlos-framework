@@ -1,0 +1,42 @@
+server:
+  port: 9816
+
+spring:
+  application:
+    name: carlos-sample-flowable
+  datasource:
+    url: jdbc:mysql://localhost:3306/carlos_flowable?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# Flowable配置
+carlos:
+  flowable:
+    # 是否启用Flowable
+    enabled: true
+    # 是否自动部署流程定义
+    auto-deploy: true
+    # 流程定义文件位置
+    process-definition-location: classpath*:/processes/**/*.bpmn20.xml
+    # 是否启用历史记录
+    history-enabled: true
+    # 历史记录级别: none, activity, audit, full
+    history-level: audit
+    # 是否启用异步执行器
+    async-executor-enabled: false
+    # 异步执行器配置
+    async-executor:
+      core-pool-size: 2
+      max-pool-size: 10
+      queue-size: 100
+      keep-alive-time: 60
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.carlos: debug
+    org.flowable: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

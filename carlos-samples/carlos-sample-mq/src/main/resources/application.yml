@@ -1,0 +1,69 @@
+server:
+  port: 9819
+
+spring:
+  application:
+    name: carlos-sample-mq
+
+carlos:
+  mq:
+    # MQ 类型：auto(自动检测) / rabbitmq / rocketmq / kafka
+    type: auto
+
+    # 全局配置
+    global:
+      send-timeout: 3s
+      max-retry-times: 3
+      enable-trace: true
+
+    # RocketMQ 配置
+    rocketmq:
+      name-server: localhost:9876
+      producer:
+        group: sample-producer-group
+        send-message-timeout: 3000
+        retry-times-when-send-failed: 2
+        retry-times-when-send-async-failed: 2
+      consumer:
+        group: sample-consumer-group
+        consume-thread-min: 5
+        consume-thread-max: 20
+
+    # RabbitMQ 配置（备选）
+    # rabbitmq:
+    #   host: localhost
+    #   port: 5672
+    #   username: guest
+    #   password: guest
+
+    # Kafka 配置（备选）
+    # kafka:
+    #   bootstrap-servers:
+    #     - localhost:9092
+
+  boot:
+    cors:
+      allowed-origins:
+        - 'http://localhost:8080'
+        - 'http://localhost:8081'
+
+  openapi:
+    enable: true
+    title: MQ示例接口
+    description: Carlos MQ 消息队列示例接口文档
+    version: 1.0.0
+    base-package: com.carlos.mq.controller
+
+knife4j:
+  enable: true
+  production: false
+  setting:
+    enableDebug: true
+    language: zh-CN
+
+logging:
+  level:
+    root: info
+    com.carlos: debug
+  file:
+    path: log/mq-sample

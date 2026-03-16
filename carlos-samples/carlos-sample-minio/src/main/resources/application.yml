@@ -1,0 +1,23 @@
+server:
+  port: 9817
+
+spring:
+  application:
+    name: carlos-sample-minio
+
+# MinIO 配置
+carlos:
+  minio:
+    enabled: true
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket-name: carlos-sample
+    # 是否自动创建 bucket
+    auto-create-bucket: true
+
+# 日志配置
+logging:
+  level:
+    com.carlos: DEBUG
+    io.minio: DEBUG
