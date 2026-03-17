@@ -23,6 +23,7 @@
     <module>carlos-spring-boot-starter-datacenter</module>
     <module>carlos-spring-boot-starter-datascope</module>
     <module>carlos-spring-boot-starter-disruptor</module>
+    <module>carlos-spring-boot-starter-migration</module>
     <module>carlos-spring-boot-starter-docking</module>
     <module>carlos-spring-boot-starter-encrypt</module>
     <module>carlos-spring-boot-starter-flowable</module>

@@ -46,7 +46,7 @@
     <!--<mybatis-plus.version>3.5.2</mybatis-plus.version>-->
     <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
     <!--<mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>-->
-    <alibaba.seata.version>2.5.0</alibaba.seata.version>        <!-- SCA 2025.0.0.0 推荐版本 -->
+    <alibaba.seata.version>2.0.0</alibaba.seata.version>        <!-- SCA 2025.0.0.0 推荐版本 -->
     <!--<alibaba.seata.version>1.5.1</alibaba.seata.version>-->
 
     <!-- 工具 -->
@@ -68,6 +68,8 @@
 
 
     <fastjson.version>2.0.60</fastjson.version>
+    <gson.version>2.11.0</gson.version>
+    <json-path.version>2.9.0</json-path.version>
     <guava.version>33.4.8-jre</guava.version>
 
     <!-- Redis & Cache -->
@@ -95,6 +97,9 @@
 
     <!-- High Performance -->
     <disruptor.version>3.4.4</disruptor.version>
+
+    <!-- Database Migration -->
+    <liquibase.version>4.29.0</liquibase.version>
 
     <!-- Encryption -->
     <bouncycastle.version>1.70</bouncycastle.version>
@@ -241,6 +246,24 @@
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
         <version>${fastjson.version}</version>
+      </dependency>
+      <!-- Fastjson2 -->
+      <dependency>
+        <groupId>com.alibaba.fastjson2</groupId>
+        <artifactId>fastjson2</artifactId>
+        <version>${fastjson.version}</version>
+      </dependency>
+      <!-- Gson -->
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
+      </dependency>
+      <!-- JsonPath -->
+      <dependency>
+        <groupId>com.jayway.jsonpath</groupId>
+        <artifactId>json-path</artifactId>
+        <version>${json-path.version}</version>
       </dependency>
       <!-- 解析客户端操作系统、浏览器等 -->
       <dependency>
@@ -508,6 +531,12 @@
         <artifactId>carlos-spring-boot-starter-disruptor</artifactId>
         <version>${revision}</version>
       </dependency>
+      <!-- 数据库迁移组件 -->
+      <dependency>
+        <groupId>com.carlos</groupId>
+        <artifactId>carlos-spring-boot-starter-migration</artifactId>
+        <version>${revision}</version>
+      </dependency>
       <dependency>
         <groupId>com.carlos</groupId>
         <artifactId>carlos-spring-boot-starter-openapi</artifactId>
@@ -599,6 +628,13 @@
         <groupId>com.lmax</groupId>
         <artifactId>disruptor</artifactId>
         <version>${disruptor.version}</version>
+      </dependency>
+
+      <!-- Database Migration -->
+      <dependency>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-core</artifactId>
+        <version>${liquibase.version}</version>
       </dependency>
 
       <!-- Encryption -->

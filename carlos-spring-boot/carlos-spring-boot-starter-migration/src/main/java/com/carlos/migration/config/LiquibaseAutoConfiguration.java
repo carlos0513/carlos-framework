@@ -1,0 +1,117 @@
+package com.carlos.migration.config;
+
+import com.carlos.migration.core.MultiDataSourceLiquibase;
+import com.carlos.migration.listener.MigrationEventListener;
+import com.carlos.migration.service.MigrationService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
+
+import javax.sql.DataSource;
+import java.util.Map;
+
+/**
+ * Liquibase 自动配置类
+ * 提供数据库迁移功能的自动配置
+ *
+ * @author carlos
+ * @since 3.0.0
+ */
+@Slf4j
+@AutoConfiguration(after = DataSourceAutoConfiguration.class)
+@ConditionalOnClass({liquibase.integration.spring.SpringLiquibase.class})
+@ConditionalOnProperty(prefix = "carlos.migration", name = "enabled", havingValue = "true", matchIfMissing = true)
+@EnableConfigurationProperties(MigrationProperties.class)
+public class LiquibaseAutoConfiguration {
+
+    private final MigrationProperties migrationProperties;
+    private final ResourceLoader resourceLoader;
+
+    public LiquibaseAutoConfiguration(MigrationProperties migrationProperties, ResourceLoader resourceLoader) {
+        this.migrationProperties = migrationProperties;
+        this.resourceLoader = resourceLoader;
+    }
+
+    /**
+     * 多数据源 Liquibase 配置
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public MultiDataSourceLiquibase multiDataSourceLiquibase(
+        ObjectProvider<DataSource> dataSourceProvider,
+        ObjectProvider<Map<String, DataSource>> multiDataSourcesProvider) {
+
+        MultiDataSourceLiquibase liquibase = new MultiDataSourceLiquibase();
+        liquibase.setMigrationProperties(migrationProperties);
+        liquibase.setResourceLoader(resourceLoader);
+
+        // 设置主数据源
+        DataSource primaryDataSource = dataSourceProvider.getIfAvailable();
+        if (primaryDataSource != null) {
+            liquibase.setPrimaryDataSource(primaryDataSource);
+        }
+
+        // 设置多数据源
+        Map<String, DataSource> multiDataSources = multiDataSourcesProvider.getIfAvailable();
+        if (multiDataSources != null) {
+            liquibase.setMultiDataSources(multiDataSources);
+        }
+
+        log.info("[Migration] Liquibase 多数据源迁移配置已初始化");
+        return liquibase;
+    }
+
+    /**
+     * 迁移服务
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public MigrationService migrationService(MultiDataSourceLiquibase multiDataSourceLiquibase) {
+        return new MigrationService(multiDataSourceLiquibase);
+    }
+
+    /**
+     * 迁移事件监听器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public MigrationEventListener migrationEventListener() {
+        return new MigrationEventListener();
+    }
+
+    /**
+     * 内部配置类：兼容 Spring Boot 原生 LiquibaseProperties
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(LiquibaseProperties.class)
+    static class SpringLiquibaseCompatibilityConfiguration {
+
+        /**
+         * 将 Carlos Migration 配置同步到 Spring LiquibaseProperties
+         */
+        @Bean
+        @ConditionalOnMissingBean
+        public LiquibaseProperties liquibaseProperties(MigrationProperties migrationProperties) {
+            LiquibaseProperties properties = new LiquibaseProperties();
+            MigrationProperties.DataSourceConfig primary = migrationProperties.getPrimary();
+
+            properties.setChangeLog(primary.getChangeLog());
+            properties.setContexts(primary.getContexts());
+            properties.setLabels(primary.getLabels());
+            properties.setDefaultSchema(primary.getDefaultSchema());
+            properties.setDropFirst(primary.isDropFirst());
+            properties.setEnabled(migrationProperties.isEnabled() && primary.isEnabled());
+
+            return properties;
+        }
+    }
+}
