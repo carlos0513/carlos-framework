@@ -10,14 +10,6 @@ package com.carlos.datasource.config;
  */
 public interface MybatisCommonField {
 
-    String DEFAULT_PRIMARY_KEY_FILED_NAME = "id";
-    String DEFAULT_VERSION_FILED_NAME = "version";
-    String DEFAULT_LOGIC_DELETE_FILED_NAME = "is_deleted";
-    String DEFAULT_UPDATE_USER_FILED_NAME = "updateBy";
-    String DEFAULT_UPDATE_TIME_FILED_NAME = "updateTime";
-    String DEFAULT_CREATE_USER_FILED_NAME = "createBy";
-    String DEFAULT_CREATE_TIME_FILED_NAME = "createTime";
-
 
     /**
      * 主键字段名称

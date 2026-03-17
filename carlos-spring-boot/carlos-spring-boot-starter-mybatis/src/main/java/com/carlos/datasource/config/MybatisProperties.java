@@ -1,6 +1,7 @@
 package com.carlos.datasource.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.carlos.datasource.MybatisConstant;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -98,37 +99,37 @@ public class MybatisProperties {
         /**
          * 创建时间字段名
          */
-        private String createTimeField = "createTime";
+        private String createTimeField = MybatisConstant.DEFAULT_CREATE_TIME_FILED_NAME;
 
         /**
          * 更新时间字段名
          */
-        private String updateTimeField = "updateTime";
+        private String updateTimeField = MybatisConstant.DEFAULT_UPDATE_TIME_FILED_NAME;
 
         /**
          * 创建人字段名
          */
-        private String createByField = "createBy";
+        private String createByField = MybatisConstant.DEFAULT_CREATE_USER_FILED_NAME;
 
         /**
          * 更新人字段名
          */
-        private String updateByField = "updateBy";
+        private String updateByField = MybatisConstant.DEFAULT_UPDATE_USER_FILED_NAME;
 
         /**
          * 逻辑删除字段名
          */
-        private String logicDeleteField = "isDeleted";
+        private String logicDeleteField = MybatisConstant.DEFAULT_LOGIC_DELETE_FILED_NAME;
 
         /**
          * 版本号字段名
          */
-        private String versionField = "version";
+        private String versionField = MybatisConstant.DEFAULT_VERSION_FILED_NAME;
 
         /**
          * 租户ID字段名
          */
-        private String tenantIdField = "tenantId";
+        private String tenantIdField = MybatisConstant.DEFAULT_TENANT_ID_FILED_NAME;
 
         /**
          * 是否启用插入填充
@@ -222,7 +223,7 @@ public class MybatisProperties {
         return new MybatisCommonField() {
             @Override
             public String primaryKeyFiledName() {
-                return DEFAULT_PRIMARY_KEY_FILED_NAME;
+                return MybatisConstant.DEFAULT_PRIMARY_KEY_FILED_NAME;
             }
 
             @Override
