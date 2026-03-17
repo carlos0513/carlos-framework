@@ -1,13 +1,16 @@
 package com.carlos.encrypt.utils;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.Mode;
 import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.carlos.encrypt.enums.AesKeySize;
 import com.carlos.encrypt.exception.EncryptException;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -302,7 +305,9 @@ public class AesUtil {
      * @return 密钥字符串（Base64）
      */
     public static String generateKey(AesKeySize keySize) {
-        return SecureUtil.generateKey("AES", keySize.getBits()).getEncodedBase64();
+        SecretKey aes = SecureUtil.generateKey("AES", keySize.getBits());
+
+        return Base64.encode(aes.getEncoded());
     }
 
     /**
@@ -323,7 +328,7 @@ public class AesUtil {
         byte[] iv = new byte[16];
         java.security.SecureRandom random = new java.security.SecureRandom();
         random.nextBytes(iv);
-        return cn.hutool.core.codec.Base64.encode(iv);
+        return Base64.encode(iv);
     }
 
     /**
@@ -342,7 +347,7 @@ public class AesUtil {
         // 处理密钥长度
         if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
             // 使用 MD5 处理为 16 字节
-            keyBytes = cn.hutool.crypto.digest.DigestUtil.md5(key);
+            keyBytes = DigestUtil.md5(key);
         }
 
         // 处理 IV
