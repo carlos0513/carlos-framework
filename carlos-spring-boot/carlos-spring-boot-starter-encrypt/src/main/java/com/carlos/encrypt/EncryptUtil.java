@@ -1,15 +1,19 @@
 package com.carlos.encrypt;
 
-import cn.hutool.crypto.asymmetric.KeyType;
-import cn.hutool.crypto.asymmetric.SM2;
-import cn.hutool.crypto.symmetric.SM4;
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.*;
+import cn.hutool.crypto.digest.DigestUtil;
+import cn.hutool.crypto.digest.SM3;
+import cn.hutool.crypto.symmetric.AES;
+import cn.hutool.crypto.symmetric.DESede;
 import com.carlos.encrypt.config.EncryptProperties;
 import com.carlos.encrypt.enums.AesKeySize;
 import com.carlos.encrypt.enums.AlgorithmType;
 import com.carlos.encrypt.enums.RsaKeySize;
 import com.carlos.encrypt.exception.EncryptException;
 import com.carlos.encrypt.key.RsaKeyPair;
-import com.carlos.encrypt.utils.*;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.math.ec.ECPoint;
@@ -28,10 +32,10 @@ import java.security.SecureRandom;
  * </p>
  *
  * <p>
- * 提供常用的加解密算法支持，包括：
+ * 基于 Hutool 封装，提供常用的加解密算法支持，包括：
  * <ul>
  *   <li>国密算法：SM2（非对称）、SM3（哈希）、SM4（对称）</li>
- *   <li>国际算法：AES、RSA、DES、3DES</li>
+ *   <li>国际算法：AES、RSA、3DES</li>
  *   <li>哈希算法：MD5、SHA-1、SHA-256、SHA-512</li>
  *   <li>编码：Base64</li>
  * </ul>
@@ -42,13 +46,13 @@ import java.security.SecureRandom;
  */
 public class EncryptUtil {
 
-    private static volatile SM4 sm4;
+    private static volatile cn.hutool.crypto.symmetric.SM4 sm4;
     private static volatile SM2 sm2;
     private static volatile EncryptProperties encryptProperties;
     private static volatile boolean initialized = false;
     private static final Object INIT_LOCK = new Object();
 
-    public EncryptUtil(final SM4 sm4, final SM2 sm2, final EncryptProperties encryptProperties) {
+    public EncryptUtil(final cn.hutool.crypto.symmetric.SM4 sm4, final SM2 sm2, final EncryptProperties encryptProperties) {
         if (!initialized) {
             synchronized (INIT_LOCK) {
                 if (!initialized) {
@@ -64,7 +68,7 @@ public class EncryptUtil {
     /**
      * 静态初始化方法，用于手动初始化工具类
      */
-    public static void init(final SM4 sm4, final SM2 sm2, final EncryptProperties encryptProperties) {
+    public static void init(final cn.hutool.crypto.symmetric.SM4 sm4, final SM2 sm2, final EncryptProperties encryptProperties) {
         if (!initialized) {
             synchronized (INIT_LOCK) {
                 if (!initialized) {
@@ -282,14 +286,22 @@ public class EncryptUtil {
     // region ====================== AES 对称加密 ======================
 
     /**
-     * AES 加密
+     * AES 加密（CBC 模式，PKCS5Padding）
      *
      * @param data 待加密数据
-     * @param key  密钥
+     * @param key  密钥（16/24/32 字节）
      * @return 加密后的 Hex 字符串
      */
     public static String aesEncrypt(String data, String key) {
-        return AesUtil.encrypt(data, key);
+        if (StrUtil.isBlank(data)) {
+            return data;
+        }
+        try {
+            AES aes = SecureUtil.aes(key.getBytes());
+            return aes.encryptHex(data);
+        } catch (Exception e) {
+            throw new EncryptException("AES 加密失败", e);
+        }
     }
 
     /**
@@ -300,7 +312,15 @@ public class EncryptUtil {
      * @return 加密后的 Base64 字符串
      */
     public static String aesEncryptBase64(String data, String key) {
-        return AesUtil.encryptBase64(data, key);
+        if (StrUtil.isBlank(data)) {
+            return data;
+        }
+        try {
+            AES aes = SecureUtil.aes(key.getBytes());
+            return aes.encryptBase64(data);
+        } catch (Exception e) {
+            throw new EncryptException("AES 加密失败", e);
+        }
     }
 
     /**
@@ -311,7 +331,15 @@ public class EncryptUtil {
      * @return 解密后的原文
      */
     public static String aesDecrypt(String encryptedData, String key) {
-        return AesUtil.decrypt(encryptedData, key);
+        if (StrUtil.isBlank(encryptedData)) {
+            return encryptedData;
+        }
+        try {
+            AES aes = SecureUtil.aes(key.getBytes());
+            return aes.decryptStr(encryptedData);
+        } catch (Exception e) {
+            throw new EncryptException("AES 解密失败", e);
+        }
     }
 
     /**
@@ -322,7 +350,15 @@ public class EncryptUtil {
      * @return 解密后的原文
      */
     public static String aesDecryptBase64(String encryptedData, String key) {
-        return AesUtil.decryptBase64(encryptedData, key);
+        if (StrUtil.isBlank(encryptedData)) {
+            return encryptedData;
+        }
+        try {
+            AES aes = SecureUtil.aes(key.getBytes());
+            return aes.decryptStr(encryptedData);
+        } catch (Exception e) {
+            throw new EncryptException("AES 解密失败", e);
+        }
     }
 
     /**
@@ -332,7 +368,7 @@ public class EncryptUtil {
      * @return 密钥字符串（Base64）
      */
     public static String generateAesKey(AesKeySize keySize) {
-        return AesUtil.generateKey(keySize);
+        return java.util.Base64.getEncoder().encodeToString(SecureUtil.generateKey("AES", keySize.getBits()).getEncoded());
     }
 
     /**
@@ -341,7 +377,7 @@ public class EncryptUtil {
      * @return 密钥字符串（Base64）
      */
     public static String generateAesKey() {
-        return AesUtil.generateKey();
+        return generateAesKey(AesKeySize.BITS_256);
     }
     // endregion ====================== AES 结束 ======================
 
@@ -356,7 +392,15 @@ public class EncryptUtil {
      * @return 加密后的 Hex 字符串
      */
     public static String rsaEncrypt(String data, String publicKey) {
-        return RsaUtil.encrypt(data, publicKey);
+        if (StrUtil.isBlank(data)) {
+            return data;
+        }
+        try {
+            RSA rsa = SecureUtil.rsa(null, publicKey);
+            return rsa.encryptHex(data, KeyType.PublicKey);
+        } catch (Exception e) {
+            throw new EncryptException("RSA 加密失败", e);
+        }
     }
 
     /**
@@ -367,7 +411,15 @@ public class EncryptUtil {
      * @return 加密后的 Base64 字符串
      */
     public static String rsaEncryptBase64(String data, String publicKey) {
-        return RsaUtil.encryptBase64(data, publicKey);
+        if (StrUtil.isBlank(data)) {
+            return data;
+        }
+        try {
+            RSA rsa = SecureUtil.rsa(null, publicKey);
+            return rsa.encryptBase64(data, KeyType.PublicKey);
+        } catch (Exception e) {
+            throw new EncryptException("RSA 加密失败", e);
+        }
     }
 
     /**
@@ -378,7 +430,15 @@ public class EncryptUtil {
      * @return 解密后的原文
      */
     public static String rsaDecrypt(String encryptedData, String privateKey) {
-        return RsaUtil.decrypt(encryptedData, privateKey);
+        if (StrUtil.isBlank(encryptedData)) {
+            return encryptedData;
+        }
+        try {
+            RSA rsa = SecureUtil.rsa(privateKey, null);
+            return rsa.decryptStr(encryptedData, KeyType.PrivateKey);
+        } catch (Exception e) {
+            throw new EncryptException("RSA 解密失败", e);
+        }
     }
 
     /**
@@ -389,7 +449,15 @@ public class EncryptUtil {
      * @return 解密后的原文
      */
     public static String rsaDecryptBase64(String encryptedData, String privateKey) {
-        return RsaUtil.decryptBase64(encryptedData, privateKey);
+        if (StrUtil.isBlank(encryptedData)) {
+            return encryptedData;
+        }
+        try {
+            RSA rsa = SecureUtil.rsa(privateKey, null);
+            return rsa.decryptStr(encryptedData, KeyType.PrivateKey);
+        } catch (Exception e) {
+            throw new EncryptException("RSA 解密失败", e);
+        }
     }
 
     /**
@@ -397,22 +465,40 @@ public class EncryptUtil {
      *
      * @param data       待签名数据
      * @param privateKey 私钥（Base64 格式）
-     * @return 签名后的 Hex 字符串
+     * @return 签名后的 Base64 字符串
      */
     public static String rsaSign(String data, String privateKey) {
-        return RsaUtil.sign(data, privateKey);
+        if (StrUtil.isBlank(data)) {
+            return data;
+        }
+        try {
+            Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, privateKey, null);
+            byte[] signed = sign.sign(data.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return java.util.Base64.getEncoder().encodeToString(signed);
+        } catch (Exception e) {
+            throw new EncryptException("RSA 签名失败", e);
+        }
     }
 
     /**
      * RSA 公钥验签
      *
      * @param data      原始数据
-     * @param sign      签名（Hex 格式）
+     * @param sign      签名（Base64 格式）
      * @param publicKey 公钥（Base64 格式）
      * @return 验签结果
      */
     public static boolean rsaVerify(String data, String sign, String publicKey) {
-        return RsaUtil.verify(data, sign, publicKey);
+        if (StrUtil.isBlank(data) || StrUtil.isBlank(sign)) {
+            return false;
+        }
+        try {
+            Sign verifySign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, null, publicKey);
+            byte[] signBytes = java.util.Base64.getDecoder().decode(sign);
+            return verifySign.verify(data.getBytes(java.nio.charset.StandardCharsets.UTF_8), signBytes);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -422,7 +508,9 @@ public class EncryptUtil {
      * @return RSA 密钥对
      */
     public static RsaKeyPair generateRsaKeyPair(RsaKeySize keySize) {
-        return RsaUtil.generateKeyPair(keySize);
+        KeyPair keyPair = SecureUtil.generateKeyPair("RSA", keySize.getBits());
+        RSA rsa = new RSA(keyPair.getPrivate().getEncoded(), keyPair.getPublic().getEncoded());
+        return new RsaKeyPair(rsa.getPublicKeyBase64(), rsa.getPrivateKeyBase64());
     }
 
     /**
@@ -431,39 +519,9 @@ public class EncryptUtil {
      * @return RSA 密钥对
      */
     public static RsaKeyPair generateRsaKeyPair() {
-        return RsaUtil.generateKeyPair();
+        return generateRsaKeyPair(RsaKeySize.BITS_2048);
     }
     // endregion ====================== RSA 结束 ======================
-
-
-    // region ====================== DES 对称加密 ======================
-
-    /**
-     * DES 加密
-     *
-     * @param data 待加密数据
-     * @param key  密钥（8 字节）
-     * @return 加密后的 Hex 字符串
-     * @deprecated 建议使用 {@link #aesEncrypt(String, String)}
-     */
-    @Deprecated
-    public static String desEncrypt(String data, String key) {
-        return DesUtil.encrypt(data, key);
-    }
-
-    /**
-     * DES 解密
-     *
-     * @param encryptedData 加密数据（Hex 格式）
-     * @param key           密钥
-     * @return 解密后的原文
-     * @deprecated 建议使用 {@link #aesDecrypt(String, String)}
-     */
-    @Deprecated
-    public static String desDecrypt(String encryptedData, String key) {
-        return DesUtil.decrypt(encryptedData, key);
-    }
-    // endregion ====================== DES 结束 ======================
 
 
     // region ====================== 3DES 对称加密 ======================
@@ -476,7 +534,15 @@ public class EncryptUtil {
      * @return 加密后的 Hex 字符串
      */
     public static String des3Encrypt(String data, String key) {
-        return Des3Util.encrypt(data, key);
+        if (StrUtil.isBlank(data)) {
+            return data;
+        }
+        try {
+            DESede des3 = SecureUtil.desede(key.getBytes());
+            return des3.encryptHex(data);
+        } catch (Exception e) {
+            throw new EncryptException("3DES 加密失败", e);
+        }
     }
 
     /**
@@ -487,7 +553,15 @@ public class EncryptUtil {
      * @return 解密后的原文
      */
     public static String des3Decrypt(String encryptedData, String key) {
-        return Des3Util.decrypt(encryptedData, key);
+        if (StrUtil.isBlank(encryptedData)) {
+            return encryptedData;
+        }
+        try {
+            DESede des3 = SecureUtil.desede(key.getBytes());
+            return des3.decryptStr(encryptedData);
+        } catch (Exception e) {
+            throw new EncryptException("3DES 解密失败", e);
+        }
     }
     // endregion ====================== 3DES 结束 ======================
 
@@ -501,7 +575,10 @@ public class EncryptUtil {
      * @return MD5 值
      */
     public static String md5(String data) {
-        return Md5Util.md5(data);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return DigestUtil.md5Hex(data);
     }
 
     /**
@@ -511,7 +588,10 @@ public class EncryptUtil {
      * @return MD5 值（16 位）
      */
     public static String md5_16(String data) {
-        return Md5Util.md5_16(data);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return DigestUtil.md5Hex16(data);
     }
 
     /**
@@ -522,7 +602,10 @@ public class EncryptUtil {
      * @return 加盐 MD5 值
      */
     public static String md5WithSalt(String data, String salt) {
-        return Md5Util.md5WithSalt(data, salt);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return DigestUtil.md5Hex(data + salt);
     }
 
     /**
@@ -533,7 +616,10 @@ public class EncryptUtil {
      * @return 是否匹配
      */
     public static boolean md5Verify(String data, String expected) {
-        return Md5Util.verify(data, expected);
+        if (StrUtil.isBlank(data) || StrUtil.isBlank(expected)) {
+            return false;
+        }
+        return md5(data).equalsIgnoreCase(expected);
     }
     // endregion ====================== MD5 结束 ======================
 
@@ -547,7 +633,10 @@ public class EncryptUtil {
      * @return SHA-1 值
      */
     public static String sha1(String data) {
-        return ShaUtil.sha1(data);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return DigestUtil.sha1Hex(data);
     }
 
     /**
@@ -557,7 +646,10 @@ public class EncryptUtil {
      * @return SHA-256 值
      */
     public static String sha256(String data) {
-        return ShaUtil.sha256(data);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return DigestUtil.sha256Hex(data);
     }
 
     /**
@@ -567,7 +659,10 @@ public class EncryptUtil {
      * @return SHA-512 值
      */
     public static String sha512(String data) {
-        return ShaUtil.sha512(data);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return DigestUtil.sha512Hex(data);
     }
 
     /**
@@ -578,7 +673,10 @@ public class EncryptUtil {
      * @return 加盐 SHA-256 值
      */
     public static String sha256WithSalt(String data, String salt) {
-        return ShaUtil.sha256WithSalt(data, salt);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return sha256(data + salt);
     }
 
     /**
@@ -589,7 +687,10 @@ public class EncryptUtil {
      * @return 是否匹配
      */
     public static boolean sha256Verify(String data, String expected) {
-        return ShaUtil.verifySha256(data, expected);
+        if (StrUtil.isBlank(data) || StrUtil.isBlank(expected)) {
+            return false;
+        }
+        return sha256(data).equalsIgnoreCase(expected);
     }
     // endregion ====================== SHA 结束 ======================
 
@@ -603,7 +704,10 @@ public class EncryptUtil {
      * @return SM3 值
      */
     public static String sm3(String data) {
-        return Sm3Util.sm3(data);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return new SM3().digestHex(data);
     }
 
     /**
@@ -614,7 +718,10 @@ public class EncryptUtil {
      * @return 加盐 SM3 值
      */
     public static String sm3WithSalt(String data, String salt) {
-        return Sm3Util.sm3WithSalt(data, salt);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return sm3(data + salt);
     }
 
     /**
@@ -625,7 +732,10 @@ public class EncryptUtil {
      * @return 是否匹配
      */
     public static boolean sm3Verify(String data, String expected) {
-        return Sm3Util.verify(data, expected);
+        if (StrUtil.isBlank(data) || StrUtil.isBlank(expected)) {
+            return false;
+        }
+        return sm3(data).equalsIgnoreCase(expected);
     }
     // endregion ====================== SM3 结束 ======================
 
@@ -639,7 +749,10 @@ public class EncryptUtil {
      * @return Base64 编码字符串
      */
     public static String base64Encode(String data) {
-        return Base64Util.encode(data);
+        if (StrUtil.isBlank(data)) {
+            return "";
+        }
+        return Base64.encode(data);
     }
 
     /**
@@ -649,7 +762,10 @@ public class EncryptUtil {
      * @return 解码后的字符串
      */
     public static String base64Decode(String base64Data) {
-        return Base64Util.decode(base64Data);
+        if (StrUtil.isBlank(base64Data)) {
+            return "";
+        }
+        return Base64.decodeStr(base64Data);
     }
 
     /**
@@ -659,7 +775,10 @@ public class EncryptUtil {
      * @return Base64 编码字符串
      */
     public static String base64Encode(byte[] data) {
-        return Base64Util.encode(data);
+        if (data == null || data.length == 0) {
+            return "";
+        }
+        return Base64.encode(data);
     }
 
     /**
@@ -669,7 +788,10 @@ public class EncryptUtil {
      * @return 解码后的字节数组
      */
     public static byte[] base64DecodeToBytes(String base64Data) {
-        return Base64Util.decodeToBytes(base64Data);
+        if (StrUtil.isBlank(base64Data)) {
+            return new byte[0];
+        }
+        return Base64.decode(base64Data);
     }
     // endregion ====================== Base64 结束 ======================
 
@@ -694,11 +816,9 @@ public class EncryptUtil {
     public static String generateKey(AlgorithmType algorithmType) {
         switch (algorithmType) {
             case AES:
-                return AesUtil.generateKey();
-            case DES:
-                return DesUtil.generateKey();
+                return generateAesKey();
             case DES3:
-                return Des3Util.generateKey();
+                return java.util.Base64.getEncoder().encodeToString(SecureUtil.generateKey("DESede").getEncoded());
             case RSA:
                 return "请使用 generateRsaKeyPair() 方法生成 RSA 密钥对";
             case SM2:
