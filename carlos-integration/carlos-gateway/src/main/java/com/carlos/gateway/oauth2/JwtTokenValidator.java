@@ -14,11 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 
+import java.io.Serializable;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -147,19 +150,21 @@ public class JwtTokenValidator implements TokenValidator {
         // 解析角色列表
         Object roles = payload.get("roles");
         if (roles instanceof List) {
-            context.setRoleIds(((List<?>) roles).stream()
+            Set<Serializable> roleIds = ((List<?>) roles).stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
-                .toList());
+                .collect(Collectors.toSet());
+            context.setRoleIds(roleIds);
         }
 
         // 解析部门列表
         Object depts = payload.get("depts");
         if (depts instanceof List) {
-            context.setDepartmentIds(((List<?>) depts).stream()
+            Set<Serializable> deptIds = ((List<?>) depts).stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
-                .toList());
+                .collect(Collectors.toSet());
+            context.setDepartmentIds(deptIds);
         }
 
         return context;

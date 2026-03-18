@@ -289,6 +289,16 @@
         <version>${mybatis-plus.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-core</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-extension</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.github.anwen-mp</groupId>
         <artifactId>mongo-plus-boot-starter</artifactId>
         <version>${mongodb-plus.version}</version>
@@ -402,7 +412,7 @@
       <!-- 核心模块 -->
       <dependency>
         <groupId>com.carlos</groupId>
-        <artifactId>carlos-spring-boot-starter-docking</artifactId>
+        <artifactId>carlos-spring-boot-starter-integration</artifactId>
         <version>${revision}</version>
       </dependency>
       <!-- 数据权限 -->
@@ -440,6 +450,11 @@
       <dependency>
         <groupId>com.carlos</groupId>
         <artifactId>carlos-spring-boot-starter-minio</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.carlos</groupId>
+        <artifactId>carlos-spring-boot-starter-oss</artifactId>
         <version>${revision}</version>
       </dependency>
 

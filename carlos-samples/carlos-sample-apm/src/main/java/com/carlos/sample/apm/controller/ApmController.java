@@ -4,7 +4,7 @@ import com.carlos.apm.TraceUtil;
 import com.carlos.apm.annotation.TraceTag;
 import com.carlos.apm.mdc.MdcUtil;
 import com.carlos.apm.skywalking.util.SkyWalkingUtil;
-import com.carlos.core.pojo.Result;
+import com.carlos.core.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,13 +94,13 @@ public class ApmController {
     @TraceTag(key = "order.userId", value = "#userId")
     @TraceTag(key = "order.amount", value = "#amount")
     public Result<Map<String, Object>> createOrder(
-            @RequestParam Long userId,
-            @RequestParam String productName,
-            @RequestParam Double amount) {
+        @RequestParam Long userId,
+        @RequestParam String productName,
+        @RequestParam Double amount) {
 
         String traceId = TraceUtil.getUnifiedTraceId();
         log.info("[TraceId: {}] 创建订单，用户: {}, 商品: {}, 金额: {}",
-                traceId, userId, productName, amount);
+            traceId, userId, productName, amount);
 
         // 添加业务标签
         TraceUtil.tag("order.product", productName);
@@ -127,7 +127,7 @@ public class ApmController {
     @GetMapping("/slow")
     @TraceTag(key = "apm.action", value = "'slow-operation'")
     public Result<Map<String, Object>> slowOperation(
-            @RequestParam(defaultValue = "1000") long sleepTime) {
+        @RequestParam(defaultValue = "1000") long sleepTime) {
 
         String traceId = TraceUtil.getUnifiedTraceId();
         log.info("[TraceId: {}] 开始执行耗时操作，预计耗时: {}ms", traceId, sleepTime);
@@ -164,7 +164,7 @@ public class ApmController {
     @GetMapping("/error")
     @TraceTag(key = "apm.action", value = "'simulate-error'")
     public Result<Map<String, Object>> simulateError(
-            @RequestParam(defaultValue = "false") boolean shouldError) {
+        @RequestParam(defaultValue = "false") boolean shouldError) {
 
         String traceId = TraceUtil.getUnifiedTraceId();
         log.info("[TraceId: {}] 模拟错误场景，是否触发错误: {}", traceId, shouldError);

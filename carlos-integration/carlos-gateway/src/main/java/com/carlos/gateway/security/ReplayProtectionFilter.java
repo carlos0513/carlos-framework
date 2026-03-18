@@ -150,7 +150,7 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
                                           String nonce, String signature) {
         return Mono.fromCallable(() -> {
             try {
-                String method = request.getMethodValue();
+                String method = request.getMethod().name();
                 String path = request.getURI().getPath();
                 String query = Optional.ofNullable(request.getURI().getQuery()).orElse("");
 

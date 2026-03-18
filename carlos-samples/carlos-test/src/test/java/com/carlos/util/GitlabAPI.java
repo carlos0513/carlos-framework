@@ -64,7 +64,7 @@ public class GitlabAPI {
                 List<String> groupIdss = StrUtil.split(groupIds, ",");
                 for (String groupId : groupIdss) {
                     gitlab.getGroupApi().addMember(groupId, user.getId(), level, expire);
-                    System.out.println("用户 " + user.getUsername() + " 已被添加到组 " + groupId + "。");
+                    System.out.println("用户 " + user.getUsername() + " 已被添加到组 " + groupId + "");
                 }
             }
             String projectIds = gitlabUser.getProjectIds();
@@ -72,7 +72,7 @@ public class GitlabAPI {
                 List<String> projectIdss = StrUtil.split(projectIds, ",");
                 for (String projectId : projectIdss) {
                     gitlab.getProjectApi().addMember(projectId, user.getId(), level, expire);
-                    System.out.println("用户 " + user.getUsername() + " 已被添加到仓库 " + projectId + "。");
+                    System.out.println("用户 " + user.getUsername() + " 已被添加到仓�?" + projectId + "");
                 }
             }
         }

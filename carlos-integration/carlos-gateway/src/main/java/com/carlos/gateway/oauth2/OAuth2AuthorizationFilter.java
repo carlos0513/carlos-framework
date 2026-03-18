@@ -52,21 +52,22 @@ public class OAuth2AuthorizationFilter implements GlobalFilter, Ordered {
         UserContext userContext = exchange.getAttribute(AuthConstant.USER_CONTEXT);
         if (userContext == null) {
             log.warn("No user context found for path: {}", path);
-            throw new ServiceException(StatusCode.FORBIDDEN, "Authentication required");
+            throw new ServiceException(StatusCode.NOT_PERMISSION, "Authentication required");
         }
 
         // 根据授权模式进行权限校验
-        return switch (properties.getAuthorizationMode()) {
+        Mono<Boolean> permissionMono = switch (properties.getAuthorizationMode()) {
             case RBAC -> checkRbacPermission(userContext, path, method);
             case ABAC -> checkAbacPermission(userContext, path, method, exchange);
-        }
-        .flatMap(hasPermission -> {
+        };
+
+        return permissionMono.flatMap(hasPermission -> {
             if (Boolean.TRUE.equals(hasPermission)) {
                 return chain.filter(exchange);
             }
             log.warn("User {} has no permission for {} {}",
                 userContext.getAccount(), method, path);
-            throw new ServiceException(StatusCode.FORBIDDEN, "Access denied");
+            throw new ServiceException(StatusCode.NOT_PERMISSION, "Access denied");
         });
     }
 
@@ -75,7 +76,7 @@ public class OAuth2AuthorizationFilter implements GlobalFilter, Ordered {
      */
     private Mono<Boolean> checkRbacPermission(UserContext userContext, String path, HttpMethod method) {
         // 从 Redis 或配置中心获取用户的角色权限映射
-        return permissionProvider.getUserPermissions(userContext.getUserId())
+        return permissionProvider.getUserPermissions(String.valueOf(userContext.getUserId()))
             .map(permissions -> {
                 // 检查是否拥有访问该资源的权限
                 String requiredPermission = method + ":" + path;

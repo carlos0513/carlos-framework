@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 系统用户 API提供的对象(API Object)
+ * 系统用户 API提供的对�?API Object)
  * </p>
  *
  * @author Carlos
@@ -22,7 +22,7 @@ public class OrgUserAO implements Serializable {
      */
     private Long id;
     /**
-     * 用户名
+     * 用户�?
      */
     private String account;
     /**
@@ -46,7 +46,7 @@ public class OrgUserAO implements Serializable {
      */
     private String address;
     /**
-     * 性别，0：保密, 1：男，2：女，默认0
+     * 性别�?：保�? 1：男�?：女，默�?
      */
     private Integer gender;
     /**
@@ -74,7 +74,7 @@ public class OrgUserAO implements Serializable {
      */
     private String educationBackground;
     /**
-     * 最后登录时间
+     * 最后登录时�?
      */
     private LocalDateTime lastLogin;
     /**
@@ -82,7 +82,7 @@ public class OrgUserAO implements Serializable {
      */
     private Integer loginCount;
     /**
-     * 创建者
+     * 创建�?
      */
     private Long createBy;
     /**
@@ -90,7 +90,7 @@ public class OrgUserAO implements Serializable {
      */
     private LocalDateTime createTime;
     /**
-     * 修改者
+     * 修改�?
      */
     private Long updateBy;
     /**

@@ -1,6 +1,6 @@
 package com.carlos.sample.datacenter.controller;
 
-import com.carlos.core.pojo.response.Result;
+import com.carlos.core.response.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,7 +41,7 @@ public class DatacenterController {
             createDictItem("3", "待审核", "pending", 3)
         );
 
-        return Result.success(dictList);
+        return Result.ok(dictList);
     }
 
     /**
@@ -57,7 +57,7 @@ public class DatacenterController {
         dict.put("remark", "系统启用状态");
         dict.put("createTime", "2024-01-01 00:00:00");
 
-        return Result.success(dict);
+        return Result.ok(dict);
     }
 
     /**
@@ -78,7 +78,7 @@ public class DatacenterController {
         );
 
         String configValue = configMap.getOrDefault(configKey, "default_value");
-        return Result.success(configValue);
+        return Result.ok(configValue);
     }
 
     /**
@@ -96,7 +96,7 @@ public class DatacenterController {
             createConfigItem("upload.allowedTypes", "jpg,png,gif,pdf", "允许上传的文件类型", "上传配置")
         );
 
-        return Result.success(configList);
+        return Result.ok(configList);
     }
 
     /**
@@ -107,7 +107,7 @@ public class DatacenterController {
     public Result<Void> refreshDictCache() {
         log.info("刷新数据字典缓存");
         // 模拟刷新缓存操作
-        return Result.success();
+        return Result.ok();
     }
 
     /**
@@ -118,7 +118,7 @@ public class DatacenterController {
     public Result<Void> refreshConfigCache() {
         log.info("刷新参数配置缓存");
         // 模拟刷新缓存操作
-        return Result.success();
+        return Result.ok();
     }
 
     /**
@@ -138,7 +138,7 @@ public class DatacenterController {
             ));
         }
 
-        return Result.success(result);
+        return Result.ok(result);
     }
 
     // ==================== 私有辅助方法 ====================

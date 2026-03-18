@@ -1,6 +1,6 @@
 package com.carlos.sample.disruptor.controller;
 
-import com.carlos.common.response.Result;
+import com.carlos.core.response.Result;
 import com.carlos.disruptor.core.DisruptorManager;
 import com.carlos.disruptor.core.DisruptorTemplate;
 import com.carlos.sample.disruptor.event.OrderEvent;
@@ -62,7 +62,7 @@ public class DisruptorController {
         orderDisruptor.publishEvent(order);
         log.info("[Controller] 订单事件发布成功: {}", order.getOrderNo());
 
-        return Result.success("订单事件发布成功: " + order.getOrderNo());
+        return Result.ok("订单事件发布成功: " + order.getOrderNo());
     }
 
     /**
@@ -82,7 +82,7 @@ public class DisruptorController {
         orderDisruptor.publishEventList(orders);
         log.info("[Controller] 批量订单事件发布完成");
 
-        return Result.success("批量发布 " + count + " 个订单事件成功");
+        return Result.ok("批量发布 " + count + " 个订单事件成功");
     }
 
     /**
@@ -98,7 +98,7 @@ public class DisruptorController {
 
         boolean success = orderDisruptor.tryPublishEvent(order);
         if (success) {
-            return Result.success("订单事件发布成功: " + order.getOrderNo());
+            return Result.ok("订单事件发布成功: " + order.getOrderNo());
         } else {
             return Result.fail("队列已满，发布失败");
         }
@@ -118,7 +118,7 @@ public class DisruptorController {
 
         boolean success = orderDisruptor.tryPublishEvent(order, timeoutMs, TimeUnit.MILLISECONDS);
         if (success) {
-            return Result.success("订单事件发布成功: " + order.getOrderNo());
+            return Result.ok("订单事件发布成功: " + order.getOrderNo());
         } else {
             return Result.fail("发布超时");
         }
@@ -139,7 +139,7 @@ public class DisruptorController {
         log.info("[Controller] 准备发布类型为 [{}] 的订单事件: {}", eventType, order.getOrderNo());
         orderDisruptor.publishEvent(eventType, order);
 
-        return Result.success("类型化订单事件发布成功: " + order.getOrderNo());
+        return Result.ok("类型化订单事件发布成功: " + order.getOrderNo());
     }
 
     /**
@@ -161,7 +161,7 @@ public class DisruptorController {
             stats.setExceptionCount(handlerStats.exceptionCount());
         }
 
-        return Result.success(stats);
+        return Result.ok(stats);
     }
 
     /**

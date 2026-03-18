@@ -50,7 +50,7 @@ public class DatacenterFactory {
      * 创建数据平台实例
      *
      * @param config 配置信息
-     * @return com.carlos.docking.datacenter.core.instance.DatacenterInstance
+     * @return com.carlos.integration.datacenter.core.instance.DatacenterInstance
      * @author Carlos
      * @date 2024-12-12 14:11
      */

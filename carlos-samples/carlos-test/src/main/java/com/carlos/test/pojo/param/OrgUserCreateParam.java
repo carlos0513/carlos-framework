@@ -23,8 +23,8 @@ import java.time.LocalDateTime;
 @Schema(description = "系统用户新增参数")
 public class OrgUserCreateParam {
 
-    @NotBlank(message = "用户名不能为空")
-    @Schema(description = "用户名")
+    @NotBlank(message = "用户名不能为")
+    @Schema(description = "用户")
     private String account;
     @NotBlank(message = "真实姓名不能为空")
     @Schema(description = "真实姓名")
@@ -38,8 +38,8 @@ public class OrgUserCreateParam {
     private String phone;
     @Schema(description = "详细地址")
     private String address;
-    @NotNull(message = "性别，0：保密, 1：男，2：女，默认0不能为空")
-    @Schema(description = "性别，0：保密, 1：男，2：女，默认0")
+    @NotNull(message = "性别�?：保�? 1：男�?：女，默�?不能为空")
+    @Schema(description = "性别�?：保�? 1：男�?：女，默�?")
     private Integer gender;
     @Schema(description = "头像文件的id")
     private String head;
@@ -53,7 +53,7 @@ public class OrgUserCreateParam {
     private String politicalOutlook;
     @Schema(description = "学历")
     private String educationBackground;
-    @Schema(description = "最后登录时间")
+    @Schema(description = "最后登录时")
     private LocalDateTime lastLogin;
     @NotNull(message = "登录次数不能为空")
     @Schema(description = "登录次数")

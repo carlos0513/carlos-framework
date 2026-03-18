@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @Schema(description = "系统用户列表查询参数")
 public class OrgUserPageParam extends ParamPage {
 
-    @Schema(description = "用户名")
+    @Schema(description = "用户")
     private String account;
     @Schema(description = "真实姓名")
     private String realname;
@@ -36,7 +36,7 @@ public class OrgUserPageParam extends ParamPage {
     private String phone;
     @Schema(description = "详细地址")
     private String address;
-    @Schema(description = "性别，0：保密, 1：男，2：女，默认0")
+    @Schema(description = "性别�?：保�? 1：男�?：女，默�?")
     private Integer gender;
     @Schema(description = "头像文件的id")
     private String head;
@@ -50,11 +50,11 @@ public class OrgUserPageParam extends ParamPage {
     private String politicalOutlook;
     @Schema(description = "学历")
     private String educationBackground;
-    @Schema(description = "最后登录时间")
+    @Schema(description = "最后登录时")
     private LocalDateTime lastLogin;
     @Schema(description = "登录次数")
     private Integer loginCount;
-    @Schema(description = "开始时间")
+    @Schema(description = "开始时")
     private LocalDateTime start;
 
     @Schema(description = "结束时间")

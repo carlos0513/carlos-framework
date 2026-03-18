@@ -13,7 +13,7 @@
   <artifactId>carlos-sample-docking</artifactId>
 
   <name>carlos-sample-docking</name>
-  <description>Carlos Framework 第三方平台对接示例模块 - 演示钉钉等平台的集成</description>
+  <description>Carlos Framework 第三方系统集成示例模块 - 演示钉钉等平台的集成</description>
 
   <dependencies>
     <!-- Spring Boot Web Starter -->
@@ -25,7 +25,7 @@
     <!-- Docking Starter - 第三方平台对接 -->
     <dependency>
       <groupId>com.carlos</groupId>
-      <artifactId>carlos-spring-boot-starter-docking</artifactId>
+      <artifactId>carlos-spring-boot-starter-integration</artifactId>
     </dependency>
 
     <!-- 钉钉 SDK - 可选依赖 -->

@@ -18,7 +18,7 @@ import lombok.Getter;
 public enum UserStateEnum implements BaseEnum {
 
     /**
-     * 用户状态
+     * 用户状�?
      */
     // DISABLE(0, "禁用"),
     ENABLE(1, "启用"),

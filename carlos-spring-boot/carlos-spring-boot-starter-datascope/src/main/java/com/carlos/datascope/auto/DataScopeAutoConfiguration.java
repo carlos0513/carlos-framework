@@ -16,7 +16,7 @@ import com.carlos.datascope.repository.RuleRepository;
 import com.carlos.datascope.repository.YamlRuleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.plugin.Interceptor;
+import org.aopalliance.intercept.Interceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

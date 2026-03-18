@@ -20,7 +20,7 @@ import java.util.Set;
 @Accessors(chain = true)
 public class UserCreateParam {
 
-    @Schema(description = "用户名")
+    @Schema(description = "用户")
     private String account;
     @Schema(description = "真实姓名")
     private String realname;
@@ -31,7 +31,7 @@ public class UserCreateParam {
     private String identify;
     @Schema(description = "手机号码")
     private String phone;
-    @Schema(description = "管理员")
+    @Schema(description = "管理")
     private Boolean admin;
     @Schema(description = "行政区域")
     private String regionCode;

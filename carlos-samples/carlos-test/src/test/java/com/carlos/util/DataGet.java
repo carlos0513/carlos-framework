@@ -31,7 +31,7 @@ public class DataGet {
         map.put("dishonest", "是否严重违法失信");
         map.put("violateLaw", "是否违法违规");
         map.put("companyName", "企业名称");
-        map.put("validStart", "有效期开始");
+        map.put("validStart", "有效期开");
         map.put("adminPunish", "是否受到行政处罚");
         map.put("uscc", "社会统一信用代码");
         map.put("partDate", "分区日期");
@@ -39,10 +39,10 @@ public class DataGet {
         map.put("regMngName", "登记管理部门");
         map.put("estabDate", "成立日期");
         map.put("orgType", "机构类型");
-        map.put("vaildEnd", "有效期结束");
+        map.put("vaildEnd", "有效期结");
         map.put("lawSuit", "是否涉案涉诉");
         map.put("abnormalOp", "是否异常经营");
-        map.put("lar", "法定代表人");
+        map.put("lar", "法定代表");
         map.put("isTax", "是否纳税");
         map.put("busScope", "经营范围");
 

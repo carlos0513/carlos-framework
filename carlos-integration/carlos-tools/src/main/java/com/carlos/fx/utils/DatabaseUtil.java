@@ -44,9 +44,9 @@ public class DatabaseUtil {
             // 获取数据库元数据
             var metaData = connection.getMetaData();
             return ConnectionTestResult.success(
-                    metaData.getDatabaseProductName(),
-                    metaData.getDatabaseProductVersion(),
-                    responseTime
+                metaData.getDatabaseProductName(),
+                metaData.getDatabaseProductVersion(),
+                responseTime
             );
 
         } catch (Throwable e) {
@@ -86,7 +86,7 @@ public class DatabaseUtil {
         public String toString() {
             if (success) {
                 return String.format("✅ 连接成功 [%s %s] 响应时间: %dms",
-                        databaseName, databaseVersion, responseTimeMs);
+                    databaseName, databaseVersion, responseTimeMs);
             } else {
                 return "❌ 连接失败: " + errorMessage;
             }

@@ -90,7 +90,7 @@ public class TracingFilter implements GlobalFilter, Ordered {
      * 标记请求信息
      */
     private void tagRequest(Span span, ServerHttpRequest request) {
-        span.tag("http.method", request.getMethodValue());
+        span.tag("http.method", request.getMethod().name());
         span.tag("http.url", request.getURI().toString());
         span.tag("http.path", request.getURI().getPath());
         span.tag("http.host", request.getURI().getHost());
@@ -124,9 +124,9 @@ public class TracingFilter implements GlobalFilter, Ordered {
      * 将追踪上下文注入到出站请求
      */
     private ServerHttpRequest injectTracingContext(ServerHttpRequest request, Span span) {
-        return propagator.inject(span.context(), request, (carrier, key, value) -> {
-            return carrier.mutate().header(key, value).build();
-        });
+        ServerHttpRequest.Builder builder = request.mutate();
+        propagator.inject(span.context(), builder, (b, key, value) -> b.header(key, value));
+        return builder.build();
     }
 
     @Override

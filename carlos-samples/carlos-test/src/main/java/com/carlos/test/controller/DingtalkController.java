@@ -1,9 +1,9 @@
 package com.carlos.test.controller;
 
 
-import com.carlos.docking.dingtalk.DingtalkUtil;
-import com.carlos.docking.dingtalk.SendMessageRequest;
-import com.carlos.docking.dingtalk.msg.ActionCardMsg;
+import com.carlos.integration.module.dingtalk.support.DingtalkUtil;
+import com.carlos.integration.module.dingtalk.support.SendMessageRequest;
+import com.carlos.integration.module.dingtalk.support.msg.ActionCardMsg;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;

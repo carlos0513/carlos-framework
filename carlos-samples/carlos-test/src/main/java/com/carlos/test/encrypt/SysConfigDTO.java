@@ -31,15 +31,15 @@ public class SysConfigDTO {
      */
     private String configCode;
     /**
-     * 参数键值
+     * 参数键�?
      */
     private String configValue;
     /**
-     * 值类型
+     * 值类�?
      */
     private String valueType;
     /**
-     * 状态
+     * 状�?
      */
     private Boolean state;
     /**
@@ -51,7 +51,7 @@ public class SysConfigDTO {
      */
     private String remark;
     /**
-     * 创建者
+     * 创建�?
      */
     private Long createBy;
     /**
@@ -59,7 +59,7 @@ public class SysConfigDTO {
      */
     private LocalDateTime createTime;
     /**
-     * 更新者
+     * 更新�?
      */
     private Long updateBy;
     /**

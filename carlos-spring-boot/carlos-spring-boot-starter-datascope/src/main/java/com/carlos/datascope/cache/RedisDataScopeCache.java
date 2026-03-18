@@ -1,5 +1,6 @@
 package com.carlos.datascope.cache;
 
+import cn.hutool.json.JSONUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -39,7 +40,7 @@ public class RedisDataScopeCache implements DataScopeCache {
         try {
             redisTemplate.opsForValue().set(
                 KEY_PREFIX + key,
-                value,
+                JSONUtil.toJsonStr(value),
                 defaultTtlMinutes,
                 TimeUnit.MINUTES
             );
@@ -51,7 +52,7 @@ public class RedisDataScopeCache implements DataScopeCache {
     @Override
     public void put(String key, Object value, long ttl, TimeUnit timeUnit) {
         try {
-            redisTemplate.opsForValue().set(KEY_PREFIX + key, value, ttl, timeUnit);
+            redisTemplate.opsForValue().set(KEY_PREFIX + key, JSONUtil.toJsonStr(value), ttl, timeUnit);
         } catch (Exception e) {
             log.warn("Redis put failed: key={}", key, e);
         }

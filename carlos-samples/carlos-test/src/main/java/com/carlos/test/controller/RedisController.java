@@ -71,7 +71,7 @@ public class RedisController {
     }
 
     public void test1() {
-        log.info("test1开始执行:{}", Thread.currentThread().getName());
+        log.info("test1开始执�?{}", Thread.currentThread().getName());
         boolean locked = false;
         String lock1 = "lock1";
         // String lock2 = "lock2";
@@ -88,7 +88,7 @@ public class RedisController {
             locked = lock.tryLock(0, 300, TimeUnit.SECONDS);
             log.info("test1111,获取锁是否成功：{}", locked);
             if (locked) {
-                log.info("test1111,获取锁成功,成功执行业务test1");
+                log.info("test1111,获取锁成�?成功执行业务test1");
                 ThreadUtil.sleep(3000);
             } else {
                 log.info("test1111,未获取到分布式锁，未执行test1");
@@ -105,7 +105,7 @@ public class RedisController {
     }
 
     public void test2() {
-        log.info("test2开始执行:{}", Thread.currentThread().getName());
+        log.info("test2开始执�?{}", Thread.currentThread().getName());
         boolean locked = false;
         String lock1 = "lock1";
         // String lock2 = "lock2";
@@ -122,7 +122,7 @@ public class RedisController {
             locked = lock.tryLock(0, 300, TimeUnit.SECONDS);
             log.info("test2222,获取锁是否成功：{}", locked);
             if (locked) {
-                log.info("test2222,获取锁成功,成功执行业务test2");
+                log.info("test2222,获取锁成�?成功执行业务test2");
                 ThreadUtil.sleep(3000);
             } else {
                 log.info("test2222,未获取到分布式锁，未执行test2");

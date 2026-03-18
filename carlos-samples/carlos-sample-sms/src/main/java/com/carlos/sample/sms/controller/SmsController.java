@@ -54,7 +54,7 @@ public class SmsController {
         try {
             SmsUtil.sendByTemplateKey(phone, templateCode, messages);
             log.info("短信发送成功 - 手机号: {}", phone);
-            return Result.success("短信发送成功");
+            return Result.ok("短信发送成功");
         } catch (Exception e) {
             log.error("短信发送失败 - 手机号: {}, 错误: {}", phone, e.getMessage());
             return Result.fail("短信发送失败: " + e.getMessage());
@@ -86,7 +86,7 @@ public class SmsController {
         try {
             SmsUtil.sendByTemplateKey(phones, templateCode, messages);
             log.info("批量短信发送成功 - 手机号数量: {}", phones.size());
-            return Result.success("批量短信发送成功");
+            return Result.ok("批量短信发送成功");
         } catch (Exception e) {
             log.error("批量短信发送失败 - 错误: {}", e.getMessage());
             return Result.fail("批量短信发送失败: " + e.getMessage());
@@ -118,7 +118,7 @@ public class SmsController {
         try {
             SmsUtil.sendByTemplateKey(phone, templateCode, null, messages, true);
             log.info("异步短信发送请求已提交 - 手机号: {}", phone);
-            return Result.success("异步短信发送请求已提交");
+            return Result.ok("异步短信发送请求已提交");
         } catch (Exception e) {
             log.error("异步短信发送失败 - 手机号: {}, 错误: {}", phone, e.getMessage());
             return Result.fail("异步短信发送失败: " + e.getMessage());
@@ -153,7 +153,7 @@ public class SmsController {
         try {
             SmsUtil.sendByTemplateKey(phone, templateCode, configId, messages, false);
             log.info("短信发送成功 - 手机号: {}, 配置ID: {}", phone, configId);
-            return Result.success("短信发送成功");
+            return Result.ok("短信发送成功");
         } catch (Exception e) {
             log.error("短信发送失败 - 手机号: {}, 配置ID: {}, 错误: {}", phone, configId, e.getMessage());
             return Result.fail("短信发送失败: " + e.getMessage());

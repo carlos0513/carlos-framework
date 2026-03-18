@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>com.carlos</groupId>
-        <artifactId>carlos-parent</artifactId>
-        <version>${revision}</version>
-        <relativePath>../../carlos-parent/pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-
+  <parent>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-gateway</artifactId>
+    <artifactId>carlos-parent</artifactId>
     <version>${revision}</version>
+    <relativePath>../../carlos-parent/pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <description>
-      Carlos 现代融合治理网关 - 集成 OAuth2、WAF、限流、熔断、灰度发布、链路追踪
-    </description>
+  <groupId>com.carlos</groupId>
+  <artifactId>carlos-gateway</artifactId>
+  <version>${revision}</version>
+
+  <description>
+    Carlos 现代融合治理网关 - 集成 OAuth2、WAF、限流、熔断、灰度发布、链路追踪
+  </description>
 
   <properties>
     <resilience4j.version>2.1.0</resilience4j.version>
@@ -26,10 +26,10 @@
   <dependencies>
     <!-- ==================== Spring Boot 基础 ==================== -->
     <!-- bootstrap 启动器 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-bootstrap</artifactId>
+    </dependency>
 
     <!-- Spring Boot 配置处理器 -->
     <dependency>
@@ -39,10 +39,10 @@
     </dependency>
 
     <!-- ==================== Spring Cloud Gateway ==================== -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-gateway</artifactId>
+    </dependency>
 
     <!-- 负载均衡 -->
     <dependency>
@@ -51,15 +51,15 @@
     </dependency>
 
     <!-- ==================== Spring Cloud Alibaba Nacos ==================== -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>com.alibaba.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>com.alibaba.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+    </dependency>
 
     <!-- ==================== Redis 支持 ==================== -->
     <dependency>
@@ -129,29 +129,29 @@
     </dependency>
 
     <!-- ==================== 文档聚合（Knife4j） ==================== -->
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>com.github.xiaoymin</groupId>
+      <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- ==================== Carlos 核心依赖 ==================== -->
-        <dependency>
-            <groupId>com.carlos</groupId>
-          <artifactId>carlos-spring-boot-core</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-core</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>com.carlos</groupId>
-            <artifactId>carlos-utils</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-utils</artifactId>
+    </dependency>
 
     <!-- ==================== 工具库 ==================== -->
     <!-- Hutool -->
-        <dependency>
-          <groupId>cn.hutool</groupId>
-          <artifactId>hutool-all</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+    </dependency>
 
     <!-- Guava -->
     <dependency>
@@ -163,42 +163,42 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-        </dependency>
+    </dependency>
 
     <!-- ==================== 测试依赖 ==================== -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-test</artifactId>
-          <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>io.projectreactor</groupId>
       <artifactId>reactor-test</artifactId>
       <scope>test</scope>
-        </dependency>
+    </dependency>
 
   </dependencies>
 
-    <build>
-        <finalName>${project.artifactId}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

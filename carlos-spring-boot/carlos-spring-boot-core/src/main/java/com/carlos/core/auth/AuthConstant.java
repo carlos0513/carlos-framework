@@ -11,6 +11,11 @@ package com.carlos.core.auth;
 public interface AuthConstant {
 
     /**
+     * 用户上下文在 exchange attributes 中的键名
+     */
+    String USER_CONTEXT = "userContext";
+
+    /**
      * JWT存储权限前缀
      */
     String AUTHORITY_PREFIX = "ROLE_";

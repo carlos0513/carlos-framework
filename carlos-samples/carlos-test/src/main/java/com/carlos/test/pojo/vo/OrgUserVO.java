@@ -24,7 +24,7 @@ public class OrgUserVO implements Serializable {
     private static final long serialVersionUID = 1L;
     @Schema(description = "主键")
     private Long id;
-    @Schema(description = "用户名")
+    @Schema(description = "用户")
     private String account;
     @Schema(description = "真实姓名")
     private String realname;
@@ -36,7 +36,7 @@ public class OrgUserVO implements Serializable {
     private String phone;
     @Schema(description = "详细地址")
     private String address;
-    @Schema(description = "性别，0：保密, 1：男，2：女，默认0")
+    @Schema(description = "性别�?：保�? 1：男�?：女，默�?")
     private Integer gender;
     @Schema(description = "头像文件的id")
     private String head;
@@ -50,15 +50,15 @@ public class OrgUserVO implements Serializable {
     private String politicalOutlook;
     @Schema(description = "学历")
     private String educationBackground;
-    @Schema(description = "最后登录时间")
+    @Schema(description = "最后登录时")
     private LocalDateTime lastLogin;
     @Schema(description = "登录次数")
     private Integer loginCount;
-    @Schema(description = "创建者")
+    @Schema(description = "创建")
     private Long createBy;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
-    @Schema(description = "修改者")
+    @Schema(description = "修改")
     private Long updateBy;
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;

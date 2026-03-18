@@ -10,14 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -63,7 +66,7 @@ public class OpaqueTokenValidator implements TokenValidator {
     private Mono<UserContext> introspectToken(String token, String cacheKey) {
         log.debug("Introspecting token at: {}", properties.getIntrospectionUri());
 
-        String basicAuth = Base64Utils.encodeToString(
+        String basicAuth = Base64.getEncoder().encodeToString(
             (properties.getClientId() + ":" + properties.getClientSecret())
                 .getBytes(StandardCharsets.UTF_8));
 
@@ -128,19 +131,21 @@ public class OpaqueTokenValidator implements TokenValidator {
         // 解析角色列表
         Object roles = json.get("roles");
         if (roles instanceof List) {
-            context.setRoleIds(((List<?>) roles).stream()
+            Set<Serializable> roleIds = ((List<?>) roles).stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
-                .toList());
+                .collect(Collectors.toSet());
+            context.setRoleIds(roleIds);
         }
 
         // 解析部门列表
         Object depts = json.get("depts");
         if (depts instanceof List) {
-            context.setDepartmentIds(((List<?>) depts).stream()
+            Set<Serializable> deptIds = ((List<?>) depts).stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
-                .toList());
+                .collect(Collectors.toSet());
+            context.setDepartmentIds(deptIds);
         }
 
         return context;

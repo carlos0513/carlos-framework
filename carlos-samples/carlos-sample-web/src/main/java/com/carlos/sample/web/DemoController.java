@@ -1,5 +1,6 @@
 package com.carlos.sample.web;
 
+import com.carlos.core.response.Result;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class DemoController {
      */
     @GetMapping("/health")
     public Result<String> health() {
-        return Result.success("Service is running");
+        return Result.ok("Service is running");
     }
 
     /**
@@ -34,7 +35,7 @@ public class DemoController {
         Map<String, Object> data = new HashMap<>();
         data.put("currentTime", LocalDateTime.now());
         data.put("timestamp", System.currentTimeMillis());
-        return Result.success(data);
+        return Result.ok(data);
     }
 
     /**
@@ -42,7 +43,7 @@ public class DemoController {
      */
     @GetMapping("/hello/{name}")
     public Result<String> hello(@PathVariable String name) {
-        return Result.success("Hello, " + name + "!");
+        return Result.ok("Hello, " + name + "!");
     }
 
     /**
@@ -50,7 +51,7 @@ public class DemoController {
      */
     @GetMapping("/greet")
     public Result<String> greet(@RequestParam(required = false, defaultValue = "World") String name) {
-        return Result.success("Greetings, " + name + "!");
+        return Result.ok("Greetings, " + name + "!");
     }
 
     /**
@@ -64,7 +65,7 @@ public class DemoController {
         result.put("email", param.getEmail());
         result.put("age", param.getAge());
         result.put("createdAt", LocalDateTime.now());
-        return Result.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -77,7 +78,7 @@ public class DemoController {
         result.put("id", id);
         result.put("username", param.getUsername());
         result.put("updatedAt", LocalDateTime.now());
-        return Result.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -86,6 +87,6 @@ public class DemoController {
     @DeleteMapping("/user/{id}")
     public Result<String> deleteUser(@PathVariable Long id) {
         log.info("Deleting user: {}", id);
-        return Result.success("User " + id + " deleted successfully");
+        return Result.ok("User " + id + " deleted successfully");
     }
 }

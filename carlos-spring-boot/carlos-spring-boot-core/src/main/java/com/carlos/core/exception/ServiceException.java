@@ -25,6 +25,10 @@ public final class ServiceException extends GlobalException {
         super(statusCode);
     }
 
+    public ServiceException(StatusCode statusCode, String message) {
+        super(statusCode.getCode(), message);
+    }
+
     public ServiceException(StatusCode statusCode, Throwable cause) {
         super(statusCode, cause);
     }

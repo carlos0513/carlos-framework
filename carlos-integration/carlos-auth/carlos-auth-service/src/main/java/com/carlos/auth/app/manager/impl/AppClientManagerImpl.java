@@ -203,7 +203,7 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
 
     @Override
     public AppClientDTO getCache(Serializable... keys) {
-        List<AppClientDTO> clients = RedisUtil.getValueList(this.generateKey(keys));
+        List<AppClientDTO> clients = RedisUtil.getValueListByPattern(this.generateKey(keys));
         if (clients == null || clients.isEmpty()) {
             return null;
         }

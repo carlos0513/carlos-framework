@@ -51,12 +51,4 @@ public @interface TraceTag {
     String condition() default "";
 }
 
-/**
- * 追踪标签集合注解
- */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@interface TraceTags {
-    TraceTag[] value();
-}
+

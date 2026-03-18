@@ -1,6 +1,6 @@
 package com.carlos.mq.controller;
 
-import com.carlos.core.pojo.Result;
+import com.carlos.core.response.Result;
 import com.carlos.mq.core.MqTemplate;
 import com.carlos.mq.support.DelayLevel;
 import io.swagger.v3.oas.annotations.Operation;

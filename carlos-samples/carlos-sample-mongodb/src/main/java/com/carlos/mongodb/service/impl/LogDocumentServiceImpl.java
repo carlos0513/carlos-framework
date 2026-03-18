@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class LogDocumentServiceImpl extends BaseServiceImpl<LogDocument, String> implements LogDocumentService {
+public class LogDocumentServiceImpl extends BaseServiceImpl<LogDocumentRepository, LogDocument, String> implements LogDocumentService {
 
     private final LogDocumentRepository logDocumentRepository;
 

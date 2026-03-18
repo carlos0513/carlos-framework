@@ -3,11 +3,15 @@ package com.carlos.integration.core.client;
 import com.carlos.integration.core.support.DockingRestClientException;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.springframework.http.HttpMethod.*;
+
 
 /**
  * <p>
@@ -23,7 +27,7 @@ public class RequestBuilder {
     private final RestClient restClient;
     private final String path;
 
-    private HttpMethod method = HttpMethod.GET;
+    private HttpMethod method = GET;
     private final Map<String, Object> queryParams = new HashMap<>();
     private Object body;
     private final Map<String, String> headers = new HashMap<>();
@@ -43,17 +47,17 @@ public class RequestBuilder {
     }
 
     public RequestBuilder get() {
-        this.method = HttpMethod.GET;
+        this.method = GET;
         return this;
     }
 
     public RequestBuilder post() {
-        this.method = HttpMethod.POST;
+        this.method = POST;
         return this;
     }
 
     public RequestBuilder put() {
-        this.method = HttpMethod.PUT;
+        this.method = PUT;
         return this;
     }
 
@@ -127,15 +131,16 @@ public class RequestBuilder {
      * 执行请求（指定返回类型）
      */
     public <T> T execute(Class<T> returnType) {
-        RestClient.RequestBodySpec spec = buildRequest();
+        RestClient.RequestHeadersSpec<?> spec = buildRequest();
 
-        if (body != null) {
-            spec.body(body);
+        // 对于支持 body 的方法，设置请求体
+        if (body != null && spec instanceof RestClient.RequestBodySpec) {
+            ((RestClient.RequestBodySpec) spec).body(body);
         }
 
         return spec.retrieve()
             .onStatus(
-                status -> status.isError(),
+                HttpStatusCode::isError,
                 (request, response) -> {
                     throw new DockingRestClientException(
                         "Request failed: " + response.getStatusText());
@@ -148,15 +153,16 @@ public class RequestBuilder {
      * 执行请求（指定泛型返回类型）
      */
     public <T> T execute(ParameterizedTypeReference<T> returnType) {
-        RestClient.RequestBodySpec spec = buildRequest();
+        RestClient.RequestHeadersSpec<?> spec = buildRequest();
 
-        if (body != null) {
-            spec.body(body);
+        // 对于支持 body 的方法，设置请求体
+        if (body != null && spec instanceof RestClient.RequestBodySpec) {
+            ((RestClient.RequestBodySpec) spec).body(body);
         }
 
         return spec.retrieve()
             .onStatus(
-                status -> status.isError(),
+                HttpStatusCode::isError,
                 (request, response) -> {
                     throw new DockingRestClientException(
                         "Request failed: " + response.getStatusText());
@@ -169,15 +175,16 @@ public class RequestBuilder {
      * 执行请求（无返回值）
      */
     public void executeVoid() {
-        RestClient.RequestBodySpec spec = buildRequest();
+        RestClient.RequestHeadersSpec<?> spec = buildRequest();
 
-        if (body != null) {
-            spec.body(body);
+        // 对于支持 body 的方法，设置请求体
+        if (body != null && spec instanceof RestClient.RequestBodySpec) {
+            ((RestClient.RequestBodySpec) spec).body(body);
         }
 
         spec.retrieve()
             .onStatus(
-                status -> status.isError(),
+                HttpStatusCode::isError,
                 (request, response) -> {
                     throw new DockingRestClientException(
                         "Request failed: " + response.getStatusText());
@@ -189,31 +196,61 @@ public class RequestBuilder {
     /**
      * 构建请求
      */
-    private RestClient.RequestBodySpec buildRequest() {
-        RestClient.UriSpec<RestClient.RequestBodySpec> uriSpec = switch (method) {
-            case GET -> restClient.get();
-            case POST -> restClient.post();
-            case PUT -> restClient.put();
-            case DELETE -> restClient.delete();
-            case PATCH -> restClient.patch();
-            case HEAD -> restClient.head();
-            case OPTIONS -> restClient.options();
-            default -> throw new IllegalArgumentException("Unsupported method: " + method);
-        };
+    private RestClient.RequestHeadersSpec<?> buildRequest() {
+        RestClient.RequestHeadersSpec<?> spec;
 
         // 构建 URI
-        RestClient.RequestBodySpec spec;
         if (queryParams.isEmpty()) {
-            spec = uriSpec.uri(path);
+            if (method == HttpMethod.GET) {
+                spec = restClient.get().uri(path);
+            } else if (method == HttpMethod.POST) {
+                spec = restClient.post().uri(path);
+            } else if (method == HttpMethod.PUT) {
+                spec = restClient.put().uri(path);
+            } else if (method == HttpMethod.DELETE) {
+                spec = restClient.delete().uri(path);
+            } else if (method == HttpMethod.PATCH) {
+                spec = restClient.patch().uri(path);
+            } else {
+                throw new IllegalArgumentException("Unsupported HTTP method: " + method);
+            }
         } else {
-            spec = uriSpec.uri(uriBuilder -> {
-                uriBuilder.path(path);
-                queryParams.forEach((k, v) -> uriBuilder.queryParam(k, v));
-                return uriBuilder.build();
-            });
+            if (method == HttpMethod.GET) {
+                spec = restClient.get().uri(uriBuilder -> {
+                    uriBuilder.path(path);
+                    queryParams.forEach(uriBuilder::queryParam);
+                    return uriBuilder.build();
+                });
+            } else if (method == HttpMethod.POST) {
+                spec = restClient.post().uri(uriBuilder -> {
+                    uriBuilder.path(path);
+                    queryParams.forEach(uriBuilder::queryParam);
+                    return uriBuilder.build();
+                });
+            } else if (method == HttpMethod.PUT) {
+                spec = restClient.put().uri(uriBuilder -> {
+                    uriBuilder.path(path);
+                    queryParams.forEach(uriBuilder::queryParam);
+                    return uriBuilder.build();
+                });
+            } else if (method == HttpMethod.DELETE) {
+                spec = restClient.delete().uri(uriBuilder -> {
+                    uriBuilder.path(path);
+                    queryParams.forEach(uriBuilder::queryParam);
+                    return uriBuilder.build();
+                });
+            } else if (method == HttpMethod.PATCH) {
+                spec = restClient.patch().uri(uriBuilder -> {
+                    uriBuilder.path(path);
+                    queryParams.forEach(uriBuilder::queryParam);
+                    return uriBuilder.build();
+                });
+            } else {
+                throw new IllegalArgumentException("Unsupported HTTP method: " + method);
+            }
         }
 
-        // 添加请求�?
+        // 添加请求头
         headers.forEach(spec::header);
         spec.header("Content-Type", contentType.toString());
 

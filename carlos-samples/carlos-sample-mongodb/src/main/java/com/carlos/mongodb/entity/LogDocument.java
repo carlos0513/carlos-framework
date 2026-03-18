@@ -1,8 +1,6 @@
 package com.carlos.mongodb.entity;
 
-import com.carlos.mongodb.AbstractMybatisCommonField;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,9 +14,8 @@ import java.time.LocalDateTime;
  * @date 2026/3/15
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @Document(collection = "log_document")
-public class LogDocument extends AbstractMybatisCommonField {
+public class LogDocument {
 
     @Id
     private String id;
@@ -83,23 +80,4 @@ public class LogDocument extends AbstractMybatisCommonField {
      */
     private LocalDateTime createTime;
 
-    @Override
-    public String primaryKeyFiledName() {
-        return "id";
-    }
-
-    @Override
-    public Class<?> primaryKeyFiledType() {
-        return String.class;
-    }
-
-    @Override
-    public String createTimeFiledName() {
-        return "createTime";
-    }
-
-    @Override
-    public Class<?> createTimeFiledType() {
-        return LocalDateTime.class;
-    }
 }

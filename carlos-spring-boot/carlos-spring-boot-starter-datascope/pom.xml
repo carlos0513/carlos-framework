@@ -52,6 +52,12 @@
       <version>4.9</version>
     </dependency>
 
+    <!-- MyBatis Plus JSqlParser 适配 -->
+    <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-jsqlparser</artifactId>
+    </dependency>
+
     <!-- Caffeine - 本地缓存 -->
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>

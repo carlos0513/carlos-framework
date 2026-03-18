@@ -75,7 +75,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk access_token error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("钉钉服务访问失败�?);
+            throw new DockingDingtalkException("钉钉服务访问失败");
         }
     }
 
@@ -100,7 +100,7 @@ public class DingtalkService {
             return response.getResult();
         } catch (ApiException e) {
             log.error("Get dingtalk access_token error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("钉钉服务访问失败�?);
+            throw new DockingDingtalkException("钉钉服务访问失败");
 
         }
     }
@@ -127,7 +127,7 @@ public class DingtalkService {
             return response.getResult();
         } catch (ApiException e) {
             log.error("Get dingtalk opapi/v2/department/get error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("钉钉服务访问失败�?);
+            throw new DockingDingtalkException("钉钉服务访问失败");
 
         }
     }
@@ -155,7 +155,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/user/getbymobile error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("钉钉服务访问失败�?);
+            throw new DockingDingtalkException("钉钉服务访问失败");
 
         }
     }
@@ -183,7 +183,7 @@ public class DingtalkService {
             return response.getResult();
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/department/listsub error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("部门信息获取失败�?);
+            throw new DockingDingtalkException("部门信息获取失败");
         }
     }
 
@@ -211,7 +211,7 @@ public class DingtalkService {
             return response.getResult();
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/user/list error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("部门用户信息获取失败�?);
+            throw new DockingDingtalkException("部门用户信息获取失败");
 
         }
     }
@@ -231,7 +231,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/user/create error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("创建钉钉用户失败�?);
+            throw new DockingDingtalkException("创建钉钉用户失败");
         }
     }
 
@@ -250,7 +250,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/user/update error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("修改钉钉用户失败�?);
+            throw new DockingDingtalkException("修改钉钉用户失败");
         }
     }
 
@@ -269,7 +269,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/user/delete error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("删除钉钉用户失败�?);
+            throw new DockingDingtalkException("删除钉钉用户失败");
         }
     }
 
@@ -289,7 +289,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/department/create error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("创建钉钉部门失败�?);
+            throw new DockingDingtalkException("创建钉钉部门失败");
         }
     }
 
@@ -309,7 +309,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/department/delete error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("删除钉钉部门失败�?);
+            throw new DockingDingtalkException("删除钉钉部门失败");
         }
     }
 
@@ -328,7 +328,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk topapi/v2/department/update error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("修改钉钉部门失败�?);
+            throw new DockingDingtalkException("修改钉钉部门失败");
         }
     }
 
@@ -344,7 +344,7 @@ public class DingtalkService {
         // String errcode = result.getErrorCode();
         // if (!errcode.equals("0")) {
         //     log.error("Dingtalk request error: errorCode:{}, errMsg:{} url:{} param:{} response:{}", errcode, result.getMessage(), result.getRequestUrl(), result.getParams(), JSONUtil.toJsonPrettyStr(result));
-        //     throw new DockingException("钉钉服务调用出错�?);
+        //     throw new DockingException("钉钉服务调用出错");
         // }
         log.info("Dingtalk request success: url:{}   param:{} response:{}", result.getRequestUrl(), result.getParams(), JSONUtil.toJsonPrettyStr(result));
     }
@@ -436,7 +436,7 @@ public class DingtalkService {
             return response;
         } catch (ApiException e) {
             log.error("Get dingtalk access_token error, message:{}", e.getMessage(), e);
-            throw new DockingDingtalkException("钉钉服务访问失败�?);
+            throw new DockingDingtalkException("钉钉服务访问失败");
 
         }
     }
@@ -458,7 +458,7 @@ public class DingtalkService {
                 userIdList.add(userid);
             } catch (ApiException e) {
                 log.error("Get dingtalk userid error, message:{}", e.getMessage(), e);
-                throw new DockingDingtalkException("钉钉服务访问失败�?);
+                throw new DockingDingtalkException("钉钉服务访问失败");
             }
         }
         return String.join(StrPool.COMMA, userIdList);

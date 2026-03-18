@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Data
 @Slf4j
-@ConfigurationProperties(prefix = "carlos.docking.datacenter")
+@ConfigurationProperties(prefix = "carlos.integration.datacenter")
 public class DatacenterProperties implements InitializingBean {
 
 

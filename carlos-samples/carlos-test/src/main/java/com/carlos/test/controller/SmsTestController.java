@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 public class SmsTestController {
 
     @GetMapping("send")
-    @Operation(summary = "发送短信测试")
+    @Operation(summary = "发送短信测")
     public void sendSms() {
         LinkedHashMap<String, String> map = Maps.newLinkedHashMap();
         map.put("code", SmsUtils.getRandomInt(6));

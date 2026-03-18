@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("encrypt")
-@Tag(name = "加解密工具测试")
+@Tag(name = "加解密工具测")
 @Slf4j
 public class EncryptController {
 

@@ -67,7 +67,7 @@ public class SmsChannelAdapter extends AbstractChannelAdapter {
             // SmsClient client = createSmsClient();
             // SendSmsResponse response = client.sendSms(phoneNumber, content);
             // if (response.isSuccess()) {
-            //     return SendResult.success(response.getMessageId());
+            //     return SendResult.ok(response.getMessageId());
             // } else {
             //     return SendResult.fail(response.getErrorMessage());
             // }

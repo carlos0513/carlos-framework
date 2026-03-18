@@ -205,6 +205,15 @@ public class DataScopeResult implements Serializable {
         this.matchedRuleIds.add(ruleId);
     }
 
+    /**
+     * 是否需要脱敏
+     *
+     * @return true 如果存在脱敏列
+     */
+    public boolean needsMasking() {
+        return maskingColumns != null && !maskingColumns.isEmpty();
+    }
+
     // ==================== 内部类 ====================
 
     /**

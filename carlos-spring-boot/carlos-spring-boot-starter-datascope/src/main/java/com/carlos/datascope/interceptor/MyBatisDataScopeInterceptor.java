@@ -4,13 +4,14 @@ import com.carlos.datascope.core.context.DataScopeContext;
 import com.carlos.datascope.core.context.DataScopeContextHolder;
 import com.carlos.datascope.core.model.DataScopeResult;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.HexValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.*;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SetOperationList;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -98,7 +99,7 @@ public class MyBatisDataScopeInterceptor implements Interceptor {
 
         if (statement instanceof Select) {
             Select select = (Select) statement;
-            processSelectBody(select.getSelectBody(), condition);
+            processSelect(select, condition);
             return select.toString();
         }
 
@@ -107,11 +108,11 @@ public class MyBatisDataScopeInterceptor implements Interceptor {
     }
 
     /**
-     * 处理SelectBody
+     * 处理Select
      */
-    private void processSelectBody(SelectBody selectBody, String condition) {
-        if (selectBody instanceof PlainSelect) {
-            PlainSelect plainSelect = (PlainSelect) selectBody;
+    private void processSelect(Select select, String condition) {
+        if (select instanceof PlainSelect) {
+            PlainSelect plainSelect = (PlainSelect) select;
 
             Expression where = plainSelect.getWhere();
             Expression dataScopeExpr = new HexValue(" " + condition + " ");
@@ -122,10 +123,10 @@ public class MyBatisDataScopeInterceptor implements Interceptor {
                 AndExpression and = new AndExpression(where, dataScopeExpr);
                 plainSelect.setWhere(and);
             }
-        } else if (selectBody instanceof SetOperationList) {
-            SetOperationList setOpList = (SetOperationList) selectBody;
-            for (SelectBody select : setOpList.getSelects()) {
-                processSelectBody(select, condition);
+        } else if (select instanceof SetOperationList) {
+            SetOperationList setOpList = (SetOperationList) select;
+            for (Select sel : setOpList.getSelects()) {
+                processSelect(sel, condition);
             }
         }
     }
@@ -190,6 +191,7 @@ public class MyBatisDataScopeInterceptor implements Interceptor {
 
         return builder.build();
     }
+
 
     @Override
     public Object plugin(Object target) {

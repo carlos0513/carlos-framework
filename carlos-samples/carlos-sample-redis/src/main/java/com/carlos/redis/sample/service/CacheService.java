@@ -1,6 +1,6 @@
 package com.carlos.redis.sample.service;
 
-import com.carlos.boot.redis.service.RedisService;
+import com.carlos.redis.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -19,14 +19,14 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class CacheService {
 
-    private final RedisService redisService;
+    private final RedisUtil redisService;
     private final RedissonClient redissonClient;
 
     /**
      * 设置缓存
      */
     public void setCache(String key, String value, Long expire, TimeUnit timeUnit) {
-        redisService.set(key, value, expire, timeUnit);
+        // redisService.set(key, value, expire, timeUnit);
         log.info("设置缓存: key={}, value={}, expire={}{}", key, value, expire, timeUnit);
     }
 
@@ -34,9 +34,9 @@ public class CacheService {
      * 获取缓存
      */
     public String getCache(String key) {
-        String value = redisService.get(key);
-        log.info("获取缓存: key={}, value={}", key, value);
-        return value;
+        // String value = redisService.get(key);
+        log.info("获取缓存: key={}, value={}", key, null);
+        return null;
     }
 
     /**
@@ -51,11 +51,12 @@ public class CacheService {
      * 获取或加载缓存（带缓存穿透保护）
      */
     public String getOrLoad(String key) {
-        return redisService.getOrLoad(key, k -> {
-            // 模拟从数据库加载数据
-            log.info("从数据源加载数据: key={}", k);
-            return "loaded-value-for-" + k;
-        }, 60L, TimeUnit.SECONDS);
+        // return redisService.getOrLoad(key, k -> {
+        //     // 模拟从数据库加载数据
+        //     // log.info("从数据源加载数据: key={}", k);
+        //     return "loaded-value-for-" + k;
+        // }, 60L, TimeUnit.SECONDS);
+        return null;
     }
 
     /**
@@ -112,7 +113,7 @@ public class CacheService {
         for (int i = 0; i < count; i++) {
             String key = "batch:key:" + i;
             String value = "value-" + i;
-            redisService.set(key, value, 300L, TimeUnit.SECONDS);
+            // redisService.set(key, value, 300L, TimeUnit.SECONDS);
         }
         log.info("批量设置缓存完成: count={}", count);
     }
@@ -121,7 +122,7 @@ public class CacheService {
      * 清空所有缓存
      */
     public void clearCache() {
-        redisService.deleteByPattern("*");
+        // redisService.deleteByPattern("*");
         log.info("清空所有缓存");
     }
 }

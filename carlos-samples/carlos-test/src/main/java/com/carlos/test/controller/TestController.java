@@ -64,13 +64,13 @@ public class TestController {
     }
 
     public String encrypt(String algorithm, byte[] key, byte[] iv, byte[] data) throws Exception {
-        Cipher cipher = Cipher.getInstance(algorithm, "BC"); // 使用BC作为提供者
+        Cipher cipher = Cipher.getInstance(algorithm, "BC"); // 使用BC作为提供�?
         SecretKeySpec keySpec = new SecretKeySpec(key, "SM4");
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
         // cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
         cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
         byte[] encryptedData = cipher.doFinal(data);
-        return new String(encryptedData); // 返回Base64编码的加密数据
+        return new String(encryptedData); // 返回Base64编码的加密数�?
     }
 
     @GetMapping("cors")
@@ -80,15 +80,15 @@ public class TestController {
     }
 
     @GetMapping("rzt/sendMessage")
-    @Operation(summary = "蓉政通消息发送")
+    @Operation(summary = "蓉政通消息发")
     public void sendMessage(String phone) {
-        // RztUtil.sendTextMessage(Sets.newHashSet(phone), null, null, "测试消息！");
+        // RztUtil.sendTextMessage(Sets.newHashSet(phone), null, null, "测试消息");
         log.info("请求成功");
     }
 
 
     @PostMapping("gecode")
-    @Operation(summary = "短信发送测试")
+    @Operation(summary = "短信发送测")
     public void sendGeCode(String phone) {
 
         SmsBlend smsBlend = SmsFactory.getSmsBlend("gecode");

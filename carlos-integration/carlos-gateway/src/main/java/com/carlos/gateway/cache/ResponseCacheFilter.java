@@ -9,6 +9,7 @@ import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -112,8 +113,8 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
         return chain.filter(exchange)
             .then(Mono.defer(() -> {
                 // 检查状态码是否可缓存
-                HttpStatus statusCode = exchange.getResponse().getStatusCode();
-                if (statusCode == null || !CACHEABLE_STATUS.contains(statusCode)) {
+                HttpStatusCode statusCode = exchange.getResponse().getStatusCode();
+                if (statusCode == null || !CACHEABLE_STATUS.contains(HttpStatus.resolve(statusCode.value()))) {
                     return Mono.empty();
                 }
 
@@ -133,7 +134,7 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
      * 生成缓存键
      */
     private String generateCacheKey(ServerHttpRequest request) {
-        String key = request.getMethodValue() + ":" +
+        String key = request.getMethod().name() + ":" +
             request.getURI().getPath() + ":" +
             request.getURI().getQuery();
 
@@ -163,13 +164,13 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
      * 缓存的响应
      */
     public static class CachedResponse {
-        private HttpStatus statusCode;
+        private HttpStatusCode statusCode;
         private HttpHeaders headers;
         private byte[] body;
         private long timestamp;
         private long ttl;
 
-        public CachedResponse(HttpStatus statusCode, HttpHeaders headers, byte[] body, long ttl) {
+        public CachedResponse(HttpStatusCode statusCode, HttpHeaders headers, byte[] body, long ttl) {
             this.statusCode = statusCode;
             this.headers = headers;
             this.body = body;
@@ -181,7 +182,7 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
             return System.currentTimeMillis() - timestamp > ttl;
         }
 
-        public HttpStatus getStatusCode() {
+        public HttpStatusCode getStatusCode() {
             return statusCode;
         }
 

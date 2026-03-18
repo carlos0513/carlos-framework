@@ -2,7 +2,6 @@ package com.carlos.datascope.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
@@ -66,8 +65,8 @@ public class CaffeineDataScopeCache implements DataScopeCache {
     }
 
     @Override
-    public CacheStats stats() {
-        CacheStats stats = cache.stats();
-        return new CacheStats(stats.hitCount(), stats.missCount(), cache.estimatedSize());
+    public DataScopeCache.CacheStats stats() {
+        com.github.benmanes.caffeine.cache.stats.CacheStats stats = cache.stats();
+        return DataScopeCache.CacheStats.of(stats.hitCount(), stats.missCount(), cache.estimatedSize());
     }
 }

@@ -1,6 +1,6 @@
 package com.carlos.sample.encrypt.controller;
 
-import com.carlos.common.bean.result.Result;
+import com.carlos.core.response.Result;
 import com.carlos.encrypt.EncryptUtil;
 import com.carlos.encrypt.Sm2KeyPair;
 import com.carlos.sample.encrypt.pojo.EncryptData;
@@ -34,7 +34,7 @@ public class EncryptController {
         log.info("SM4 加密请求，原文: {}", plainText);
         String encrypted = EncryptUtil.encrypt(plainText);
         log.info("SM4 加密结果: {}", encrypted);
-        return Result.success(encrypted);
+        return Result.ok(encrypted);
     }
 
     /**
@@ -48,7 +48,7 @@ public class EncryptController {
         log.info("SM4 解密请求，密文: {}", encryptedText);
         String decrypted = EncryptUtil.decrypt(encryptedText);
         log.info("SM4 解密结果: {}", decrypted);
-        return Result.success(decrypted);
+        return Result.ok(decrypted);
     }
 
     /**
@@ -62,7 +62,7 @@ public class EncryptController {
         log.info("SM4 Hex 加密请求，原文: {}", plainText);
         String encrypted = EncryptUtil.sm4EncryptHex(plainText);
         log.info("SM4 Hex 加密结果: {}", encrypted);
-        return Result.success(encrypted);
+        return Result.ok(encrypted);
     }
 
     /**
@@ -76,7 +76,7 @@ public class EncryptController {
         log.info("SM4 Base64 加密请求，原文: {}", plainText);
         String encrypted = EncryptUtil.sm4EncryptBase64(plainText);
         log.info("SM4 Base64 加密结果: {}", encrypted);
-        return Result.success(encrypted);
+        return Result.ok(encrypted);
     }
 
     /**
@@ -90,7 +90,7 @@ public class EncryptController {
         log.info("SM2 加密请求，原文: {}", plainText);
         String encrypted = EncryptUtil.sm2Encrypt(plainText);
         log.info("SM2 加密结果: {}", encrypted);
-        return Result.success(encrypted);
+        return Result.ok(encrypted);
     }
 
     /**
@@ -104,7 +104,7 @@ public class EncryptController {
         log.info("SM2 解密请求，密文: {}", encryptedText);
         String decrypted = EncryptUtil.sm2Decrypt(encryptedText);
         log.info("SM2 解密结果: {}", decrypted);
-        return Result.success(decrypted);
+        return Result.ok(decrypted);
     }
 
     /**
@@ -118,7 +118,7 @@ public class EncryptController {
         log.info("SM2 Hex 加密请求，原文: {}", plainText);
         String encrypted = EncryptUtil.sm2EncryptHex(plainText);
         log.info("SM2 Hex 加密结果: {}", encrypted);
-        return Result.success(encrypted);
+        return Result.ok(encrypted);
     }
 
     /**
@@ -132,7 +132,7 @@ public class EncryptController {
         log.info("SM2 Base64 加密请求，原文: {}", plainText);
         String encrypted = EncryptUtil.sm2EncryptBase64(plainText);
         log.info("SM2 Base64 加密结果: {}", encrypted);
-        return Result.success(encrypted);
+        return Result.ok(encrypted);
     }
 
     /**
@@ -149,7 +149,7 @@ public class EncryptController {
             data.setSm2PublicKey(keyPair.getPublicKey());
             data.setSm2PrivateKey(keyPair.getPrivateKey());
             log.info("SM2 密钥对生成成功");
-            return Result.success(data);
+            return Result.ok(data);
         } catch (GeneralSecurityException e) {
             log.error("生成 SM2 密钥对失败", e);
             return Result.fail("生成密钥对失败: " + e.getMessage());
@@ -180,7 +180,7 @@ public class EncryptController {
         result.setSm2Decrypted(EncryptUtil.sm2Decrypt(sm2Encrypted));
 
         log.info("加解密演示完成");
-        return Result.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -190,6 +190,6 @@ public class EncryptController {
      */
     @GetMapping("/health")
     public Result<String> health() {
-        return Result.success("Carlos 加密示例服务运行正常");
+        return Result.ok("Carlos 加密示例服务运行正常");
     }
 }
