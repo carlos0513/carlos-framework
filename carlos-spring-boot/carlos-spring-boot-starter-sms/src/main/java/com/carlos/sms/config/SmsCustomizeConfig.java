@@ -6,7 +6,6 @@ import com.carlos.sms.template.DefaultSmsTemplateManager;
 import com.carlos.sms.template.SmsTemplateManager;
 import com.carlos.sms.ums.config.UmsFactory;
 import com.carlos.sms.wocloud.config.WoCloudFactory;
-import com.carlos.sms.ynchina.config.YnChinaFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -54,15 +53,6 @@ public class SmsCustomizeConfig {
     @ConditionalOnProperty(prefix = "sms.blends.ums", name = "supplier", havingValue = "ums")
     public UmsFactory umsFactory() {
         return UmsFactory.instance();
-    }
-
-    /**
-     * 云南
-     */
-    @Bean
-    @ConditionalOnProperty(prefix = "sms.blends.ynchina", name = "supplier", havingValue = "ynchina")
-    public YnChinaFactory ynChina() {
-        return YnChinaFactory.instance();
     }
 
     /**
