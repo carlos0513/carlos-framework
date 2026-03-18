@@ -1,6 +1,5 @@
 package com.carlos.migration.config;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import java.util.Map;
  * @author carlos
  * @since 3.0.0
  */
-@Data
 @ConfigurationProperties(prefix = "carlos.migration")
 public class MigrationProperties {
 
@@ -52,10 +50,67 @@ public class MigrationProperties {
      */
     private int asyncThreadPoolSize = 2;
 
+    // Getters and Setters
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public DataSourceConfig getPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(DataSourceConfig primary) {
+        this.primary = primary;
+    }
+
+    public Map<String, DataSourceConfig> getMulti() {
+        return multi;
+    }
+
+    public void setMulti(Map<String, DataSourceConfig> multi) {
+        this.multi = multi;
+    }
+
+    public boolean isEndpointEnabled() {
+        return endpointEnabled;
+    }
+
+    public void setEndpointEnabled(boolean endpointEnabled) {
+        this.endpointEnabled = endpointEnabled;
+    }
+
+    public String getEndpointPath() {
+        return endpointPath;
+    }
+
+    public void setEndpointPath(String endpointPath) {
+        this.endpointPath = endpointPath;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+
+    public int getAsyncThreadPoolSize() {
+        return asyncThreadPoolSize;
+    }
+
+    public void setAsyncThreadPoolSize(int asyncThreadPoolSize) {
+        this.asyncThreadPoolSize = asyncThreadPoolSize;
+    }
+
     /**
      * 数据源配置
      */
-    @Data
     public static class DataSourceConfig {
 
         /**
@@ -124,5 +179,111 @@ public class MigrationProperties {
          * Liquibase 数据库变更日志锁定表名
          */
         private String databaseChangeLogLockTable = "DATABASECHANGELOGLOCK";
+
+        // Getters and Setters
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getChangeLog() {
+            return changeLog;
+        }
+
+        public void setChangeLog(String changeLog) {
+            this.changeLog = changeLog;
+        }
+
+        public String getContexts() {
+            return contexts;
+        }
+
+        public void setContexts(String contexts) {
+            this.contexts = contexts;
+        }
+
+        public String getLabels() {
+            return labels;
+        }
+
+        public void setLabels(String labels) {
+            this.labels = labels;
+        }
+
+        public String getDefaultSchema() {
+            return defaultSchema;
+        }
+
+        public void setDefaultSchema(String defaultSchema) {
+            this.defaultSchema = defaultSchema;
+        }
+
+        public boolean isDropFirst() {
+            return dropFirst;
+        }
+
+        public void setDropFirst(boolean dropFirst) {
+            this.dropFirst = dropFirst;
+        }
+
+        public boolean isValidateOnMigrate() {
+            return validateOnMigrate;
+        }
+
+        public void setValidateOnMigrate(boolean validateOnMigrate) {
+            this.validateOnMigrate = validateOnMigrate;
+        }
+
+        public boolean isIgnoreFailedFutureMigrations() {
+            return ignoreFailedFutureMigrations;
+        }
+
+        public void setIgnoreFailedFutureMigrations(boolean ignoreFailedFutureMigrations) {
+            this.ignoreFailedFutureMigrations = ignoreFailedFutureMigrations;
+        }
+
+        public boolean isRunOnStartup() {
+            return runOnStartup;
+        }
+
+        public void setRunOnStartup(boolean runOnStartup) {
+            this.runOnStartup = runOnStartup;
+        }
+
+        public int getRollbackCount() {
+            return rollbackCount;
+        }
+
+        public void setRollbackCount(int rollbackCount) {
+            this.rollbackCount = rollbackCount;
+        }
+
+        public Map<String, String> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, String> parameters) {
+            this.parameters = parameters;
+        }
+
+        public String getDatabaseChangeLogTable() {
+            return databaseChangeLogTable;
+        }
+
+        public void setDatabaseChangeLogTable(String databaseChangeLogTable) {
+            this.databaseChangeLogTable = databaseChangeLogTable;
+        }
+
+        public String getDatabaseChangeLogLockTable() {
+            return databaseChangeLogLockTable;
+        }
+
+        public void setDatabaseChangeLogLockTable(String databaseChangeLogLockTable) {
+            this.databaseChangeLogLockTable = databaseChangeLogLockTable;
+        }
     }
 }

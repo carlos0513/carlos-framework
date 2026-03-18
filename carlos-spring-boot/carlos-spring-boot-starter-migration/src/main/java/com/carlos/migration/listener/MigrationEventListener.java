@@ -1,7 +1,8 @@
 package com.carlos.migration.listener;
 
 import com.carlos.migration.core.MultiDataSourceLiquibase;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -14,9 +15,10 @@ import java.util.Map;
  * @author carlos
  * @since 3.0.0
  */
-@Slf4j
 public class MigrationEventListener implements
     ApplicationListener<ApplicationReadyEvent> {
+
+    private static final Logger log = LoggerFactory.getLogger(MigrationEventListener.class);
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {

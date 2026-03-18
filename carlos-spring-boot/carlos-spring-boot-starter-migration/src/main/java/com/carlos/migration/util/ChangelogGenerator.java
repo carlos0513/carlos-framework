@@ -1,6 +1,7 @@
 package com.carlos.migration.util;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,8 +18,9 @@ import java.time.format.DateTimeFormatter;
  * @author carlos
  * @since 3.0.0
  */
-@Slf4j
 public class ChangelogGenerator {
+
+    private static final Logger log = LoggerFactory.getLogger(ChangelogGenerator.class);
 
     private static final DateTimeFormatter FORMATTER =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

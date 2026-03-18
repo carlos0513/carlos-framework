@@ -12,7 +12,8 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ResourceLoader;
@@ -31,8 +32,9 @@ import java.util.concurrent.*;
  * @author carlos
  * @since 3.0.0
  */
-@Slf4j
 public class MultiDataSourceLiquibase implements InitializingBean, DisposableBean {
+
+    private static final Logger log = LoggerFactory.getLogger(MultiDataSourceLiquibase.class);
 
     private MigrationProperties migrationProperties;
     private ResourceLoader resourceLoader;
@@ -237,7 +239,7 @@ public class MultiDataSourceLiquibase implements InitializingBean, DisposableBea
             ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
             try (Liquibase liquibase = new Liquibase(config.getChangeLog(), resourceAccessor, database)) {
-                liquibase.rollback(count, new Contexts(config.getContexts()));
+                liquibase.rollback(count, config.getContexts());
                 log.info("[Migration] 数据源 [{}] 回滚 [{}] 个变更集成功", dataSourceName, count);
             }
         } catch (SQLException | LiquibaseException e) {

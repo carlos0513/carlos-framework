@@ -1,6 +1,6 @@
 package com.carlos.migration.core;
 
-import com.carlos.common.exception.ServiceException;
+import com.carlos.core.exception.GlobalException;
 
 /**
  * 数据库迁移异常
@@ -8,7 +8,7 @@ import com.carlos.common.exception.ServiceException;
  * @author carlos
  * @since 3.0.0
  */
-public class MigrationException extends ServiceException {
+public class MigrationException extends GlobalException {
 
     public MigrationException(String message) {
         super(message);

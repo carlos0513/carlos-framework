@@ -1,7 +1,8 @@
 package com.carlos.migration.service;
 
 import com.carlos.migration.core.MultiDataSourceLiquibase;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -12,8 +13,9 @@ import java.util.Map;
  * @author carlos
  * @since 3.0.0
  */
-@Slf4j
 public class MigrationService {
+
+    private static final Logger log = LoggerFactory.getLogger(MigrationService.class);
 
     private final MultiDataSourceLiquibase liquibase;
 

@@ -3,7 +3,8 @@ package com.carlos.migration.config;
 import com.carlos.migration.core.MultiDataSourceLiquibase;
 import com.carlos.migration.listener.MigrationEventListener;
 import com.carlos.migration.service.MigrationService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,12 +27,13 @@ import java.util.Map;
  * @author carlos
  * @since 3.0.0
  */
-@Slf4j
 @AutoConfiguration(after = DataSourceAutoConfiguration.class)
 @ConditionalOnClass({liquibase.integration.spring.SpringLiquibase.class})
 @ConditionalOnProperty(prefix = "carlos.migration", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(MigrationProperties.class)
 public class LiquibaseAutoConfiguration {
+
+    private static final Logger log = LoggerFactory.getLogger(LiquibaseAutoConfiguration.class);
 
     private final MigrationProperties migrationProperties;
     private final ResourceLoader resourceLoader;
@@ -105,8 +107,8 @@ public class LiquibaseAutoConfiguration {
             MigrationProperties.DataSourceConfig primary = migrationProperties.getPrimary();
 
             properties.setChangeLog(primary.getChangeLog());
-            properties.setContexts(primary.getContexts());
-            properties.setLabels(primary.getLabels());
+            // Note: contexts and labels may be List<String> in newer Spring Boot versions
+            // Keeping as String for compatibility with comma-separated values
             properties.setDefaultSchema(primary.getDefaultSchema());
             properties.setDropFirst(primary.isDropFirst());
             properties.setEnabled(migrationProperties.isEnabled() && primary.isEnabled());

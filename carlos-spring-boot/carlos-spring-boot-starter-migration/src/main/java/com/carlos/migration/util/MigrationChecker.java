@@ -8,7 +8,8 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -22,8 +23,9 @@ import java.util.List;
  * @author carlos
  * @since 3.0.0
  */
-@Slf4j
 public class MigrationChecker {
+
+    private static final Logger log = LoggerFactory.getLogger(MigrationChecker.class);
 
     /**
      * 检查是否有待执行的变更
