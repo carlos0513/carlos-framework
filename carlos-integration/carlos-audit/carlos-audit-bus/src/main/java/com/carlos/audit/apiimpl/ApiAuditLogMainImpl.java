@@ -55,7 +55,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             }
 
             // 参数转换为 DTO
-            AuditLogMainDTO dto = convertToDTO(param);
+            AuditLogMainDTO dto = AuditLogMainConvert.INSTANCE.toDTO(param);
 
             // 异步保存
             logMainService.addAuditLogMain(dto);
@@ -90,7 +90,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             }
 
             // 参数转换为 DTO
-            AuditLogMainDTO dto = convertToDTO(param);
+            AuditLogMainDTO dto = AuditLogMainConvert.INSTANCE.toDTO(param);
 
             // 同步保存
             boolean success = logMainService.addAuditLogMainSync(dto, timeoutMs);
@@ -129,7 +129,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
 
             // 批量转换为 DTO
             List<AuditLogMainDTO> dtos = params.stream()
-                .map(this::convertToDTO)
+                .map(AuditLogMainConvert.INSTANCE::toDTO)
                 .collect(Collectors.toList());
 
             // 批量异步保存
@@ -203,140 +203,5 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             log.error("简单审计日志保存失败: {}", e.getMessage(), e);
             return Result.fail("审计日志保存失败: " + e.getMessage());
         }
-    }
-
-    /**
-     * 将 API 参数转换为 DTO
-     *
-     * @param param API 参数
-     * @return DTO
-     */
-    private AuditLogMainDTO convertToDTO(ApiAuditLogMainParam param) {
-        AuditLogMainDTO dto = new AuditLogMainDTO();
-
-        // 基础字段
-        dto.setId(param.getId());
-        dto.setServerTime(param.getServerTime() != null ? param.getServerTime() : LocalDateTime.now());
-        dto.setEventDate(param.getEventDate() != null ? param.getEventDate() : LocalDate.now());
-        dto.setClientTime(param.getClientTime());
-        dto.setEventTime(param.getEventTime() != null ? param.getEventTime() : LocalDateTime.now());
-        dto.setDurationMs(param.getDurationMs());
-        dto.setRetentionDeadline(param.getRetentionDeadline() != null ? param.getRetentionDeadline() : LocalDate.now().plusDays(90));
-        dto.setLogSchemaVersion(param.getLogSchemaVersion() != null ? param.getLogSchemaVersion() : 1);
-
-        // 分类和类型
-        dto.setCategory(param.getCategory());
-        dto.setLogType(param.getLogType());
-        dto.setRiskLevel(param.getRiskLevel() != null ? param.getRiskLevel() : 0);
-
-        // 主体信息
-        dto.setPrincipalId(param.getPrincipalId());
-        dto.setPrincipalType(param.getPrincipalType());
-        dto.setPrincipalName(param.getPrincipalName());
-        dto.setTenantId(param.getTenantId());
-        dto.setDeptId(param.getDeptId());
-        dto.setDeptName(param.getDeptName());
-        dto.setDeptPath(param.getDeptPath());
-
-        // 目标对象
-        dto.setTargetType(param.getTargetType());
-        dto.setTargetId(param.getTargetId());
-        dto.setTargetName(param.getTargetName());
-        dto.setTargetSnapshot(param.getTargetSnapshot());
-
-        // 状态和结果
-        dto.setState(param.getState());
-        dto.setResultCode(param.getResultCode());
-        dto.setResultMessage(param.getResultMessage());
-        dto.setOperation(param.getOperation());
-        dto.setApprovalComment(param.getApprovalComment());
-
-        // 客户端信息
-        dto.setClientIp(param.getClientIp());
-        dto.setClientPort(param.getClientPort());
-        dto.setServerIp(param.getServerIp());
-        dto.setUserAgent(param.getUserAgent());
-        dto.setDeviceFingerprint(param.getDeviceFingerprint());
-
-        // 地理位置
-        dto.setLocationCountry(param.getLocationCountry());
-        dto.setLocationProvince(param.getLocationProvince());
-        dto.setLocationCity(param.getLocationCity());
-        dto.setLocationLat(param.getLocationLat());
-        dto.setLocationLon(param.getLocationLon());
-
-        // 认证信息
-        dto.setAuthType(param.getAuthType());
-        dto.setAuthProvider(param.getAuthProvider());
-        dto.setRoles(param.getRoles());
-        dto.setPermissions(param.getPermissions());
-
-        // 业务信息
-        dto.setBizChannel(param.getBizChannel());
-        dto.setBizScene(param.getBizScene());
-        dto.setBizOrderNo(param.getBizOrderNo());
-        dto.setRelatedBizIds(param.getRelatedBizIds());
-        dto.setMonetaryAmount(param.getMonetaryAmount());
-
-        // 流程和批次
-        dto.setProcessId(param.getProcessId());
-        dto.setBatchId(param.getBatchId());
-        dto.setBatchIndex(param.getBatchIndex());
-        dto.setBatchTotal(param.getBatchTotal());
-        dto.setTaskId(param.getTaskId());
-        dto.setApproverId(param.getApproverId());
-
-        // 数据变更
-        dto.setHasDataChange(param.getHasDataChange() != null ? param.getHasDataChange() : false);
-        dto.setEntityClass(param.getEntityClass());
-        dto.setTableName(param.getTableName());
-        dto.setChangeSummary(param.getChangeSummary());
-        dto.setChangedFieldCount(param.getChangedFieldCount());
-        dto.setOldData(param.getOldData());
-        dto.setNewData(param.getNewData());
-        dto.setOldDataCompressed(param.getOldDataCompressed());
-        dto.setNewDataCompressed(param.getNewDataCompressed());
-
-        // 链路追踪
-        dto.setTraceId(param.getTraceId());
-        dto.setSpanId(param.getSpanId());
-        dto.setParentSpanId(param.getParentSpanId());
-        dto.setTracePath(param.getTracePath());
-
-        // 性能指标
-        dto.setDbQueryCount(param.getDbQueryCount());
-        dto.setDbQueryTimeMs(param.getDbQueryTimeMs());
-        dto.setExternalCallCount(param.getExternalCallCount());
-        dto.setExternalCallTimeMs(param.getExternalCallTimeMs());
-        dto.setCustomMetrics(param.getCustomMetrics());
-
-        // 负载存储
-        dto.setRequestPayloadRef(param.getRequestPayloadRef());
-        dto.setResponsePayloadRef(param.getResponsePayloadRef());
-
-        // 应用信息
-        dto.setAppName(param.getAppName());
-        dto.setAppVersion(param.getAppVersion());
-        dto.setCluster(param.getCluster());
-        dto.setHostName(param.getHostName());
-
-        // 标签和附件
-        dto.setTagKeys(param.getTagKeys());
-        dto.setTagValues(param.getTagValues());
-        dto.setAttachmentCount(param.getAttachmentCount());
-        dto.setAttachmentTypes(param.getAttachmentTypes());
-        dto.setAttachmentTotalSize(param.getAttachmentTotalSize());
-        dto.setFirstAttachmentRef(param.getFirstAttachmentRef());
-        dto.setAttachmentRefs(param.getAttachmentRefs());
-
-        // 动态扩展
-        dto.setDynamicTags(param.getDynamicTags());
-        dto.setDynamicExtras(param.getDynamicExtras());
-
-        // 时间戳
-        dto.setCreatedTime(param.getCreatedTime());
-        dto.setUpdatedTime(param.getUpdatedTime());
-
-        return dto;
     }
 }

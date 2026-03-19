@@ -60,12 +60,8 @@ public class DisruptorConfig {
             waitStrategy
         );
 
-        // 设置消费者（WorkPool 模式）
-        AuditLogEventHandler[] handlers = new AuditLogEventHandler[consumerCount];
-        for (int i = 0; i < consumerCount; i++) {
-            handlers[i] = eventHandler;
-        }
-        disruptor.handleEventsWithWorkerPool(handlers);
+        // 设置消费者（使用 EventHandler）
+        disruptor.handleEventsWith(eventHandler);
 
         // 添加异常处理器
         disruptor.setDefaultExceptionHandler(new AuditLogExceptionHandler());

@@ -2,17 +2,21 @@ package com.carlos.audit.controller;
 
 import com.carlos.audit.convert.AuditLogArchiveRecordConvert;
 import com.carlos.audit.manager.AuditLogArchiveRecordManager;
+import com.carlos.audit.pojo.dto.AuditLogArchiveRecordDTO;
+import com.carlos.audit.pojo.param.AuditLogArchiveRecordCreateParam;
 import com.carlos.audit.pojo.param.AuditLogArchiveRecordPageParam;
+import com.carlos.audit.pojo.param.AuditLogArchiveRecordUpdateParam;
 import com.carlos.audit.pojo.vo.AuditLogArchiveRecordVO;
 import com.carlos.audit.service.AuditLogArchiveRecordService;
 import com.carlos.core.pagination.Paging;
+import com.carlos.core.param.ParamIdSet;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.Serializable;
 
 
 /**
@@ -36,27 +40,27 @@ public class AuditLogArchiveRecordController {
     private final AuditLogArchiveRecordManager logArchiveRecordManager;
 
 
-    // @PostMapping("add")
-    // @Operation(summary = "新增" + BASE_NAME)
-    // public void add(@RequestBody @Validated AuditLogArchiveRecordCreateParam param) {
-    //     AuditLogArchiveRecordDTO dto = AuditLogArchiveRecordConvert.INSTANCE.toDTO(param);
-    //     logArchiveRecordService.addAuditLogArchiveRecord(dto);
-    // }
-    //
-    //
-    // @PostMapping("delete")
-    // @Operation(summary = "删除" + BASE_NAME)
-    // public void delete(@RequestBody ParamIdSet<Serializable> param) {
-    //     logArchiveRecordService.deleteAuditLogArchiveRecord(param.getIds());
-    // }
-    //
-    //
-    // @PostMapping("update")
-    // @Operation(summary = "更新" + BASE_NAME)
-    // public void update(@RequestBody @Validated AuditLogArchiveRecordUpdateParam param) {
-    //     AuditLogArchiveRecordDTO dto = AuditLogArchiveRecordConvert.INSTANCE.toDTO(param);
-    //     logArchiveRecordService.updateAuditLogArchiveRecord(dto);
-    // }
+    @PostMapping("add")
+    @Operation(summary = "新增" + BASE_NAME)
+    public void add(@RequestBody @Validated AuditLogArchiveRecordCreateParam param) {
+        AuditLogArchiveRecordDTO dto = AuditLogArchiveRecordConvert.INSTANCE.toDTO(param);
+        logArchiveRecordService.addAuditLogArchiveRecord(dto);
+    }
+
+
+    @PostMapping("delete")
+    @Operation(summary = "删除" + BASE_NAME)
+    public void delete(@RequestBody ParamIdSet<Serializable> param) {
+        logArchiveRecordService.deleteAuditLogArchiveRecord(param.getIds());
+    }
+
+
+    @PostMapping("update")
+    @Operation(summary = "更新" + BASE_NAME)
+    public void update(@RequestBody @Validated AuditLogArchiveRecordUpdateParam param) {
+        AuditLogArchiveRecordDTO dto = AuditLogArchiveRecordConvert.INSTANCE.toDTO(param);
+        logArchiveRecordService.updateAuditLogArchiveRecord(dto);
+    }
 
 
     @GetMapping("detail")
@@ -68,7 +72,7 @@ public class AuditLogArchiveRecordController {
 
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
-    public Paging<AuditLogArchiveRecordVO> page(@RequestParam AuditLogArchiveRecordPageParam param) {
+    public Paging<AuditLogArchiveRecordVO> page(AuditLogArchiveRecordPageParam param) {
         return logArchiveRecordManager.getPage(param);
     }
 }

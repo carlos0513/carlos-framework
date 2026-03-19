@@ -10,8 +10,8 @@ import com.carlos.audit.pojo.vo.AuditLogConfigVO;
 import com.carlos.audit.service.AuditLogConfigService;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +28,7 @@ import java.io.Serializable;
  * @author Carlos
  * @date 2026年3月6日 下午9:31:12
  */
-@Hidden
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("audit/log/config")
@@ -74,7 +74,7 @@ public class AuditLogConfigController {
 
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
-    public Paging<AuditLogConfigVO> page(AuditLogConfigPageParam param) {
+    public Paging<AuditLogConfigVO> page(@Parameter(description = "分页参数") AuditLogConfigPageParam param) {
         return logConfigManager.getPage(param);
     }
 }

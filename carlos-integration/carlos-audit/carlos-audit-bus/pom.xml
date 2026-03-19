@@ -13,8 +13,19 @@
 
   <artifactId>carlos-audit-bus</artifactId>
 
+  <description>
+    审计日志存储实现模块
+    提供 LogStorage 接口实现，将操作日志存储到 ClickHouse
+    配合 carlos-spring-boot-starter-log 使用
+  </description>
 
   <dependencies>
+
+    <!-- 日志采集模块（必须） -->
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-log</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.carlos</groupId>
@@ -33,11 +44,11 @@
       <artifactId>carlos-audit-api</artifactId>
     </dependency>
 
-    <!-- Disruptor 高性能队列 -->
+    <!-- Disruptor 高性能队列（与 log 模块版本保持一致） -->
     <dependency>
       <groupId>com.lmax</groupId>
       <artifactId>disruptor</artifactId>
-      <version>3.4.4</version>
+      <version>4.0.0</version>
     </dependency>
 
     <!-- ClickHouse 客户端 -->
@@ -45,17 +56,6 @@
       <groupId>com.clickhouse</groupId>
       <artifactId>clickhouse-jdbc-all</artifactId>
       <version>0.9.6</version>
-    </dependency>
-    <!-- Spring AOP -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
-    </dependency>
-
-    <!-- Spring Expression (SpEL) -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-expression</artifactId>
     </dependency>
 
     <!-- Micrometer 监控 -->

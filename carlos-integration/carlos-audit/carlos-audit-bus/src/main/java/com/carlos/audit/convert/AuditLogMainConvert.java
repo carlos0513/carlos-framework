@@ -1,6 +1,7 @@
 package com.carlos.audit.convert;
 
 import com.carlos.audit.api.pojo.ao.AuditLogMainAO;
+import com.carlos.audit.api.pojo.param.ApiAuditLogMainParam;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
 import com.carlos.audit.pojo.entity.AuditLogMain;
 import com.carlos.audit.pojo.param.AuditLogMainCreateParam;
@@ -123,4 +124,14 @@ public interface AuditLogMainConvert {
      * @date 2026年3月6日 下午9:31:12
      */
     AuditLogMainAO toAO(AuditLogMain entity);
+
+    /**
+     * 接口参数对象转数据传输对象
+     *
+     * @param param 接口参数对象
+     * @return 数据传输对象
+     * @author Carlos
+     * @date 2026年3月6日 下午9:31:12
+     */
+    AuditLogMainDTO toDTO(ApiAuditLogMainParam param);
 }

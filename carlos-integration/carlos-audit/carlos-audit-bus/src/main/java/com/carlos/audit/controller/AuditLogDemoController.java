@@ -1,9 +1,8 @@
 package com.carlos.audit.controller;
 
-import com.carlos.audit.annotation.AuditLog;
-import com.carlos.audit.api.pojo.enums.AuditLogCategoryEnum;
 import com.carlos.core.response.Result;
-import io.swagger.v3.oas.annotations.Hidden;
+import com.carlos.log.annotation.Log;
+import com.carlos.log.enums.BusinessType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
@@ -14,24 +13,25 @@ import java.math.BigDecimal;
 /**
  * <p>
  * 审计日志注解使用示例控制器
- * 演示 @AuditLog 注解的各种使用方式
+ * 演示 @Log 注解的各种使用方式（存储到 ClickHouse）
  * </p>
  *
  * @author Carlos
  * @date 2026-03-06
  */
-@Hidden
+
 @RestController
 @RequestMapping("/api/audit/demo")
-@Tag(name = "审计日志使用示例", description = "演示 @AuditLog 注解的各种使用方式")
+@Tag(name = "审计日志使用示例", description = "演示 @Log 注解的各种使用方式（存储到 ClickHouse）")
 public class AuditLogDemoController {
 
     /**
      * 示例1: 用户登录（基础用法）
      */
-    @AuditLog(
-        type = "USER_LOGIN",
-        category = AuditLogCategoryEnum.SECURITY,
+    @Log(
+        title = "用户管理",
+        logType = "USER_LOGIN",
+        businessType = BusinessType.LOGIN,
         operation = "'用户登录: ' + #param.username",
         riskLevel = 30
     )
@@ -48,15 +48,16 @@ public class AuditLogDemoController {
     /**
      * 示例2: 订单支付（完整用法，带目标对象）
      */
-    @AuditLog(
-        type = "ORDER_PAY",
-        category = AuditLogCategoryEnum.BUSINESS,
+    @Log(
+        title = "订单管理",
+        logType = "ORDER_PAY",
+        businessType = BusinessType.UPDATE,
         operation = "'订单支付: ' + #param.orderNo + ', 金额: ' + #param.amount",
         targetId = "#param.orderNo",
         targetType = "ORDER",
         riskLevel = 70,
-        recordParams = true,
-        recordResult = true
+        saveRequestParams = true,
+        saveResponseData = true
     )
     @PostMapping("/order/pay")
     @Operation(summary = "订单支付示例")
@@ -71,9 +72,10 @@ public class AuditLogDemoController {
     /**
      * 示例3: 数据导出（高风险操作）
      */
-    @AuditLog(
-        type = "DATA_EXPORT",
-        category = AuditLogCategoryEnum.SECURITY,
+    @Log(
+        title = "数据导出",
+        logType = "DATA_EXPORT",
+        businessType = BusinessType.EXPORT,
         operation = "'数据导出: ' + #tableName + ', 条件: ' + #condition",
         targetType = "CONFIG",
         riskLevel = 80
@@ -90,9 +92,10 @@ public class AuditLogDemoController {
     /**
      * 示例4: 同步记录审计日志（重要操作）
      */
-    @AuditLog(
-        type = "CONFIG_CHANGE",
-        category = AuditLogCategoryEnum.SYSTEM,
+    @Log(
+        title = "配置管理",
+        logType = "CONFIG_CHANGE",
+        businessType = BusinessType.UPDATE,
         operation = "'配置变更: ' + #param.configKey",
         targetType = "CONFIG",
         riskLevel = 90,
@@ -108,9 +111,10 @@ public class AuditLogDemoController {
     /**
      * 示例5: 带业务渠道的审计日志
      */
-    @AuditLog(
-        type = "FILE_UPLOAD",
-        category = AuditLogCategoryEnum.BUSINESS,
+    @Log(
+        title = "文件管理",
+        logType = "FILE_UPLOAD",
+        businessType = BusinessType.INSERT,
         operation = "'文件上传: ' + #fileName",
         targetType = "FILE",
         riskLevel = 20,

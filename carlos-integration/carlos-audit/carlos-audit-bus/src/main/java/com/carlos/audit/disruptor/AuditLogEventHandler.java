@@ -5,7 +5,7 @@ import com.carlos.audit.api.pojo.enums.AuditLogPrincipalTypeEnum;
 import com.carlos.audit.api.pojo.enums.AuditLogStateEnum;
 import com.carlos.audit.clickhouse.ClickHouseBatchWriter;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
-import com.lmax.disruptor.WorkHandler;
+import com.lmax.disruptor.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,12 +23,12 @@ import java.time.LocalDateTime;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AuditLogEventHandler implements WorkHandler<AuditLogEvent> {
+public class AuditLogEventHandler implements EventHandler<AuditLogEvent> {
 
     private final ClickHouseBatchWriter batchWriter;
 
     @Override
-    public void onEvent(AuditLogEvent event) throws Exception {
+    public void onEvent(AuditLogEvent event, long sequence, boolean endOfBatch) throws Exception {
         if (event.getAuditLog() == null) {
             log.warn("收到空的审计日志事件，序列号: {}", event.getSequence());
             event.setState(AuditLogEvent.EventState.DISCARDED);
@@ -57,7 +57,7 @@ public class AuditLogEventHandler implements WorkHandler<AuditLogEvent> {
             }
 
         } catch (Exception e) {
-            log.error("处理审计日志事件失败，序列号: {}", event.getSequence(), e);
+            log.error("处理审计日志事件失败，序列号: {}", sequence, e);
             handleError(event, e);
         }
     }

@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * <p>
@@ -22,7 +21,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Slf4j
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableScheduling
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "carlos.audit", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class AuditAutoConfiguration {
