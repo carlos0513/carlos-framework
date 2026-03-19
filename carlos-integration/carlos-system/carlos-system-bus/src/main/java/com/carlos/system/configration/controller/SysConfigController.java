@@ -3,8 +3,6 @@ package com.carlos.system.configration.controller;
 
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
-import com.carlos.log.annotation.Log;
-import com.carlos.log.enums.BusinessType;
 import com.carlos.system.configration.convert.SysConfigConvert;
 import com.carlos.system.configration.manager.SysConfigManager;
 import com.carlos.system.configration.pojo.dto.SysConfigDTO;
@@ -49,7 +47,7 @@ public class SysConfigController {
 
     @PostMapping
     @Operation(summary = "新增" + BASE_NAME)
-    @Log(title = "新增" + BASE_NAME, businessType = BusinessType.INSERT)
+
     public void add(@RequestBody @Validated SysConfigCreateParam param) {
         SysConfigDTO dto = SysConfigConvert.INSTANCE.toDTO(param);
         this.configService.addSysConfig(dto);
@@ -57,7 +55,7 @@ public class SysConfigController {
 
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
-    @Log(title = "删除" + BASE_NAME, businessType = BusinessType.DELETE)
+
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         this.configService.deleteSysConfig(param.getIds());
     }
@@ -65,7 +63,7 @@ public class SysConfigController {
 
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
-    @Log(title = "更新" + BASE_NAME, businessType = BusinessType.UPDATE)
+
     public void update(@RequestBody @Validated SysConfigUpdateParam param) {
         SysConfigDTO dto = SysConfigConvert.INSTANCE.toDTO(param);
         this.configService.updateSysConfig(dto);
@@ -73,21 +71,21 @@ public class SysConfigController {
 
     @GetMapping("{id}")
     @Operation(summary = BASE_NAME + "详情")
-    @Log(title = "查看日志详情", businessType = BusinessType.QUERY_DETAIL)
+
     public SysConfigVO detail(@PathVariable String id) {
         return SysConfigConvert.INSTANCE.toVO(this.configManager.getDtoById(id));
     }
 
     @GetMapping("code")
     @Operation(summary = "根据code获取配置")
-    @Log(title = "获取系统配置", businessType = BusinessType.QUERY_DETAIL)
+
     public SysConfigVO getByCode(String code) {
         return SysConfigConvert.INSTANCE.toVO(this.configService.getByCode(code));
     }
 
     @GetMapping("all")
     @Operation(summary = "获取全部配置")
-    @Log(title = "获取全部配置", businessType = BusinessType.QUERY)
+
     public Map<String, SysConfigVO> getAllConfig() {
         List<SysConfigDTO> configs = configService.listConfig();
         Map<String, SysConfigVO> map = new HashMap<>();
@@ -99,7 +97,7 @@ public class SysConfigController {
 
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
-    @Log(title = "获取配置列表", businessType = BusinessType.QUERY)
+
     public Paging<SysConfigVO> page(SysConfigPageParam param) {
         return this.configManager.getPage(param);
     }

@@ -3,8 +3,6 @@ package com.carlos.system.dict.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.carlos.core.param.ParamIdSet;
-import com.carlos.log.annotation.Log;
-import com.carlos.log.enums.BusinessType;
 import com.carlos.system.dict.convert.SysDictConvert;
 import com.carlos.system.dict.manager.SysDictCacheManager;
 import com.carlos.system.dict.manager.SysDictManager;
@@ -49,7 +47,7 @@ public class SysDictController {
 
     @PostMapping
     @Operation(summary = "新增" + BASE_NAME)
-    @Log(title = "系统字典", businessType = BusinessType.INSERT)
+
     public boolean add(@RequestBody @Validated SysDictCreateParam param) {
         SysDictDTO dto = SysDictConvert.INSTANCE.toDTO(param);
         return this.dictService.addDict(dto, param.getItems());
@@ -57,14 +55,14 @@ public class SysDictController {
 
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
-    @Log(title = "系统字典", businessType = BusinessType.DELETE)
+
     public boolean delete(@RequestBody ParamIdSet<String> param) {
         return this.dictService.deleteDict(Sets.newHashSet(param.getIds()));
     }
 
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
-    @Log(title = "系统字典", businessType = BusinessType.UPDATE)
+
     public boolean update(@RequestBody @Validated SysDictUpdateParam command) {
         SysDictDTO dto = SysDictConvert.INSTANCE.toDTO(command);
         return this.dictService.update(dto, command.getItems());
@@ -105,7 +103,7 @@ public class SysDictController {
 
     @PostMapping("cache/refresh")
     @Operation(summary = "强制刷新" + BASE_NAME)
-    @Log(title = "系统字典强制刷新", businessType = BusinessType.REFRESH)
+
     public boolean refresh() {
         cacheManager.clearCache();
         this.cacheManager.initCache();

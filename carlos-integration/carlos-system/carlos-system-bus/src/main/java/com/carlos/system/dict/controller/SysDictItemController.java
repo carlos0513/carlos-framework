@@ -4,8 +4,6 @@ package com.carlos.system.dict.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.carlos.core.exception.RestException;
 import com.carlos.core.param.ParamIdSet;
-import com.carlos.log.annotation.Log;
-import com.carlos.log.enums.BusinessType;
 import com.carlos.system.dict.convert.SysDictItemConvert;
 import com.carlos.system.dict.manager.SysDictItemManager;
 import com.carlos.system.dict.pojo.dto.SysDictItemDTO;
@@ -49,7 +47,7 @@ public class SysDictItemController {
 
     @PostMapping
     @Operation(summary = "新增" + BASE_NAME)
-    @Log(title = "系统字典选项", businessType = BusinessType.INSERT)
+
     public void add(@RequestBody @Validated SysDictItemCreateParam param) {
         SysDictItemDTO dto = SysDictItemConvert.INSTANCE.toDTO(param);
         this.dictItemService.addDictItem(param.getDictId(), Collections.singletonList(dto));
@@ -57,7 +55,7 @@ public class SysDictItemController {
 
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
-    @Log(title = "系统字典选项", businessType = BusinessType.DELETE)
+
     public boolean delete(@RequestBody ParamIdSet<Long> param) {
         return this.dictItemService.deleteDictItem(Sets.newHashSet(param.getIds()));
     }
@@ -65,7 +63,7 @@ public class SysDictItemController {
 
     @PostMapping("update")
     @Operation(summary = "修改" + BASE_NAME)
-    @Log(title = "系统字典选项", businessType = BusinessType.UPDATE)
+
     public boolean update(@RequestBody @Validated SysDictItemUpdateParam command) {
         SysDictItemDTO dto = SysDictItemConvert.INSTANCE.toDTO(command);
         return this.dictItemService.updateDictItem(dto);
@@ -73,28 +71,28 @@ public class SysDictItemController {
 
     @GetMapping("info/{id}")
     @Operation(summary = BASE_NAME + "详情")
-    @Log(title = "系统字典选项", businessType = BusinessType.QUERY_DETAIL)
+
     public SysDictItemVO detail(@PathVariable String id) {
         return SysDictItemConvert.INSTANCE.toVO(this.dictItemManager.getItemById(id));
     }
 
     @GetMapping("page")
     @Operation(summary = BASE_NAME + "分页列表")
-    @Log(title = "系统字典选项", businessType = BusinessType.QUERY)
+
     public IPage<SysDictItemVO> page(SysDictItemPageParam param) {
         return this.dictItemManager.getPage(param);
     }
 
     @GetMapping("list")
     @Operation(summary = BASE_NAME + "列表")
-    @Log(title = "系统字典选项", businessType = BusinessType.QUERY)
+
     public List<SysDictItemVO> list(String dictId) {
         return SysDictItemConvert.INSTANCE.toListVO(this.dictItemManager.listItems(Sets.newHashSet(dictId), null, true));
     }
 
     @GetMapping("select")
     @Operation(summary = BASE_NAME + "下拉列表")
-    @Log(title = "系统字典选项", businessType = BusinessType.QUERY)
+
     public List<SysDictItemListVO> select(String code, String name) {
         if (StringUtils.isBlank(code)) {
             throw new RestException("字典code不能为空");

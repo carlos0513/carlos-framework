@@ -3,8 +3,6 @@ package com.carlos.system.resource.controller;
 
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
-import com.carlos.log.annotation.Log;
-import com.carlos.log.enums.BusinessType;
 import com.carlos.system.resource.convert.SysResourceConvert;
 import com.carlos.system.resource.manager.SysResourceManager;
 import com.carlos.system.resource.pojo.dto.SysResourceDTO;
@@ -49,7 +47,7 @@ public class SysResourceController {
 
     @PostMapping
     @Operation(summary = "新增" + BASE_NAME)
-    @Log(title = "新增" + BASE_NAME, businessType = BusinessType.INSERT)
+
     public void add(@RequestBody @Validated SysResourceCreateParam param) {
         SysResourceDTO dto = SysResourceConvert.INSTANCE.toDTO(param);
         this.resourceService.addResource(dto);
@@ -57,14 +55,14 @@ public class SysResourceController {
 
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
-    @Log(title = "删除" + BASE_NAME, businessType = BusinessType.DELETE)
+
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         this.resourceService.deleteResource(param.getIds());
     }
 
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
-    @Log(title = "更新" + BASE_NAME, businessType = BusinessType.UPDATE)
+
     public void update(@RequestBody @Validated SysResourceUpdateParam param) {
         SysResourceDTO dto = SysResourceConvert.INSTANCE.toDTO(param);
         this.resourceService.updateResource(dto);

@@ -7,8 +7,6 @@ import com.carlos.core.exception.ServiceException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.core.response.Result;
-import com.carlos.log.annotation.Log;
-import com.carlos.log.enums.BusinessType;
 import com.carlos.system.region.convert.SysRegionConvert;
 import com.carlos.system.region.listener.RegionExcelListener;
 import com.carlos.system.region.manager.SysRegionManager;
@@ -59,7 +57,7 @@ public class SysRegionController {
 
     @PostMapping
     @Operation(summary = "新增" + BASE_NAME)
-    @Log(title = "区域管理", businessType = BusinessType.INSERT)
+
     public void add(@RequestBody @Validated final SysRegionCreateParam param) {
         final SysRegionDTO dto = SysRegionConvert.INSTANCE.toDTO(param);
         this.regionService.addSysRegion(dto);
@@ -68,7 +66,7 @@ public class SysRegionController {
 
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
-    @Log(title = "区域管理", businessType = BusinessType.DELETE)
+
     public void delete(@RequestBody final ParamIdSet<Serializable> param) {
         this.regionService.deleteSysRegion(param.getIds());
     }
@@ -76,7 +74,7 @@ public class SysRegionController {
 
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
-    @Log(title = "区域管理", businessType = BusinessType.UPDATE)
+
     public void update(@RequestBody @Validated final SysRegionUpdateParam param) {
         final SysRegionDTO dto = SysRegionConvert.INSTANCE.toDTO(param);
         this.regionService.updateSysRegion(dto);
@@ -117,7 +115,7 @@ public class SysRegionController {
 
     @PostMapping("import")
     @Operation(summary = "0-导入区域")
-    @Log(title = "区域管理--导入区域", businessType = BusinessType.IMPORT)
+
     public Result<?> importData(@RequestPart final MultipartFile file) {
         final RegionExcelListener listener = new RegionExcelListener(regionService);
         try {
@@ -150,7 +148,7 @@ public class SysRegionController {
 
     @GetMapping("export")
     @Operation(summary = "导出数据")
-    @Log(title = "行政区域--导出区域", businessType = BusinessType.EXPORT)
+
     public void exportUser(final HttpServletResponse response) {
         regionService.export(response, false);
     }
@@ -158,7 +156,7 @@ public class SysRegionController {
 
     @GetMapping("export/template")
     @Operation(summary = "导出模板")
-    @Log(title = "行政区域--导出模板", businessType = BusinessType.EXPORT)
+
     public void exportTemplate(final HttpServletResponse response) {
         regionService.export(response, true);
     }
@@ -172,7 +170,7 @@ public class SysRegionController {
 
     @PostMapping("cache/init")
     @Operation(summary = "0-缓存初始化")
-    @Log(title = "初始化区域缓存", businessType = BusinessType.INSERT)
+
     public void cacheInit() {
         this.regionManager.initCache();
     }

@@ -5,8 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.carlos.core.constant.CoreConstant;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
-import com.carlos.log.annotation.Log;
-import com.carlos.log.enums.BusinessType;
 import com.carlos.system.enums.MenuType;
 import com.carlos.system.menu.convert.MenuConvert;
 import com.carlos.system.menu.manager.MenuManager;
@@ -52,7 +50,7 @@ public class MenuController {
     @PostMapping
 
     @Operation(summary = "新增" + BASE_NAME)
-    @Log(title = "新增" + BASE_NAME, businessType = BusinessType.INSERT)
+
     public void add(@RequestBody @Validated MenuCreateParam param) {
         MenuDTO dto = MenuConvert.INSTANCE.toDTO(param);
         this.menuService.addMenu(dto);
@@ -61,7 +59,7 @@ public class MenuController {
 
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
-    @Log(title = "删除" + BASE_NAME, businessType = BusinessType.DELETE)
+
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         this.menuService.deleteMenu(param.getIds());
     }
@@ -69,7 +67,7 @@ public class MenuController {
 
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
-    @Log(title = "更新" + BASE_NAME, businessType = BusinessType.UPDATE)
+
     public void update(@RequestBody @Validated MenuUpdateParam param) {
         MenuDTO dto = MenuConvert.INSTANCE.toDTO(param);
         this.menuService.updateMenu(dto);
@@ -78,7 +76,7 @@ public class MenuController {
 
     @GetMapping("{id}")
     @Operation(summary = BASE_NAME + "详情")
-    @Log(title = "获取菜单详情", businessType = BusinessType.QUERY_DETAIL)
+
     public MenuVO detail(@PathVariable String id) {
         return MenuConvert.INSTANCE.toVO(this.menuManager.getDtoById(id));
     }
@@ -94,7 +92,7 @@ public class MenuController {
 
     @GetMapping("tree/select")
     @Operation(summary = "菜单树形下拉列表", description = "菜单树形列表，包含详情信息")
-    @Log(title = "菜单树形下拉列表", businessType = BusinessType.QUERY)
+
     public List<MenuTreeVO> select(@RequestParam(value = "menuType", required = false) MenuType menuType) {
         List<MenuDTO> menuTree = this.menuManager.getMenuTree(CoreConstant.PARENT_LONG_0, false, menuType);
         return MenuConvert.INSTANCE.toTreeListVO(menuTree);

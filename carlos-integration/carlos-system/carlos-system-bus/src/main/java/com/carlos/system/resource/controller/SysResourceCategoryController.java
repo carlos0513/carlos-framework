@@ -3,8 +3,6 @@ package com.carlos.system.resource.controller;
 
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
-import com.carlos.log.annotation.Log;
-import com.carlos.log.enums.BusinessType;
 import com.carlos.system.resource.convert.SysResourceCategoryConvert;
 import com.carlos.system.resource.manager.SysResourceCategoryManager;
 import com.carlos.system.resource.pojo.dto.ResourceCategoryDTO;
@@ -48,7 +46,7 @@ public class SysResourceCategoryController {
 
     @PostMapping
     @Operation(summary = "新增" + BASE_NAME)
-    @Log(title = "新增" + BASE_NAME, businessType = BusinessType.INSERT)
+
     public void add(@RequestBody @Validated SysResourceCategoryCreateParam param) {
         ResourceCategoryDTO dto = SysResourceCategoryConvert.INSTANCE.toDTO(param);
         this.resourceCategoryService.addResourceCategory(dto);
@@ -56,14 +54,14 @@ public class SysResourceCategoryController {
 
     @PostMapping("delete")
     @Operation(summary = "删除" + BASE_NAME)
-    @Log(title = "删除" + BASE_NAME, businessType = BusinessType.DELETE)
+
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         this.resourceCategoryService.deleteResourceCategory(param.getIds());
     }
 
     @PostMapping("update")
     @Operation(summary = "更新" + BASE_NAME)
-    @Log(title = "更新" + BASE_NAME, businessType = BusinessType.UPDATE)
+
     public void update(@RequestBody @Validated SysResourceCategoryUpdateParam param) {
         ResourceCategoryDTO dto = SysResourceCategoryConvert.INSTANCE.toDTO(param);
         this.resourceCategoryService.updateResourceCategory(dto);
