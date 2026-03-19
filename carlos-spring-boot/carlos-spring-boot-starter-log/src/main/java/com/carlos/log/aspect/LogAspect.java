@@ -13,11 +13,11 @@ import com.carlos.log.spel.SpelExpressionResolver;
 import com.carlos.log.storage.LogStorage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -37,14 +37,19 @@ import java.util.Arrays;
  */
 @Slf4j
 @Aspect
-@RequiredArgsConstructor
 public class LogAspect {
 
     private final SpelExpressionResolver spelResolver = new SpelExpressionResolver();
 
-    // 存储相关
+    // 存储相关（使用 ObjectProvider 使异步组件变为可选）
     private final LogEventProducer eventProducer;
     private final LogStorage logStorage;
+
+    public LogAspect(ObjectProvider<LogEventProducer> eventProducerProvider, LogStorage logStorage) {
+        // 同步模式下 LogEventProducer 可能不存在，使用 getIfAvailable() 避免注入失败
+        this.eventProducer = eventProducerProvider.getIfAvailable();
+        this.logStorage = logStorage;
+    }
 
     @Around("@annotation(logAnnotation)")
     public Object around(ProceedingJoinPoint point, Log logAnnotation) throws Throwable {

@@ -1,18 +1,10 @@
 package com.carlos.log.config;
 
 import com.carlos.log.aspect.LogAspect;
-import com.carlos.log.disruptor.LogEvent;
-import com.carlos.log.disruptor.LogEventHandler;
 import com.carlos.log.disruptor.LogEventProducer;
-import com.carlos.log.properties.LogProperties;
 import com.carlos.log.storage.CompositeLogStorage;
 import com.carlos.log.storage.LogStorage;
 import com.carlos.log.storage.LoggingLogStorage;
-import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.WaitStrategy;
-import com.lmax.disruptor.dsl.Disruptor;
-import com.lmax.disruptor.dsl.ProducerType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,13 +13,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 /**
  * 日志模块自动配置
+ * <p>
+ * 核心配置：LogStorage、LogAspect
+ * 异步配置：通过 {@link LogAsyncConfig} 导入
  *
  * @author carlos
  * @since 3.0.0
@@ -35,16 +30,19 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Configuration(proxyBeanMethods = false)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableConfigurationProperties(LogProperties.class)
+@EnableConfigurationProperties(com.carlos.log.properties.LogProperties.class)
 @ConditionalOnProperty(prefix = "carlos.log", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Import(LogAsyncConfig.class)
 public class LogConfig {
 
     /**
      * 日志切面
+     * 使用 ObjectProvider 使 LogEventProducer 变为可选依赖
+     * 同步模式下 LogEventProducer 不存在，直接通过 LogStorage 存储
      */
     @Bean
     @ConditionalOnMissingBean(LogAspect.class)
-    public LogAspect logAspect(LogEventProducer eventProducer, LogStorage logStorage) {
+    public LogAspect logAspect(ObjectProvider<LogEventProducer> eventProducer, LogStorage logStorage) {
         return new LogAspect(eventProducer, logStorage);
     }
 
@@ -76,86 +74,5 @@ public class LogConfig {
         // 多个存储器，使用组合存储
         log.info("检测到多个 LogStorage ({}个)，使用组合存储", storages.size());
         return new CompositeLogStorage(storages);
-    }
-
-    /**
-     * Disruptor RingBuffer
-     */
-    @Bean
-    @ConditionalOnMissingBean(RingBuffer.class)
-    @ConditionalOnProperty(prefix = "carlos.log", name = "async", havingValue = "true", matchIfMissing = true)
-    public RingBuffer<LogEvent> logEventRingBuffer(LogProperties properties, LogStorage logStorage) {
-        LogProperties.Disruptor disruptorProps = properties.getDisruptor();
-
-        // 创建事件工厂
-        LogEvent.LogEventFactory eventFactory = new LogEvent.LogEventFactory();
-
-        // 创建等待策略
-        WaitStrategy waitStrategy = createWaitStrategy(disruptorProps.getWaitStrategy());
-
-        // 创建 Disruptor
-        Disruptor<LogEvent> disruptor = new Disruptor<>(
-            eventFactory,
-            disruptorProps.getRingBufferSize(),
-            Executors.defaultThreadFactory(),
-            ProducerType.MULTI,
-            waitStrategy
-        );
-
-        // 创建消费者处理器
-        LogEventHandler handler = new LogEventHandler(logStorage);
-
-        // 设置消费者
-        disruptor.handleEventsWith(handler);
-
-        // 启动 Disruptor
-        disruptor.start();
-
-        log.info("Disruptor 启动成功，RingBuffer大小: {}", disruptorProps.getRingBufferSize());
-
-        return disruptor.getRingBuffer();
-    }
-
-    /**
-     * 日志事件生产者
-     */
-    @Bean
-    @ConditionalOnMissingBean(LogEventProducer.class)
-    @ConditionalOnProperty(prefix = "carlos.log", name = "async", havingValue = "true", matchIfMissing = true)
-    public LogEventProducer logEventProducer(RingBuffer<LogEvent> ringBuffer) {
-        return new LogEventProducer(ringBuffer);
-    }
-
-    /**
-     * 同步模式下的占位 RingBuffer（不启用 Disruptor）
-     */
-    @Bean
-    @ConditionalOnMissingBean(RingBuffer.class)
-    @ConditionalOnProperty(prefix = "carlos.log", name = "async", havingValue = "false")
-    public RingBuffer<LogEvent> noopRingBuffer() {
-        // 同步模式下返回 null，Disruptor 相关组件不生效
-        return null;
-    }
-
-    /**
-     * 同步模式下的占位 Producer
-     */
-    @Bean
-    @ConditionalOnMissingBean(LogEventProducer.class)
-    @ConditionalOnProperty(prefix = "carlos.log", name = "async", havingValue = "false")
-    public LogEventProducer noopLogEventProducer() {
-        return null;
-    }
-
-    /**
-     * 创建等待策略
-     */
-    private WaitStrategy createWaitStrategy(String type) {
-        return switch (type.toUpperCase()) {
-            case "BUSY_SPIN" -> new com.lmax.disruptor.BusySpinWaitStrategy();
-            case "SLEEPING" -> new com.lmax.disruptor.SleepingWaitStrategy();
-            case "YIELDING" -> new com.lmax.disruptor.YieldingWaitStrategy();
-            default -> new BlockingWaitStrategy();
-        };
     }
 }

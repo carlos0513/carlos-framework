@@ -55,7 +55,14 @@ public class LogProperties {
          * 等待策略类型
          * BLOCKING、BUSY_SPIN、SLEEPING、YIELDING
          */
-        private String waitStrategy = "BLOCKING";
+        private WaitStrategyType waitStrategy = WaitStrategyType.BLOCKING;
+
+        public enum WaitStrategyType {
+            BLOCKING,
+            BUSY_SPIN,
+            SLEEPING,
+            YIELDING
+        }
     }
 
     @Data
