@@ -1,14 +1,15 @@
 package com.carlos.audit.service;
 
-import com.carlos.audit.disruptor.AuditLogEventProducer;
 import com.carlos.audit.manager.AuditLogMainManager;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
+import com.carlos.disruptor.core.DisruptorTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -24,7 +25,7 @@ import java.util.Set;
 public class AuditLogMainService {
 
     private final AuditLogMainManager logMainManager;
-    private final AuditLogEventProducer eventProducer;
+    private final DisruptorTemplate<AuditLogMainDTO> auditDisruptorTemplate;
 
     /**
      * 新增审计日志（通过 Disruptor 异步写入）
@@ -35,7 +36,7 @@ public class AuditLogMainService {
      */
     public void addAuditLogMain(AuditLogMainDTO dto) {
         // 使用 Disruptor 异步写入
-        eventProducer.publish(dto);
+        auditDisruptorTemplate.publishEvent(dto);
         log.debug("AuditLogMain has been published to Disruptor");
     }
 
@@ -47,7 +48,8 @@ public class AuditLogMainService {
      * @return 是否写入成功
      */
     public boolean addAuditLogMainSync(AuditLogMainDTO dto, long timeoutMs) {
-        return eventProducer.publishSync(dto, timeoutMs);
+        // 使用带超时的发布
+        return auditDisruptorTemplate.tryPublishEvent(dto, timeoutMs, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -56,7 +58,9 @@ public class AuditLogMainService {
      * @param dtos 审计日志数据列表
      */
     public void batchAddAuditLogMain(Iterable<AuditLogMainDTO> dtos) {
-        eventProducer.publishBatch(dtos);
+        for (AuditLogMainDTO dto : dtos) {
+            auditDisruptorTemplate.publishEvent(dto);
+        }
         log.debug("Batch AuditLogMain has been published to Disruptor");
     }
 
@@ -100,6 +104,6 @@ public class AuditLogMainService {
      * @return 队列剩余容量
      */
     public long getQueueRemainingCapacity() {
-        return eventProducer.remainingCapacity();
+        return auditDisruptorTemplate.remainingCapacity();
     }
 }

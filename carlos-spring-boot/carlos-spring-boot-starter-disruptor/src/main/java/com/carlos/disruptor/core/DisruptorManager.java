@@ -1,6 +1,7 @@
 package com.carlos.disruptor.core;
 
 import com.carlos.disruptor.config.DisruptorProperties;
+import com.carlos.disruptor.exception.DisruptorException;
 import com.carlos.disruptor.metrics.DisruptorMetrics;
 import com.lmax.disruptor.ExceptionHandler;
 import com.lmax.disruptor.RingBuffer;
@@ -80,7 +81,7 @@ public class DisruptorManager {
                                                  WaitStrategy waitStrategy,
                                                  DisruptorEventHandler<T>... handlers) {
         if (disruptors.containsKey(name)) {
-            throw new com.carlos.disruptor.exception.DisruptorException(
+            throw new DisruptorException(
                 "Disruptor instance already exists: " + name);
         }
 

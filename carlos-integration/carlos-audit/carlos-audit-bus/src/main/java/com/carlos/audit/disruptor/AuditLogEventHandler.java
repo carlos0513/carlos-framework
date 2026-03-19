@@ -5,7 +5,8 @@ import com.carlos.audit.api.pojo.enums.AuditLogPrincipalTypeEnum;
 import com.carlos.audit.api.pojo.enums.AuditLogStateEnum;
 import com.carlos.audit.clickhouse.ClickHouseBatchWriter;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
-import com.lmax.disruptor.EventHandler;
+import com.carlos.disruptor.core.DisruptorEvent;
+import com.carlos.disruptor.core.DisruptorEventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * Disruptor 事件处理器（WorkPool 模式）
+ * 审计日志 Disruptor 事件处理器
  * </p>
  *
  * @author Carlos
@@ -23,23 +24,20 @@ import java.time.LocalDateTime;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AuditLogEventHandler implements EventHandler<AuditLogEvent> {
+public class AuditLogEventHandler implements DisruptorEventHandler<AuditLogMainDTO> {
 
     private final ClickHouseBatchWriter batchWriter;
 
     @Override
-    public void onEvent(AuditLogEvent event, long sequence, boolean endOfBatch) throws Exception {
-        if (event.getAuditLog() == null) {
-            log.warn("收到空的审计日志事件，序列号: {}", event.getSequence());
-            event.setState(AuditLogEvent.EventState.DISCARDED);
+    public void onEvent(DisruptorEvent<AuditLogMainDTO> event, long sequence, boolean endOfBatch) throws Exception {
+        AuditLogMainDTO auditLog = event.getData();
+
+        if (auditLog == null) {
+            log.warn("收到空的审计日志事件，序列号: {}", sequence);
             return;
         }
 
         try {
-            event.setState(AuditLogEvent.EventState.PROCESSING);
-
-            AuditLogMainDTO auditLog = event.getAuditLog();
-
             // 1. 数据清洗与 enrich
             enrichAuditLog(auditLog);
 
@@ -49,16 +47,14 @@ public class AuditLogEventHandler implements EventHandler<AuditLogEvent> {
             // 3. 加入批量写入队列
             batchWriter.add(auditLog);
 
-            event.setState(AuditLogEvent.EventState.SUCCESS);
-
             if (log.isDebugEnabled()) {
                 log.debug("审计日志事件处理成功，序列号: {}, 类型: {}",
-                    event.getSequence(), auditLog.getLogType());
+                    sequence, auditLog.getLogType());
             }
 
         } catch (Exception e) {
             log.error("处理审计日志事件失败，序列号: {}", sequence, e);
-            handleError(event, e);
+            throw e; // 抛出异常让 Disruptor 的异常处理器处理
         }
     }
 
@@ -224,34 +220,8 @@ public class AuditLogEventHandler implements EventHandler<AuditLogEvent> {
         };
     }
 
-    /**
-     * 错误处理
-     */
-    private void handleError(AuditLogEvent event, Exception e) {
-        if (event.getRetryCount() < 3) {
-            event.setRetryCount(event.getRetryCount() + 1);
-            event.setState(AuditLogEvent.EventState.NEW);
-            // 短暂延迟后重试
-            try {
-                Thread.sleep(100 * event.getRetryCount());
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
-            }
-            // 注意：这里需要重新发布到 RingBuffer，简化处理
-            log.warn("审计日志事件处理失败，将重试，序列号: {}，重试次数: {}",
-                event.getSequence(), event.getRetryCount());
-        } else {
-            event.setState(AuditLogEvent.EventState.FAILED);
-            // 转入死信队列或本地文件备份
-            saveToDeadLetterQueue(event, e);
-        }
-    }
-
-    /**
-     * 保存到死信队列
-     */
-    private void saveToDeadLetterQueue(AuditLogEvent event, Exception e) {
-        log.error("审计日志事件最终处理失败，转入死信队列，序列号: {}", event.getSequence(), e);
-        // TODO: 实现死信队列持久化（本地文件或备用存储）
+    @Override
+    public String getHandlerName() {
+        return "AuditLogEventHandler";
     }
 }

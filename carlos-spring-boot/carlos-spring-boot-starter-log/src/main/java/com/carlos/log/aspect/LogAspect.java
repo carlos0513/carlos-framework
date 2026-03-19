@@ -6,8 +6,8 @@ import com.carlos.boot.request.RequestInfo;
 import com.carlos.boot.request.RequestUtil;
 import com.carlos.boot.util.ExtendInfoUtil;
 import com.carlos.core.auth.UserContext;
+import com.carlos.disruptor.core.DisruptorTemplate;
 import com.carlos.log.annotation.Log;
-import com.carlos.log.disruptor.LogEventProducer;
 import com.carlos.log.entity.OperationLog;
 import com.carlos.log.spel.SpelExpressionResolver;
 import com.carlos.log.storage.LogStorage;
@@ -42,12 +42,13 @@ public class LogAspect {
     private final SpelExpressionResolver spelResolver = new SpelExpressionResolver();
 
     // 存储相关（使用 ObjectProvider 使异步组件变为可选）
-    private final LogEventProducer eventProducer;
+    private final DisruptorTemplate<OperationLog> disruptorTemplate;
     private final LogStorage logStorage;
 
-    public LogAspect(ObjectProvider<LogEventProducer> eventProducerProvider, LogStorage logStorage) {
-        // 同步模式下 LogEventProducer 可能不存在，使用 getIfAvailable() 避免注入失败
-        this.eventProducer = eventProducerProvider.getIfAvailable();
+    public LogAspect(ObjectProvider<DisruptorTemplate<OperationLog>> disruptorTemplateProvider,
+                     LogStorage logStorage) {
+        // 同步模式下 DisruptorTemplate 可能不存在，使用 getIfAvailable() 避免注入失败
+        this.disruptorTemplate = disruptorTemplateProvider.getIfAvailable();
         this.logStorage = logStorage;
     }
 
@@ -161,7 +162,6 @@ public class LogAspect {
         operationLog.setLogType(logType);
 
         // 类别（从 title 推断或默认 BUSINESS）
-        // TODO: Carlos 2026-03-19  
         operationLog.setCategory("BUSINESS");
 
         // 操作描述（支持 SpEL）
@@ -348,9 +348,9 @@ public class LogAspect {
      */
     private void sendLog(OperationLog operationLog, Log logAnnotation) {
         try {
-            if (logAnnotation.async() && eventProducer != null) {
+            if (logAnnotation.async() && disruptorTemplate != null) {
                 // 异步发送
-                eventProducer.publish(operationLog);
+                disruptorTemplate.publishEvent(operationLog);
             } else {
                 // 同步发送
                 if (logStorage != null) {

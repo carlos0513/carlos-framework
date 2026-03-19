@@ -9,7 +9,6 @@ import com.carlos.datacenter.core.factory.BaseProviderFactory;
 import com.carlos.datacenter.core.factory.ProviderFactoryHolder;
 import com.carlos.datacenter.core.instance.DatacenterInstance;
 import com.carlos.datacenter.core.supplier.SupplierInfo;
-import com.carlos.datacenter.provider.shuning.config.ShuNingFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -77,6 +76,6 @@ public class DatacenterInstanceInitializer {
      */
     private void registerDefaultFactory() {
         // TODO: Carlos 2024-12-12 正式情况下取消注册
-        ProviderFactoryHolder.registerFactory(ShuNingFactory.instance());
+        // ProviderFactoryHolder.registerFactory(ShuNingFactory.instance());
     }
 }

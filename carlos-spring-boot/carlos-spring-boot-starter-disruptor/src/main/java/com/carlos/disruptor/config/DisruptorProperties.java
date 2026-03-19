@@ -1,5 +1,6 @@
 package com.carlos.disruptor.config;
 
+import com.lmax.disruptor.*;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -16,7 +17,7 @@ public class DisruptorProperties {
     /**
      * 是否启用Disruptor
      */
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     /**
      * RingBuffer大小，必须是2的幂
@@ -65,12 +66,12 @@ public class DisruptorProperties {
         /**
          * 转换为 Disruptor WaitStrategy
          */
-        public com.lmax.disruptor.WaitStrategy toStrategy() {
+        public WaitStrategy toStrategy() {
             return switch (this) {
-                case BLOCKING -> new com.lmax.disruptor.BlockingWaitStrategy();
-                case SLEEPING -> new com.lmax.disruptor.SleepingWaitStrategy();
-                case YIELDING -> new com.lmax.disruptor.YieldingWaitStrategy();
-                case BUSY_SPIN -> new com.lmax.disruptor.BusySpinWaitStrategy();
+                case BLOCKING -> new BlockingWaitStrategy();
+                case SLEEPING -> new SleepingWaitStrategy();
+                case YIELDING -> new YieldingWaitStrategy();
+                case BUSY_SPIN -> new BusySpinWaitStrategy();
             };
         }
     }

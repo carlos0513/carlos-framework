@@ -44,12 +44,7 @@ public class LogProperties {
         /**
          * 消费者线程数
          */
-        private int consumerCount = 2;
-
-        /**
-         * 是否使用 WorkPool 模式
-         */
-        private boolean useWorkPool = true;
+        private String name = "log-disruptor";
 
         /**
          * 等待策略类型

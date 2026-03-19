@@ -1,7 +1,8 @@
 package com.carlos.log.config;
 
+import com.carlos.disruptor.core.DisruptorTemplate;
 import com.carlos.log.aspect.LogAspect;
-import com.carlos.log.disruptor.LogEventProducer;
+import com.carlos.log.entity.OperationLog;
 import com.carlos.log.storage.CompositeLogStorage;
 import com.carlos.log.storage.LogStorage;
 import com.carlos.log.storage.LoggingLogStorage;
@@ -37,13 +38,14 @@ public class LogConfig {
 
     /**
      * 日志切面
-     * 使用 ObjectProvider 使 LogEventProducer 变为可选依赖
-     * 同步模式下 LogEventProducer 不存在，直接通过 LogStorage 存储
+     * 使用 ObjectProvider 使 DisruptorTemplate 变为可选依赖
+     * 同步模式下 DisruptorTemplate 不存在，直接通过 LogStorage 存储
      */
     @Bean
     @ConditionalOnMissingBean(LogAspect.class)
-    public LogAspect logAspect(ObjectProvider<LogEventProducer> eventProducer, LogStorage logStorage) {
-        return new LogAspect(eventProducer, logStorage);
+    public LogAspect logAspect(ObjectProvider<DisruptorTemplate<OperationLog>> disruptorTemplateProvider,
+                               LogStorage logStorage) {
+        return new LogAspect(disruptorTemplateProvider, logStorage);
     }
 
     /**

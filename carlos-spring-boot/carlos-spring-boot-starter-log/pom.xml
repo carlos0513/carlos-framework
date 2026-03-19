@@ -31,11 +31,10 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Disruptor 高性能队列 -->
+    <!-- Disruptor Starter -->
     <dependency>
-      <groupId>com.lmax</groupId>
-      <artifactId>disruptor</artifactId>
-      <version>4.0.0</version>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-disruptor</artifactId>
     </dependency>
 
     <!-- Spring Expression（SpEL） -->

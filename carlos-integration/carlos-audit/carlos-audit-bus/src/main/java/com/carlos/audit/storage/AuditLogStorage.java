@@ -1,9 +1,9 @@
 package com.carlos.audit.storage;
 
 import com.carlos.audit.api.pojo.enums.*;
-import com.carlos.audit.disruptor.AuditLogEventProducer;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
 import com.carlos.audit.pojo.enums.AuditLogPayloadStorageTypeEnum;
+import com.carlos.disruptor.core.DisruptorTemplate;
 import com.carlos.log.entity.OperationLog;
 import com.carlos.log.storage.LogStorage;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuditLogStorage implements LogStorage {
 
-    private final AuditLogEventProducer eventProducer;
+    private final DisruptorTemplate<AuditLogMainDTO> auditDisruptorTemplate;
     private final AuditLogConverter converter = new AuditLogConverter();
 
     @Override
@@ -40,7 +40,7 @@ public class AuditLogStorage implements LogStorage {
 
         try {
             AuditLogMainDTO auditLog = converter.convert(operationLog);
-            eventProducer.publish(auditLog);
+            auditDisruptorTemplate.publishEvent(auditLog);
             return true;
         } catch (Exception e) {
             log.error("存储审计日志失败", e);
@@ -58,7 +58,7 @@ public class AuditLogStorage implements LogStorage {
             List<AuditLogMainDTO> auditLogs = logs.stream()
                 .map(converter::convert)
                 .collect(Collectors.toList());
-            eventProducer.publishBatch(auditLogs);
+            auditDisruptorTemplate.publishEventList(auditLogs);
             return true;
         } catch (Exception e) {
             log.error("批量存储审计日志失败", e);
