@@ -136,7 +136,7 @@ public class DisruptorManager {
     public <T> DisruptorTemplate<T> getTemplate(String name) {
         DisruptorHolder<T> holder = (DisruptorHolder<T>) disruptors.get(name);
         if (holder == null) {
-            throw new com.carlos.disruptor.exception.DisruptorException(
+            throw new DisruptorException(
                 "Disruptor instance not found: " + name);
         }
         return new DisruptorTemplate<>(name, holder.getRingBuffer(), metrics);

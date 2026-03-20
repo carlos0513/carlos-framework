@@ -1,5 +1,6 @@
 package com.carlos.log.properties;
 
+import com.carlos.disruptor.core.DisruptorWaitStrategyType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -42,7 +43,7 @@ public class LogProperties {
         private int ringBufferSize = 1024;
 
         /**
-         * 消费者线程数
+         * 线程名称
          */
         private String name = "log-disruptor";
 
@@ -50,14 +51,8 @@ public class LogProperties {
          * 等待策略类型
          * BLOCKING、BUSY_SPIN、SLEEPING、YIELDING
          */
-        private WaitStrategyType waitStrategy = WaitStrategyType.BLOCKING;
+        private DisruptorWaitStrategyType waitStrategy = DisruptorWaitStrategyType.BLOCKING;
 
-        public enum WaitStrategyType {
-            BLOCKING,
-            BUSY_SPIN,
-            SLEEPING,
-            YIELDING
-        }
     }
 
     @Data

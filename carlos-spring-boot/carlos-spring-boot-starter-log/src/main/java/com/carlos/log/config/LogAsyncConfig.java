@@ -7,7 +7,6 @@ import com.carlos.log.disruptor.LogDisruptorHandler;
 import com.carlos.log.entity.OperationLog;
 import com.carlos.log.properties.LogProperties;
 import com.carlos.log.storage.LogStorage;
-import com.lmax.disruptor.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,7 +45,7 @@ public class LogAsyncConfig {
         return disruptorManager.create(
             StrUtil.blankToDefault(properties.getStorage().getDefaultStorage(), "log-disruptor"),
             disruptorProps.getRingBufferSize(),
-            createWaitStrategy(disruptorProps.getWaitStrategy()),
+            disruptorProps.getWaitStrategy().toStrategy(),
             handler
         );
     }
@@ -56,18 +55,5 @@ public class LogAsyncConfig {
         return new LogDisruptorHandler(logStorage);
     }
 
-    /**
-     * 创建等待策略
-     */
-    private WaitStrategy createWaitStrategy(LogProperties.Disruptor.WaitStrategyType type) {
-        if (type == null) {
-            return new BlockingWaitStrategy();
-        }
-        return switch (type) {
-            case BUSY_SPIN -> new BusySpinWaitStrategy();
-            case SLEEPING -> new SleepingWaitStrategy();
-            case YIELDING -> new YieldingWaitStrategy();
-            default -> new BlockingWaitStrategy();
-        };
-    }
+
 }

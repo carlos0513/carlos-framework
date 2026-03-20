@@ -1,6 +1,6 @@
 package com.carlos.disruptor.config;
 
-import com.lmax.disruptor.*;
+import com.carlos.disruptor.core.DisruptorWaitStrategyType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -27,7 +27,7 @@ public class DisruptorProperties {
     /**
      * 等待策略: blocking, sleeping, yielding, busy-spin
      */
-    private WaitStrategyType waitStrategy = WaitStrategyType.BLOCKING;
+    private DisruptorWaitStrategyType waitStrategy = DisruptorWaitStrategyType.BLOCKING;
 
     /**
      * 线程池配置
@@ -36,20 +36,6 @@ public class DisruptorProperties {
 
     @Data
     public static class ThreadPoolConfig {
-        /**
-         * 核心线程数
-         */
-        private int coreSize = 4;
-
-        /**
-         * 最大线程数
-         */
-        private int maxSize = 8;
-
-        /**
-         * 队列容量
-         */
-        private int queueCapacity = 100;
 
         /**
          * 线程名称前缀
@@ -57,22 +43,5 @@ public class DisruptorProperties {
         private String threadNamePrefix = "disruptor-";
     }
 
-    public enum WaitStrategyType {
-        BLOCKING,
-        SLEEPING,
-        YIELDING,
-        BUSY_SPIN;
 
-        /**
-         * 转换为 Disruptor WaitStrategy
-         */
-        public WaitStrategy toStrategy() {
-            return switch (this) {
-                case BLOCKING -> new BlockingWaitStrategy();
-                case SLEEPING -> new SleepingWaitStrategy();
-                case YIELDING -> new YieldingWaitStrategy();
-                case BUSY_SPIN -> new BusySpinWaitStrategy();
-            };
-        }
-    }
 }

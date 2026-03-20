@@ -4,7 +4,7 @@ import com.carlos.audit.disruptor.AuditLogEventHandler;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
 import com.carlos.disruptor.core.DisruptorManager;
 import com.carlos.disruptor.core.DisruptorTemplate;
-import com.lmax.disruptor.*;
+import com.carlos.disruptor.core.DisruptorWaitStrategyType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,32 +38,16 @@ public class AuditDisruptorConfig {
         AuditProperties.Disruptor disruptorProps = auditProperties.getDisruptor();
 
         int bufferSize = disruptorProps.getBufferSize();
-        WaitStrategy waitStrategy = createWaitStrategy(disruptorProps.getWaitStrategy());
+        DisruptorWaitStrategyType waitStrategy = disruptorProps.getWaitStrategy();
+        String threadNamePrefix = disruptorProps.getName();
 
-        log.info("初始化审计日志 Disruptor，bufferSize={}, waitStrategy={}",
-            bufferSize, disruptorProps.getWaitStrategy());
+        log.info("初始化审计日志 Disruptor， name:{} bufferSize={}, waitStrategy={}", threadNamePrefix, bufferSize, waitStrategy);
 
-        return disruptorManager.create(
-            "audit-disruptor",
-            bufferSize,
-            waitStrategy,
+        return disruptorManager.create(threadNamePrefix,
+            bufferSize, waitStrategy.toStrategy(),
             eventHandler
         );
     }
 
-    /**
-     * 创建等待策略
-     */
-    private WaitStrategy createWaitStrategy(String name) {
-        if (name == null) {
-            return new BlockingWaitStrategy();
-        }
-        return switch (name.toLowerCase()) {
-            case "busy_spin", "busyspin" -> new BusySpinWaitStrategy();
-            case "sleeping" -> new SleepingWaitStrategy();
-            case "yielding" -> new YieldingWaitStrategy();
-            case "blocking" -> new BlockingWaitStrategy();
-            default -> new BlockingWaitStrategy();
-        };
-    }
+
 }

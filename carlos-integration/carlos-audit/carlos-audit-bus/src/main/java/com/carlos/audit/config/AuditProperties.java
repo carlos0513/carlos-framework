@@ -1,5 +1,6 @@
 package com.carlos.audit.config;
 
+import com.carlos.disruptor.core.DisruptorWaitStrategyType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -54,10 +55,13 @@ public class AuditProperties {
          */
         private int consumerCount = 4;
 
+        /** 名称 */
+        private String name = "audit-disruptor";
+
         /**
          * 等待策略：blocking, busy_spin, lite_blocking, sleeping, yielding
          */
-        private String waitStrategy = "blocking";
+        private DisruptorWaitStrategyType waitStrategy = DisruptorWaitStrategyType.BLOCKING;
 
         /**
          * 是否启用多生产者模式

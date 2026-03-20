@@ -48,10 +48,10 @@ public class DisruptorAutoConfiguration {
      * Disruptor 管理器
      */
     @Bean
-    // @ConditionalOnMissingBean
+    @ConditionalOnMissingBean
     public DisruptorManager disruptorManager(DisruptorProperties properties, DisruptorMetrics metrics) {
         if (log.isInfoEnabled()) {
-            log.info("Disruptor Manager initializing. bufferSize={}, waitStrategy={}",
+            log.info("Disruptor Manager initializing. defaultBufferSize={}, defaultWaitStrategy={}",
                 properties.getBufferSize(), properties.getWaitStrategy());
         }
         return new DisruptorManager(properties, metrics);
