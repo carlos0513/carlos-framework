@@ -16,7 +16,7 @@
        ├── convert/
        ├── manager/impl/
        ├── mapper/
-       ├── pojo/dto|entity|enums|excel|param|vo/
+       ├── pojo/dto|entity|enums|param|vo/
        └── service/impl/
    ```
 3. 创建 `pom.xml`（继承 `carlos-integration`，版本 `${revision}`）

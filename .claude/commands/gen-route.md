@@ -4,7 +4,7 @@
 
 ## 执行步骤
 
-1. 进入前端目录：`cd D:/ide_project/carlos/framework/carlos-framework-admin`
+1. 进入前端目录：`cd D:/ide_project/carlos/carlos-framework/carlos-ui`
 2. 执行：`pnpm gen-route`
 3. 说明生成了哪些新路由文件
 

@@ -2,6 +2,11 @@
   "permissions": {
     "defaultMode": "bypassPermissions",
     "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
       "Bash(mvn clean install*)",
       "Bash(mvn clean deploy*)",
       "Bash(mvn test*)",
@@ -14,6 +19,7 @@
       "Bash(git log*)",
       "Bash(git add*)",
       "Bash(git commit*)",
+      "Bash(git push*)",
       "Bash(git checkout*)",
       "Bash(git branch*)",
       "Bash(git stash*)",
@@ -21,6 +27,7 @@
       "Bash(pnpm install*)",
       "Bash(pnpm dev*)",
       "Bash(pnpm build*)",
+      "Bash(pnpm test*)",
       "Bash(pnpm lint*)",
       "Bash(pnpm typecheck*)",
       "Bash(pnpm gen-route*)",

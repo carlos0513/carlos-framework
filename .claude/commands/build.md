@@ -3,7 +3,7 @@
 构建 carlos-framework 全部模块（跳过测试）。
 
 ```bash
-cd D:/ide_project/carlos/framework/carlos-framework
+cd D:/ide_project/carlos/carlos-framework
 mvn clean install -DskipTests
 ```
 
@@ -31,7 +31,7 @@ mvn versions:display-dependency-updates
 
 1. carlos-dependencies
 2. carlos-parent
-3. carlos-commons（core → utils → excel）
-4. carlos-spring-boot（22 个 starter）
+3. carlos-commons（carlos-utils）
+4. carlos-spring-boot（23 个模块，含 carlos-spring-boot-core）
 5. carlos-integration（auth → system → org → audit → message → license → tools）
 6. carlos-samples

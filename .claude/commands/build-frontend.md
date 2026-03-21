@@ -4,7 +4,7 @@
 
 ## 执行步骤
 
-1. 进入前端目录：`cd D:/ide_project/carlos/framework/carlos-framework-admin`
+1. 进入前端目录：`cd D:/ide_project/carlos/carlos-framework/carlos-ui`
 2. 确认依赖已安装（如未安装则运行 `pnpm install`）
 3. 执行构建：`pnpm build`
 4. 显示构建产物路径

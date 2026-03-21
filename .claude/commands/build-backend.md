@@ -4,7 +4,7 @@
 
 ## 执行步骤
 
-1. 进入后端目录：`cd D:/ide_project/carlos/framework/carlos-framework`
+1. 进入后端目录：`cd D:/ide_project/carlos/carlos-framework`
 2. 执行构建：`mvn clean install -DskipTests`
 3. 显示构建结果摘要
 

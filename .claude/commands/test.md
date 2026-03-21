@@ -3,7 +3,7 @@
 运行后端单元测试并生成覆盖率报告。
 
 ```bash
-cd D:/ide_project/carlos/framework/carlos-framework
+cd D:/ide_project/carlos/carlos-framework
 
 # 运行全部测试
 mvn test
