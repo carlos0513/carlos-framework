@@ -4,7 +4,7 @@
 
 - **Carlos** - Project Creator, Lead Developer
     - GitHub: [@carlos](https://github.com/carlos)
-    - Email: carlos@example.com
+  - Email: zhujunkeep@gmail.com
 
 ## Active Maintainers
 
