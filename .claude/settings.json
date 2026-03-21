@@ -1,5 +1,6 @@
 {
   "permissions": {
+    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(mvn clean install*)",
       "Bash(mvn clean deploy*)",
@@ -16,13 +17,28 @@
       "Bash(git checkout*)",
       "Bash(git branch*)",
       "Bash(git stash*)",
-      "Bash(git pull*)"
+      "Bash(git pull*)",
+      "Bash(pnpm install*)",
+      "Bash(pnpm dev*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm gen-route*)",
+      "Bash(pnpm commit*)"
     ],
     "deny": [
       "Bash(rm -rf*)",
       "Bash(git push --force*)",
       "Bash(git reset --hard*)",
-      "Bash(git clean -f*)"
+      "Bash(git clean -f*)",
+      "Bash(sudo *)",
+      "Bash(curl * | sh)",
+      "Bash(wget * | sh)",
+      "Bash(*> /dev/null 2>&1)",
+      "Bash(mysql -e 'DROP*')",
+      "mcp__production-db__delete",
+      "Bash(npm install*)",
+      "Bash(yarn*)"
     ]
   }
 }

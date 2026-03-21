@@ -1,7 +1,7 @@
 ---
-name: carlos-admin-standard
+name: carlos-ui-standard
 description: >
-  carlos-framework-admin 前端编码规范。编写 Vue 3 / TypeScript 代码时使用。
+  carlos-framework 前端编码规范。编写 Vue 3 / TypeScript 代码时使用。
   包含组件规范、类型规范、状态管理、API 请求、样式、路由等完整规范。
 ---
 
