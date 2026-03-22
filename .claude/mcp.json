@@ -1,0 +1,86 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "D:/ide_project/carlos/carlos-framework"
+      ],
+      "description": "文件系统访问，用于代码生成、文件操作和项目结构浏览"
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN:-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}"
+      },
+      "description": "GitHub API 访问，用于代码搜索、PR 管理和 Issue 追踪"
+    },
+    "fetch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ],
+      "description": "HTTP 请求，用于测试后端 API 和获取外部资源"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "description": "复杂问题分析和思维链，用于架构设计和技术决策"
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "description": "浏览器自动化（Playwright 替代方案），用于前端测试和截图"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-playwright"
+      ],
+      "description": "浏览器自动化，用于前端 E2E 测试和页面截图"
+    },
+    "mysql": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@benborla29/mcp-server-mysql"
+      ],
+      "env": {
+        "MYSQL_HOST": "${MYSQL_HOST:-100.73.89.3}",
+        "MYSQL_PORT": "${MYSQL_PORT:-13306}",
+        "MYSQL_USER": "${MYSQL_USER:-carlos}",
+        "MYSQL_PASSWORD": "${MYSQL_PASSWORD:-Hadoop@2022}",
+        "MYSQL_DATABASE": "${MYSQL_DATABASE:-carlos-framework}"
+      },
+      "description": "MySQL 数据库访问，用于查询表结构、执行 SQL 和数据验证"
+    },
+    "clickhouse": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "clickhouse-mcp-server"
+      ],
+      "env": {
+        "CLICKHOUSE_HOST": "${CLICKHOUSE_HOST:-100.73.89.3}",
+        "CLICKHOUSE_PORT": "${CLICKHOUSE_PORT:-18123}",
+        "CLICKHOUSE_USER": "${CLICKHOUSE_USER:-admin}",
+        "CLICKHOUSE_PASSWORD": "${CLICKHOUSE_PASSWORD:-Hadoop@2022}",
+        "CLICKHOUSE_DATABASE": "${CLICKHOUSE_DATABASE:-carlos-framework}"
+      },
+      "description": "ClickHouse 数据库访问，用于 OLAP 查询和数据分析"
+    }
+  }
+}

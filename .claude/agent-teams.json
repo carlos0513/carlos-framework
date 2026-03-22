@@ -1,0 +1,680 @@
+{
+  "teams": {
+    "backend-dev": {
+      "name": "后端开发团队",
+      "description": "负责后端模块开发、API 设计、数据库设计",
+      "leader": "carlos-planner",
+      "members": [
+        {
+          "agent": "carlos-planner",
+          "role": "规划师",
+          "responsibilities": [
+            "需求分析",
+            "模块设计",
+            "任务分解"
+          ],
+          "trigger": "开发新业务模块或复杂功能前"
+        },
+        {
+          "agent": "carlos-db-designer",
+          "role": "数据库设计师",
+          "responsibilities": [
+            "表结构设计",
+            "索引优化",
+            "Migration 脚本"
+          ],
+          "trigger": "设计新表或修改 Schema"
+        },
+        {
+          "agent": "carlos-module-scaffolder",
+          "role": "脚手架生成器",
+          "responsibilities": [
+            "生成模块骨架",
+            "创建标准目录结构",
+            "生成基础代码"
+          ],
+          "trigger": "新建业务模块"
+        },
+        {
+          "agent": "carlos-api-designer",
+          "role": "API 设计师",
+          "responsibilities": [
+            "REST API 设计",
+            "Feign 接口设计",
+            "POJO 对象设计"
+          ],
+          "trigger": "设计新接口或 CRUD"
+        },
+        {
+          "agent": "springboot-tdd",
+          "role": "TDD 开发工程师",
+          "responsibilities": [
+            "编写测试",
+            "实现功能",
+            "重构代码"
+          ],
+          "trigger": "新增功能或修复 Bug"
+        },
+        {
+          "agent": "java-reviewer",
+          "role": "代码审查员",
+          "responsibilities": [
+            "代码质量审查",
+            "规范检查",
+            "性能优化建议"
+          ],
+          "trigger": "编写或修改 Java 代码后"
+        }
+      ],
+      "workflow": [
+        "carlos-planner → carlos-db-designer → carlos-module-scaffolder → carlos-api-designer → springboot-tdd → java-reviewer"
+      ],
+      "skills": [
+        "carlos-framework-standard",
+        "java-coding-standards",
+        "springboot-patterns",
+        "springboot-tdd"
+      ],
+      "mcp": [
+        "mysql",
+        "github",
+        "fetch"
+      ]
+    },
+    "frontend-dev": {
+      "name": "前端开发团队",
+      "description": "负责前端页面开发、组件开发、UI 实现",
+      "leader": "carlos-planner",
+      "members": [
+        {
+          "agent": "carlos-planner",
+          "role": "规划师",
+          "responsibilities": [
+            "页面设计",
+            "组件规划",
+            "交互设计"
+          ],
+          "trigger": "开发新页面或复杂组件前"
+        },
+        {
+          "agent": "api-connector",
+          "role": "前后端对接工程师",
+          "responsibilities": [
+            "生成 service 层",
+            "类型定义",
+            "API 调用封装"
+          ],
+          "trigger": "新增或修改 API 对接"
+        },
+        {
+          "agent": "vue-reviewer",
+          "role": "前端代码审查员",
+          "responsibilities": [
+            "Vue 代码审查",
+            "TypeScript 类型检查",
+            "组件规范检查"
+          ],
+          "trigger": "编写或修改 Vue/TypeScript 代码后"
+        },
+        {
+          "agent": "e2e-runner",
+          "role": "E2E 测试工程师",
+          "responsibilities": [
+            "编写 E2E 测试",
+            "运行测试",
+            "生成测试报告"
+          ],
+          "trigger": "页面功能开发完成后"
+        }
+      ],
+      "workflow": [
+        "carlos-planner → api-connector → vue-reviewer → e2e-runner"
+      ],
+      "skills": [
+        "carlos-ui-standard",
+        "e2e-testing"
+      ],
+      "mcp": [
+        "playwright",
+        "fetch",
+        "github"
+      ]
+    },
+    "fullstack-dev": {
+      "name": "全栈开发团队",
+      "description": "负责前后端联调、完整功能实现",
+      "leader": "carlos-planner",
+      "members": [
+        {
+          "agent": "carlos-planner",
+          "role": "全栈规划师",
+          "responsibilities": [
+            "整体架构设计",
+            "前后端协调",
+            "接口定义"
+          ],
+          "trigger": "开发完整功能模块"
+        },
+        {
+          "agent": "carlos-db-designer",
+          "role": "数据库设计师",
+          "responsibilities": [
+            "数据模型设计",
+            "表结构设计"
+          ],
+          "trigger": "设计数据层"
+        },
+        {
+          "agent": "carlos-api-designer",
+          "role": "API 设计师",
+          "responsibilities": [
+            "后端 API 设计",
+            "接口文档"
+          ],
+          "trigger": "设计后端接口"
+        },
+        {
+          "agent": "api-connector",
+          "role": "前后端对接工程师",
+          "responsibilities": [
+            "前端 service 层生成",
+            "类型定义"
+          ],
+          "trigger": "前后端对接"
+        },
+        {
+          "agent": "springboot-tdd",
+          "role": "后端 TDD 工程师",
+          "responsibilities": [
+            "后端功能实现",
+            "单元测试"
+          ],
+          "trigger": "后端开发"
+        },
+        {
+          "agent": "vue-reviewer",
+          "role": "前端审查员",
+          "responsibilities": [
+            "前端代码审查"
+          ],
+          "trigger": "前端代码完成"
+        },
+        {
+          "agent": "java-reviewer",
+          "role": "后端审查员",
+          "responsibilities": [
+            "后端代码审查"
+          ],
+          "trigger": "后端代码完成"
+        },
+        {
+          "agent": "carlos-integration-tester",
+          "role": "集成测试工程师",
+          "responsibilities": [
+            "集成测试",
+            "端到端测试"
+          ],
+          "trigger": "功能开发完成"
+        }
+      ],
+      "workflow": [
+        "carlos-planner → carlos-db-designer → carlos-api-designer",
+        "carlos-api-designer → [springboot-tdd, api-connector]",
+        "[springboot-tdd, api-connector] → [java-reviewer, vue-reviewer]",
+        "[java-reviewer, vue-reviewer] → carlos-integration-tester"
+      ],
+      "skills": [
+        "carlos-framework-standard",
+        "carlos-ui-standard",
+        "java-coding-standards",
+        "springboot-patterns",
+        "springboot-tdd",
+        "e2e-testing"
+      ],
+      "mcp": [
+        "mysql",
+        "clickhouse",
+        "playwright",
+        "fetch",
+        "github"
+      ]
+    },
+    "qa-team": {
+      "name": "质量保证团队",
+      "description": "负责代码审查、安全审查、测试覆盖",
+      "leader": "carlos-security-reviewer",
+      "members": [
+        {
+          "agent": "java-reviewer",
+          "role": "Java 代码审查员",
+          "responsibilities": [
+            "代码质量",
+            "规范检查",
+            "性能优化"
+          ],
+          "trigger": "Java 代码变更"
+        },
+        {
+          "agent": "vue-reviewer",
+          "role": "Vue 代码审查员",
+          "responsibilities": [
+            "前端代码质量",
+            "类型安全",
+            "组件规范"
+          ],
+          "trigger": "Vue 代码变更"
+        },
+        {
+          "agent": "carlos-security-reviewer",
+          "role": "安全审查专家",
+          "responsibilities": [
+            "SQL 注入检查",
+            "XSS 防护",
+            "权限验证",
+            "敏感数据保护"
+          ],
+          "trigger": "代码提交前（强制）"
+        },
+        {
+          "agent": "carlos-integration-tester",
+          "role": "集成测试专家",
+          "responsibilities": [
+            "MockMvc 测试",
+            "Testcontainers 测试",
+            "覆盖率验证"
+          ],
+          "trigger": "模块开发完成"
+        },
+        {
+          "agent": "e2e-runner",
+          "role": "E2E 测试专家",
+          "responsibilities": [
+            "端到端测试",
+            "用户流程验证",
+            "截图和视频"
+          ],
+          "trigger": "关键功能完成"
+        }
+      ],
+      "workflow": [
+        "[java-reviewer, vue-reviewer] → carlos-security-reviewer → carlos-integration-tester → e2e-runner"
+      ],
+      "skills": [
+        "carlos-framework-standard",
+        "carlos-ui-standard",
+        "springboot-security",
+        "springboot-tdd",
+        "e2e-testing"
+      ],
+      "mcp": [
+        "mysql",
+        "playwright",
+        "fetch"
+      ]
+    },
+    "devops-team": {
+      "name": "运维团队",
+      "description": "负责构建、部署、文档更新",
+      "leader": "carlos-build-resolver",
+      "members": [
+        {
+          "agent": "carlos-build-resolver",
+          "role": "构建错误修复专家",
+          "responsibilities": [
+            "诊断构建错误",
+            "依赖冲突解决",
+            "插件问题修复"
+          ],
+          "trigger": "Maven 构建失败"
+        },
+        {
+          "agent": "build-error-resolver",
+          "role": "通用构建修复专家",
+          "responsibilities": [
+            "TypeScript 错误修复",
+            "前端构建问题"
+          ],
+          "trigger": "前端构建失败"
+        },
+        {
+          "agent": "carlos-doc-updater",
+          "role": "文档更新专家",
+          "responsibilities": [
+            "CLAUDE.md 更新",
+            "README 更新",
+            "API 文档更新"
+          ],
+          "trigger": "模块变更、新功能上线"
+        },
+        {
+          "agent": "doc-updater",
+          "role": "通用文档专家",
+          "responsibilities": [
+            "Codemap 生成",
+            "文档同步"
+          ],
+          "trigger": "架构调整"
+        }
+      ],
+      "workflow": [
+        "carlos-build-resolver → carlos-doc-updater"
+      ],
+      "skills": [
+        "docker-patterns"
+      ],
+      "mcp": [
+        "github",
+        "fetch"
+      ]
+    },
+    "architecture-team": {
+      "name": "架构团队",
+      "description": "负责架构设计、技术决策、系统优化",
+      "leader": "architect",
+      "members": [
+        {
+          "agent": "architect",
+          "role": "架构师",
+          "responsibilities": [
+            "系统架构设计",
+            "技术选型",
+            "性能优化"
+          ],
+          "trigger": "架构决策、大型重构"
+        },
+        {
+          "agent": "carlos-planner",
+          "role": "功能规划师",
+          "responsibilities": [
+            "功能设计",
+            "模块规划"
+          ],
+          "trigger": "复杂功能设计"
+        },
+        {
+          "agent": "carlos-db-designer",
+          "role": "数据架构师",
+          "responsibilities": [
+            "数据模型设计",
+            "数据库优化"
+          ],
+          "trigger": "数据架构设计"
+        },
+        {
+          "agent": "database-reviewer",
+          "role": "数据库优化专家",
+          "responsibilities": [
+            "查询优化",
+            "索引优化",
+            "性能调优"
+          ],
+          "trigger": "数据库性能问题"
+        }
+      ],
+      "workflow": [
+        "architect → carlos-planner → carlos-db-designer → database-reviewer"
+      ],
+      "skills": [
+        "carlos-framework-standard",
+        "springboot-patterns",
+        "docker-patterns"
+      ],
+      "mcp": [
+        "mysql",
+        "clickhouse",
+        "sequential-thinking",
+        "github"
+      ]
+    }
+  },
+  "scenarios": {
+    "new-module": {
+      "name": "新建业务模块",
+      "team": "backend-dev",
+      "steps": [
+        {
+          "step": 1,
+          "agent": "carlos-planner",
+          "action": "分析需求，输出 PRD 和模块设计方案",
+          "output": "PRD 文档、模块设计方案、任务清单"
+        },
+        {
+          "step": 2,
+          "agent": "carlos-db-designer",
+          "action": "设计数据库表结构",
+          "output": "建表 SQL、Entity 类、Migration 脚本"
+        },
+        {
+          "step": 3,
+          "agent": "carlos-module-scaffolder",
+          "action": "生成模块脚手架",
+          "output": "api/bus/boot/cloud 四层子模块骨架"
+        },
+        {
+          "step": 4,
+          "agent": "carlos-api-designer",
+          "action": "设计 REST API 和 Feign 接口",
+          "output": "Controller/Service/Manager/Mapper 骨架代码"
+        },
+        {
+          "step": 5,
+          "agent": "springboot-tdd",
+          "action": "TDD 开发功能",
+          "output": "测试代码 + 实现代码"
+        },
+        {
+          "step": 6,
+          "agent": "java-reviewer",
+          "action": "代码审查",
+          "output": "审查报告、修复建议"
+        },
+        {
+          "step": 7,
+          "agent": "carlos-security-reviewer",
+          "action": "安全审查",
+          "output": "安全审查报告"
+        },
+        {
+          "step": 8,
+          "agent": "carlos-integration-tester",
+          "action": "生成集成测试",
+          "output": "集成测试代码、覆盖率报告"
+        },
+        {
+          "step": 9,
+          "agent": "carlos-doc-updater",
+          "action": "更新文档",
+          "output": "更新后的 CLAUDE.md、README.md"
+        }
+      ]
+    },
+    "new-page": {
+      "name": "新增前端页面",
+      "team": "frontend-dev",
+      "steps": [
+        {
+          "step": 1,
+          "agent": "carlos-planner",
+          "action": "页面设计和组件规划",
+          "output": "页面设计方案、组件清单"
+        },
+        {
+          "step": 2,
+          "agent": "api-connector",
+          "action": "生成前端 service 层",
+          "output": "API 类型定义、请求函数"
+        },
+        {
+          "step": 3,
+          "agent": "vue-reviewer",
+          "action": "代码审查",
+          "output": "审查报告"
+        },
+        {
+          "step": 4,
+          "agent": "e2e-runner",
+          "action": "E2E 测试",
+          "output": "测试代码、测试报告、截图"
+        }
+      ]
+    },
+    "bug-fix": {
+      "name": "Bug 修复",
+      "team": "qa-team",
+      "steps": [
+        {
+          "step": 1,
+          "agent": "springboot-tdd",
+          "action": "TDD 流程修复 Bug",
+          "output": "测试代码 + 修复代码"
+        },
+        {
+          "step": 2,
+          "agent": "java-reviewer",
+          "action": "代码审查",
+          "output": "审查报告"
+        },
+        {
+          "step": 3,
+          "agent": "carlos-security-reviewer",
+          "action": "安全审查（如涉及用户输入）",
+          "output": "安全审查报告"
+        }
+      ]
+    },
+    "build-fix": {
+      "name": "构建修复",
+      "team": "devops-team",
+      "steps": [
+        {
+          "step": 1,
+          "agent": "carlos-build-resolver",
+          "action": "诊断构建错误",
+          "output": "错误分析、修复方案"
+        },
+        {
+          "step": 2,
+          "agent": "carlos-build-resolver",
+          "action": "执行修复",
+          "output": "修复后的代码"
+        }
+      ]
+    },
+    "fullstack-feature": {
+      "name": "全栈功能开发",
+      "team": "fullstack-dev",
+      "steps": [
+        {
+          "step": 1,
+          "agent": "carlos-planner",
+          "action": "整体架构设计",
+          "output": "架构设计方案、前后端接口定义"
+        },
+        {
+          "step": 2,
+          "agent": "carlos-db-designer",
+          "action": "数据库设计",
+          "output": "表结构、Entity 类"
+        },
+        {
+          "step": 3,
+          "agent": "carlos-api-designer",
+          "action": "后端 API 设计",
+          "output": "Controller/Service/Manager 骨架"
+        },
+        {
+          "step": 4,
+          "agents": [
+            "springboot-tdd",
+            "api-connector"
+          ],
+          "action": "并行开发：后端实现 + 前端 service 层",
+          "output": "后端代码 + 前端 service 代码"
+        },
+        {
+          "step": 5,
+          "agents": [
+            "java-reviewer",
+            "vue-reviewer"
+          ],
+          "action": "并行审查：后端 + 前端",
+          "output": "审查报告"
+        },
+        {
+          "step": 6,
+          "agent": "carlos-security-reviewer",
+          "action": "安全审查",
+          "output": "安全审查报告"
+        },
+        {
+          "step": 7,
+          "agent": "carlos-integration-tester",
+          "action": "集成测试",
+          "output": "集成测试代码、覆盖率报告"
+        }
+      ]
+    },
+    "architecture-review": {
+      "name": "架构评审",
+      "team": "architecture-team",
+      "steps": [
+        {
+          "step": 1,
+          "agent": "architect",
+          "action": "架构分析和设计",
+          "output": "架构设计文档"
+        },
+        {
+          "step": 2,
+          "agent": "carlos-planner",
+          "action": "功能模块规划",
+          "output": "模块设计方案"
+        },
+        {
+          "step": 3,
+          "agent": "carlos-db-designer",
+          "action": "数据架构设计",
+          "output": "数据模型设计"
+        },
+        {
+          "step": 4,
+          "agent": "database-reviewer",
+          "action": "数据库优化建议",
+          "output": "优化方案"
+        }
+      ]
+    }
+  },
+  "usage": {
+    "invoke_team": {
+      "description": "调用整个团队执行任务",
+      "syntax": "@team:<team-name> <task-description>",
+      "examples": [
+        "@team:backend-dev 开发订单管理模块",
+        "@team:frontend-dev 创建用户列表页面",
+        "@team:qa-team 审查最新代码",
+        "@team:devops-team 修复构建错误"
+      ]
+    },
+    "invoke_scenario": {
+      "description": "执行预定义场景",
+      "syntax": "@scenario:<scenario-name> <parameters>",
+      "examples": [
+        "@scenario:new-module carlos-order",
+        "@scenario:new-page user-list",
+        "@scenario:bug-fix 用户登录空指针异常",
+        "@scenario:fullstack-feature 订单支付功能"
+      ]
+    },
+    "invoke_agent": {
+      "description": "直接调用单个 agent",
+      "syntax": "@<agent-name> <task-description>",
+      "examples": [
+        "@carlos-planner 设计订单管理模块",
+        "@carlos-api-designer 设计用户 CRUD 接口",
+        "@springboot-tdd 实现订单创建功能",
+        "@java-reviewer 审查订单模块代码"
+      ]
+    }
+  }
+}
