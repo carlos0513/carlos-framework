@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -32,7 +32,7 @@ import java.util.List;
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties(JsonProperties.class)
+@ConditionalOnClass(WebMvcConfigurer.class)
 @RequiredArgsConstructor
 public class JsonWebConfiguration implements WebMvcConfigurer {
 

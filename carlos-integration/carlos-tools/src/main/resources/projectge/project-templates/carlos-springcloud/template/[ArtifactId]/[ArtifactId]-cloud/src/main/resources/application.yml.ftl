@@ -12,9 +12,9 @@ import:
 # 2. 环境专属配置（覆盖公共配置）
 #      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
 # 3. 额外共享配置（如 Redis、MySQL 配置）
-- optional:nacos:common.yaml?group=INFRA&refreshEnabled=true
-- optional:nacos:redis.yaml?group=INFRA&refreshEnabled=true
-- optional:nacos:mysql.yaml?group=INFRA&refreshEnabled=true
+- optional:nacos:common.yml?DEFAULT_GROUP&refreshEnabled=true
+- optional:nacos:redis.yml?DEFAULT_GROUP&refreshEnabled=true
+- optional:nacos:mysql.yml?DEFAULT_GROUP&refreshEnabled=true
   cloud:
     nacos:
       discovery:
