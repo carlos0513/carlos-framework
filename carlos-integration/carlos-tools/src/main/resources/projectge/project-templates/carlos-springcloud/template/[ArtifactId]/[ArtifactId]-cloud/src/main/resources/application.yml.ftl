@@ -5,6 +5,16 @@ spring:
     active: ${r'${PROFILE:local}'}
   application:
 name: ${project.artifactId}
+config:
+import:
+# 1. 公共配置（所有环境共享）
+#      - optional:nacos:${spring.application.name}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+# 2. 环境专属配置（覆盖公共配置）
+#      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+# 3. 额外共享配置（如 Redis、MySQL 配置）
+- optional:nacos:common.yaml?group=INFRA&refreshEnabled=true
+- optional:nacos:redis.yaml?group=INFRA&refreshEnabled=true
+- optional:nacos:mysql.yaml?group=INFRA&refreshEnabled=true
   cloud:
     nacos:
       discovery:
@@ -13,19 +23,6 @@ name: ${project.artifactId}
         enabled: true
         file-extension: yml
         refresh-enabled: true
-        shared-configs:
-          -
-            data-id: share-config.yml
-            refresh: true
-          -
-            data-id: redis.yml
-            refresh: true
-          -
-            data-id: mysql.yml
-            refresh: true
-          -
-            data-id: minio.yml
-            refresh: true
 
 # 本地调试环境
 ---
