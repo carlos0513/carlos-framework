@@ -83,7 +83,7 @@
     <mongodb-plus.version>2.1.9</mongodb-plus.version>
 
     <!-- Message Queue -->
-    <rocketmq.version>2.0.2</rocketmq.version>
+    <rocketmq.version>5.2.0</rocketmq.version>
 
     <!-- Storage -->
     <minio.version>8.5.7</minio.version>
