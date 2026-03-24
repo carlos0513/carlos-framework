@@ -1,5 +1,7 @@
 com.carlos.redis.config.RedisLettuceConnectionConfiguration
 com.carlos.redis.config.RedisCacheConfig
+com.carlos.redis.config.ReactiveRedisConfig
 com.carlos.redis.config.RedissonConfig
 com.carlos.redis.caffeine.CaffeineConfig
 com.carlos.redis.util.RedisUtil
+com.carlos.redis.util.ReactiveRedisUtil

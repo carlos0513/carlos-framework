@@ -79,5 +79,12 @@
       <optional>true</optional>
     </dependency>
 
+    <!-- Spring WebFlux（可选，为 Gateway 等响应式应用提供支持） -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+      <optional>true</optional>
+    </dependency>
+
   </dependencies>
 </project>

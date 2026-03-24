@@ -47,6 +47,20 @@ public class CacheProperties implements InitializingBean {
      */
     private String keyOverflowStrategy = "truncate";
 
+    /**
+     * Reactive Redis 配置
+     */
+    private Reactive reactive = new Reactive();
+
+    @Data
+    public static class Reactive {
+        /**
+         * 是否启用 Reactive Redis 支持
+         * 默认启用（当类路径存在 reactor 时）
+         */
+        private boolean enabled = true;
+    }
+
     @Override
     public void afterPropertiesSet() {
         if (usePrefix) {
