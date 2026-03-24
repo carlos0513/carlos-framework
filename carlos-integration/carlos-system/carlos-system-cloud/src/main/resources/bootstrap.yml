@@ -1,9 +1,6 @@
 server:
   port: 9501
 spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
   profiles:
     active: ${PROFILE:local}
   application:
@@ -16,16 +13,16 @@ spring:
         enabled: true
         file-extension: yml
         refresh-enabled: true
-        shared-configs:
-          -
-            data-id: share-config.yml
-            refresh: true
-          -
-            data-id: mysql.yml
-            refresh: true
-          -
-            data-id: redis.yml
-            refresh: true
+  config:
+    import:
+      # 1. 公共配置（所有环境共享）
+      #      - optional:nacos:${spring.application.name}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      # 2. 环境专属配置（覆盖公共配置）
+      #      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      # 3. 额外共享配置（如 Redis、MySQL 配置）
+      - optional:nacos:common.yaml?group=INFRA&refreshEnabled=true
+      - optional:nacos:redis.yaml?group=INFRA&refreshEnabled=true
+      - optional:nacos:mysql.yaml?group=INFRA&refreshEnabled=true
           -
             data-id: minio.yml
             refresh: true

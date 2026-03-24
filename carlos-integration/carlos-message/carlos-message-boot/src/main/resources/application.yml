@@ -9,9 +9,6 @@ spring:
     name: carlos-szt-org
   profiles:
     active: env,boot
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
   # spring配置
   datasource:
     druid:

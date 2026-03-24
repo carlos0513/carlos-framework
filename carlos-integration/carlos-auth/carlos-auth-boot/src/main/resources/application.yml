@@ -4,9 +4,6 @@ server:
 spring:
   profiles:
     active: env,boot
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
   application:
     name: carlos-auth
   # 配置文件导入
