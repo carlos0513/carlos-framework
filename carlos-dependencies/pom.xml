@@ -28,7 +28,7 @@
     <!-- Spring 全家桶 -->
     <spring-boot.version>3.5.9</spring-boot.version>
     <spring-cloud.version>2025.0.1</spring-cloud.version>
-    <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
+    <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
 
     <druid.version>1.2.27</druid.version>
     <yauaa.version>7.32.0</yauaa.version>
