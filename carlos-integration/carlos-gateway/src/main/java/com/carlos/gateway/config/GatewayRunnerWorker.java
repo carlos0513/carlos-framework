@@ -26,7 +26,7 @@ public class GatewayRunnerWorker implements ApplicationRunner, Ordered {
 
     public static final String DOC = "/doc.html";
 
-    @Value("${spring.cloud.gateway.api-prefix:/bbt-api}")
+    @Value("${spring.cloud.gateway.api-prefix:/api}")
     private String apiPrefix;
 
     @Override

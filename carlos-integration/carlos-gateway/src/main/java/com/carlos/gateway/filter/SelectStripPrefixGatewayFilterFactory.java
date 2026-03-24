@@ -44,11 +44,9 @@ public class SelectStripPrefixGatewayFilterFactory
             "/**/doc.html",
             "/**/favicon.ico",
             "/**/swagger-resources",
-            "/**/v2/api-docs/**",
             "/**/v3/api-docs",
             "/**/webjars/**",
             "/**/csrf",
-            "/**/v2/api-docs-ext",
             "/**/v3/api-docs-ext"
     );
 

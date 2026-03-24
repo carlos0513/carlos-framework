@@ -1,10 +1,21 @@
 server:
-  port: 9511
+  port: 9510
+
 spring:
   profiles:
     active: ${PROFILE:local}
   application:
-    name: carlos-org
+    name: carlos-gateway
+  config:
+    import:
+      # 1. 公共配置（所有环境共享）
+      #      - optional:nacos:${spring.application.name}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      # 2. 环境专属配置（覆盖公共配置）
+      #      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      # 3. 额外共享配置（如 Redis、MySQL 配置）
+      - optional:nacos:common.yaml?group=INFRA&refreshEnabled=true
+      - optional:nacos:redis.yaml?group=INFRA&refreshEnabled=true
+      - optional:nacos:mysql.yaml?group=INFRA&refreshEnabled=true
   cloud:
     nacos:
       discovery:
@@ -13,16 +24,6 @@ spring:
         enabled: true
         file-extension: yml
         refresh-enabled: true
-        shared-configs:
-          -
-            data-id: share-config.yml
-            refresh: true
-          -
-            data-id: redis.yml
-            refresh: true
-          -
-            data-id: mysql.yml
-            refresh: true
 
 # 本地调试环境
 ---
@@ -55,7 +56,7 @@ spring:
       username: ${NACOS_USERNAME}
       password: ${NACOS_PASSWORD}
       discovery:
-        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        server-addr: ${NACOS_ADDR}
         namespace: ${NACOS_NAMESPACE}
         group: ${NACOS_GROUP}
       config:

@@ -1,73 +1,52 @@
 # ==========================================
-# 网关聚合配置（Knife4j 4.x 支持 Gateway）
+# Carlos Gateway 现代配置（完整功能版）
 # ==========================================
-
-knife4j:
-  # 启用网关聚合模式
-  gateway:
-    enabled: true
-
-    # 发现模式：自动从注册中心发现服务
-    strategy: discover
-
-    # 手动配置模式（strategy: manual 时使用）
-    routes:
-      -
-        name: user-service
-        url: /user-service
-        service-name: user-service
-        context-path: /
-        order: 1
-
-      -
-        name: order-service
-        url: /order-service
-        service-name: order-service
-        context-path: /
-        order: 2
-
-      -
-        name: system-service
-        url: /system-service
-        service-name: system-service
-        context-path: /
-        order: 3
-
-    # 发现模式配置（配合 Nacos/Eureka）
-    discover:
-      # 是否启用发现
-      enabled: true
-      # 排除的服务名
-      excluded-services:
-        - gateway-service
-        - monitor-service
-      # 包含的服务名（优先级高于 excluded）
-      included-services:
-        - user-service
-        - order-service
-      # 服务排序
-      order: 1
-
-  # 其他配置与普通模式相同
-  enable: true
-  production: false
-
-  setting:
-    title: 微服务 API 文档中心
-    description: 网关聚合所有服务的 API 文档
+# 配置说明：
+#   - 统一前缀 /api/v1：所有 API 请求需以此开头
+#   - PathPrefixFilter 会在路由前自动截掉此前缀
+#   - Swagger/Knife4j 资源在白名单中，可直接访问
 
 spring:
   cloud:
     gateway:
-      # 网关路由配置
+      # 启用网关
+      enabled: true
+      # 全局跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+      # 默认过滤器
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+      # 路由配置
+      # 注意：PathPrefixFilter 已处理前缀，路由配置匹配截掉前缀后的路径
       routes:
         -
-          id: user-service
-          uri: lb://user-service
+          id: carlos-org
+          uri: lb://carlos-org
           predicates:
-            - Path=/user-service/**
+            - Path=/org/**
           filters:
-            - StripPrefix=1
+            # StripPrefix 已移至 PathPrefixFilter 统一处理
+            # 如需服务级限流和熔断，保留以下配置
+            -
+              name: RedisRateLimiter
+              args:
+                replenishRate: 100
+                burstCapacity: 200
+                keyResolver: IP
+            -
+              name: Resilience4jCircuitBreaker
+              args:
+                name: user-service
+                fallbackUri: forward:/fallback/user
 
         -
           id: order-service
@@ -75,4 +54,187 @@ spring:
           predicates:
             - Path=/order-service/**
           filters:
-            - StripPrefix=1
+            -
+              name: RedisRateLimiter
+              args:
+                replenishRate: 50
+                burstCapacity: 100
+                keyResolver: USER
+
+        -
+          id: carlos-system
+          uri: lb://carlos-system
+          predicates:
+            - Path=/sys/**
+          filters:
+            -
+              name: RedisRateLimiter
+              args:
+                replenishRate: 200
+                burstCapacity: 400
+
+        # Knife4j 文档聚合路由（白名单路径，无需前缀）
+        -
+          id: knife4j-gateway
+          uri: http://localhost:${server.port}
+          predicates:
+            - Path=/doc.html,/webjars/**,/swagger-resources/**,/v3/api-docs/**
+
+# ==========================================
+# Carlos 网关配置
+# ==========================================
+carlos:
+  gateway:
+    # API 统一前缀配置
+    # 所有请求必须以此前缀开头（白名单路径除外）
+    prefix: /api/v1
+    # 是否启用前缀校验
+    prefix-enabled: true
+    # 白名单路径（支持 Ant 风格通配符）
+    # 默认包含：/doc.html, /webjars/**, /swagger-ui/**, /v3/api-docs/**, /actuator/**
+    whitelist:
+      - /custom/public/**
+
+    # ==================== OAuth2 配置 ====================
+    oauth2:
+      enabled: true
+      # Token 类型：JWT 或 OPAQUE
+      token-type: JWT
+
+      # JWT 配置
+      jwt-public-key: |
+        -----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
+        -----END PUBLIC KEY-----
+      jwt-issuer: carlos-auth
+      jwt-audience: carlos-gateway
+
+      # Opaque Token 配置（当 token-type 为 OPAQUE 时使用）
+      introspection-uri: http://carlos-auth/oauth2/introspect
+      client-id: gateway-client
+      client-secret: gateway-secret
+      introspection-cache-duration: 5m
+
+      # 权限配置
+      authorization-enabled: true
+      authorization-mode: RBAC
+
+      # 白名单
+      whitelist:
+        - /public/**
+        - /static/**
+
+    # ==================== 灰度发布配置 ====================
+    gray:
+      enabled: false
+      strategies:
+        user-service:
+          enabled: true
+          weight: 10  # 10% 流量进入灰度
+          version: "2.0.0"
+          hash-key: USER
+        order-service:
+          enabled: true
+          user-ids:
+            - "10001"
+            - "10002"
+
+    # ==================== WAF 配置 ====================
+    waf:
+      enabled: true
+      sql-injection-protection: true
+      xss-protection: true
+      path-traversal-protection: true
+      sensitive-file-protection: true
+      command-injection-protection: true
+      check-body: true
+      csrf-protection: true
+      allowed-origin: "http://localhost:3000"
+
+    # ==================== 防重放配置 ====================
+    replay:
+      enabled: true
+      strict-mode: false
+      secret-key: ${REPLAY_SECRET_KEY:your-secret-key-here}
+      whitelist:
+        - /public/**
+
+    # ==================== 限流配置 ====================
+    ratelimit:
+      enabled: true
+
+    # ==================== 熔断配置 ====================
+    circuitbreaker:
+      enabled: true
+
+    # ==================== 缓存配置 ====================
+    cache:
+      enabled: true
+      local-size: 10000
+      local-expire: 5m
+      redis-enabled: true
+      redis-expire: 10m
+
+    # ==================== 链路追踪配置 ====================
+    tracing:
+      enabled: true
+      sampling-rate: 1.0
+      ignore-patterns:
+        - /actuator/**
+        - /health
+
+    # ==================== 指标配置 ====================
+    metrics:
+      enabled: true
+
+    # ==================== 转换配置 ====================
+    transform:
+      enabled: true
+      api-version-enabled: true
+      path-rewrites:
+        "/api/v1/(.*)": "/v1/$1"
+      header-transforms:
+        -
+          source: X-Old-Header
+          target: X-New-Header
+          operation: REPLACE
+        -
+          source: X-Internal-Token
+          operation: REMOVE
+
+# ==========================================
+# Knife4j 配置（API 文档聚合）
+# ==========================================
+knife4j:
+  gateway:
+    enabled: true
+    tags-sorter: order
+    operations-sorter: order
+    strategy: discover
+    discover:
+      enabled: true
+      version: openapi3
+
+# ==========================================
+# Actuator 配置
+# ==========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  endpoint:
+    health:
+      show-details: when-authorized
+    gateway:
+      enabled: true
+
+# ==========================================
+# 日志配置
+# ==========================================
+logging:
+  level:
+    com.carlos.gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"

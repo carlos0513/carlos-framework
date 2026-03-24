@@ -1,14 +1,10 @@
 server:
-  port: 9510
-
+  port: 9511
 spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
   profiles:
     active: ${PROFILE:local}
   application:
-    name: carlos-gateway
+    name: carlos-org
   cloud:
     nacos:
       discovery:
@@ -17,6 +13,7 @@ spring:
         enabled: true
         file-extension: yml
         refresh-enabled: true
+
         shared-configs:
           -
             data-id: share-config.yml
@@ -24,7 +21,9 @@ spring:
           -
             data-id: redis.yml
             refresh: true
-
+          -
+            data-id: mysql.yml
+            refresh: true
 
 # 本地调试环境
 ---
@@ -57,7 +56,7 @@ spring:
       username: ${NACOS_USERNAME}
       password: ${NACOS_PASSWORD}
       discovery:
-        server-addr: ${NACOS_ADDR}
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE}
         group: ${NACOS_GROUP}
       config:

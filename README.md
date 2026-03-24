@@ -39,6 +39,54 @@
 | MapStruct            | 1.6.3             | Bean mapping                       |
 | Guava                | 33.4.8-jre        | Google core libraries              |
 
+### Middleware & Dependencies
+
+**Database & ORM**
+
+- MySQL Connector: 8.0.33
+- Druid: 1.2.27
+- MyBatis-Plus Join: 1.5.4
+- Dynamic DataSource: 4.3.1
+- MongoDB Plus: 2.1.9
+- DM JDBC: 8.1.3.62
+
+**Cache & Storage**
+
+- Redisson: 3.51.0
+- Caffeine: 3.1.8
+- MinIO: 8.5.7
+- Aliyun OSS: 2.20.26
+
+**Message Queue**
+
+- RocketMQ: 5.3.1
+- RocketMQ Client: 2.0.2
+
+**Workflow & High Performance**
+
+- Flowable: 7.0.1
+- Disruptor: 3.4.4
+
+**Security & Encryption**
+
+- Spring Security OAuth2: 6.2.7
+- BouncyCastle: 1.70
+
+**Monitoring & Diagnostics**
+
+- Arthas: 4.1.5
+- Spring Boot Admin: 3.5.7
+
+**Utilities**
+
+- Fastjson2: 2.0.60
+- Gson: 2.11.0
+- OkHttp: 4.12.0
+- Apache POI: 5.2.5
+- EasyExcel: 4.1.5
+- Knife4j: 4.6.0-SNAPSHOT
+- Liquibase: 4.29.0
+
 ## Quick Start
 
 ### Prerequisites

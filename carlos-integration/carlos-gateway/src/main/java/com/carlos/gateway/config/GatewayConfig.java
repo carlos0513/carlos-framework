@@ -1,10 +1,13 @@
 package com.carlos.gateway.config;
 
 import com.carlos.gateway.cache.CacheProperties;
+import com.carlos.gateway.cache.ResponseCacheFilter;
 import com.carlos.gateway.circuitbreaker.Resilience4jCircuitBreakerFilter;
+import com.carlos.gateway.filter.PathPrefixFilter;
 import com.carlos.gateway.gray.GrayReleaseFilter;
 import com.carlos.gateway.gray.GrayReleaseProperties;
 import com.carlos.gateway.oauth2.*;
+import com.carlos.gateway.observability.MetricsFilter;
 import com.carlos.gateway.observability.TracingFilter;
 import com.carlos.gateway.observability.TracingProperties;
 import com.carlos.gateway.ratelimit.RedisRateLimiter;
@@ -14,13 +17,23 @@ import com.carlos.gateway.security.WafFilter;
 import com.carlos.gateway.security.WafProperties;
 import com.carlos.gateway.transform.RequestTransformFilter;
 import com.carlos.gateway.transform.TransformProperties;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -36,6 +49,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties({
+    GatewayProperties.class,
     OAuth2GatewayProperties.class,
     GrayReleaseProperties.class,
     WafProperties.class,
@@ -44,7 +58,16 @@ import org.springframework.web.reactive.function.client.WebClient;
     TracingProperties.class,
     TransformProperties.class
 })
-public class ModernGatewayConfig {
+public class GatewayConfig {
+
+    // ==================== 路径前缀配置 ====================
+
+    @Bean
+    @ConditionalOnProperty(name = "carlos.gateway.prefix-enabled", havingValue = "true", matchIfMissing = true)
+    public PathPrefixFilter pathPrefixFilter(GatewayProperties gatewayProperties) {
+        log.info("Initializing Path Prefix Filter with prefix: {}", gatewayProperties.getPrefix());
+        return new PathPrefixFilter(gatewayProperties);
+    }
 
     // ==================== OAuth2 认证配置 ====================
 
@@ -72,7 +95,7 @@ public class ModernGatewayConfig {
     @ConditionalOnProperty(name = "carlos.gateway.oauth2.authorization-enabled", havingValue = "true")
     public OAuth2AuthorizationFilter oAuth2AuthorizationFilter(
         OAuth2GatewayProperties properties,
-        com.carlos.gateway.oauth2.DefaultPermissionProvider permissionProvider) {
+        DefaultPermissionProvider permissionProvider) {
         log.info("Initializing OAuth2 Authorization Filter with mode: {}", properties.getAuthorizationMode());
         return new OAuth2AuthorizationFilter(properties, permissionProvider);
     }
@@ -127,9 +150,9 @@ public class ModernGatewayConfig {
 
     @Bean
     @ConditionalOnProperty(name = "carlos.gateway.cache.enabled", havingValue = "true", matchIfMissing = true)
-    public com.carlos.gateway.cache.ResponseCacheFilter responseCacheFilter(CacheProperties properties) {
+    public ResponseCacheFilter responseCacheFilter(CacheProperties properties) {
         log.info("Initializing Response Cache Filter");
-        return new com.carlos.gateway.cache.ResponseCacheFilter(properties);
+        return new ResponseCacheFilter(properties);
     }
 
     // ==================== 可观测性配置 ====================
@@ -137,8 +160,8 @@ public class ModernGatewayConfig {
     @Bean
     @ConditionalOnProperty(name = "carlos.gateway.tracing.enabled", havingValue = "true", matchIfMissing = true)
     public TracingFilter tracingFilter(
-        io.micrometer.tracing.Tracer tracer,
-        io.micrometer.tracing.propagation.Propagator propagator,
+        Tracer tracer,
+        Propagator propagator,
         TracingProperties properties) {
         log.info("Initializing Tracing Filter");
         return new TracingFilter(tracer, propagator, properties);
@@ -146,10 +169,10 @@ public class ModernGatewayConfig {
 
     @Bean
     @ConditionalOnProperty(name = "carlos.gateway.metrics.enabled", havingValue = "true", matchIfMissing = true)
-    public com.carlos.gateway.observability.MetricsFilter metricsFilter(
-        io.micrometer.core.instrument.MeterRegistry meterRegistry) {
+    public MetricsFilter metricsFilter(
+        MeterRegistry meterRegistry) {
         log.info("Initializing Metrics Filter");
-        return new com.carlos.gateway.observability.MetricsFilter(meterRegistry);
+        return new MetricsFilter(meterRegistry);
     }
 
     // ==================== 转换配置 ====================
@@ -166,7 +189,29 @@ public class ModernGatewayConfig {
     @Bean
     @ConditionalOnMissingBean
     public ReactiveStringRedisTemplate reactiveStringRedisTemplate(
-        org.springframework.data.redis.connection.ReactiveRedisConnectionFactory connectionFactory) {
+        ReactiveRedisConnectionFactory connectionFactory) {
         return new ReactiveStringRedisTemplate(connectionFactory);
+    }
+
+    @Bean
+    public GatewayRunnerWorker gatewayRunnerWorker() {
+        return new GatewayRunnerWorker();
+    }
+
+
+    /**
+     * gateway 全局异常处理 该配置会覆盖默认的异常处理 网关都是给接口做代理转发的，后端对应的都是REST
+     * API，返回数据格式都是JSON。如果不做处理，当发生异常时，Gateway默认给出的错误信息是页面，不方便前端进行异常处理。需要对异常信息进行处理，返回JSON格式的数据给客户端
+     */
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public ErrorWebExceptionHandler gatewayErrorWebExceptionHandler() {
+        return new GatewayExceptionHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(value = ErrorAttributes.class, search = SearchStrategy.CURRENT)
+    public DefaultErrorAttributes errorAttributes() {
+        return new GatewayErrorAttributes();
     }
 }
