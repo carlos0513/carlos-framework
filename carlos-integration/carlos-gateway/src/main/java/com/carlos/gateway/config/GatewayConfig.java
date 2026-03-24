@@ -10,7 +10,6 @@ import com.carlos.gateway.oauth2.*;
 import com.carlos.gateway.observability.MetricsFilter;
 import com.carlos.gateway.observability.TracingFilter;
 import com.carlos.gateway.observability.TracingProperties;
-import com.carlos.gateway.ratelimit.RedisRateLimiter;
 import com.carlos.gateway.security.ReplayProtectionFilter;
 import com.carlos.gateway.security.ReplayProtectionProperties;
 import com.carlos.gateway.security.WafFilter;
@@ -36,6 +35,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
 
 /**
  * <p>
@@ -99,15 +99,6 @@ public class GatewayConfig {
         DefaultPermissionProvider permissionProvider) {
         log.info("Initializing OAuth2 Authorization Filter with mode: {}", properties.getAuthorizationMode());
         return new OAuth2AuthorizationFilter(properties, permissionProvider);
-    }
-
-    // ==================== 限流配置 ====================
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.ratelimit.enabled", havingValue = "true", matchIfMissing = true)
-    public RedisRateLimiter redisRateLimiter(ReactiveStringRedisTemplate redisTemplate) {
-        log.info("Initializing Redis Rate Limiter");
-        return new RedisRateLimiter(redisTemplate);
     }
 
     // ==================== 熔断配置 ====================
@@ -187,6 +178,17 @@ public class GatewayConfig {
 
     // ==================== 工具 Bean ====================
 
+    @Bean
+    @ConditionalOnMissingBean
+    public WebClient webClient() {
+        return WebClient.builder().build();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "webClientBuilder")
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
     @Bean
     @ConditionalOnMissingBean
     public ReactiveStringRedisTemplate reactiveStringRedisTemplate(

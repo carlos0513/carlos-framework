@@ -37,11 +37,16 @@
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
+    <!-- ==================== Spring WebFlux (WebClient 支持) ==================== -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
 
     <!-- ==================== Spring Cloud Gateway ==================== -->
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-gateway</artifactId>
+      <artifactId>spring-cloud-gateway-server-webflux</artifactId>
     </dependency>
 
     <!-- 负载均衡 -->
@@ -65,12 +70,6 @@
     <dependency>
       <groupId>com.carlos</groupId>
       <artifactId>carlos-spring-boot-starter-redis</artifactId>
-    </dependency>
-
-    <!-- Reactive Redis -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
     </dependency>
 
     <!-- ==================== 熔断降级（Resilience4j） ==================== -->

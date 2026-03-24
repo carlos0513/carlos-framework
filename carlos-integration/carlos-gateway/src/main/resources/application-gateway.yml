@@ -7,6 +7,19 @@
 #   - Swagger/Knife4j 资源在白名单中，可直接访问
 
 spring:
+  data:
+    redis:
+      database: ${REDIS_DB}
+      host: ${REDIS_IP}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PWD}
+      lettuce:
+        pool:
+          max-active: 100
+          max-idle: 1000
+          max-wait: 30s
+          min-idle: 50
+        shutdown-timeout: 100ms
   cloud:
     gateway:
       # 启用网关
@@ -34,10 +47,9 @@ spring:
           predicates:
             - Path=/org/**
           filters:
-            # StripPrefix 已移至 PathPrefixFilter 统一处理
-            # 如需服务级限流和熔断，保留以下配置
+            # Carlos 扩展限流器：支持更多 KeyResolver 策略和统一错误响应
             -
-              name: RedisRateLimiter
+              name: CarlosRateLimiter
               args:
                 replenishRate: 100
                 burstCapacity: 200
@@ -55,7 +67,7 @@ spring:
             - Path=/order-service/**
           filters:
             -
-              name: RedisRateLimiter
+              name: CarlosRateLimiter
               args:
                 replenishRate: 50
                 burstCapacity: 100
@@ -68,7 +80,7 @@ spring:
             - Path=/sys/**
           filters:
             -
-              name: RedisRateLimiter
+              name: CarlosRateLimiter
               args:
                 replenishRate: 200
                 burstCapacity: 400
@@ -167,8 +179,52 @@ carlos:
       show-stack-trace: false
 
     # ==================== 限流配置 ====================
-    ratelimit:
+    # Carlos 扩展限流器配置
+    # 基于 Spring Cloud Gateway RedisRateLimiter 扩展，提供多维度限流策略
+    rate-limiter:
       enabled: true
+
+      # 默认限流配置（全局生效）
+      default-config:
+        replenish-rate: 100      # 每秒产生 100 个令牌
+        burst-capacity: 200      # 令牌桶容量 200
+        requested-tokens: 1      # 每次请求消耗 1 个令牌
+        key-resolver: IP         # 默认基于 IP 限流
+
+      # 路由特定配置（可选，覆盖默认配置）
+      routes:
+        -
+          route-id: carlos-org
+          replenish-rate: 100
+          burst-capacity: 200
+          key-resolver: IP
+        -
+          route-id: order-service
+          replenish-rate: 50
+          burst-capacity: 100
+          key-resolver: USER
+          inherit-default: false
+
+      # 白名单（不限流的 IP）
+      whitelist:
+        - "127.0.0.1"
+        - "10.0.0.1"
+
+      # 黑名单（直接拒绝的 IP）
+      blacklist:
+      # - "192.168.1.100"
+
+      # 响应配置
+      response:
+        include-headers: true           # 包含限流响应头
+        uniform-error-response: true    # 使用 Carlos ErrorResponse 格式
+        retry-after: 60                 # 建议重试时间（秒）
+
+      # 监控配置
+      metrics:
+        enabled: true
+        publish-events: true
+        sample-rate: 1.0
 
     # ==================== 熔断配置 ====================
     circuitbreaker:
@@ -208,6 +264,19 @@ carlos:
         -
           source: X-Internal-Token
           operation: REMOVE
+  cache:
+    reactive:
+      enabled: true
+    # 是否使用统一 key 前缀
+    use-prefix: true
+    # 缓存前缀
+    key-prefix: "gateway"
+    # 序列化方式：jackson、fastjson、kryo、jdk
+    serializer: fastjson
+    # Key 最大长度
+    key-max-length: 256
+    # Key 溢出策略：truncate、md5、sha1
+    key-overflow-strategy: truncate
 
 # ==========================================
 # Knife4j 配置（API 文档聚合）
