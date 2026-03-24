@@ -74,7 +74,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         // 获取请求信息
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
-        String method = request.getMethodValue();
+        String method = request.getMethod() != null ? request.getMethod().name() : "UNKNOWN";
         String requestId = exchange.getRequest().getId();
 
         // 记录异常日志
@@ -151,27 +151,35 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         // 添加特定异常的扩展信息
         Map<String, Object> extra = new HashMap<>();
 
-        if (ex instanceof RateLimitException rateLimitEx) {
+        if (ex instanceof RateLimitException) {
+            RateLimitException rateLimitEx = (RateLimitException) ex;
             extra.put("limitDimension", rateLimitEx.getLimitDimension());
             extra.put("limitRate", rateLimitEx.getLimitRate());
             extra.put("retryAfter", rateLimitEx.getRetryAfter());
-        } else if (ex instanceof CircuitBreakerException cbEx) {
+        } else if (ex instanceof CircuitBreakerException) {
+            CircuitBreakerException cbEx = (CircuitBreakerException) ex;
             extra.put("circuitBreakerName", cbEx.getCircuitBreakerName());
             extra.put("circuitBreakerState", cbEx.getCircuitBreakerState());
             extra.put("failureRate", cbEx.getFailureRate());
-        } else if (ex instanceof AuthenticationException authEx) {
+        } else if (ex instanceof AuthenticationException) {
+            AuthenticationException authEx = (AuthenticationException) ex;
             extra.put("failureType", authEx.getFailureType().name());
-        } else if (ex instanceof WafBlockException wafEx) {
+        } else if (ex instanceof WafBlockException) {
+            WafBlockException wafEx = (WafBlockException) ex;
             extra.put("ruleType", wafEx.getRuleType());
             extra.put("ruleName", wafEx.getRuleName());
-        } else if (ex instanceof ServiceNotFoundException snfEx) {
+        } else if (ex instanceof ServiceNotFoundException) {
+            ServiceNotFoundException snfEx = (ServiceNotFoundException) ex;
             extra.put("serviceName", snfEx.getServiceName());
-        } else if (ex instanceof RequestTimeoutException timeoutEx) {
+        } else if (ex instanceof RequestTimeoutException) {
+            RequestTimeoutException timeoutEx = (RequestTimeoutException) ex;
             extra.put("timeoutMs", timeoutEx.getTimeoutMs());
             extra.put("targetService", timeoutEx.getTargetService());
-        } else if (ex instanceof RequestValidationException validationEx) {
+        } else if (ex instanceof RequestValidationException) {
+            RequestValidationException validationEx = (RequestValidationException) ex;
             extra.put("fieldErrors", validationEx.getFieldErrors());
-        } else if (ex instanceof ReplayAttackException replayEx) {
+        } else if (ex instanceof ReplayAttackException) {
+            ReplayAttackException replayEx = (ReplayAttackException) ex;
             extra.put("attackType", replayEx.getAttackType().name());
             extra.put("requestId", replayEx.getRequestId());
         }
@@ -190,17 +198,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
         // 根据错误码映射 HTTP 状态
         if (errorCode != null) {
-            httpStatus = switch (errorCode) {
-                case 4001 -> HttpStatus.UNAUTHORIZED;      // 非法访问
-                case 4003 -> HttpStatus.FORBIDDEN;         // 没有权限
-                case 4004 -> HttpStatus.NOT_FOUND;         // 资源不存在
-                case 5001 -> HttpStatus.BAD_REQUEST;       // 参数校验异常
-                case 5104 -> HttpStatus.UNAUTHORIZED;      // 登录授权异常
-                case 5105, 5106 -> HttpStatus.FORBIDDEN;   // 没有访问权限
-                case 5107 -> HttpStatus.UNAUTHORIZED;      // Token 解析异常
-                case 5108 -> HttpStatus.METHOD_NOT_ALLOWED;// 请求方式不合法
-                default -> HttpStatus.INTERNAL_SERVER_ERROR;
-            };
+            httpStatus = mapErrorCodeToHttpStatus(errorCode);
         }
 
         builder.status(httpStatus.value())
@@ -298,6 +296,63 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
     }
 
     /**
+     * 错误码映射为 HTTP 状态码
+     */
+    private HttpStatus mapErrorCodeToHttpStatus(int errorCode) {
+        switch (errorCode) {
+            case 4001:
+                return HttpStatus.UNAUTHORIZED;      // 非法访问
+            case 4003:
+                return HttpStatus.FORBIDDEN;         // 没有权限
+            case 4004:
+                return HttpStatus.NOT_FOUND;         // 资源不存在
+            case 5001:
+                return HttpStatus.BAD_REQUEST;       // 参数校验异常
+            case 5104:
+                return HttpStatus.UNAUTHORIZED;      // 登录授权异常
+            case 5105:
+            case 5106:
+                return HttpStatus.FORBIDDEN;         // 没有访问权限
+            case 5107:
+                return HttpStatus.UNAUTHORIZED;      // Token 解析异常
+            case 5108:
+                return HttpStatus.METHOD_NOT_ALLOWED;// 请求方式不合法
+            default:
+                return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    /**
+     * HTTP 状态码映射为业务错误码
+     */
+    private int mapHttpStatusToCode(HttpStatus status) {
+        switch (status) {
+            case BAD_REQUEST:
+                return StatusCode.PARAMETER_EXCEPTION.getCode();
+            case UNAUTHORIZED:
+                return StatusCode.AUTHENTICATION_EXCEPTION.getCode();
+            case FORBIDDEN:
+                return StatusCode.UNAUTHORIZED_EXCEPTION.getCode();
+            case NOT_FOUND:
+                return StatusCode.NOT_FOUND.getCode();
+            case METHOD_NOT_ALLOWED:
+                return StatusCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION.getCode();
+            case TOO_MANY_REQUESTS:
+                return 5429;
+            case INTERNAL_SERVER_ERROR:
+                return StatusCode.FAIL.getCode();
+            case BAD_GATEWAY:
+                return 5502;
+            case SERVICE_UNAVAILABLE:
+                return 5503;
+            case GATEWAY_TIMEOUT:
+                return 5504;
+            default:
+                return StatusCode.FAIL.getCode();
+        }
+    }
+
+    /**
      * 记录异常日志
      */
     private void logException(Throwable ex, String path, String method, String requestId) {
@@ -310,10 +365,14 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             || ex instanceof WebClientResponseException) {
             // 业务异常或已知异常，记录为 WARN
             log.warn(logMessage);
-        } else if (ex instanceof ResponseStatusException
-            && ((ResponseStatusException) ex).getStatusCode().is4xxClientError()) {
-            // 客户端错误，记录为 WARN
-            log.warn(logMessage);
+        } else if (ex instanceof ResponseStatusException) {
+            ResponseStatusException statusEx = (ResponseStatusException) ex;
+            if (statusEx.getStatusCode().is4xxClientError()) {
+                // 客户端错误，记录为 WARN
+                log.warn(logMessage);
+            } else {
+                log.error(logMessage, ex);
+            }
         } else {
             // 其他异常，记录为 ERROR 并打印堆栈
             log.error(logMessage, ex);
@@ -332,25 +391,6 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         } catch (Exception ignored) {
         }
         return "unknown";
-    }
-
-    /**
-     * HTTP 状态码映射为业务错误码
-     */
-    private int mapHttpStatusToCode(HttpStatus status) {
-        return switch (status) {
-            case BAD_REQUEST -> StatusCode.PARAMETER_EXCEPTION.getCode();
-            case UNAUTHORIZED -> StatusCode.AUTHENTICATION_EXCEPTION.getCode();
-            case FORBIDDEN -> StatusCode.UNAUTHORIZED_EXCEPTION.getCode();
-            case NOT_FOUND -> StatusCode.NOT_FOUND.getCode();
-            case METHOD_NOT_ALLOWED -> StatusCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION.getCode();
-            case TOO_MANY_REQUESTS -> 5429;
-            case INTERNAL_SERVER_ERROR -> StatusCode.FAIL.getCode();
-            case BAD_GATEWAY -> 5502;
-            case SERVICE_UNAVAILABLE -> 5503;
-            case GATEWAY_TIMEOUT -> 5504;
-            default -> StatusCode.FAIL.getCode();
-        };
     }
 
     /**

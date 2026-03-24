@@ -159,6 +159,13 @@ carlos:
       whitelist:
         - /public/**
 
+    # ==================== 异常处理配置 ====================
+    exception:
+      # 开发模式：显示详细错误信息（包括异常详情和堆栈）
+      dev-mode: false
+      # 是否显示异常堆栈信息（生产环境建议关闭）
+      show-stack-trace: false
+
     # ==================== 限流配置 ====================
     ratelimit:
       enabled: true

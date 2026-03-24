@@ -1,5 +1,7 @@
 package com.carlos.gateway.ratelimit;
 
+import com.carlos.gateway.exception.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -7,10 +9,15 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +30,7 @@ import java.util.List;
  *
  * @author carlos
  * @date 2026/3/16
+ * @updated 2026/3/24 优化异常处理，统一响应格式
  */
 @Slf4j
 @Component
@@ -34,6 +42,7 @@ public class RedisRateLimiter extends AbstractGatewayFilterFactory<RedisRateLimi
      * ARGV[1]: 最大令牌数
      * ARGV[2]: 每秒产生的令牌数
      * ARGV[3]: 当前时间戳（毫秒）
+     * 返回值: 1 表示允许通过，0 表示被限流
      */
     private static final String RATE_LIMITER_SCRIPT =
         "local key = KEYS[1]\n" +
@@ -62,17 +71,20 @@ public class RedisRateLimiter extends AbstractGatewayFilterFactory<RedisRateLimi
 
     private final ReactiveStringRedisTemplate redisTemplate;
     private final RedisScript<Long> rateLimiterScript;
+    private final ObjectMapper objectMapper;
 
     public RedisRateLimiter(ReactiveStringRedisTemplate redisTemplate) {
         super(Config.class);
         this.redisTemplate = redisTemplate;
         this.rateLimiterScript = RedisScript.of(RATE_LIMITER_SCRIPT, Long.class);
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             String key = resolveKey(exchange, config);
+            String keyType = config.getKeyResolver().name();
             long now = Instant.now().toEpochMilli();
 
             List<String> keys = List.of("ratelimit:" + key);
@@ -87,17 +99,59 @@ public class RedisRateLimiter extends AbstractGatewayFilterFactory<RedisRateLimi
                 .flatMap(allowed -> {
                     if (allowed == 1L) {
                         // 添加限流响应头
-                        exchange.getResponse().getHeaders().add("X-RateLimit-Limit",
+                        ServerHttpResponse response = exchange.getResponse();
+                        response.getHeaders().add("X-RateLimit-Limit",
                             String.valueOf(config.getBurstCapacity()));
+                        response.getHeaders().add("X-RateLimit-Remaining",
+                            String.valueOf(Math.max(0, config.getBurstCapacity() - 1)));
                         return chain.filter(exchange);
                     } else {
-                        log.warn("Rate limit exceeded for key: {}", key);
-                        exchange.getResponse().setStatusCode(
-                            org.springframework.http.HttpStatus.TOO_MANY_REQUESTS);
-                        return exchange.getResponse().setComplete();
+                        // 触发限流，返回统一格式的错误响应
+                        log.warn("Rate limit exceeded for key: {} (type: {})", key, keyType);
+                        return writeRateLimitResponse(exchange.getResponse(), keyType, config);
                     }
+                })
+                .onErrorResume(e -> {
+                    log.error("Rate limit check failed for key: {}", key, e);
+                    // Redis 故障时，默认放行，避免影响业务
+                    return chain.filter(exchange);
                 });
         };
+    }
+
+    /**
+     * 写入限流响应
+     */
+    private Mono<Void> writeRateLimitResponse(ServerHttpResponse response, String limitDimension, Config config) {
+        response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        response.getHeaders().add("Retry-After", "60");  // 建议客户端 60 秒后重试
+        response.getHeaders().add("X-RateLimit-Limit", String.valueOf(config.getBurstCapacity()));
+        response.getHeaders().add("X-RateLimit-Reset", String.valueOf(Instant.now().plusSeconds(60).getEpochSecond()));
+
+        // 构建标准化的错误响应
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .status(HttpStatus.TOO_MANY_REQUESTS.value())
+            .code(5429)
+            .message("请求过于频繁，请稍后重试")
+            .extra(java.util.Map.of(
+                "limitDimension", limitDimension,
+                "limitRate", config.getReplenishRate(),
+                "burstCapacity", config.getBurstCapacity(),
+                "retryAfter", 60
+            ))
+            .build();
+
+        return response.writeWith(Mono.fromSupplier(() -> {
+            try {
+                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
+                return response.bufferFactory().wrap(bytes);
+            } catch (Exception e) {
+                log.error("Failed to serialize rate limit response", e);
+                String fallback = "{\"success\":false,\"status\":429,\"code\":5429,\"message\":\"Too Many Requests\"}";
+                return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
+            }
+        }));
     }
 
     /**

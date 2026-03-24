@@ -1,5 +1,7 @@
 package com.carlos.gateway.circuitbreaker;
 
+import com.carlos.gateway.exception.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
@@ -8,9 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author carlos
  * @date 2026/3/16
+ * @updated 2026/3/24 优化异常处理，统一响应格式
  */
 @Slf4j
 @Component
@@ -32,9 +38,12 @@ public class Resilience4jCircuitBreakerFilter extends
 
     private final CircuitBreakerRegistry circuitBreakerRegistry;
     private final ConcurrentHashMap<String, CircuitBreaker> circuitBreakers = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper;
 
     public Resilience4jCircuitBreakerFilter() {
         super(Config.class);
+        this.objectMapper = new ObjectMapper();
+
         // 默认配置
         CircuitBreakerConfig defaultConfig = CircuitBreakerConfig.custom()
             .failureRateThreshold(50)                    // 失败率阈值
@@ -65,19 +74,31 @@ public class Resilience4jCircuitBreakerFilter extends
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            String routeId = exchange.getAttribute(org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_PREDICATE_ROUTE_ATTR);
+            String routeId = exchange.getAttribute(
+                org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_PREDICATE_ROUTE_ATTR);
             String circuitBreakerName = config.getName() != null ? config.getName() : (routeId != null ? routeId : "default");
 
             CircuitBreaker circuitBreaker = circuitBreakers.computeIfAbsent(circuitBreakerName,
-                name -> circuitBreakerRegistry.circuitBreaker(name));
+                name -> {
+                    CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker(name);
+                    // 添加事件监听器
+                    cb.getEventPublisher()
+                        .onStateTransition(event -> log.warn("CircuitBreaker [{}] state transition: {} -> {}",
+                            name, event.getStateTransition().getFromState(), event.getStateTransition().getToState()))
+                        .onError(event -> log.debug("CircuitBreaker [{}] recorded error: {}",
+                            name, event.getThrowable().getMessage()))
+                        .onSuccess(event -> log.debug("CircuitBreaker [{}] recorded success", name));
+                    return cb;
+                });
 
             return chain.filter(exchange)
                 .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
                 .onErrorResume(throwable -> {
-                    log.error("Circuit breaker {} triggered for error: {}",
-                        circuitBreakerName, throwable.getMessage());
+                    CircuitBreaker.State state = circuitBreaker.getState();
+                    log.error("Circuit breaker [{}] triggered (state: {}, failureRate: {}%): {}",
+                        circuitBreakerName, state, circuitBreaker.getMetrics().getFailureRate(), throwable.getMessage());
 
-                    // 触发熔断后的降级处理
+                    // 根据配置选择降级方式
                     if (config.getFallbackUri() != null) {
                         // 转发到降级接口
                         exchange.getAttributes().put(
@@ -86,17 +107,50 @@ public class Resilience4jCircuitBreakerFilter extends
                         );
                         return Mono.empty();
                     } else {
-                        // 返回默认降级响应
-                        exchange.getResponse().setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
-                        return exchange.getResponse().writeWith(
-                            Mono.just(exchange.getResponse().bufferFactory().wrap(
-                                "{\"code\":503,\"message\":\"Service temporarily unavailable\"}"
-                                    .getBytes()
-                            ))
-                        );
+                        // 返回统一格式的降级响应
+                        return writeCircuitBreakerResponse(exchange.getResponse(), circuitBreakerName, state,
+                            circuitBreaker.getMetrics().getFailureRate());
                     }
                 });
         };
+    }
+
+    /**
+     * 写入熔断降级响应
+     */
+    private Mono<Void> writeCircuitBreakerResponse(ServerHttpResponse response, String circuitBreakerName,
+                                                   CircuitBreaker.State state, float failureRate) {
+        response.setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+        // 构建标准化的错误响应
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .status(HttpStatus.SERVICE_UNAVAILABLE.value())
+            .code(5503)
+            .message("服务暂时不可用，请稍后重试")
+            .extra(java.util.Map.of(
+                "circuitBreakerName", circuitBreakerName,
+                "circuitBreakerState", state.name(),
+                "failureRate", failureRate,
+                "retryAfter", 30  // 建议客户端30秒后重试
+            ))
+            .build();
+
+        // 或者抛出异常让全局异常处理器处理（推荐）
+        // 这里选择直接返回响应，避免额外的异常处理开销
+        return response.writeWith(Mono.fromSupplier(() -> {
+            try {
+                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
+                return response.bufferFactory().wrap(bytes);
+            } catch (Exception e) {
+                log.error("Failed to serialize circuit breaker response", e);
+                String fallback = String.format(
+                    "{\"success\":false,\"status\":503,\"code\":5503,\"message\":\"Service temporarily unavailable\"," +
+                        "\"extra\":{\"circuitBreakerName\":\"%s\",\"circuitBreakerState\":\"%s\"}}",
+                    circuitBreakerName, state.name());
+                return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
+            }
+        }));
     }
 
     @Override

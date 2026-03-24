@@ -1,6 +1,9 @@
 package com.carlos.gateway.security;
 
 import cn.hutool.core.util.StrUtil;
+import com.carlos.gateway.exception.ErrorResponse;
+import com.carlos.gateway.exception.ReplayAttackException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -26,6 +29,7 @@ import java.util.Optional;
  *
  * @author carlos
  * @date 2026/3/16
+ * @updated 2026/3/24 优化异常处理，统一响应格式
  */
 @Slf4j
 @Component
@@ -33,6 +37,7 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
 
     private final ReplayProtectionProperties properties;
     private final ReactiveStringRedisTemplate redisTemplate;
+    private final ObjectMapper objectMapper;
 
     // 时间戳允许的最大误差（秒）
     private static final long TIMESTAMP_TOLERANCE = 300; // 5分钟
@@ -41,6 +46,7 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
                                   ReactiveStringRedisTemplate redisTemplate) {
         this.properties = properties;
         this.redisTemplate = redisTemplate;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -50,9 +56,12 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         }
 
         ServerHttpRequest request = exchange.getRequest();
+        String path = request.getURI().getPath();
+        String clientIp = request.getRemoteAddress() != null
+            ? request.getRemoteAddress().getAddress().getHostAddress()
+            : "unknown";
 
         // 1. 白名单检查
-        String path = request.getURI().getPath();
         if (properties.getWhitelist() != null &&
             properties.getWhitelist().stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
@@ -74,20 +83,24 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
                     if (Boolean.TRUE.equals(valid)) {
                         return chain.filter(exchange);
                     }
-                    return blockRequest(exchange, "Request expired or timestamp invalid");
+                    return blockRequest(exchange, ReplayAttackException.AttackType.EXPIRED_TIMESTAMP,
+                        nonce, "请求时间戳过期或无效");
                 });
         }
 
         // 严格模式：必须包含所有参数
         if (StrUtil.isBlank(timestamp) || StrUtil.isBlank(nonce) || StrUtil.isBlank(signature)) {
-            return blockRequest(exchange, "Missing required security headers");
+            return blockRequest(exchange, ReplayAttackException.AttackType.UNKNOWN, nonce,
+                "缺少必要的安全请求头（X-Timestamp, X-Nonce, X-Signature）");
         }
 
         // 3. 验证时间戳
         return checkTimestamp(timestamp)
             .flatMap(valid -> {
                 if (!Boolean.TRUE.equals(valid)) {
-                    return blockRequest(exchange, "Request expired or timestamp invalid");
+                    log.warn("Replay protection: Expired timestamp from [{}] to [{}]", clientIp, path);
+                    return blockRequest(exchange, ReplayAttackException.AttackType.EXPIRED_TIMESTAMP,
+                        nonce, "请求时间戳过期");
                 }
                 return Mono.just(true);
             })
@@ -95,7 +108,9 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
             .flatMap(v -> checkNonce(nonce))
             .flatMap(valid -> {
                 if (!Boolean.TRUE.equals(valid)) {
-                    return blockRequest(exchange, "Request replay detected");
+                    log.warn("Replay protection: Duplicate nonce detected from [{}] to [{}]", clientIp, path);
+                    return blockRequest(exchange, ReplayAttackException.AttackType.DUPLICATE_NONCE,
+                        nonce, "检测到重放攻击（重复的请求标识）");
                 }
                 return Mono.just(true);
             })
@@ -103,7 +118,9 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
             .flatMap(v -> verifySignature(request, timestamp, nonce, signature))
             .flatMap(valid -> {
                 if (!Boolean.TRUE.equals(valid)) {
-                    return blockRequest(exchange, "Invalid signature");
+                    log.warn("Replay protection: Invalid signature from [{}] to [{}]", clientIp, path);
+                    return blockRequest(exchange, ReplayAttackException.AttackType.INVALID_SIGNATURE,
+                        nonce, "请求签名验证失败");
                 }
                 return chain.filter(exchange);
             });
@@ -135,7 +152,7 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
                     // Nonce 已存在，可能是重放攻击
                     return Mono.just(false);
                 }
-                // 存储 Nonce，设置过期时间
+                // 存储 Nonce，设置过期时间（2倍时间戳容差）
                 return redisTemplate.opsForValue()
                     .set(key, "1", Duration.ofSeconds(TIMESTAMP_TOLERANCE * 2))
                     .thenReturn(true);
@@ -193,16 +210,48 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * 拦截请求
+     * 拦截请求，返回统一格式的错误响应
      */
-    private Mono<Void> blockRequest(ServerWebExchange exchange, String message) {
-        log.warn("Replay protection blocked request: {}", message);
+    private Mono<Void> blockRequest(ServerWebExchange exchange, ReplayAttackException.AttackType attackType,
+                                    String requestId, String message) {
+        String path = exchange.getRequest().getURI().getPath();
+        String clientIp = exchange.getRequest().getRemoteAddress() != null
+            ? exchange.getRequest().getRemoteAddress().getAddress().getHostAddress()
+            : "unknown";
+
+        log.warn("Replay protection blocked request from [{}] to [{}]: {} (type={})",
+            clientIp, path, message, attackType.name());
+
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.FORBIDDEN);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-        String body = String.format("{\"code\":403,\"message\":\"%s\"}", message);
-        return response.writeWith(Mono.just(response.bufferFactory().wrap(body.getBytes())));
+        // 构建标准化的错误响应
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .status(HttpStatus.FORBIDDEN.value())
+            .code(54031)
+            .message(message)
+            .path(path)
+            .method(exchange.getRequest().getMethod() != null ? exchange.getRequest().getMethod().name() : "UNKNOWN")
+            .extra(java.util.Map.of(
+                "attackType", attackType.name(),
+                "requestId", requestId != null ? requestId : "unknown",
+                "clientIp", clientIp
+            ))
+            .build();
+
+        return response.writeWith(Mono.fromSupplier(() -> {
+            try {
+                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
+                return response.bufferFactory().wrap(bytes);
+            } catch (Exception e) {
+                log.error("Failed to serialize replay protection response", e);
+                String fallback = String.format(
+                    "{\"success\":false,\"status\":403,\"code\":54031,\"message\":\"%s\"}",
+                    message);
+                return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
+            }
+        }));
     }
 
     @Override

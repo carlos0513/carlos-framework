@@ -56,7 +56,8 @@ import org.springframework.web.reactive.function.client.WebClient;
     ReplayProtectionProperties.class,
     CacheProperties.class,
     TracingProperties.class,
-    TransformProperties.class
+    TransformProperties.class,
+    ExceptionProperties.class
 })
 public class GatewayConfig {
 
@@ -198,20 +199,30 @@ public class GatewayConfig {
         return new GatewayRunnerWorker();
     }
 
+    // ==================== 全局异常处理配置 ====================
 
     /**
-     * gateway 全局异常处理 该配置会覆盖默认的异常处理 网关都是给接口做代理转发的，后端对应的都是REST
-     * API，返回数据格式都是JSON。如果不做处理，当发生异常时，Gateway默认给出的错误信息是页面，不方便前端进行异常处理。需要对异常信息进行处理，返回JSON格式的数据给客户端
+     * 网关全局异常处理器
+     * 覆盖 Spring Boot 默认的异常处理，返回统一的 JSON 格式错误响应
+     * 优先级最高，确保最先处理异常
      */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public ErrorWebExceptionHandler gatewayErrorWebExceptionHandler() {
-        return new GatewayExceptionHandler();
+    public ErrorWebExceptionHandler gatewayErrorWebExceptionHandler(ExceptionProperties exceptionProperties) {
+        log.info("Initializing Gateway Exception Handler (devMode: {}, showStackTrace: {})",
+            exceptionProperties.isDevMode(), exceptionProperties.isShowStackTrace());
+        return new GatewayExceptionHandler(exceptionProperties.isDevMode(), exceptionProperties.isShowStackTrace());
     }
 
+    /**
+     * 错误属性扩展
+     * 扩展 Spring Boot 默认的错误属性，添加网关特定的字段
+     */
     @Bean
     @ConditionalOnMissingBean(value = ErrorAttributes.class, search = SearchStrategy.CURRENT)
-    public DefaultErrorAttributes errorAttributes() {
-        return new GatewayErrorAttributes();
+    public DefaultErrorAttributes errorAttributes(ExceptionProperties exceptionProperties) {
+        log.info("Initializing Gateway Error Attributes (devMode: {})", exceptionProperties.isDevMode());
+        GatewayErrorAttributes attributes = new GatewayErrorAttributes(exceptionProperties.isDevMode());
+        return attributes;
     }
 }

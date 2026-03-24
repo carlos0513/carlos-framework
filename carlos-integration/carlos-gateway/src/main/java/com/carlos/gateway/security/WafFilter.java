@@ -1,5 +1,7 @@
 package com.carlos.gateway.security;
 
+import com.carlos.gateway.exception.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -18,22 +20,25 @@ import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * <p>
  * Web 应用防火墙（WAF）过滤器
- * 防护：SQL 注入、XSS、CSRF、路径遍历、敏感文件访问
+ * 防护：SQL 注入、XSS、CSRF、路径遍历、敏感文件访问、命令注入
  * </p>
  *
  * @author carlos
  * @date 2026/3/16
+ * @updated 2026/3/24 优化异常处理，统一响应格式
  */
 @Slf4j
 @Component
 public class WafFilter implements GlobalFilter, Ordered {
 
     private final WafProperties properties;
+    private final ObjectMapper objectMapper;
 
     // SQL 注入检测模式
     private static final Pattern SQL_INJECTION_PATTERN = Pattern.compile(
@@ -75,6 +80,7 @@ public class WafFilter implements GlobalFilter, Ordered {
 
     public WafFilter(WafProperties properties) {
         this.properties = properties;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -84,22 +90,41 @@ public class WafFilter implements GlobalFilter, Ordered {
         }
 
         ServerHttpRequest request = exchange.getRequest();
+        String path = request.getURI().getPath();
 
         // 1. 检查路径
-        String path = request.getURI().getPath();
         if (checkPath(path)) {
-            return blockRequest(exchange, "Blocked by WAF: suspicious path detected");
+            return blockRequest(exchange, "PATH_TRAVERSAL", "suspicious_path",
+                "检测到可疑路径访问，请求已被拦截");
         }
 
         // 2. 检查查询参数
         String query = request.getURI().getQuery();
-        if (query != null && checkQueryString(query)) {
-            return blockRequest(exchange, "Blocked by WAF: suspicious query string detected");
+        if (query != null) {
+            Matcher sqlMatcher = SQL_INJECTION_PATTERN.matcher(query);
+            if (properties.isSqlInjectionProtection() && sqlMatcher.find()) {
+                return blockRequest(exchange, "SQL_INJECTION", "query_string",
+                    "检测到 SQL 注入攻击，请求已被拦截");
+            }
+
+            Matcher xssMatcher = XSS_PATTERN.matcher(query);
+            if (properties.isXssProtection() && xssMatcher.find()) {
+                return blockRequest(exchange, "XSS", "query_string",
+                    "检测到 XSS 攻击，请求已被拦截");
+            }
+
+            Matcher cmdMatcher = COMMAND_INJECTION_PATTERN.matcher(query);
+            if (properties.isCommandInjectionProtection() && cmdMatcher.find()) {
+                return blockRequest(exchange, "COMMAND_INJECTION", "query_string",
+                    "检测到命令注入攻击，请求已被拦截");
+            }
         }
 
         // 3. 检查请求头
-        if (checkHeaders(request.getHeaders())) {
-            return blockRequest(exchange, "Blocked by WAF: suspicious header detected");
+        String headerViolation = checkHeaders(request.getHeaders());
+        if (headerViolation != null) {
+            return blockRequest(exchange, "MALICIOUS_HEADER", headerViolation,
+                "检测到恶意请求头，请求已被拦截");
         }
 
         // 4. 检查请求体（POST/PUT 请求）
@@ -113,7 +138,8 @@ public class WafFilter implements GlobalFilter, Ordered {
         // 5. CSRF 检查
         if (properties.isCsrfProtection() && isCsrfRequest(request)) {
             if (!checkCsrfToken(request)) {
-                return blockRequest(exchange, "Blocked by WAF: CSRF token invalid");
+                return blockRequest(exchange, "CSRF", "invalid_token",
+                    "CSRF Token 验证失败，请求已被拦截");
             }
         }
 
@@ -125,30 +151,11 @@ public class WafFilter implements GlobalFilter, Ordered {
      */
     private boolean checkPath(String path) {
         if (properties.isPathTraversalProtection() && PATH_TRAVERSAL_PATTERN.matcher(path).find()) {
-            log.warn("Path traversal detected: {}", path);
+            log.warn("WAF: Path traversal detected: {}", path);
             return true;
         }
         if (properties.isSensitiveFileProtection() && SENSITIVE_FILE_PATTERN.matcher(path).find()) {
-            log.warn("Sensitive file access detected: {}", path);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 检查查询字符串
-     */
-    private boolean checkQueryString(String query) {
-        if (properties.isSqlInjectionProtection() && SQL_INJECTION_PATTERN.matcher(query).find()) {
-            log.warn("SQL injection in query string: {}", query);
-            return true;
-        }
-        if (properties.isXssProtection() && XSS_PATTERN.matcher(query).find()) {
-            log.warn("XSS in query string: {}", query);
-            return true;
-        }
-        if (properties.isCommandInjectionProtection() && COMMAND_INJECTION_PATTERN.matcher(query).find()) {
-            log.warn("Command injection in query string: {}", query);
+            log.warn("WAF: Sensitive file access detected: {}", path);
             return true;
         }
         return false;
@@ -156,24 +163,25 @@ public class WafFilter implements GlobalFilter, Ordered {
 
     /**
      * 检查请求头
+     * @return 违规类型，如果没有违规返回 null
      */
-    private boolean checkHeaders(HttpHeaders headers) {
+    private String checkHeaders(HttpHeaders headers) {
         for (String headerName : headers.keySet()) {
             List<String> values = headers.get(headerName);
             if (values != null) {
                 for (String value : values) {
                     if (properties.isSqlInjectionProtection() && SQL_INJECTION_PATTERN.matcher(value).find()) {
-                        log.warn("SQL injection in header {}: {}", headerName, value);
-                        return true;
+                        log.warn("WAF: SQL injection in header {}: {}", headerName, value);
+                        return headerName;
                     }
                     if (properties.isXssProtection() && XSS_PATTERN.matcher(value).find()) {
-                        log.warn("XSS in header {}: {}", headerName, value);
-                        return true;
+                        log.warn("WAF: XSS in header {}: {}", headerName, value);
+                        return headerName;
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -189,10 +197,16 @@ public class WafFilter implements GlobalFilter, Ordered {
                 String body = new String(bytes, StandardCharsets.UTF_8);
 
                 if (properties.isSqlInjectionProtection() && SQL_INJECTION_PATTERN.matcher(body).find()) {
-                    return blockRequest(exchange, "Blocked by WAF: SQL injection in body");
+                    return blockRequest(exchange, "SQL_INJECTION", "request_body",
+                        "检测到 SQL 注入攻击（请求体），请求已被拦截");
                 }
                 if (properties.isXssProtection() && XSS_PATTERN.matcher(body).find()) {
-                    return blockRequest(exchange, "Blocked by WAF: XSS in body");
+                    return blockRequest(exchange, "XSS", "request_body",
+                        "检测到 XSS 攻击（请求体），请求已被拦截");
+                }
+                if (properties.isCommandInjectionProtection() && COMMAND_INJECTION_PATTERN.matcher(body).find()) {
+                    return blockRequest(exchange, "COMMAND_INJECTION", "request_body",
+                        "检测到命令注入攻击（请求体），请求已被拦截");
                 }
 
                 // 重新包装请求体
@@ -229,9 +243,11 @@ public class WafFilter implements GlobalFilter, Ordered {
 
         // 简单的 CSRF 检查：验证 Origin 或 Referer
         if (origin != null && !origin.startsWith(properties.getAllowedOrigin())) {
+            log.warn("WAF: CSRF check failed - invalid origin: {}", origin);
             return false;
         }
         if (referer != null && !referer.startsWith(properties.getAllowedOrigin())) {
+            log.warn("WAF: CSRF check failed - invalid referer: {}", referer);
             return false;
         }
 
@@ -239,16 +255,47 @@ public class WafFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * 拦截请求
+     * 拦截请求，返回统一格式的错误响应
      */
-    private Mono<Void> blockRequest(ServerWebExchange exchange, String message) {
-        log.warn("WAF blocked request: {}", message);
+    private Mono<Void> blockRequest(ServerWebExchange exchange, String ruleType, String ruleName, String message) {
+        String path = exchange.getRequest().getURI().getPath();
+        String clientIp = exchange.getRequest().getRemoteAddress() != null
+            ? exchange.getRequest().getRemoteAddress().getAddress().getHostAddress()
+            : "unknown";
+
+        log.warn("WAF blocked request from [{}] to [{}]: {} - ruleType={}, ruleName={}",
+            clientIp, path, message, ruleType, ruleName);
+
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.FORBIDDEN);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-        String body = String.format("{\"code\":403,\"message\":\"%s\"}", message);
-        return response.writeWith(Mono.just(response.bufferFactory().wrap(body.getBytes())));
+        // 构建标准化的错误响应
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .status(HttpStatus.FORBIDDEN.value())
+            .code(5403)
+            .message(message)
+            .path(path)
+            .method(exchange.getRequest().getMethod() != null ? exchange.getRequest().getMethod().name() : "UNKNOWN")
+            .extra(java.util.Map.of(
+                "ruleType", ruleType,
+                "ruleName", ruleName,
+                "clientIp", clientIp
+            ))
+            .build();
+
+        return response.writeWith(Mono.fromSupplier(() -> {
+            try {
+                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
+                return response.bufferFactory().wrap(bytes);
+            } catch (Exception e) {
+                log.error("Failed to serialize WAF block response", e);
+                String fallback = String.format(
+                    "{\"success\":false,\"status\":403,\"code\":5403,\"message\":\"%s\"}",
+                    message);
+                return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
+            }
+        }));
     }
 
     @Override
