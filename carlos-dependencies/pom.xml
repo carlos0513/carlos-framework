@@ -42,7 +42,7 @@
     <spring-boot-starter-security.version>2.7.4</spring-boot-starter-security.version>
 
     <!-- 数据层 -->
-    <mybatis-plus.version>3.5.15</mybatis-plus.version>          <!-- 已支持 SB3 -->
+    <mybatis-plus.version>3.5.16</mybatis-plus.version>          <!-- 已支持 SB3 -->
     <!--<mybatis-plus.version>3.5.2</mybatis-plus.version>-->
     <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
     <!--<mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>-->
