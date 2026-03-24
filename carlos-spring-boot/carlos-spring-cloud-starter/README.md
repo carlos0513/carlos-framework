@@ -8,7 +8,92 @@ Spring Cloud Alibaba 2025.0.0.0 构建，支持 Spring Boot 3.5.9+。
 
 ## 主要功能
 
-### 1. 一站式启动注解
+### 1. FallbackFactory 自动注册（新特性）
+
+模块提供 **FallbackFactory 自动扫描注册** 功能，无需手动为每个 FallbackFactory 创建 Bean 注册方法。
+
+#### 自动注册说明
+
+当应用中存在 `FallbackFactory` 实现类时，starter 会自动扫描并将其注册为 Spring Bean，无需手动在配置类中声明 `@Bean` 方法。
+
+**默认行为**：
+
+- 自动扫描 `com.carlos` 包及其子包下的所有 `FallbackFactory` 实现类
+- 自动注册为 Spring Bean，Bean 名称为类名首字母小写
+- 已手动注册的 FallbackFactory 不会被重复注册
+- 抽象类和接口不会被注册
+
+#### 配置示例
+
+```yaml
+carlos:
+  feign:
+    fallback:
+      enabled: true                    # 启用自动注册（默认 true）
+      scan-packages:                   # 自定义扫描包路径
+        - com.carlos.system.fallback
+        - com.carlos.org.fallback
+```
+
+#### 使用方式对比
+
+**传统方式（需要手动注册）**：
+
+```java
+@Configuration
+public class SystemFeignConfig {
+    
+    @Bean
+    public FeignDictFallbackFactory dictFallbackFactory() {
+        return new FeignDictFallbackFactory();
+    }
+    
+    @Bean
+    public FeignMenuFallbackFactory menuFallbackFactory() {
+        return new FeignMenuFallbackFactory();
+    }
+    
+    // 每增加一个 FallbackFactory 都需要手动添加 @Bean 方法
+}
+```
+
+**自动注册方式（推荐）**：
+
+```java
+// 只需要实现 FallbackFactory 接口，无需任何配置
+@Slf4j
+public class FeignDictFallbackFactory implements FallbackFactory<ApiDict> {
+    @Override
+    public ApiDict create(Throwable throwable) {
+        log.error("字典服务调用失败", throwable);
+        return new ApiDict() {
+            @Override
+            public Result<Dict> getById(String id) {
+                return Result.fail();
+            }
+        };
+    }
+}
+```
+
+#### 注意事项
+
+1. **扫描路径**：确保 FallbackFactory 实现类位于扫描路径下（默认 `com.carlos`）
+2. **Bean 名称**：自动注册的 Bean 名称为类名首字母小写（如 `FeignDictFallbackFactory` → `feignDictFallbackFactory`）
+3. **手动注册优先**：如果已通过 `@Bean` 或 `@Component` 注册，自动注册会跳过该类
+4. **Feign 注解**：`@FeignClient` 的 `fallbackFactory` 属性需指向 FallbackFactory 类，而非 Bean 名称
+
+```java
+@FeignClient(
+    name = "system-service",
+    fallbackFactory = FeignDictFallbackFactory.class  // 指向类，starter 会自动找到对应的 Bean
+)
+public interface ApiDict {
+    // ...
+}
+```
+
+### 2. 一站式启动注解
 
 **@SpringCloudApplication** 注解简化微服务启动配置：
 
@@ -27,7 +112,7 @@ public class UserApplication {
 - `@EnableFeignClients("com.carlos")`: 启用 Feign 客户端
 - `@SpringBootApplication`: Spring Boot 应用
 
-### 2. OpenFeign 服务调用
+### 3. OpenFeign 服务调用
 
 #### Feign 配置
 
@@ -76,6 +161,12 @@ carlos:
       keep-alive-duration: 5  # 连接保持时长(分钟)
       connect-timeout: 5000   # 连接超时(ms)
       read-timeout: 10000     # 读取超时(ms)
+    
+    fallback:
+      enabled: true         # 启用 FallbackFactory 自动注册（默认 true）
+      scan-packages:        # 扫描包路径列表（默认 com.carlos）
+        - com.carlos.system.fallback
+        - com.carlos.org.fallback
 
 # Feign 客户端默认配置
 feign:
@@ -104,7 +195,7 @@ userServiceClient.getUser(1L);
 FeignRequestInterceptor.clearContext();
 ```
 
-### 3. Nacos 服务发现与配置
+### 4. Nacos 服务发现与配置
 
 #### 服务注册与发现
 
@@ -155,7 +246,7 @@ carlos:
         log-change: true         # 服务变更时打印日志
 ```
 
-### 4. Sentinel 熔断降级
+### 5. Sentinel 熔断降级
 
 #### 流量控制与熔断
 
@@ -228,7 +319,7 @@ public class OrderServiceFallbackFactory implements FallbackFactory<OrderService
 }
 ```
 
-### 5. Seata 分布式事务
+### 6. Seata 分布式事务
 
 #### 启用 Seata
 
@@ -297,7 +388,7 @@ public class OrderService {
 }
 ```
 
-### 6. 负载均衡
+### 7. 负载均衡
 
 #### 配置负载均衡策略
 
@@ -317,7 +408,7 @@ carlos:
         initial-delay: 0
 ```
 
-### 7. 服务上下文传递
+### 8. 服务上下文传递
 
 ```java
 // 设置上下文
@@ -333,7 +424,7 @@ String userId = ServiceContext.getUserId();
 ServiceContext.clear();
 ```
 
-### 8. 统一异常处理
+### 9. 统一异常处理
 
 模块已内置统一的 Feign 异常处理和 Sentinel 限流异常处理，返回标准响应格式：
 
@@ -345,7 +436,7 @@ ServiceContext.clear();
 }
 ```
 
-### 9. 健康检查
+### 10. 健康检查
 
 模块自动集成 Spring Boot Actuator 健康检查：
 

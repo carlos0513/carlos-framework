@@ -4,7 +4,9 @@ import feign.Logger;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,6 +40,11 @@ public class FeignProperties {
      * 连接池配置
      */
     private PoolProperties pool = new PoolProperties();
+
+    /**
+     * FallbackFactory 自动注册配置
+     */
+    private FallbackProperties fallback = new FallbackProperties();
 
     /**
      * 日志配置
@@ -163,5 +170,25 @@ public class FeignProperties {
          * 读取超时（毫秒）
          */
         private long readTimeout = 10000;
+    }
+
+    /**
+     * FallbackFactory 自动注册配置
+     */
+    @Data
+    public static class FallbackProperties {
+
+        /**
+         * 是否启用自动注册
+         */
+        private boolean enabled = true;
+
+        /**
+         * 扫描包路径列表
+         * <p>
+         * 如果不配置，默认扫描 {@code com.carlos} 包及其子包
+         * </p>
+         */
+        private List<String> scanPackages = new ArrayList<>();
     }
 }
