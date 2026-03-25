@@ -25,6 +25,14 @@ spring:
   datasource:
     dynamic:
       primary: master
+      strict: false #严格匹配数据源,默认false. true未匹配到指定数据源时抛异常,false使用默认数据源
+      grace-destroy: false #是否优雅关闭数据源，默认为false，设置为true时，关闭数据源时如果数据源中还存在活跃连接，至多等待10s后强制关闭
+      datasource:
+        master:
+          url: jdbc:clickhouse://10.200.200.2:18123/carlos-framework?compress=true&max_execution_time=30
+          username: admin
+          password: Hadoop@2022
+          driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
       druid:
         break-after-acquire-failure: false
         fail-fast: true
@@ -67,9 +75,9 @@ carlos:
       sourceEncoding: utf-8
       version: 1.0.0-SNAPSHOT
       domain: www.zcarlos.com
-    cache:
-      key-prefix: carlos:audit
-      user-prefix: true
+  cache:
+    key-prefix: carlos:audit
+    user-prefix: true
 
 ############################ application end ###############################
 
