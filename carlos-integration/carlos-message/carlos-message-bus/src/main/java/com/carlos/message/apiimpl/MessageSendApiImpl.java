@@ -47,12 +47,12 @@ public class MessageSendApiImpl implements MessageSendApi {
 
         Result<String> result = messageSendService.send(createParam);
         if (!result.isSuccess()) {
-            return Result.fail(result.getMessage());
+            return Result.error(result.getMsg());
         }
         SendResultAO ao = new SendResultAO();
         ao.setMessageId(result.getData());
         ao.setSuccess(true);
-        return Result.ok(ao);
+        return Result.success(ao);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MessageSendApiImpl implements MessageSendApi {
     @Operation(summary = "批量发送消息")
     public Result<SendResultAO> sendBatch(@RequestBody List<MessageSendParam> params) {
         log.info("批量发送消息请求, 数量: {}", params.size());
-        return Result.fail("批量发送功能待实现");
+        return Result.error("批量发送功能待实现");
     }
 
     @Override
@@ -100,11 +100,11 @@ public class MessageSendApiImpl implements MessageSendApi {
         log.info("查询消息状态请求, messageId: {}", messageId);
         Result<Integer> statusResult = messageQueryService.queryStatus(messageId);
         if (!statusResult.isSuccess()) {
-            return Result.fail(statusResult.getMessage());
+            return Result.error(statusResult.getMsg());
         }
         MessageStatusAO ao = new MessageStatusAO();
         ao.setMessageId(messageId);
         ao.setStatus(statusResult.getData());
-        return Result.ok(ao);
+        return Result.success(ao);
     }
 }

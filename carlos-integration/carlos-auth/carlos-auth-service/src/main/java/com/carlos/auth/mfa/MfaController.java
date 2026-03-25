@@ -52,10 +52,10 @@ public class MfaController {
                 .recoveryCodes(setupInfo.getRecoveryCodes())
                 .build();
 
-            return Result.ok(response, "MFA设置信息生成成功");
+            return Result.success(response, "MFA设置信息生成成功");
         } catch (Exception e) {
             log.error("Failed to generate MFA setup for user: {}", username, e);
-            return Result.fail("MFA设置信息生成失败: " + e.getMessage());
+            return Result.error("MFA设置信息生成失败: " + e.getMessage());
         }
     }
 
@@ -78,14 +78,14 @@ public class MfaController {
 
             if (success) {
                 log.info("MFA enabled successfully for user: {}", username);
-                return Result.ok("MFA启用成功");
+                return Result.success("MFA启用成功");
             } else {
                 log.warn("MFA verification failed for user: {}", username);
-                return Result.fail("验证码错误，请重试");
+                return Result.error("验证码错误，请重试");
             }
         } catch (Exception e) {
             log.error("Failed to verify MFA for user: {}", username, e);
-            return Result.fail("MFA验证失败: " + e.getMessage());
+            return Result.error("MFA验证失败: " + e.getMessage());
         }
     }
 
@@ -105,10 +105,10 @@ public class MfaController {
         try {
             mfaService.disableMfa(username);
             log.info("MFA disabled successfully for user: {}", username);
-            return Result.ok("MFA禁用成功");
+            return Result.success("MFA禁用成功");
         } catch (Exception e) {
             log.error("Failed to disable MFA for user: {}", username, e);
-            return Result.fail("MFA禁用失败: " + e.getMessage());
+            return Result.error("MFA禁用失败: " + e.getMessage());
         }
     }
 
@@ -135,10 +135,10 @@ public class MfaController {
                 .recoveryCodes(setupInfo.getRecoveryCodes())
                 .build();
 
-            return Result.ok(response, "MFA密钥重置成功");
+            return Result.success(response, "MFA密钥重置成功");
         } catch (Exception e) {
             log.error("Failed to reset MFA for user: {}", username, e);
-            return Result.fail("MFA密钥重置失败: " + e.getMessage());
+            return Result.error("MFA密钥重置失败: " + e.getMessage());
         }
     }
 
@@ -161,10 +161,10 @@ public class MfaController {
                 .enabled(enabled)
                 .build();
 
-            return Result.ok(response);
+            return Result.success(response);
         } catch (Exception e) {
             log.error("Failed to get MFA status for user: {}", username, e);
-            return Result.fail("获取MFA状态失败: " + e.getMessage());
+            return Result.error("获取MFA状态失败: " + e.getMessage());
         }
     }
 

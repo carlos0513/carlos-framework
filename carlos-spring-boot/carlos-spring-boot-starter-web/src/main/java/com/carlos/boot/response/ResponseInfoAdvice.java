@@ -60,9 +60,9 @@ public class ResponseInfoAdvice implements ResponseBodyAdvice<Object> {
         // JakartaServletUtil.setHeader(response, HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff");
         if (!(body instanceof Result)) {
             if (body instanceof String) {
-                body = JSONUtil.toJsonStr(Result.ok(body));
+                body = JSONUtil.toJsonStr(Result.success(body));
             } else {
-                body = Result.ok(body);
+                body = Result.success(body);
             }
         }
         final GlobalInterceptorProperties.PrintType printType = interceptorProperties.getGlobalInterceptor().getPrintType();

@@ -1,7 +1,7 @@
 package com.carlos.message.exception;
 
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -21,12 +21,12 @@ public class MessageClientException extends com.carlos.message.exception.Message
         super(message);
     }
 
-    public MessageClientException(Integer errorCode, String message) {
+    public MessageClientException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public MessageClientException(StatusCode statusCode) {
-        super(statusCode);
+    public MessageClientException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public MessageClientException(Throwable cause) {

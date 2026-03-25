@@ -247,31 +247,31 @@ public class UserController {
 手动创建响应：
 
 ```java
-import com.carlos.json.wrapper.ApiResponse;
+import com.carlos.core.response.Result;
 
 @RestController
 public class UserController {
     
     @GetMapping("/user/{id}")
-    public ApiResponse<User> getUser(@PathVariable Long id) {
+    public Result<User> getUser(@PathVariable Long id) {
         User user = userService.getById(id);
-        return ApiResponse.success(user);
+        return Result.success(user);
     }
 
     @PostMapping("/user")
-    public ApiResponse<Void> createUser(@RequestBody User user) {
+    public Result<Void> createUser(@RequestBody User user) {
         userService.save(user);
-        return ApiResponse.success("创建成功");
+        return Result.success("创建成功");
     }
 
     @GetMapping("/error")
-    public ApiResponse<Void> error() {
-        return ApiResponse.error(500, "服务器内部错误");
+    public Result<Void> error() {
+        return Result.error(500, "服务器内部错误");
         // 或使用便捷方法
-        // return ApiResponse.badRequest("参数错误");
-        // return ApiResponse.unauthorized("未授权");
-        // return ApiResponse.forbidden("禁止访问");
-        // return ApiResponse.notFound("资源不存在");
+        // return Result.badRequest("参数错误");
+        // return Result.unauthorized("未授权");
+        // return Result.forbidden("禁止访问");
+        // return Result.notFound("资源不存在");
     }
 }
 ```

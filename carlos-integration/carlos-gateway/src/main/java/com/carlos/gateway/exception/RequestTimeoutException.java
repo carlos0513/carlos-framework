@@ -1,5 +1,7 @@
 package com.carlos.gateway.exception;
 
+import com.carlos.core.response.CommonErrorCode;
+
 /**
  * <p>
  * 请求超时异常
@@ -25,13 +27,13 @@ public class RequestTimeoutException extends GatewayException {
     private final String targetService;
 
     public RequestTimeoutException(String message) {
-        super(message, 504, 5504);
+        super(CommonErrorCode.SERVER_TIMEOUT, message);
         this.timeoutMs = 0;
         this.targetService = null;
     }
 
     public RequestTimeoutException(String message, long timeoutMs, String targetService) {
-        super(message, 504, 5504);
+        super(CommonErrorCode.SERVER_TIMEOUT, message);
         this.timeoutMs = timeoutMs;
         this.targetService = targetService;
     }

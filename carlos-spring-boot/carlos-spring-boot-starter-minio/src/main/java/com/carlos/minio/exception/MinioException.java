@@ -1,7 +1,7 @@
 package com.carlos.minio.exception;
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -29,11 +29,11 @@ public class MinioException extends ComponentException {
         super(cause);
     }
 
-    public MinioException(Integer errorCode, String message) {
+    public MinioException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public MinioException(StatusCode statusCode) {
-        super(statusCode);
+    public MinioException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

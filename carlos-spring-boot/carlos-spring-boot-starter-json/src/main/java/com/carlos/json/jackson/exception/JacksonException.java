@@ -2,7 +2,7 @@ package com.carlos.json.jackson.exception;
 
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 组件异常父类
@@ -23,8 +23,8 @@ public class JacksonException extends ComponentException {
     }
 
 
-    public JacksonException(StatusCode statusCode) {
-        super(statusCode);
+    public JacksonException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public JacksonException(Throwable cause) {

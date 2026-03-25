@@ -177,7 +177,7 @@ public class FileService {
         byte[] bytes = fileInfo.getBytes();
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         if (bytes == null) {
-            JakartaServletUtil.write(response, JSONUtil.toJsonStr(Result.fail("文件读取失败！")), ContentType.JSON.getValue());
+            JakartaServletUtil.write(response, JSONUtil.toJsonStr(Result.error("文件读取失败！")), ContentType.JSON.getValue());
             return;
         }
         String fileName = fileInfo.getName();

@@ -1,7 +1,7 @@
 package com.carlos.flowable.exception;
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * Flowable工作流异常父类
@@ -27,11 +27,11 @@ public class FlowableException extends ComponentException {
         super(cause);
     }
 
-    public FlowableException(Integer errorCode, String message) {
+    public FlowableException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public FlowableException(StatusCode statusCode) {
-        super(statusCode);
+    public FlowableException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

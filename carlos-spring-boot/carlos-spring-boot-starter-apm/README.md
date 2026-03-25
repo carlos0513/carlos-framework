@@ -312,7 +312,7 @@ public class OrderController {
         log.info("[TraceId: {}] 查询订单，ID: {}", traceId, id);
         
         Order order = orderService.getOrder(id);
-        return Result.ok(order);
+        return Result.success(order);
     }
 
     @PostMapping("/create")
@@ -328,7 +328,7 @@ public class OrderController {
         TraceUtil.tag("order.id", order.getId().toString());
         TraceUtil.tag("order.amount", order.getAmount().toString());
         
-        return Result.ok(order);
+        return Result.success(order);
     }
 }
 ```

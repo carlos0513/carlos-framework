@@ -1,6 +1,6 @@
 package com.carlos.core.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 业务异常父类
@@ -24,12 +24,18 @@ public class RestException extends GlobalException {
         super(message, cause);
     }
 
-    public RestException(StatusCode statusCode) {
-        super(statusCode);
+
+    public RestException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
-    public RestException(StatusCode statusCode, Throwable cause) {
-        super(statusCode, cause);
+    public RestException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
+    }
+
+
+    public RestException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
     }
 
     public RestException(Throwable cause) {

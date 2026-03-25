@@ -38,6 +38,6 @@ public class ApiSysConfigImpl implements ApiSystemConfig {
     public Result<SysConfigAO> getByCode(String code) {
         SysConfigDTO config = this.configService.getByCode(code);
         SysConfigAO ao = SysConfigConvert.INSTANCE.toAO(config);
-        return Result.ok(ao);
+        return Result.success(ao);
     }
 }

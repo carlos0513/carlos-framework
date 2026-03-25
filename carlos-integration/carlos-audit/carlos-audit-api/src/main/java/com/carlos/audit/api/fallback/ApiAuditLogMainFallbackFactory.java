@@ -32,19 +32,19 @@ public class ApiAuditLogMainFallbackFactory implements FallbackFactory<ApiAuditL
             public Result<AuditLogMainAO> saveAuditLog(ApiAuditLogMainParam param) {
                 log.warn("保存审计日志降级处理，logType: {}", param != null ? param.getLogType() : "null");
                 // 降级时返回失败，但不影响主业务流程
-                return Result.fail("审计日志服务暂不可用，日志已丢弃: " + throwable.getMessage());
+                return Result.error("审计日志服务暂不可用，日志已丢弃: " + throwable.getMessage());
             }
 
             @Override
             public Result<AuditLogMainAO> saveAuditLogSync(ApiAuditLogMainParam param, long timeoutMs) {
                 log.warn("同步保存审计日志降级处理，logType: {}", param != null ? param.getLogType() : "null");
-                return Result.fail("审计日志服务暂不可用，日志已丢弃: " + throwable.getMessage());
+                return Result.error("审计日志服务暂不可用，日志已丢弃: " + throwable.getMessage());
             }
 
             @Override
             public Result<Void> batchSaveAuditLog(List<ApiAuditLogMainParam> params) {
                 log.warn("批量保存审计日志降级处理，日志数量: {}", params != null ? params.size() : 0);
-                return Result.fail("审计日志服务暂不可用，日志已丢弃: " + throwable.getMessage());
+                return Result.error("审计日志服务暂不可用，日志已丢弃: " + throwable.getMessage());
             }
 
             @Override
@@ -52,7 +52,7 @@ public class ApiAuditLogMainFallbackFactory implements FallbackFactory<ApiAuditL
                                                              String operation, String principalId,
                                                              String targetId, AuditLogStateEnum state) {
                 log.warn("保存简单审计日志降级处理，logType: {}", logType);
-                return Result.fail("审计日志服务暂不可用，日志已丢弃: " + throwable.getMessage());
+                return Result.error("审计日志服务暂不可用，日志已丢弃: " + throwable.getMessage());
             }
         };
     }

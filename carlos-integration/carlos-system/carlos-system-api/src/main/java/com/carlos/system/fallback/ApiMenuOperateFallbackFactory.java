@@ -30,17 +30,17 @@ public class ApiMenuOperateFallbackFactory implements FallbackFactory
 
             @Override
             public Result<List<MenuOperateAO>> listByIds(Set<String> ids) {
-                return Result.fail("菜单操作信息获取失败");
+                return Result.error("菜单操作信息获取失败");
             }
 
             @Override
             public Result<List<MenuOperateAO>> listByMenuId(String id) {
-                return Result.fail("菜单操作信息获取失败");
+                return Result.error("菜单操作信息获取失败");
             }
 
             @Override
             public Result<List<MenuOperateAO>> listByMenuIds(Set<String> menuIds) {
-                return Result.fail("菜单操作信息获取失败");
+                return Result.error("菜单操作信息获取失败");
             }
         };
     }

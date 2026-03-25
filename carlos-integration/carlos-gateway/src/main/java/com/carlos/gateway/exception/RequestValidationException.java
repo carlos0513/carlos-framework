@@ -1,6 +1,6 @@
 package com.carlos.gateway.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.CommonErrorCode;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -27,12 +27,12 @@ public class RequestValidationException extends GatewayException {
     private final Map<String, String> fieldErrors;
 
     public RequestValidationException(String message) {
-        super(message, 400, StatusCode.PARAMETER_EXCEPTION.getCode());
+        super(message, 400, CommonErrorCode.BAD_REQUEST.getCode());
         this.fieldErrors = new HashMap<>();
     }
 
     public RequestValidationException(String message, Map<String, String> fieldErrors) {
-        super(message, 400, StatusCode.PARAMETER_EXCEPTION.getCode());
+        super(message, 400, CommonErrorCode.BAD_REQUEST.getCode());
         this.fieldErrors = fieldErrors != null ? fieldErrors : new HashMap<>();
     }
 

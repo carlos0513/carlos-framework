@@ -30,22 +30,22 @@ public class MessageQueryApiFallbackFactory implements FallbackFactory<MessageQu
         return new MessageQueryApi() {
             @Override
             public Result<MessageRecordAO> getById(String messageId) {
-                return Result.fail("消息查询服务暂不可用，请稍后重试");
+                return Result.error("消息查询服务暂不可用，请稍后重试");
             }
 
             @Override
             public Result<Paging<MessageRecordAO>> page(MessagePageParam param) {
-                return Result.fail("消息查询服务暂不可用，请稍后重试");
+                return Result.error("消息查询服务暂不可用，请稍后重试");
             }
 
             @Override
             public Result<List<MessageReceiverAO>> getReceivers(String messageId) {
-                return Result.fail("消息查询服务暂不可用，请稍后重试");
+                return Result.error("消息查询服务暂不可用，请稍后重试");
             }
 
             @Override
             public Result<List<MessageRecordAO>> getUnread(String userId) {
-                return Result.fail("消息查询服务暂不可用，请稍后重试");
+                return Result.error("消息查询服务暂不可用，请稍后重试");
             }
         };
     }

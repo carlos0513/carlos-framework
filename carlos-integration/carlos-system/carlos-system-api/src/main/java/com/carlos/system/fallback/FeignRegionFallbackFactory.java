@@ -33,37 +33,37 @@ public class FeignRegionFallbackFactory implements FallbackFactory<ApiRegion> {
 
             @Override
             public Result<List<String>> previewRegionName(String regionCode, Integer limit) {
-                return Result.fail("区域名称获取失败");
+                return Result.error("区域名称获取失败");
             }
 
             @Override
             public Result<Set<String>> getSubRegionCodes(String regionCode) {
-                return Result.fail("区域信息获取失败");
+                return Result.error("区域信息获取失败");
             }
 
             @Override
             public Result<RegionInfo> getRegionInfo(String regionCode, Integer limit) {
-                return Result.fail("区域信息获取失败");
+                return Result.error("区域信息获取失败");
             }
 
             @Override
             public Result<List<SysRegionAO>> getRegionTree() {
-                return Result.fail("区域树形列表获取失败");
+                return Result.error("区域树形列表获取失败");
             }
 
             @Override
             public Result<List<SysRegionAO>> all() {
-                return Result.fail("区域列表获取失败");
+                return Result.error("区域列表获取失败");
             }
 
             @Override
             public Result<SysRegionAO> addRegion(ApiSysRegionAddParam dto) {
-                return Result.fail("区域新增失败");
+                return Result.error("区域新增失败");
             }
 
             @Override
             public Result<List<String>> ancestors(String regionCode) {
-                return Result.fail("区域信息获取失败");
+                return Result.error("区域信息获取失败");
             }
         };
     }

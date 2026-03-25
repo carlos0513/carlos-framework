@@ -43,7 +43,7 @@ public class OrgUserPositionController {
     @Operation(summary = "用户分配岗位")
     public Result<Boolean> assignPosition(@RequestBody @Validated OrgUserAssignPositionParam param) {
         userPositionService.assignPosition(param);
-        return Result.ok(true);
+        return Result.success(true);
     }
 
     /**
@@ -57,7 +57,7 @@ public class OrgUserPositionController {
     @Operation(summary = "用户卸任岗位")
     public Result<Boolean> resignPosition(@RequestParam String userId, @RequestParam String positionId) {
         userPositionService.resignPosition(userId, positionId);
-        return Result.ok(true);
+        return Result.success(true);
     }
 
 }

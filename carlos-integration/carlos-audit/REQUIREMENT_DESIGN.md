@@ -563,7 +563,7 @@ public class AuditLogQueryController {
 public interface ApiAuditLogMain {
     
     @PostMapping("/api/audit/logs/page")
-    Result<Paging<AuditLogMainAO>> page(@RequestBody ApiAuditLogMainParam param);
+   Result<Paging<AuditLogMainAO>> page(@RequestBody ApiAuditLogMainParam param);
 }
 ```
 

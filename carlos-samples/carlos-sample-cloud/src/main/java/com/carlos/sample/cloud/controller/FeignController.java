@@ -46,10 +46,10 @@ public class FeignController {
         log.info("通过 Feign 调用 hello 接口，参数: name={}", name);
         try {
             Map<String, Object> result = demoClient.hello(name);
-            return Result.ok(result);
+            return Result.success(result);
         } catch (Exception e) {
             log.error("调用 hello 接口失败", e);
-            return Result.fail("调用服务失败: " + e.getMessage());
+            return Result.error("调用服务失败: " + e.getMessage());
         }
     }
 
@@ -64,10 +64,10 @@ public class FeignController {
         log.info("通过 Feign 调用 echo 接口，参数: message={}", message);
         try {
             Map<String, Object> result = demoClient.echo(message);
-            return Result.ok(result);
+            return Result.success(result);
         } catch (Exception e) {
             log.error("调用 echo 接口失败", e);
-            return Result.fail("调用服务失败: " + e.getMessage());
+            return Result.error("调用服务失败: " + e.getMessage());
         }
     }
 
@@ -81,10 +81,10 @@ public class FeignController {
         log.info("通过 Feign 获取服务信息");
         try {
             Map<String, Object> result = demoClient.getServiceInfo();
-            return Result.ok(result);
+            return Result.success(result);
         } catch (Exception e) {
             log.error("获取服务信息失败", e);
-            return Result.fail("调用服务失败: " + e.getMessage());
+            return Result.error("调用服务失败: " + e.getMessage());
         }
     }
 
@@ -110,7 +110,7 @@ public class FeignController {
         }
         result.put("instances", instances);
 
-        return Result.ok(result);
+        return Result.success(result);
     }
 
     /**
@@ -123,7 +123,7 @@ public class FeignController {
     public Result<List<ServiceInstance>> getInstances(@PathVariable String serviceName) {
         log.info("查询服务实例列表，服务名: {}", serviceName);
         List<ServiceInstance> instances = discoveryClient.getInstances(serviceName);
-        return Result.ok(instances);
+        return Result.success(instances);
     }
 
     /**
@@ -142,7 +142,7 @@ public class FeignController {
             "Spring Cloud LoadBalancer 负载均衡",
             "Sentinel 流量控制（可选）"
         });
-        return Result.ok(info);
+        return Result.success(info);
     }
 
 }

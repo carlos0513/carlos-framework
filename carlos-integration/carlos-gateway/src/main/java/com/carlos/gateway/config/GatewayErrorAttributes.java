@@ -76,7 +76,7 @@ public class GatewayErrorAttributes extends DefaultErrorAttributes {
     private void populateGatewayExceptionAttributes(Map<String, Object> attributes, GatewayException ex) {
         attributes.put("status", ex.getHttpStatus());
         attributes.put("code", ex.getErrorCode());
-        attributes.put("message", ex.getMessage());
+        attributes.put("msg", ex.getMessage());
 
         // 添加特定异常类型的额外信息
         Map<String, Object> extra = new HashMap<>();
@@ -121,7 +121,7 @@ public class GatewayErrorAttributes extends DefaultErrorAttributes {
      * 填充全局异常属性
      */
     private void populateGlobalExceptionAttributes(Map<String, Object> attributes, GlobalException ex) {
-        Integer errorCode = ex.getErrorCode();
+        String errorCode = ex.getErrorCode();
         int httpStatus = mapErrorCodeToHttpStatus(errorCode);
 
         attributes.put("status", httpStatus);
@@ -151,27 +151,27 @@ public class GatewayErrorAttributes extends DefaultErrorAttributes {
     /**
      * 错误码映射为 HTTP 状态码
      */
-    private int mapErrorCodeToHttpStatus(Integer errorCode) {
+    private int mapErrorCodeToHttpStatus(String errorCode) {
         if (errorCode == null) {
             return 500;
         }
         switch (errorCode) {
-            case 4001:
+            case "4001":
                 return 401;  // 非法访问
-            case 4003:
+            case "4003":
                 return 403;  // 没有权限
-            case 4004:
+            case "4004":
                 return 404;  // 资源不存在
-            case 5001:
+            case "5001":
                 return 400;  // 参数校验异常
-            case 5104:
+            case "5104":
                 return 401;  // 登录授权异常
-            case 5105:
-            case 5106:
+            case "5105":
+            case "5106":
                 return 403;  // 没有访问权限
-            case 5107:
+            case "5107":
                 return 401;  // Token 解析异常
-            case 5108:
+            case "5108":
                 return 405;  // 请求方式不合法
             default:
                 return 500;

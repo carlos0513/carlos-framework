@@ -31,27 +31,27 @@ public class FeignFileFallbackFactory implements FallbackFactory<ApiFile> {
         return new ApiFile() {
             @Override
             public Result<FileInfoAO> getFile(String id) {
-                return Result.fail("文件信息获取失败");
+                return Result.error("文件信息获取失败");
             }
 
             @Override
             public Result<FileInfoAO> getFileStreamInfo(String id) {
-                return Result.fail("文件获取失败");
+                return Result.error("文件获取失败");
             }
 
             @Override
             public Result<List<FileInfoAO>> getGroupFile(String groupId) {
-                return Result.fail("文件信息获取失败");
+                return Result.error("文件信息获取失败");
             }
 
             @Override
             public Result<List<FileInfoAO>> getFiles(Set<String> ids) {
-                return Result.fail("文件信息获取失败");
+                return Result.error("文件信息获取失败");
             }
 
             @Override
             public Result<UploadResultAO> upload(ApiFileUploadParam param) {
-                return Result.fail("文件上传失败");
+                return Result.error("文件上传失败");
             }
         };
     }

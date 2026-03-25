@@ -69,9 +69,9 @@ public class MessageController {
     public Result<MessageRecordVO> getById(@PathVariable String messageId) {
         Result<MessageRecordDTO> result = messageQueryService.getById(messageId);
         if (!result.isSuccess()) {
-            return Result.fail(result.getMessage());
+            return Result.error(result.getMsg());
         }
-        return Result.ok(messageConvert.toVO(result.getData()));
+        return Result.success(messageConvert.toVO(result.getData()));
     }
 
     @GetMapping("/page")
@@ -81,11 +81,11 @@ public class MessageController {
 
         Result<Paging<MessageRecordDTO>> result = messageQueryService.page(param);
         if (!result.isSuccess()) {
-            return Result.fail(result.getMessage());
+            return Result.error(result.getMsg());
         }
         Paging<MessageRecordVO> voPaging = new Paging<>();
         voPaging.setRecords(messageConvert.toVOList(result.getData().getRecords()));
         voPaging.setTotal(result.getData().getTotal());
-        return Result.ok(voPaging);
+        return Result.success(voPaging);
     }
 }

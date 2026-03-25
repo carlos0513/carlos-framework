@@ -1,5 +1,6 @@
 package com.carlos.gateway.circuitbreaker;
 
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
@@ -20,6 +22,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
 
 /**
  * <p>
@@ -56,11 +59,11 @@ public class Resilience4jCircuitBreakerFilter extends
             .automaticTransitionFromOpenToHalfOpenEnabled(true)  // 自动转换
             .recordException(throwable -> {
                 // 记录哪些异常算失败
-                if (throwable instanceof java.util.concurrent.TimeoutException) {
+                if (throwable instanceof TimeoutException) {
                     return true;
                 }
-                if (throwable instanceof org.springframework.web.reactive.function.client.WebClientResponseException) {
-                    int statusCode = ((org.springframework.web.reactive.function.client.WebClientResponseException) throwable)
+                if (throwable instanceof WebClientResponseException) {
+                    int statusCode = ((WebClientResponseException) throwable)
                         .getStatusCode().value();
                     return statusCode >= 500;
                 }
@@ -126,8 +129,8 @@ public class Resilience4jCircuitBreakerFilter extends
         // 构建标准化的错误响应
         ErrorResponse errorResponse = ErrorResponse.builder()
             .status(HttpStatus.SERVICE_UNAVAILABLE.value())
-            .code(5503)
-            .message("服务暂时不可用，请稍后重试")
+            .code(CommonErrorCode.SERVICE_UNAVAILABLE.getCode())
+            .msg("服务暂时不可用，请稍后重试")
             .extra(java.util.Map.of(
                 "circuitBreakerName", circuitBreakerName,
                 "circuitBreakerState", state.name(),
@@ -148,6 +151,7 @@ public class Resilience4jCircuitBreakerFilter extends
                     "{\"success\":false,\"status\":503,\"code\":5503,\"message\":\"Service temporarily unavailable\"," +
                         "\"extra\":{\"circuitBreakerName\":\"%s\",\"circuitBreakerState\":\"%s\"}}",
                     circuitBreakerName, state.name());
+                // TODO: Carlos 2026-03-25
                 return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
             }
         }));

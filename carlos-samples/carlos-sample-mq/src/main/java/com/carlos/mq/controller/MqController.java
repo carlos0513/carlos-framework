@@ -65,7 +65,7 @@ public class MqController {
         @Parameter(description = "消息内容", required = true) @RequestParam String message) {
         log.info("发送普通消息，topic: {}, message: {}", topic, message);
         mqTemplate.send(topic, message);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -79,7 +79,7 @@ public class MqController {
         @Parameter(description = "消息内容", required = true) @RequestParam String message) {
         log.info("发送带标签消息，topic: {}, tag: {}, message: {}", topic, tag, message);
         mqTemplate.send(topic, tag, message);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -95,7 +95,7 @@ public class MqController {
         log.info("发送延迟消息，topic: {}, message: {}, delayLevel: {}", topic, message, delayLevel);
         DelayLevel level = DelayLevel.valueOf(delayLevel);
         mqTemplate.sendDelayed(topic, message, level);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -109,7 +109,7 @@ public class MqController {
         @Parameter(description = "分片键（用于保证顺序）", required = true) @RequestParam String hashKey) {
         log.info("发送顺序消息，topic: {}, message: {}, hashKey: {}", topic, message, hashKey);
         mqTemplate.sendOrdered(topic, message, hashKey);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -121,7 +121,7 @@ public class MqController {
         log.info("发送订单消息，order: {}", order);
         order.setCreateTime(LocalDateTime.now());
         mqTemplate.send("order-topic", order);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -136,7 +136,7 @@ public class MqController {
         log.info("发送带标签订单消息，tag: {}, order: {}", tag, order);
         order.setCreateTime(LocalDateTime.now());
         mqTemplate.send("order-topic", tag, order);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -150,7 +150,7 @@ public class MqController {
         log.info("发送延迟订单消息，delayLevel: {}, order: {}", delayLevel, order);
         order.setCreateTime(LocalDateTime.now());
         mqTemplate.sendDelayed("order-delay-topic", order, delayLevel);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -163,7 +163,7 @@ public class MqController {
         @Parameter(description = "消息内容", required = true) @RequestParam String message) {
         log.info("发送单向消息，topic: {}, message: {}", topic, message);
         mqTemplate.sendOneWay(topic, message);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -174,7 +174,7 @@ public class MqController {
     public Result<Boolean> ping() {
         boolean available = mqTemplate.ping();
         log.info("MQ连接状态: {}", available);
-        return Result.ok(available);
+        return Result.success(available);
     }
 
     /**
@@ -185,6 +185,6 @@ public class MqController {
     public Result<String> getMqType() {
         String mqType = mqTemplate.getMqType();
         log.info("当前MQ类型: {}", mqType);
-        return Result.ok(mqType);
+        return Result.success(mqType);
     }
 }

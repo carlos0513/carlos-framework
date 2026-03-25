@@ -1,7 +1,7 @@
 package com.carlos.gateway.config;
 
 import com.carlos.core.exception.GlobalException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -107,8 +107,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
     private ErrorResponse buildErrorResponse(Throwable ex, String path, String method, String requestId) {
         ErrorResponse.ErrorResponseBuilder builder = ErrorResponse.builder()
             .path(path)
-            .method(method)
-            .requestId(requestId);
+            .method(method).traceId(requestId);
 
         // 根据异常类型处理
         if (ex instanceof GatewayException) {
@@ -145,8 +144,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      */
     private void handleGatewayException(GatewayException ex, ErrorResponse.ErrorResponseBuilder builder) {
         builder.status(ex.getHttpStatus())
-            .code(ex.getErrorCode())
-            .message(ex.getMessage());
+            .code(ex.getErrorCode()).msg(ex.getMessage());
 
         // 添加特定异常的扩展信息
         Map<String, Object> extra = new HashMap<>();
@@ -193,7 +191,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      * 处理核心模块全局异常
      */
     private void handleGlobalException(GlobalException ex, ErrorResponse.ErrorResponseBuilder builder) {
-        Integer errorCode = ex.getErrorCode();
+        String errorCode = ex.getErrorCode();
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
         // 根据错误码映射 HTTP 状态
@@ -201,9 +199,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             httpStatus = mapErrorCodeToHttpStatus(errorCode);
         }
 
-        builder.status(httpStatus.value())
-            .code(errorCode != null ? errorCode : StatusCode.FAIL.getCode())
-            .message(ex.getMessage());
+        builder.status(httpStatus.value()).code(errorCode != null ? errorCode : CommonErrorCode.INTERNAL_ERROR.getCode()).msg(ex.getMessage());
     }
 
     /**
@@ -216,9 +212,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             message = String.format("服务 [%s] 暂不可用，请稍后重试", serviceName);
         }
 
-        builder.status(HttpStatus.NOT_FOUND.value())
-            .code(StatusCode.NOT_FOUND.getCode())
-            .message(message);
+        builder.status(HttpStatus.NOT_FOUND.value()).code(CommonErrorCode.NOT_FOUND.getCode()).msg(message);
     }
 
     /**
@@ -236,8 +230,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         }
 
         builder.status(status.value())
-            .code(mapHttpStatusToCode(status))
-            .message(message);
+            .code(mapHttpStatusToCode(status)).msg(message);
     }
 
     /**
@@ -252,8 +245,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         String message = String.format("下游服务返回错误 [%d]: %s", status.value(), status.getReasonPhrase());
 
         builder.status(status.value())
-            .code(mapHttpStatusToCode(status))
-            .message(message);
+            .code(mapHttpStatusToCode(status)).msg(message);
 
         // 尝试解析下游服务的错误响应
         try {
@@ -272,50 +264,44 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      * 处理超时异常
      */
     private void handleTimeoutException(Throwable ex, ErrorResponse.ErrorResponseBuilder builder) {
-        builder.status(HttpStatus.GATEWAY_TIMEOUT.value())
-            .code(5504)
-            .message("请求超时，请稍后重试");
+        builder.status(HttpStatus.GATEWAY_TIMEOUT.value()).code(CommonErrorCode.SERVICE_CALL_ERROR.getCode()).msg("请求超时，请稍后重试");
     }
 
     /**
      * 处理连接异常
      */
     private void handleConnectException(Throwable ex, ErrorResponse.ErrorResponseBuilder builder) {
-        builder.status(HttpStatus.BAD_GATEWAY.value())
-            .code(5502)
-            .message("服务连接失败，请稍后重试");
+        builder.status(HttpStatus.BAD_GATEWAY.value()).code(CommonErrorCode.SERVICE_CALL_ERROR.getCode()).msg("服务连接失败，请稍后重试");
     }
 
     /**
      * 处理通用异常
      */
     private void handleGenericException(Throwable ex, ErrorResponse.ErrorResponseBuilder builder) {
-        builder.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .code(StatusCode.FAIL.getCode())
-            .message("服务暂不可用，请稍后重试");
+        builder.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).code(CommonErrorCode.INTERNAL_ERROR.getCode()).msg("服务暂不可用，请稍后重试");
     }
 
     /**
      * 错误码映射为 HTTP 状态码
      */
-    private HttpStatus mapErrorCodeToHttpStatus(int errorCode) {
+    private HttpStatus mapErrorCodeToHttpStatus(String errorCode) {
         switch (errorCode) {
-            case 4001:
+            case "4001":
                 return HttpStatus.UNAUTHORIZED;      // 非法访问
-            case 4003:
+            case "4003":
                 return HttpStatus.FORBIDDEN;         // 没有权限
-            case 4004:
+            case "4004":
                 return HttpStatus.NOT_FOUND;         // 资源不存在
-            case 5001:
+            case "5001":
                 return HttpStatus.BAD_REQUEST;       // 参数校验异常
-            case 5104:
+            case "5104":
                 return HttpStatus.UNAUTHORIZED;      // 登录授权异常
-            case 5105:
-            case 5106:
+            case "5105":
+            case "5106":
                 return HttpStatus.FORBIDDEN;         // 没有访问权限
-            case 5107:
+            case "5107":
                 return HttpStatus.UNAUTHORIZED;      // Token 解析异常
-            case 5108:
+            case "5108":
                 return HttpStatus.METHOD_NOT_ALLOWED;// 请求方式不合法
             default:
                 return HttpStatus.INTERNAL_SERVER_ERROR;
@@ -325,30 +311,30 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
     /**
      * HTTP 状态码映射为业务错误码
      */
-    private int mapHttpStatusToCode(HttpStatus status) {
+    private String mapHttpStatusToCode(HttpStatus status) {
         switch (status) {
             case BAD_REQUEST:
-                return StatusCode.PARAMETER_EXCEPTION.getCode();
+                return CommonErrorCode.BAD_REQUEST.getCode();
             case UNAUTHORIZED:
-                return StatusCode.AUTHENTICATION_EXCEPTION.getCode();
+                return CommonErrorCode.UNAUTHORIZED.getCode();
             case FORBIDDEN:
-                return StatusCode.UNAUTHORIZED_EXCEPTION.getCode();
+                return CommonErrorCode.FORBIDDEN.getCode();
             case NOT_FOUND:
-                return StatusCode.NOT_FOUND.getCode();
+                return CommonErrorCode.NOT_FOUND.getCode();
             case METHOD_NOT_ALLOWED:
-                return StatusCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION.getCode();
+                return CommonErrorCode.METHOD_NOT_ALLOWED.getCode();
             case TOO_MANY_REQUESTS:
-                return 5429;
+                return CommonErrorCode.TOO_MANY_REQUESTS.getCode();
             case INTERNAL_SERVER_ERROR:
-                return StatusCode.FAIL.getCode();
+                return CommonErrorCode.INTERNAL_ERROR.getCode();
             case BAD_GATEWAY:
-                return 5502;
+                return CommonErrorCode.SERVICE_CALL_ERROR.getCode();
             case SERVICE_UNAVAILABLE:
-                return 5503;
+                return CommonErrorCode.SERVICE_UNAVAILABLE.getCode();
             case GATEWAY_TIMEOUT:
-                return 5504;
+                return CommonErrorCode.SERVICE_UNAVAILABLE.getCode();
             default:
-                return StatusCode.FAIL.getCode();
+                return CommonErrorCode.INTERNAL_ERROR.getCode();
         }
     }
 

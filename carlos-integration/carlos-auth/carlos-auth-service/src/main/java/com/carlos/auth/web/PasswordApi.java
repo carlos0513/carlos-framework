@@ -34,13 +34,13 @@ public class PasswordApi {
             return null;
         }
         String encode = passwordEncoder.encode(password);
-        return Result.ok(encode);
+        return Result.success(encode);
     }
 
     @Operation(summary = "密码匹配校验")
     @PostMapping(value = "match")
     public Result<Boolean> match(@RequestBody PasswordMatchDTO param) {
         boolean match = passwordEncoder.matches(param.getPassword(), param.getEncodePassword());
-        return Result.ok(match);
+        return Result.success(match);
     }
 }

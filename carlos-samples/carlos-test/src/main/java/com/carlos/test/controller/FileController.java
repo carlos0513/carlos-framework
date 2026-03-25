@@ -44,9 +44,10 @@ public class FileController {
 
 
         InputStream stream = FileUtil.getInputStream(file);
-        // response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        // response.setCharacterEncoding(StandardCharsets.UTF_8.name
+        // ());
         if (stream == null) {
-            JakartaServletUtil.write(response, JSONUtil.toJsonStr(Result.fail("文件读取失败")), ContentType.JSON.getValue());
+            JakartaServletUtil.write(response, JSONUtil.toJsonStr(Result.error("文件读取失败")), ContentType.JSON.getValue());
             return;
         }
 

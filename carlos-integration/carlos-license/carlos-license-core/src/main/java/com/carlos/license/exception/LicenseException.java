@@ -2,7 +2,7 @@ package com.carlos.license.exception;
 
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 缓存异常父类
@@ -22,12 +22,12 @@ public class LicenseException extends ComponentException {
         super(message);
     }
 
-    public LicenseException(Integer errorCode, String message) {
+    public LicenseException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public LicenseException(StatusCode statusCode) {
-        super(statusCode);
+    public LicenseException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public LicenseException(Throwable cause) {

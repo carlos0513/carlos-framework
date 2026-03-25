@@ -44,10 +44,10 @@ public class ApiMenuOperateImpl implements ApiMenuOperate {
     @Operation(summary = "根据ids获取菜单操作列表")
     public Result<List<MenuOperateAO>> listByIds(Set<String> ids) {
         if (CollectionUtil.isEmpty(ids)) {
-            return Result.ok(Collections.emptyList());
+            return Result.success(Collections.emptyList());
         }
         List<MenuOperateDTO> menuOperates = menuOperateService.listByIds(ids);
-        return Result.ok(MenuOperateConvert.INSTANCE.toAOList(menuOperates));
+        return Result.success(MenuOperateConvert.INSTANCE.toAOList(menuOperates));
 
     }
 
@@ -56,18 +56,18 @@ public class ApiMenuOperateImpl implements ApiMenuOperate {
     @Operation(summary = "根据menuId获取菜单操作列表")
     public Result<List<MenuOperateAO>> listByMenuId(String menuId) {
         if (StrUtil.isEmpty(menuId)) {
-            return Result.ok(Collections.emptyList());
+            return Result.success(Collections.emptyList());
         }
         List<MenuOperateDTO> menuOperates = menuOperateService.listByMenuId(menuId);
-        return Result.ok(MenuOperateConvert.INSTANCE.toAOList(menuOperates));
+        return Result.success(MenuOperateConvert.INSTANCE.toAOList(menuOperates));
     }
 
     @Override
     public Result<List<MenuOperateAO>> listByMenuIds(Set<String> menuIds) {
         if (CollectionUtil.isEmpty(menuIds)) {
-            return Result.ok(Collections.emptyList());
+            return Result.success(Collections.emptyList());
         }
         List<MenuOperateDTO> menuOperates = menuOperateService.listByMenuIds(menuIds);
-        return Result.ok(MenuOperateConvert.INSTANCE.toAOList(menuOperates));
+        return Result.success(MenuOperateConvert.INSTANCE.toAOList(menuOperates));
     }
 }

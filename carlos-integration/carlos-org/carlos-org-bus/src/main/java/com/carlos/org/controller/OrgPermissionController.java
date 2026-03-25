@@ -51,7 +51,7 @@ public class OrgPermissionController {
     @Operation(summary = "PM-001 " + BASE_NAME + "树")
     public Result<List<OrgPermissionVO>> tree() {
         List<OrgPermissionDTO> dtoList = permissionService.getPermissionTree();
-        return Result.ok(OrgPermissionConvert.INSTANCE.buildTreeVOList(dtoList));
+        return Result.success(OrgPermissionConvert.INSTANCE.buildTreeVOList(dtoList));
     }
 
 

@@ -2,7 +2,7 @@ package com.carlos.cloud.feign;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.CommonErrorCode;
 import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;
@@ -66,7 +66,7 @@ public class FeignClientErrorDecoder extends ErrorDecoder.Default {
             }
         }).orElseGet(() -> {
             // 如果excepiton中code不为空，则使用该code，否则使用默认的错误code
-            final Integer code = Optional.ofNullable(exceptionInfo.getCode()).map(Integer::valueOf).orElse(StatusCode.FAIL.getCode());
+            final String code = Optional.ofNullable(exceptionInfo.getCode()).orElse(CommonErrorCode.INTERNAL_ERROR.getCode());
             // 如果excepiton中message不为空，则使用该message，否则使用默认的错误message
             final String message = Optional.ofNullable(exceptionInfo.getMessage()).orElse("openfeign调用异常");
             return new OpenFeignException(code, message);

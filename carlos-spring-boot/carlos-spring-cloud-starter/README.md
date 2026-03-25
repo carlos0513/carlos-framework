@@ -69,7 +69,7 @@ public class FeignDictFallbackFactory implements FallbackFactory<ApiDict> {
         return new ApiDict() {
             @Override
             public Result<Dict> getById(String id) {
-                return Result.fail();
+                return Result.error();
             }
         };
     }
@@ -122,13 +122,13 @@ public class UserApplication {
 public interface UserServiceClient {
 
     @GetMapping("/{id}")
-    Result<User> getUser(@PathVariable("id") Long id);
+   Result<User> getUser(@PathVariable("id") Long id);
 
     @PostMapping
-    Result<User> create(@RequestBody UserDTO user);
+   Result<User> create(@RequestBody UserDTO user);
 
     @GetMapping("/list")
-    Result<List<User>> list(@SpringQueryMap UserQuery query);
+   Result<List<User>> list(@SpringQueryMap UserQuery query);
 }
 ```
 
@@ -284,17 +284,17 @@ public class UserController {
         fallback = "handleFallback"
     )
     public Result<User> getUser(@PathVariable Long id) {
-        return Result.ok(userService.getById(id));
+        return Result.success(userService.getById(id));
     }
 
     // 限流处理
     public Result<User> handleBlock(Long id, BlockException ex) {
-        return Result.fail("请求过于频繁，请稍后重试");
+        return Result.error("请求过于频繁，请稍后重试");
     }
 
     // 降级处理
     public Result<User> handleFallback(Long id, Throwable ex) {
-        return Result.fail("服务暂时不可用");
+        return Result.error("服务暂时不可用");
     }
 }
 
@@ -305,7 +305,7 @@ public class UserController {
 )
 public interface OrderServiceClient {
     @GetMapping("/api/orders/user/{userId}")
-    Result<List<Order>> getUserOrders(@PathVariable Long userId);
+   Result<List<Order>> getUserOrders(@PathVariable Long userId);
 }
 
 @Component
@@ -314,7 +314,7 @@ public class OrderServiceFallbackFactory implements FallbackFactory<OrderService
     @Override
     public OrderServiceClient create(Throwable cause) {
         log.error("Order service fallback", cause);
-        return userId -> Result.ok(Collections.emptyList());
+        return userId ->Result.success(Collections.emptyList());
     }
 }
 ```
@@ -383,7 +383,7 @@ public class OrderService {
         orderMapper.insert(order);
         
         log.info("创建订单成功, 订单ID: {}", order.getId());
-        return Result.ok(order);
+        return Result.success(order);
     }
 }
 ```
@@ -509,10 +509,10 @@ public class UserServiceApplication {
 public interface OrderServiceClient {
     
     @GetMapping("/{id}")
-    Result<OrderAO> getById(@PathVariable("id") Long id);
+   Result<OrderAO> getById(@PathVariable("id") Long id);
     
     @PostMapping
-    Result<OrderAO> create(@RequestBody OrderCreateParam param);
+   Result<OrderAO> create(@RequestBody OrderCreateParam param);
 }
 
 // 熔断降级实现在 {service}-bus 模块
@@ -525,13 +525,13 @@ public class OrderServiceClientFallbackFactory implements FallbackFactory<OrderS
             @Override
             public Result<OrderAO> getById(Long id) {
                 log.error("获取订单失败, id={}", id, cause);
-                return Result.fail("订单服务暂时不可用");
+                return Result.error("订单服务暂时不可用");
             }
             
             @Override
             public Result<OrderAO> create(OrderCreateParam param) {
                 log.error("创建订单失败", cause);
-                return Result.fail("订单服务暂时不可用");
+                return Result.error("订单服务暂时不可用");
             }
         };
     }
@@ -550,7 +550,7 @@ public class ConfigController {
 
     @GetMapping("/config")
     public Result<ConfigInfo> getConfig() {
-        return Result.ok(new ConfigInfo(featureEnabled));
+        return Result.success(new ConfigInfo(featureEnabled));
     }
 }
 ```

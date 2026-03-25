@@ -1,6 +1,6 @@
 package com.carlos.core.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 业务异常
@@ -21,16 +21,22 @@ public final class ServiceException extends GlobalException {
         super(message, cause);
     }
 
-    public ServiceException(StatusCode statusCode) {
-        super(statusCode);
+    public ServiceException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
-    public ServiceException(StatusCode statusCode, String message) {
-        super(statusCode.getCode(), message);
+    public ServiceException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
     }
 
-    public ServiceException(StatusCode statusCode, Throwable cause) {
-        super(statusCode, cause);
+
+    public ServiceException(String errorCode, String message) {
+        super(errorCode, message);
+    }
+
+
+    public ServiceException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
     }
 
     public ServiceException(Throwable cause) {

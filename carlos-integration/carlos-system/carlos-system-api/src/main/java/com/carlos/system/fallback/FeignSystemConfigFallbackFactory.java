@@ -28,7 +28,7 @@ public class FeignSystemConfigFallbackFactory implements FallbackFactory<ApiSyst
 
             @Override
             public Result<SysConfigAO> getByCode(String code) {
-                return Result.fail("系统配置读取失败");
+                return Result.error("系统配置读取失败");
             }
         };
     }

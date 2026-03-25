@@ -42,7 +42,7 @@ public class AuditLogDemoController {
         LoginVO vo = new LoginVO();
         vo.setUserId("10001");
         vo.setToken("mock-jwt-token");
-        return Result.ok(vo);
+        return Result.success(vo);
     }
 
     /**
@@ -66,7 +66,7 @@ public class AuditLogDemoController {
         OrderVO vo = new OrderVO();
         vo.setOrderNo(param.getOrderNo());
         vo.setStatus("PAID");
-        return Result.ok(vo);
+        return Result.success(vo);
     }
 
     /**
@@ -86,7 +86,7 @@ public class AuditLogDemoController {
         @RequestParam String tableName,
         @RequestParam(required = false) String condition) {
         // 模拟导出逻辑
-        return Result.ok("export-file-id-12345");
+        return Result.success("export-file-id-12345");
     }
 
     /**
@@ -105,7 +105,7 @@ public class AuditLogDemoController {
     @Operation(summary = "配置变更示例（同步审计）")
     public Result<Void> updateConfig(@RequestBody ConfigParam param) {
         // 模拟配置更新
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -129,7 +129,7 @@ public class AuditLogDemoController {
         FileVO vo = new FileVO();
         vo.setFileId("file-123");
         vo.setFileName(fileName);
-        return Result.ok(vo);
+        return Result.success(vo);
     }
 
     // ==================== 参数/返回对象定义 ====================

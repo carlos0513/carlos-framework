@@ -1,6 +1,6 @@
 package com.carlos.integration.module.dingtalk.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -22,12 +22,12 @@ public class DockingRequestParamDingtalkException extends DockingDingtalkExcepti
         super(message);
     }
 
-    public DockingRequestParamDingtalkException(Integer errorCode, String message) {
+    public DockingRequestParamDingtalkException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public DockingRequestParamDingtalkException(StatusCode statusCode) {
-        super(statusCode);
+    public DockingRequestParamDingtalkException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public DockingRequestParamDingtalkException(Throwable cause) {

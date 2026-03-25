@@ -29,12 +29,12 @@ public class ApiAppClientFallbackFactory implements FallbackFactory
 
             @Override
             public Result<AppClientAO> getById(Serializable id) {
-                return Result.fail("应用信息获取失败！");
+                return Result.error("应用信息获取失败！");
             }
 
             @Override
             public Result<AppClientAO> getByAppKey(String appKey) {
-                return Result.fail("应用信息获取失败！");
+                return Result.error("应用信息获取失败！");
             }
         };
     }

@@ -187,7 +187,7 @@ A    - BB   - CC
 {
   "success": true,
   "code": "00000",
-  "message": "操作成功",
+  "msg": "操作成功",
   "data": {
     "id": 1,
     "name": "张三"
@@ -203,7 +203,7 @@ A    - BB   - CC
 {
   "success": false,
   "code": "20101",
-  "message": "用户不存在",
+  "msg": "用户不存在",
   "data": null,
   "traceId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
   "timestamp": 1710638258000,
@@ -217,24 +217,24 @@ A    - BB   - CC
 {
   "success": false,
   "code": "10101",
-  "message": "参数校验失败",
+  "msg": "参数校验失败",
   "data": null,
   "traceId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
   "timestamp": 1710638258000,
   "details": [
     {
       "field": "username",
-      "message": "用户名不能为空",
+      "msg": "用户名不能为空",
       "rejectedValue": ""
     },
     {
       "field": "email",
-      "message": "邮箱格式不正确",
+      "msg": "邮箱格式不正确",
       "rejectedValue": "invalid-email"
     },
     {
       "field": "age",
-      "message": "年龄必须在 18-100 之间",
+      "msg": "年龄必须在 18-100 之间",
       "rejectedValue": 150
     }
   ]
@@ -247,7 +247,7 @@ A    - BB   - CC
 |-------------|---------|----|-----------------------|
 | `success`   | boolean | 是  | `true`=成功, `false`=失败 |
 | `code`      | string  | 是  | 5位错误码，成功时为 `00000`    |
-| `message`   | string  | 是  | 人类可读的错误信息             |
+| `msg`       | string  | 是  | 人类可读的错误信息             |
 | `data`      | object  | 否  | 业务数据，失败时为 `null`      |
 | `traceId`   | string  | 是  | 链路追踪 ID，用于排查问题        |
 | `timestamp` | long    | 是  | 响应时间戳（毫秒）             |
@@ -274,10 +274,10 @@ throw StatusCode.PARAM_VALIDATION_ERROR.exception("用户名长度必须在 %d-%
 
 ```java
 @GetMapping("/user/{id}")
-public ApiResponse<UserVO> getUser(@PathVariable Long id) {
+public Result<UserVO> getUser(@PathVariable Long id) {
     UserDTO user = userService.getById(id);
     UserVO vo = userConvert.dtoToVo(user);
-    return ApiResponse.success(vo);
+    return Result.success(vo);
 }
 ```
 
@@ -318,24 +318,24 @@ public class UserService {
 @Data
 public class UserCreateParam {
     
-    @NotBlank(message = "用户名不能为空")
-    @Size(min = 4, max = 20, message = "用户名长度必须在 4-20 之间")
+    @NotBlank(msg = "用户名不能为空")
+    @Size(min = 4, max = 20, msg = "用户名长度必须在 4-20 之间")
     private String username;
     
-    @NotBlank(message = "邮箱不能为空")
-    @Email(message = "邮箱格式不正确")
+    @NotBlank(msg = "邮箱不能为空")
+    @Email(msg = "邮箱格式不正确")
     private String email;
     
-    @Min(value = 18, message = "年龄必须大于等于 18")
-    @Max(value = 100, message = "年龄必须小于等于 100")
+    @Min(value = 18, msg = "年龄必须大于等于 18")
+    @Max(value = 100, msg = "年龄必须小于等于 100")
     private Integer age;
 }
 
 @PostMapping("/users")
-public ApiResponse<Void> createUser(@RequestBody @Valid UserCreateParam param) {
+public Result<Void> createUser(@RequestBody @Valid UserCreateParam param) {
     // 如果参数校验失败，自动返回 code=10101，details 包含具体字段错误
     userService.create(param);
-    return ApiResponse.success();
+    return Result.success();
 }
 ```
 
@@ -354,7 +354,7 @@ public enum OrderErrorCode implements ErrorCode {
     ORDER_PAYMENT_TIMEOUT("20305", "支付超时，订单已关闭", 400);
     
     private final String code;
-    private final String message;
+    private final String msg;
     private final int httpStatus;
     
     // ... constructor and getters
@@ -418,7 +418,7 @@ throw StatusCode.USER_ACCOUNT_LOCKED.exception(
 // Controller 只负责转换和返回
 
 // ✅ 使用参数校验注解，让框架自动处理
-@NotNull(message = "用户ID不能为空")
+@NotNull(msg = "用户ID不能为空")
 private Long userId;
 ```
 

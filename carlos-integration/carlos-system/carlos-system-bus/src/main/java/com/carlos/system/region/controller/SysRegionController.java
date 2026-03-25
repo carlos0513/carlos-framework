@@ -101,7 +101,7 @@ public class SysRegionController {
         @Parameter(name = "codeTop", description = "是否以传入的code作为顶级树的开始")
     })
     public Result<List<SysRegionVO>> treeList(final String parentId, final String regionName, final String regionCode, final boolean codeTop) {
-        return Result.ok(this.regionService.getRegionTree(parentId, regionName, regionCode, true, codeTop));
+        return Result.success(this.regionService.getRegionTree(parentId, regionName, regionCode, true, codeTop));
     }
 
     @GetMapping("loadStep")
@@ -126,9 +126,9 @@ public class SysRegionController {
             ExcelUtil.checkExcel(filename);
             EasyExcel.read(file.getInputStream(), RegionExcel.class, listener).sheet().doRead();
         } catch (final IOException e) {
-            return Result.fail("数据导入失败！");
+            return Result.error("数据导入失败！");
         }
-        return Result.ok("区域数据初始化导入成功！");
+        return Result.success("区域数据初始化导入成功！");
     }
 
 
@@ -138,11 +138,11 @@ public class SysRegionController {
         MultipartFile file = param.getFile();
         String fileName = file.getOriginalFilename();
         if (fileName == null) {
-            return Result.fail("请选择文件！");
+            return Result.error("请选择文件！");
         }
         regionService.importCustomRegions(param);
 
-        return Result.ok("区域数据初始化导入成功！");
+        return Result.success("区域数据初始化导入成功！");
     }
 
 

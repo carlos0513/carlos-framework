@@ -39,7 +39,7 @@ public class ApiResourceImpl implements ApiResource {
     @GetMapping
     @Operation(summary = "获取资源信息")
     public Result<SysResourceAO> getResourceById(String id) {
-        return Result.ok(resourceService.getSysResource(id));
+        return Result.success(resourceService.getSysResource(id));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ApiResourceImpl implements ApiResource {
     @Operation(summary = "添加资源")
     public Result<Boolean> addResource(@RequestBody ApiSysResourceAddParam param) {
         resourceService.addResource(SysResourceConvert.INSTANCE.toDTO(param));
-        return Result.ok(true);
+        return Result.success(true);
     }
 
     @Override
@@ -55,6 +55,6 @@ public class ApiResourceImpl implements ApiResource {
     @Operation(summary = "添加资源类型")
     public Result<Boolean> addResourceCategory(@RequestBody ApiResourceCategoryAddParam param) {
         categoryService.addResourceCategory(SysResourceCategoryConvert.INSTANCE.toDTO(param));
-        return Result.ok(true);
+        return Result.success(true);
     }
 }

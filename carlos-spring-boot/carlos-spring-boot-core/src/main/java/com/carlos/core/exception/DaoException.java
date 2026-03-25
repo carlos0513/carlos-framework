@@ -1,7 +1,7 @@
 package com.carlos.core.exception;
 
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -27,12 +27,16 @@ public class DaoException extends GlobalException {
         super(message, cause);
     }
 
-    public DaoException(StatusCode statusCode) {
-        super(statusCode);
+    public DaoException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
-    public DaoException(StatusCode statusCode, Throwable cause) {
-        super(statusCode, cause);
+    public DaoException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
+    }
+
+    public DaoException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
     }
 
     public DaoException(Throwable cause) {

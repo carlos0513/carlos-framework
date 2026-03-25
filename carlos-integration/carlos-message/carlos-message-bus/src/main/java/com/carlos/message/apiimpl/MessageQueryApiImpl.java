@@ -43,9 +43,9 @@ public class MessageQueryApiImpl implements MessageQueryApi {
         log.info("查询消息详情: {}", messageId);
         Result<MessageRecordDTO> result = messageQueryService.getById(messageId);
         if (!result.isSuccess()) {
-            return Result.fail(result.getMessage());
+            return Result.error(result.getMsg());
         }
-        return Result.ok(toAO(result.getData()));
+        return Result.success(toAO(result.getData()));
     }
 
     @Override
@@ -55,7 +55,7 @@ public class MessageQueryApiImpl implements MessageQueryApi {
         log.info("分页查询消息记录: {}", param);
         Result<Paging<MessageRecordDTO>> result = messageQueryService.page(param);
         if (!result.isSuccess()) {
-            return Result.fail(result.getMessage());
+            return Result.error(result.getMsg());
         }
         Paging<MessageRecordDTO> dtoPage = result.getData();
         Paging<MessageRecordAO> aoPage = new Paging<>();
@@ -66,7 +66,7 @@ public class MessageQueryApiImpl implements MessageQueryApi {
         List<MessageRecordAO> aoList = dtoPage.getRecords() == null ? new ArrayList<>()
             : dtoPage.getRecords().stream().map(this::toAO).collect(Collectors.toList());
         aoPage.setRecords(aoList);
-        return Result.ok(aoPage);
+        return Result.success(aoPage);
     }
 
     @Override
@@ -76,11 +76,11 @@ public class MessageQueryApiImpl implements MessageQueryApi {
         log.info("查询消息接收人列表: {}", messageId);
         Result<List<MessageReceiverDTO>> result = messageQueryService.getReceivers(messageId);
         if (!result.isSuccess()) {
-            return Result.fail(result.getMessage());
+            return Result.error(result.getMsg());
         }
         List<MessageReceiverAO> aoList = result.getData() == null ? new ArrayList<>()
             : result.getData().stream().map(this::toReceiverAO).collect(Collectors.toList());
-        return Result.ok(aoList);
+        return Result.success(aoList);
     }
 
     @Override
@@ -90,18 +90,20 @@ public class MessageQueryApiImpl implements MessageQueryApi {
         log.info("查询用户未读消息: {}", userId);
         Result<List<MessageRecordDTO>> result = messageQueryService.getUnread(userId);
         if (!result.isSuccess()) {
-            return Result.fail(result.getMessage());
+            return Result.error(result.getMsg());
         }
         List<MessageRecordAO> aoList = result.getData() == null ? new ArrayList<>()
             : result.getData().stream().map(this::toAO).collect(Collectors.toList());
-        return Result.ok(aoList);
+        return Result.success(aoList);
     }
 
     /**
      * MessageRecordDTO → MessageRecordAO
      */
     private MessageRecordAO toAO(MessageRecordDTO dto) {
-        if (dto == null) return null;
+        if (dto == null) {
+            return null;
+        }
         MessageRecordAO ao = new MessageRecordAO();
         ao.setMessageId(dto.getMessageId());
         ao.setTemplateCode(dto.getTemplateCode());
@@ -123,7 +125,9 @@ public class MessageQueryApiImpl implements MessageQueryApi {
      * MessageReceiverDTO → MessageReceiverAO
      */
     private MessageReceiverAO toReceiverAO(MessageReceiverDTO dto) {
-        if (dto == null) return null;
+        if (dto == null) {
+            return null;
+        }
         MessageReceiverAO ao = new MessageReceiverAO();
         ao.setMessageId(dto.getMessageId());
         ao.setChannelCode(dto.getChannelCode());

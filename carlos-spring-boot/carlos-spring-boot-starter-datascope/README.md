@@ -139,7 +139,7 @@ public class UserController {
     )
     public Result<Page<User>> getUserList(PageParam param) {
         Page<User> page = userService.getUserPage(param);
-        return Result.ok(page);
+        return Result.success(page);
     }
 
     @GetMapping("/my-data")
@@ -150,7 +150,7 @@ public class UserController {
     )
     public Result<List<User>> getMyData() {
         List<User> myData = userService.getMyData();
-        return Result.ok(myData);
+        return Result.success(myData);
     }
 }
 ```

@@ -1506,7 +1506,7 @@ public class UserController {
         @DataMasking.Field(name = "email", type = DataMasking.Type.EMAIL)
     })
     public Result<List<UserVO>> list() {
-        return Result.ok(userService.list());
+        return Result.success(userService.list());
     }
 }
 ```

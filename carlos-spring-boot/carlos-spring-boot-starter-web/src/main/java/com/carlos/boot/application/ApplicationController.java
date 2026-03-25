@@ -39,9 +39,9 @@ public class ApplicationController {
     @ResponseBody
     public Result<?> enumList() {
         if (enumService == null) {
-            return Result.fail("枚举功能未开启");
+            return Result.error("枚举功能未开启");
         }
-        return Result.ok(enumService.getEnumList());
+        return Result.success(enumService.getEnumList());
     }
 
     @GetMapping("/enum")
@@ -49,15 +49,15 @@ public class ApplicationController {
     @ResponseBody
     public Result<?> enumInfo(String name) {
         if (enumService == null) {
-            return Result.fail("枚举功能未开启");
+            return Result.error("枚举功能未开启");
         }
-        return Result.ok(enumService.getEnumInfo(name));
+        return Result.success(enumService.getEnumInfo(name));
     }
 
     @GetMapping("init/resource")
     @Operation(summary = "初始化资源")
     @ResponseBody
     public Result<?> initResource() {
-        return Result.ok(resourceService.init());
+        return Result.success(resourceService.init());
     }
 }

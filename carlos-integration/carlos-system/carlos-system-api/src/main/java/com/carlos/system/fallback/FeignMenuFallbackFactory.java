@@ -31,22 +31,22 @@ public class FeignMenuFallbackFactory implements FallbackFactory<ApiMenu> {
 
             @Override
             public Result<MenuAO> getMenuById(String id) {
-                return Result.fail();
+                return Result.error();
             }
 
             @Override
             public Result<List<MenuAO>> listMenus(Set<String> ids) {
-                return Result.fail();
+                return Result.error();
             }
 
             @Override
             public Result<List<MenuAO>> allMenu() {
-                return Result.fail();
+                return Result.error();
             }
 
             @Override
             public Result<List<MenuAO>> listMenuByType(MenuType menuType) {
-                return Result.fail();
+                return Result.error();
             }
         };
     }

@@ -24,7 +24,7 @@ public class FeignGlobalExceptionHandler {
     public Result<String> feignExceptionHandler(FeignException exception) {
 
         log.error(exception.getMessage(), exception);
-        return Result.fail(exception.getMessage());
+        return Result.error(exception.getMessage());
 
     }
 }

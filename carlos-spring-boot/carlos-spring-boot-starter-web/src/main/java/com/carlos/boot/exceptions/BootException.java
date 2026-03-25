@@ -1,7 +1,7 @@
 package com.carlos.boot.exceptions;
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * Springboot组件异常父类
@@ -21,12 +21,12 @@ public class BootException extends ComponentException {
         super(message);
     }
 
-    public BootException(final Integer errorCode, final String message) {
+    public BootException(final ErrorCode errorCode, final String message) {
         super(errorCode, message);
     }
 
-    public BootException(final StatusCode statusCode) {
-        super(statusCode);
+    public BootException(final ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public BootException(final Throwable cause) {

@@ -70,13 +70,13 @@ public class UserController {
     @GetMapping("/user/{id}")
     public Result<User> getUser(@PathVariable Long id) {
         User user = userService.getById(id);
-        return Result.ok(user);
+        return Result.success(user);
     }
 
     @PostMapping("/user")
     public Result<Void> createUser(@RequestBody User user) {
         userService.save(user);
-        return Result.ok();
+        return Result.success();
     }
 }
 ```
@@ -104,7 +104,7 @@ public class UserService {
 
 ```java
 import com.carlos.core.exception.ServiceException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 @Service
 public class OrderService {
@@ -248,7 +248,7 @@ Commons 模块使用统一的版本号，由 `carlos-spring-boot-parent` 管理�
 // ✅ 推荐
 @GetMapping("/users")
 public Result<List<User>> listUsers() {
-    return Result.ok(userService.list());
+    return Result.success(userService.list());
 }
 
 // ❌ 不推荐

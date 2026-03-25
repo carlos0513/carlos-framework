@@ -12,13 +12,13 @@
 
 ```java
 // 成功响应
-Result<User> result = Result.ok(user);
+Result<User> result =Result.success(user);
 
 // 失败响应
-Result<Void> result = Result.fail("操作失败");
+Result<Void> result = Result.error("操作失败");
 
 // 自定义状态码
-Result<Void> result = Result.fail(StatusCode.UNAUTHORIZED, "未授权");
+Result<Void> result = Result.error(StatusCode.UNAUTHORIZED, "未授权");
 
 // 获取数据（返回 Optional）
 Optional<User> data = result.data();
@@ -106,14 +106,14 @@ Paging<UserVO> voPage = paging.convert(converter);
 public Result<Paging<User>> list(@RequestBody ParamPage param) {
     Page<User> page = new Page<>(param.getCurrent(), param.getSize());
     // 查询逻辑
-    return Result.ok(paging);
+    return Result.success(paging);
 }
 
 // ID 参数
 @PostMapping("/detail")
 public Result<User> detail(@RequestBody ParamLongId param) {
     User user = userService.getById(param.getId());
-    return Result.ok(user);
+    return Result.success(user);
 }
 ```
 
@@ -369,7 +369,7 @@ public interface ApplicationExtend {
 @GetMapping("/internal")
 public Result<Void> internalMethod() {
     // 此方法不会被记录操作日志
-    return Result.ok();
+    return Result.success();
 }
 ```
 

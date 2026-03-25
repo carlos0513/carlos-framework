@@ -95,7 +95,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         }
         // tokenInfo.setTokenType(accessToken.getTokenType().getValue());
         tokenInfo.setExpiresIn(ChronoUnit.SECONDS.between(accessToken.getIssuedAt(), accessToken.getExpiresAt()));
-        ResponseUtil.printJson(response, Result.ok(tokenInfo));
+        ResponseUtil.printJson(response, Result.success(tokenInfo));
     }
 
 }

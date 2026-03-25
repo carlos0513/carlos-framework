@@ -8,6 +8,7 @@ import com.alibaba.csp.sentinel.slots.block.degrade.DegradeException;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowException;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
 import com.alibaba.csp.sentinel.slots.system.SystemBlockException;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.core.response.Result;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -105,7 +106,7 @@ public class SentinelConfig {
             log.warn("Sentinel 拦截请求 - 资源: {}, 类型: {}, 原因: {}",
                 resourceName, e.getClass().getSimpleName(), e.getMessage());
 
-            Result<String> result = Result.fail(HttpStatus.TOO_MANY_REQUESTS.value(), message);
+            Result<String> result = Result.error(CommonErrorCode.SERVICE_UNAVAILABLE, message);
             response.getWriter().write(objectMapper.writeValueAsString(result));
         }
     }

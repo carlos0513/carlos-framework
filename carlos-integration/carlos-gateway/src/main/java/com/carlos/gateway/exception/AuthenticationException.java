@@ -1,6 +1,6 @@
 package com.carlos.gateway.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.CommonErrorCode;
 import lombok.Getter;
 
 /**
@@ -24,12 +24,12 @@ public class AuthenticationException extends GatewayException {
     private final AuthFailureType failureType;
 
     public AuthenticationException(String message) {
-        super(message, 401, StatusCode.AUTHENTICATION_EXCEPTION.getCode());
+        super(message, 401, CommonErrorCode.UNAUTHORIZED.getCode());
         this.failureType = AuthFailureType.OTHER;
     }
 
     public AuthenticationException(String message, AuthFailureType failureType) {
-        super(message, 401, StatusCode.AUTHENTICATION_EXCEPTION.getCode());
+        super(message, 401, CommonErrorCode.UNAUTHORIZED.getCode());
         this.failureType = failureType;
     }
 

@@ -1,5 +1,6 @@
 package com.carlos.gateway.security;
 
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -273,8 +274,8 @@ public class WafFilter implements GlobalFilter, Ordered {
         // 构建标准化的错误响应
         ErrorResponse errorResponse = ErrorResponse.builder()
             .status(HttpStatus.FORBIDDEN.value())
-            .code(5403)
-            .message(message)
+            .code(CommonErrorCode.FORBIDDEN.getCode())
+            .msg(message)
             .path(path)
             .method(exchange.getRequest().getMethod() != null ? exchange.getRequest().getMethod().name() : "UNKNOWN")
             .extra(java.util.Map.of(

@@ -2,7 +2,7 @@ package com.carlos.cloud.feign;
 
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -24,12 +24,21 @@ public class OpenFeignException extends ComponentException {
         super(message);
     }
 
-    public OpenFeignException(final Integer errorCode, final String message) {
+    public OpenFeignException(final ErrorCode errorCode, final String message) {
         super(errorCode, message);
     }
 
-    public OpenFeignException(final StatusCode statusCode) {
-        super(statusCode);
+    public OpenFeignException(final String errorCode, final String message) {
+        super(errorCode, message);
+    }
+
+    public OpenFeignException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
+    }
+
+
+    public OpenFeignException(final ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public OpenFeignException(final Throwable cause) {

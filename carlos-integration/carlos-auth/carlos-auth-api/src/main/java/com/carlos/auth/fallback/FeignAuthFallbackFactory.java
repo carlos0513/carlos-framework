@@ -28,22 +28,22 @@ public class FeignAuthFallbackFactory implements FallbackFactory<FeignAuth> {
             @Override
             public Result<Oauth2TokenDTO> getAccessToken(
                 final Map<String, String> param, final MultiValueMap<String, String> headers) {
-                return Result.fail("token获取失败", message);
+                return Result.error(message);
             }
 
             @Override
             public Result<String> encodePassword(final String password) {
-                return Result.fail("加密失败");
+                return Result.error("加密失败");
             }
 
             @Override
             public Result<Boolean> match(final PasswordMatchDTO param) {
-                return Result.fail();
+                return Result.error();
             }
 
             @Override
             public Result<String> checkToken(String token) {
-                return Result.fail();
+                return Result.error();
             }
         };
     }

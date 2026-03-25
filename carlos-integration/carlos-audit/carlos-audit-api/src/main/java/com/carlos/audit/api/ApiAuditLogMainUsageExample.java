@@ -69,7 +69,7 @@ public class ApiAuditLogMainUsageExample {
         if (result.isSuccess()) {
             log.info("审计日志保存成功，ID: {}", result.getData().getId());
         } else {
-            log.warn("审计日志保存失败: {}", result.getMessage());
+            log.warn("审计日志保存失败: {}", result.getMsg());
             // 注意：异步保存失败不影响主业务流程
         }
     }
@@ -103,7 +103,7 @@ public class ApiAuditLogMainUsageExample {
         if (result.isSuccess()) {
             log.info("重要审计日志同步保存成功，ID: {}", result.getData().getId());
         } else {
-            log.error("重要审计日志同步保存失败: {}", result.getMessage());
+            log.error("重要审计日志同步保存失败: {}", result.getMsg());
             // 重要日志保存失败，可能需要回滚业务操作或告警
             throw new RuntimeException("审计日志保存失败，操作已回滚");
         }
@@ -142,7 +142,7 @@ public class ApiAuditLogMainUsageExample {
         if (result.isSuccess()) {
             log.info("批量审计日志保存成功，数量: {}", params.size());
         } else {
-            log.warn("批量审计日志保存失败: {}", result.getMessage());
+            log.warn("批量审计日志保存失败: {}", result.getMsg());
         }
     }
 
@@ -165,7 +165,7 @@ public class ApiAuditLogMainUsageExample {
         if (result.isSuccess()) {
             log.info("简单审计日志保存成功，ID: {}", result.getData().getId());
         } else {
-            log.warn("简单审计日志保存失败: {}", result.getMessage());
+            log.warn("简单审计日志保存失败: {}", result.getMsg());
         }
     }
 

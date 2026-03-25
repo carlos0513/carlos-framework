@@ -2,7 +2,7 @@ package com.carlos.org.exception;
 
 
 import com.carlos.core.exception.GlobalException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -28,20 +28,16 @@ public class OrgModuleException extends GlobalException {
         super(cause);
     }
 
-    public OrgModuleException(StatusCode statusCode) {
-        super(statusCode);
+    public OrgModuleException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
-    public OrgModuleException(StatusCode statusCode, Throwable cause) {
-        super(statusCode, cause);
+    public OrgModuleException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
     }
 
-    public OrgModuleException(Integer statusCode, Throwable cause) {
-        super(statusCode, cause);
-    }
-
-    public OrgModuleException(Integer statusCode, String message) {
-        super(statusCode, message);
+    public OrgModuleException(String errorCode, String message) {
+        super(errorCode, message);
     }
 
     public OrgModuleException(String message, Throwable cause) {

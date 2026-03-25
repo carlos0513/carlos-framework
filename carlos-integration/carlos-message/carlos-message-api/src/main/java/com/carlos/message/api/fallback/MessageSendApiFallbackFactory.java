@@ -30,32 +30,32 @@ public class MessageSendApiFallbackFactory implements FallbackFactory<MessageSen
         return new MessageSendApi() {
             @Override
             public Result<SendResultAO> send(MessageSendParam param) {
-                return Result.fail("消息发送服务暂不可用，请稍后重试");
+                return Result.error("消息发送服务暂不可用，请稍后重试");
             }
 
             @Override
             public Result<String> sendAsync(MessageSendParam param) {
-                return Result.fail("消息发送服务暂不可用，请稍后重试");
+                return Result.error("消息发送服务暂不可用，请稍后重试");
             }
 
             @Override
             public Result<SendResultAO> sendBatch(List<MessageSendParam> params) {
-                return Result.fail("消息发送服务暂不可用，请稍后重试");
+                return Result.error("消息发送服务暂不可用，请稍后重试");
             }
 
             @Override
             public Result<String> schedule(MessageSendParam param, LocalDateTime scheduleTime) {
-                return Result.fail("消息发送服务暂不可用，请稍后重试");
+                return Result.error("消息发送服务暂不可用，请稍后重试");
             }
 
             @Override
             public Result<Boolean> revoke(String messageId) {
-                return Result.fail("消息发送服务暂不可用，请稍后重试");
+                return Result.error("消息发送服务暂不可用，请稍后重试");
             }
 
             @Override
             public Result<MessageStatusAO> queryStatus(String messageId) {
-                return Result.fail("消息发送服务暂不可用，请稍后重试");
+                return Result.error("消息发送服务暂不可用，请稍后重试");
             }
         };
     }

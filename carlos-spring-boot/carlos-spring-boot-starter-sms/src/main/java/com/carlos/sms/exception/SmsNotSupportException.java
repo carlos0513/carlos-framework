@@ -1,6 +1,6 @@
 package com.carlos.sms.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -22,12 +22,12 @@ public class SmsNotSupportException extends SmsException {
         super(message);
     }
 
-    public SmsNotSupportException(Integer errorCode, String message) {
+    public SmsNotSupportException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public SmsNotSupportException(StatusCode statusCode) {
-        super(statusCode);
+    public SmsNotSupportException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public SmsNotSupportException(Throwable cause) {

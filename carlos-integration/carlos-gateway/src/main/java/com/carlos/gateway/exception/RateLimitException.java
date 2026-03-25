@@ -1,5 +1,7 @@
 package com.carlos.gateway.exception;
 
+import com.carlos.core.response.CommonErrorCode;
+
 /**
  * <p>
  * 限流异常
@@ -30,14 +32,14 @@ public class RateLimitException extends GatewayException {
     private final long retryAfter;
 
     public RateLimitException(String message) {
-        super(message, 429, 5429);
+        super(CommonErrorCode.TOO_MANY_REQUESTS, message);
         this.limitDimension = "unknown";
         this.limitRate = 0;
         this.retryAfter = 60;
     }
 
     public RateLimitException(String message, String limitDimension, long limitRate, long retryAfter) {
-        super(message, 429, 5429);
+        super(CommonErrorCode.TOO_MANY_REQUESTS, message);
         this.limitDimension = limitDimension;
         this.limitRate = limitRate;
         this.retryAfter = retryAfter;

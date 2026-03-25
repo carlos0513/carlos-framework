@@ -172,7 +172,7 @@ public class JsonProperties {
         /**
          * 响应包装类全限定名
          */
-        private String wrapperClass = "com.carlos.json.wrapper.ApiResponse";
+        private String wrapperClass = "com.carlos.core.response.Result";
 
         /**
          * 成功状态码字段名

@@ -1,5 +1,6 @@
 package com.carlos.json.web;
 
+import com.carlos.core.response.Result;
 import com.carlos.json.JsonUtils;
 import com.carlos.json.config.JsonProperties;
 import com.carlos.json.jackson.JacksonUtil;
@@ -100,7 +101,7 @@ public class JsonWebConfiguration implements WebMvcConfigurer {
             }
 
             // 如果已经是包装类型，直接返回
-            if (body instanceof com.carlos.json.wrapper.ApiResponse) {
+            if (body instanceof Result) {
                 return body;
             }
 
@@ -109,7 +110,7 @@ public class JsonWebConfiguration implements WebMvcConfigurer {
                 // 转换为 JSON 字符串
                 response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
                 try {
-                    return JacksonUtil.toJson(com.carlos.json.wrapper.ApiResponse.success(body));
+                    return JacksonUtil.toJson(Result.success(body));
                 } catch (Exception e) {
                     log.error("包装 String 响应失败", e);
                     return body;
@@ -117,7 +118,7 @@ public class JsonWebConfiguration implements WebMvcConfigurer {
             }
 
             // 包装响应
-            return com.carlos.json.wrapper.ApiResponse.success(body);
+            return Result.success(body);
         }
     }
 }

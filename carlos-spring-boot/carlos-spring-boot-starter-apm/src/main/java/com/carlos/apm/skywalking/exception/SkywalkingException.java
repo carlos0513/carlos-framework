@@ -2,7 +2,7 @@ package com.carlos.apm.skywalking.exception;
 
 
 import com.carlos.apm.exception.ApmException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 组件异常父类
@@ -23,8 +23,8 @@ public class SkywalkingException extends ApmException {
     }
 
 
-    public SkywalkingException(StatusCode statusCode) {
-        super(statusCode);
+    public SkywalkingException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public SkywalkingException(Throwable cause) {

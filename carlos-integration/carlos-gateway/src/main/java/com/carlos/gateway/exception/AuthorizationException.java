@@ -1,6 +1,6 @@
 package com.carlos.gateway.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.CommonErrorCode;
 
 /**
  * <p>
@@ -17,7 +17,7 @@ public class AuthorizationException extends GatewayException {
     private static final long serialVersionUID = 1L;
 
     public AuthorizationException(String message) {
-        super(message, 403, StatusCode.UNAUTHORIZED_EXCEPTION.getCode());
+        super(message, 403, CommonErrorCode.FORBIDDEN.getCode());
     }
 
     public AuthorizationException(String message, Throwable cause) {

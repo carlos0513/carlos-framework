@@ -9,7 +9,7 @@ import cn.hutool.jwt.signers.JWTSigner;
 import cn.hutool.jwt.signers.JWTSignerUtil;
 import com.carlos.core.auth.UserContext;
 import com.carlos.core.exception.ServiceException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.CommonErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
@@ -68,14 +68,14 @@ public class JwtTokenValidator implements TokenValidator {
     @Override
     public Mono<UserContext> validate(String token) {
         if (StrUtil.isBlank(token)) {
-            return Mono.error(new ServiceException(StatusCode.UNAUTHORIZED, "Token is empty"));
+            return Mono.error(new ServiceException(CommonErrorCode.UNAUTHORIZED, "Token is empty"));
         }
 
         // 检查 Token 是否在黑名单中（用于实现登出功能）
         return isTokenBlacklisted(token)
             .flatMap(isBlacklisted -> {
                 if (isBlacklisted) {
-                    return Mono.error(new ServiceException(StatusCode.UNAUTHORIZED, "Token has been revoked"));
+                    return Mono.error(new ServiceException(CommonErrorCode.UNAUTHORIZED, "Token has been revoked"));
                 }
                 return validateJwt(token);
             });
@@ -105,24 +105,24 @@ public class JwtTokenValidator implements TokenValidator {
 
                 // 验证签名
                 if (signer != null && !jwt.verify(signer)) {
-                    throw new ServiceException(StatusCode.UNAUTHORIZED, "Invalid token signature");
+                    throw new ServiceException(CommonErrorCode.UNAUTHORIZED, "Invalid token signature");
                 }
 
                 // 验证发行者
                 String issuer = (String) jwt.getPayload("iss");
                 if (!properties.getJwtIssuer().equals(issuer)) {
-                    throw new ServiceException(StatusCode.UNAUTHORIZED, "Invalid token issuer");
+                    throw new ServiceException(CommonErrorCode.UNAUTHORIZED, "Invalid token issuer");
                 }
 
                 // 验证受众
                 Object audience = jwt.getPayload("aud");
                 if (audience instanceof String) {
                     if (!properties.getJwtAudience().equals(audience)) {
-                        throw new ServiceException(StatusCode.UNAUTHORIZED, "Invalid token audience");
+                        throw new ServiceException(CommonErrorCode.UNAUTHORIZED, "Invalid token audience");
                     }
                 } else if (audience instanceof List) {
                     if (!((List<?>) audience).contains(properties.getJwtAudience())) {
-                        throw new ServiceException(StatusCode.UNAUTHORIZED, "Invalid token audience");
+                        throw new ServiceException(CommonErrorCode.UNAUTHORIZED, "Invalid token audience");
                     }
                 }
 
@@ -130,7 +130,7 @@ public class JwtTokenValidator implements TokenValidator {
                 return buildUserContext(jwt);
             } catch (Exception e) {
                 log.debug("JWT validation failed: {}", e.getMessage());
-                throw new ServiceException(StatusCode.UNAUTHORIZED, "Invalid token");
+                throw new ServiceException(CommonErrorCode.UNAUTHORIZED, "Invalid token");
             }
         });
     }

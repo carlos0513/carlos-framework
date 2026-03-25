@@ -406,7 +406,7 @@ public class ApiController {
         // 处理业务逻辑
         processData(decryptedData);
 
-        return Result.ok();
+        return Result.success();
     }
 
     // 返回加密数据
@@ -420,7 +420,7 @@ public class ApiController {
         EncryptedResponse response = new EncryptedResponse();
         response.setData(encryptedData);
 
-        return Result.ok(response);
+        return Result.success(response);
     }
 }
 ```

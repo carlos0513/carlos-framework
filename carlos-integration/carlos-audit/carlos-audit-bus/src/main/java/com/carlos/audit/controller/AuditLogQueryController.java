@@ -47,7 +47,7 @@ public class AuditLogQueryController {
         String tenantId = getCurrentTenantId();
         Paging<AuditLogMainDTO> result = queryService.pageQuery(tenantId, pageNum, pageSize,
             startTime, endTime, logType, state);
-        return Result.ok(result);
+        return Result.success(result);
     }
 
     /**
@@ -57,7 +57,7 @@ public class AuditLogQueryController {
     @Operation(summary = "查询审计日志详情")
     public Result<AuditLogMainDTO> getById(@PathVariable Long id) {
         AuditLogMainDTO dto = queryService.getById(id);
-        return Result.ok(dto);
+        return Result.success(dto);
     }
 
     /**
@@ -69,7 +69,7 @@ public class AuditLogQueryController {
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         String tenantId = getCurrentTenantId();
         AuditLogStatsVO stats = queryService.getRealtimeStats(tenantId, date);
-        return Result.ok(stats);
+        return Result.success(stats);
     }
 
     /**
@@ -82,7 +82,7 @@ public class AuditLogQueryController {
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
         List<AuditLogMainDTO> trail = queryService.getUserTrail(principalId, start, end);
-        return Result.ok(trail);
+        return Result.success(trail);
     }
 
     /**
@@ -96,7 +96,7 @@ public class AuditLogQueryController {
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
         String tenantId = getCurrentTenantId();
         List<AuditLogMainDTO> risks = queryService.listRiskEvents(tenantId, minRiskLevel, start, end);
-        return Result.ok(risks);
+        return Result.success(risks);
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.carlos.redis.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 缓存读取异常
@@ -20,12 +20,12 @@ public class CacheGetException extends CacheException {
         super(message);
     }
 
-    public CacheGetException(Integer errorCode, String message) {
+    public CacheGetException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public CacheGetException(StatusCode statusCode) {
-        super(statusCode);
+    public CacheGetException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public CacheGetException(Throwable cause) {

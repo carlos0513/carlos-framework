@@ -47,7 +47,7 @@ public class AuthController {
         RequestInfo requestInfo = RequestUtil.getRequestInfo();
         String token = requestInfo.getToken();
         if (StrUtil.isBlank(token)) {
-            return Result.ok();
+            return Result.success();
         }
         return this.removeToken(token);
     }
@@ -61,7 +61,7 @@ public class AuthController {
         String registeredClientId = authorization.getRegisteredClientId();
         RegisteredClient client = clientService.findById(registeredClientId);
         // 如果令牌不存在 返回401
-        return Result.ok(client.getClientId());
+        return Result.success(client.getClientId());
     }
 
     /**
@@ -76,10 +76,10 @@ public class AuthController {
         OAuth2Authorization authorization = this.authorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
         OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization.getAccessToken();
         if (accessToken == null || StrUtil.isBlank(accessToken.getToken().getTokenValue())) {
-            return Result.ok();
+            return Result.success();
         }
         // 清空access token
         this.authorizationService.remove(authorization);
-        return Result.ok();
+        return Result.success();
     }
 }

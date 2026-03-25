@@ -53,7 +53,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         OAuth2Error error = ((OAuth2AuthenticationException) exception).getError();
         ServletServerHttpResponse httpResponse = new ServletServerHttpResponse(response);
         httpResponse.setStatusCode(HttpStatus.OK);
-        this.errorHttpResponseConverter.write(Result.fail(exception.getMessage()), MediaType.APPLICATION_JSON, httpResponse);
+        this.errorHttpResponseConverter.write(Result.error(exception.getMessage()), MediaType.APPLICATION_JSON, httpResponse);
     }
 
 }

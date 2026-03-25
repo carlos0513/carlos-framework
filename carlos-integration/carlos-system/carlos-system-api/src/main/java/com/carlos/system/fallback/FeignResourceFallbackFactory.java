@@ -29,17 +29,17 @@ public class FeignResourceFallbackFactory implements FallbackFactory<ApiResource
 
             @Override
             public Result<SysResourceAO> getResourceById(String id) {
-                return Result.fail();
+                return Result.error();
             }
 
             @Override
             public Result<Boolean> addResource(ApiSysResourceAddParam param) {
-                return Result.fail();
+                return Result.error();
             }
 
             @Override
             public Result<Boolean> addResourceCategory(ApiResourceCategoryAddParam param) {
-                return Result.fail();
+                return Result.error();
             }
         };
     }

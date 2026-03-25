@@ -1,7 +1,7 @@
 package com.carlos.boot.error;
 
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.core.response.Result;
-import com.carlos.core.response.StatusCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.RequestDispatcher;
@@ -36,15 +36,15 @@ public class GlobalErrorController implements ErrorController {
         final int status = response.getStatus();
         switch (status) {
             case HttpServletResponse.SC_UNAUTHORIZED:
-                return Result.fail(StatusCode.UNAUTHORIZED);
+                return Result.error(CommonErrorCode.UNAUTHORIZED);
             case HttpServletResponse.SC_FORBIDDEN:
-                return Result.fail(StatusCode.NOT_PERMISSION);
+                return Result.error(CommonErrorCode.UNAUTHORIZED);
             case HttpServletResponse.SC_NOT_FOUND:
-                return Result.fail(StatusCode.NOT_FOUND);
+                return Result.error(CommonErrorCode.NOT_FOUND);
             default:
                 break;
         }
-        return Result.fail(StatusCode.FAIL);
+        return Result.error(CommonErrorCode.INTERNAL_ERROR);
     }
 
     /**

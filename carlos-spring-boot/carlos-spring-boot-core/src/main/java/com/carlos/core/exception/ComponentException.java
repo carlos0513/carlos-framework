@@ -1,7 +1,7 @@
 package com.carlos.core.exception;
 
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -27,21 +27,22 @@ public class ComponentException extends GlobalException {
         super(cause);
     }
 
-    public ComponentException(StatusCode statusCode) {
-        super(statusCode);
+    public ComponentException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
-    public ComponentException(StatusCode statusCode, Throwable cause) {
-        super(statusCode, cause);
+    public ComponentException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
     }
 
-    public ComponentException(Integer statusCode, Throwable cause) {
-        super(statusCode, cause);
-    }
-
-    public ComponentException(Integer statusCode, String message) {
+    public ComponentException(ErrorCode statusCode, String message) {
         super(statusCode, message);
     }
+
+    public ComponentException(String statusCode, String message) {
+        super(statusCode, message);
+    }
+
 
     public ComponentException(String message, Throwable cause) {
         super(message, cause);

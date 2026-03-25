@@ -499,7 +499,7 @@ public class UserController {
     @GetMapping("/list")
     @DataScope(dimension = ScopeDimension.DEPT_AND_CHILDREN)
     public Result<Page<User>> list(UserQuery query) {
-        return Result.ok(userService.page(query));
+        return Result.success(userService.page(query));
     }
     
     /**
@@ -508,7 +508,7 @@ public class UserController {
     @GetMapping("/{id}")
     @DataScope(condition = "@ds.isCurrentUser(#id) or @ds.hasRole('admin')")
     public Result<User> detail(@PathVariable Long id) {
-        return Result.ok(userService.getById(id));
+        return Result.success(userService.getById(id));
     }
     
     /**
@@ -522,7 +522,7 @@ public class UserController {
         @DataMasking.MaskingField(name = "email", type = MaskingType.EMAIL)
     })
     public Result<List<UserSensitive>> sensitiveList() {
-        return Result.ok(userService.sensitiveList());
+        return Result.success(userService.sensitiveList());
     }
     
     /**
@@ -535,7 +535,7 @@ public class UserController {
         @DataScope(dimension = ScopeDimension.ALL, tables = {"sys_dict"})
     })
     public Result<ComplexData> complexQuery() {
-        return Result.ok(userService.complexQuery());
+        return Result.success(userService.complexQuery());
     }
 }
 ```

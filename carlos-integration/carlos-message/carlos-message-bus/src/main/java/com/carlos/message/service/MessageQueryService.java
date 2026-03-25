@@ -48,13 +48,13 @@ public class MessageQueryService {
     public Result<MessageRecordDTO> getById(String messageId) {
         log.info("查询消息详情: {}", messageId);
         if (StrUtil.isBlank(messageId)) {
-            return Result.fail("消息ID不能为空");
+            return Result.error("消息ID不能为空");
         }
         MessageRecord record = messageRecordManager.getByMessageId(messageId);
         if (record == null) {
-            return Result.fail("消息不存在: " + messageId);
+            return Result.error("消息不存在: " + messageId);
         }
-        return Result.ok(messageConvert.toDTO(record));
+        return Result.success(messageConvert.toDTO(record));
     }
 
     /**
@@ -92,7 +92,7 @@ public class MessageQueryService {
             return dto;
         }).collect(Collectors.toList());
         result.setRecords(dtoList);
-        return Result.ok(result);
+        return Result.success(result);
     }
 
     /**
@@ -104,10 +104,10 @@ public class MessageQueryService {
     public Result<List<MessageReceiverDTO>> getReceivers(String messageId) {
         log.info("查询消息接收人列表: {}", messageId);
         if (StrUtil.isBlank(messageId)) {
-            return Result.fail("消息ID不能为空");
+            return Result.error("消息ID不能为空");
         }
         List<MessageReceiver> receivers = messageReceiverManager.listByMessageId(messageId);
-        return Result.ok(messageConvert.toReceiverList(receivers));
+        return Result.success(messageConvert.toReceiverList(receivers));
     }
 
     /**
@@ -119,7 +119,7 @@ public class MessageQueryService {
     public Result<List<MessageRecordDTO>> getUnread(String userId) {
         log.info("查询用户未读消息: {}", userId);
         if (StrUtil.isBlank(userId)) {
-            return Result.fail("用户ID不能为空");
+            return Result.error("用户ID不能为空");
         }
 
         // 查询该用户所有未读的消息接收记录（排除已读/撤回状态）
@@ -132,7 +132,7 @@ public class MessageQueryService {
 
         List<MessageReceiver> receiverList = messageReceiverManager.list(wrapper);
         if (receiverList.isEmpty()) {
-            return Result.ok(new ArrayList<>());
+            return Result.success(new ArrayList<>());
         }
 
         // 根据 messageId 去重，查询消息记录详情
@@ -148,7 +148,7 @@ public class MessageQueryService {
                 dtoList.add(messageConvert.toDTO(record));
             }
         }
-        return Result.ok(dtoList);
+        return Result.success(dtoList);
     }
 
     /**
@@ -160,11 +160,11 @@ public class MessageQueryService {
     public Result<Integer> queryStatus(String messageId) {
         log.info("查询消息状态: {}", messageId);
         if (StrUtil.isBlank(messageId)) {
-            return Result.fail("消息ID不能为空");
+            return Result.error("消息ID不能为空");
         }
         MessageRecord record = messageRecordManager.getByMessageId(messageId);
         if (record == null) {
-            return Result.fail("消息不存在");
+            return Result.error("消息不存在");
         }
         // 根据成功/失败数计算聚合状态
         // 全部成功：2（已发送）；全部失败：5（失败）；部分：2（已发送）；无记录：0（待发送）
@@ -179,7 +179,7 @@ public class MessageQueryService {
         } else {
             status = MessageReceiverStatusEnum.SENT.getCode();
         }
-        return Result.ok(status);
+        return Result.success(status);
     }
 
     /**

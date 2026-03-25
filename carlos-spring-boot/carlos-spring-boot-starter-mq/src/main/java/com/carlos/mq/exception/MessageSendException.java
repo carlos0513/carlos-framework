@@ -1,7 +1,7 @@
 package com.carlos.mq.exception;
 
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 public class MessageSendException extends MessageException {
 
@@ -13,12 +13,12 @@ public class MessageSendException extends MessageException {
         super(message);
     }
 
-    public MessageSendException(Integer errorCode, String message) {
+    public MessageSendException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public MessageSendException(StatusCode statusCode) {
-        super(statusCode);
+    public MessageSendException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public MessageSendException(Throwable cause) {

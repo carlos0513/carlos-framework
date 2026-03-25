@@ -1,7 +1,7 @@
 package com.carlos.disruptor.exception;
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * Disruptor 异常类
@@ -29,11 +29,11 @@ public class DisruptorException extends ComponentException {
         super(cause);
     }
 
-    public DisruptorException(Integer errorCode, String message) {
+    public DisruptorException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public DisruptorException(StatusCode statusCode) {
-        super(statusCode);
+    public DisruptorException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

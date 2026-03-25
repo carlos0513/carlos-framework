@@ -2,7 +2,7 @@ package com.carlos.snowflake.exception;
 
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 缓存异常父类
@@ -22,12 +22,12 @@ public class SnowflakeException extends ComponentException {
         super(message);
     }
 
-    public SnowflakeException(Integer errorCode, String message) {
+    public SnowflakeException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public SnowflakeException(StatusCode statusCode) {
-        super(statusCode);
+    public SnowflakeException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public SnowflakeException(Throwable cause) {

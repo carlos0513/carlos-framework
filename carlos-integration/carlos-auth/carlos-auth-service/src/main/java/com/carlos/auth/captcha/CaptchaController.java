@@ -51,13 +51,13 @@ public class CaptchaController {
         // 检查发送限制（RateLimitService已在AuthController中调用，此处为双重保险）
         if (!rateLimitService.trySendCaptcha("sms", phone)) {
             log.warn("SMS captcha send rate limit exceeded for phone: {}", SensitiveDataUtil.maskPhone(phone));
-            return Result.fail("发送过于频繁，请稍后再试");
+            return Result.error("发送过于频繁，请稍后再试");
         }
 
         // 检查每日上限
         if (!captchaService.canSendCaptcha("sms", phone)) {
             log.warn("SMS captcha daily limit exceeded for phone: {}", SensitiveDataUtil.maskPhone(phone));
-            return Result.fail("今日发送次数已达上限");
+            return Result.error("今日发送次数已达上限");
         }
 
         try {
@@ -69,15 +69,15 @@ public class CaptchaController {
                 captchaService.incrementSendCount("sms", phone);
 
                 log.info("SMS captcha sent successfully to: {}", SensitiveDataUtil.maskPhone(phone));
-                return Result.ok("验证码发送成功");
+                return Result.success("验证码发送成功");
             } else {
                 log.error("Failed to send SMS captcha to: {}", SensitiveDataUtil.maskPhone(phone));
-                return Result.fail("验证码发送失败");
+                return Result.error("验证码发送失败");
             }
 
         } catch (Exception e) {
             log.error("Error sending SMS captcha to: {}", SensitiveDataUtil.maskPhone(phone), e);
-            return Result.fail("验证码发送失败: " + e.getMessage());
+            return Result.error("验证码发送失败: " + e.getMessage());
         }
     }
 
@@ -96,13 +96,13 @@ public class CaptchaController {
         // 检查发送限制
         if (!rateLimitService.trySendCaptcha("email", email)) {
             log.warn("Email captcha send rate limit exceeded for: {}", SensitiveDataUtil.maskEmail(email));
-            return Result.fail("发送过于频繁，请稍后再试");
+            return Result.error("发送过于频繁，请稍后再试");
         }
 
         // 检查每日上限
         if (!captchaService.canSendCaptcha("email", email)) {
             log.warn("Email captcha daily limit exceeded for: {}", SensitiveDataUtil.maskEmail(email));
-            return Result.fail("今日发送次数已达上限");
+            return Result.error("今日发送次数已达上限");
         }
 
         try {
@@ -112,15 +112,15 @@ public class CaptchaController {
                 captchaService.incrementSendCount("email", email);
 
                 log.info("Email captcha sent successfully to: {}", SensitiveDataUtil.maskEmail(email));
-                return Result.ok("验证码发送成功");
+                return Result.success("验证码发送成功");
             } else {
                 log.error("Failed to send email captcha to: {}", SensitiveDataUtil.maskEmail(email));
-                return Result.fail("验证码发送失败");
+                return Result.error("验证码发送失败");
             }
 
         } catch (Exception e) {
             log.error("Error sending email captcha to: {}", SensitiveDataUtil.maskEmail(email), e);
-            return Result.fail("验证码发送失败: " + e.getMessage());
+            return Result.error("验证码发送失败: " + e.getMessage());
         }
     }
 
@@ -144,7 +144,7 @@ public class CaptchaController {
 
             if (!isValid) {
                 log.warn("SMS captcha verification failed for phone: {}", SensitiveDataUtil.maskPhone(phone));
-                return Result.fail("验证码错误或已过期");
+                return Result.error("验证码错误或已过期");
             }
 
             log.info("SMS captcha verified successfully for phone: {}", SensitiveDataUtil.maskPhone(phone));
@@ -152,7 +152,7 @@ public class CaptchaController {
             // TODO: 查询用户，如果不存在则自动注册
             // TODO: 生成并返回JWT令牌
 
-            return Result.ok(
+            return Result.success(
                 CaptchaLoginResponse.builder()
                     .message("验证成功")
                     .requiresRegistration(false) // 根据实际逻辑判断
@@ -162,7 +162,7 @@ public class CaptchaController {
 
         } catch (Exception e) {
             log.error("Error verifying SMS captcha for phone: {}", SensitiveDataUtil.maskPhone(phone), e);
-            return Result.fail("验证失败: " + e.getMessage());
+            return Result.error("验证失败: " + e.getMessage());
         }
     }
 

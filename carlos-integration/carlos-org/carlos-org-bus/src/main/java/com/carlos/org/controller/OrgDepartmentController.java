@@ -102,7 +102,7 @@ public class OrgDepartmentController {
     @Operation(summary = "DM-001 " + BASE_NAME + "树")
     public Result<List<OrgDepartmentTreeVO>> tree() {
         List<OrgDepartmentDTO> dtoList = departmentService.getDepartmentTree();
-        return Result.ok(OrgDepartmentConvert.INSTANCE.buildTreeVOList(dtoList));
+        return Result.success(OrgDepartmentConvert.INSTANCE.buildTreeVOList(dtoList));
     }
 
 

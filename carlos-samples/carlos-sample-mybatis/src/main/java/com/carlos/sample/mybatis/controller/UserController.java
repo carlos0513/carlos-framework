@@ -35,7 +35,7 @@ public class UserController {
     @PostMapping
     public Result<Boolean> create(@RequestBody User user) {
         int result = userMapper.insert(user);
-        return Result.ok(result > 0);
+        return Result.success(result > 0);
     }
 
     /**
@@ -47,7 +47,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public Result<Boolean> delete(@PathVariable Long id) {
         int result = userMapper.deleteById(id);
-        return Result.ok(result > 0);
+        return Result.success(result > 0);
     }
 
     /**
@@ -59,7 +59,7 @@ public class UserController {
     @PutMapping
     public Result<Boolean> update(@RequestBody User user) {
         int result = userMapper.updateById(user);
-        return Result.ok(result > 0);
+        return Result.success(result > 0);
     }
 
     /**
@@ -71,7 +71,7 @@ public class UserController {
     @GetMapping("/{id}")
     public Result<User> getById(@PathVariable Long id) {
         User user = userMapper.selectById(id);
-        return Result.ok(user);
+        return Result.success(user);
     }
 
     /**
@@ -82,7 +82,7 @@ public class UserController {
     @GetMapping("/list")
     public Result<List<User>> list() {
         List<User> list = userMapper.selectList(null);
-        return Result.ok(list);
+        return Result.success(list);
     }
 
     /**
@@ -94,7 +94,7 @@ public class UserController {
     @GetMapping("/status/{status}")
     public Result<List<User>> listByStatus(@PathVariable Integer status) {
         List<User> list = userMapper.selectByStatus(status);
-        return Result.ok(list);
+        return Result.success(list);
     }
 
     /**
@@ -106,7 +106,7 @@ public class UserController {
     @GetMapping("/search")
     public Result<List<User>> searchByUsername(@RequestParam String username) {
         List<User> list = userMapper.selectByUsernameLike(username);
-        return Result.ok(list);
+        return Result.success(list);
     }
 
     /**
@@ -125,6 +125,6 @@ public class UserController {
             .eq(status != null, User::getStatus, status)
             .orderByDesc(User::getCreateTime);
         List<User> list = userMapper.selectList(wrapper);
-        return Result.ok(list);
+        return Result.success(list);
     }
 }

@@ -40,7 +40,7 @@ public class OssController {
     @GetMapping("/init")
     @Operation(summary = "获取 OSS 初始化信息")
     public Result<OssClientInfo> init() {
-        return Result.ok(OssClientInfo.builder()
+        return Result.success(OssClientInfo.builder()
             .endpoint(properties.getEndpoint())
             .publicEndpoint(properties.getPublicEndpoint())
             .accessKey(properties.getAccessKey())
@@ -58,7 +58,7 @@ public class OssController {
     @GetMapping("/bucket/default")
     @Operation(summary = "获取默认桶名称")
     public Result<String> getDefaultBucket() {
-        return Result.ok(properties.getBucketName());
+        return Result.success(properties.getBucketName());
     }
 
     /**
@@ -67,7 +67,7 @@ public class OssController {
     @GetMapping("/bucket/list")
     @Operation(summary = "列出所有存储桶")
     public Result<List<String>> listBuckets() {
-        return Result.ok(ossTemplate.listBuckets());
+        return Result.success(ossTemplate.listBuckets());
     }
 
     /**
@@ -77,7 +77,7 @@ public class OssController {
     @Operation(summary = "检查存储桶是否存在")
     @Parameter(name = "bucketName", description = "桶名称")
     public Result<Boolean> bucketExists(@RequestParam String bucketName) {
-        return Result.ok(ossTemplate.bucketExists(bucketName));
+        return Result.success(ossTemplate.bucketExists(bucketName));
     }
 
     /**
@@ -88,7 +88,7 @@ public class OssController {
     @Parameter(name = "bucketName", description = "桶名称")
     public Result<Void> createBucket(@RequestParam String bucketName) {
         ossTemplate.createBucket(bucketName);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -99,7 +99,7 @@ public class OssController {
     @Parameter(name = "bucketName", description = "桶名称")
     public Result<Void> deleteBucket(@RequestParam String bucketName) {
         ossTemplate.deleteBucket(bucketName);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -121,7 +121,7 @@ public class OssController {
         try {
             OssFile ossFile = ossTemplate.putObject(targetBucket, targetObject,
                 file.getInputStream(), file.getContentType());
-            return Result.ok(ossFile);
+            return Result.success(ossFile);
         } catch (Exception e) {
             log.error("Failed to upload file", e);
             throw new RuntimeException("Failed to upload file: " + e.getMessage());
@@ -139,7 +139,7 @@ public class OssController {
         @RequestParam String objectName,
         @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
-        return Result.ok(ossTemplate.getObjectInfo(targetBucket, objectName));
+        return Result.success(ossTemplate.getObjectInfo(targetBucket, objectName));
     }
 
     /**
@@ -153,7 +153,7 @@ public class OssController {
         @RequestParam String objectName,
         @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
-        return Result.ok(ossTemplate.objectExists(targetBucket, objectName));
+        return Result.success(ossTemplate.objectExists(targetBucket, objectName));
     }
 
     /**
@@ -168,7 +168,7 @@ public class OssController {
         @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
         ossTemplate.deleteObject(targetBucket, objectName);
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -182,7 +182,7 @@ public class OssController {
         @RequestParam String objectName,
         @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
-        return Result.ok(ossTemplate.getObjectUrl(targetBucket, objectName));
+        return Result.success(ossTemplate.getObjectUrl(targetBucket, objectName));
     }
 
     /**
@@ -198,7 +198,7 @@ public class OssController {
         @RequestParam(required = false) String bucketName,
         @RequestParam(required = false, defaultValue = "3600") int expires) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
-        return Result.ok(ossTemplate.getPresignedUrl(targetBucket, objectName, expires));
+        return Result.success(ossTemplate.getPresignedUrl(targetBucket, objectName, expires));
     }
 
     /**
@@ -212,6 +212,6 @@ public class OssController {
         @RequestParam(required = false) String prefix,
         @RequestParam(required = false) String bucketName) {
         String targetBucket = bucketName != null ? bucketName : properties.getBucketName();
-        return Result.ok(ossTemplate.listObjects(targetBucket, prefix));
+        return Result.success(ossTemplate.listObjects(targetBucket, prefix));
     }
 }

@@ -371,13 +371,13 @@ public class ProductController {
     public Result<Product> createProduct(@RequestBody @Valid CreateProductRequest request) {
         Product product = convertToEntity(request);
         Product saved = productService.saveProduct(product);
-        return Result.ok(saved);
+        return Result.success(saved);
     }
 
     @GetMapping("/search")
     public Result<Paging<ProductVO>> searchProducts(ProductQueryParam param) {
         Paging<ProductVO> page = productService.searchProducts(param);
-        return Result.ok(page);
+        return Result.success(page);
     }
 
     @GetMapping("/{id}")
@@ -386,7 +386,7 @@ public class ProductController {
         if (product == null) {
             throw new ServiceException("产品不存在");
         }
-        return Result.ok(convertToVO(product));
+        return Result.success(convertToVO(product));
     }
 }
 ```

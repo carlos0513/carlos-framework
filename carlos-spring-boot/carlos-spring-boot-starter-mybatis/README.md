@@ -63,7 +63,7 @@ PageInfo<User> pageInfo = pageInfo(param);
 public Result<PageInfo<User>> page(@RequestBody ParamPage param) {
     PageInfo<User> pageInfo = new PageInfo<>(param);
     userService.page(pageInfo);
-    return Result.ok(pageInfo);
+    return Result.success(pageInfo);
 }
 ```
 
@@ -88,7 +88,7 @@ public Result<PageInfo<User>> page(@RequestBody ParamPageOrder param) {
     // 执行查询
     userService.page(pageInfo, queryWrapper().eq(User::getStatus, 1));
 
-    return Result.ok(pageInfo);
+    return Result.success(pageInfo);
 }
 ```
 
@@ -626,29 +626,29 @@ public class UserController {
     @PostMapping
     public Result<User> create(@RequestBody User user) {
         userService.save(user);
-        return Result.ok(user);
+        return Result.success(user);
     }
 
     @GetMapping("/{id}")
     public Result<User> getById(@PathVariable Long id) {
-        return Result.ok(userService.getById(id));
+        return Result.success(userService.getById(id));
     }
 
     @PutMapping
     public Result<Void> update(@RequestBody User user) {
         userService.updateById(user);
-        return Result.ok();
+        return Result.success();
     }
 
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Long id) {
         userService.removeById(id);
-        return Result.ok();
+        return Result.success();
     }
 
     @PostMapping("/page")
     public Result<PageInfo<User>> page(@RequestBody ParamPageOrder param) {
-        return Result.ok(userService.pageQuery(param));
+        return Result.success(userService.pageQuery(param));
     }
 }
 ```

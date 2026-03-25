@@ -1,6 +1,6 @@
 package com.carlos.gateway.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.CommonErrorCode;
 
 /**
  * <p>
@@ -27,14 +27,14 @@ public class ServiceNotFoundException extends GatewayException {
     private final String requestPath;
 
     public ServiceNotFoundException(String message) {
-        super(message, 404, StatusCode.NOT_FOUND.getCode());
+        super(message, 404, CommonErrorCode.NOT_FOUND.getCode());
         this.serviceName = null;
         this.requestPath = null;
     }
 
     public ServiceNotFoundException(String serviceName, String requestPath) {
         super(String.format("服务 [%s] 未找到，请求路径: %s", serviceName, requestPath),
-            404, StatusCode.NOT_FOUND.getCode());
+            404, CommonErrorCode.NOT_FOUND.getCode());
         this.serviceName = serviceName;
         this.requestPath = requestPath;
     }

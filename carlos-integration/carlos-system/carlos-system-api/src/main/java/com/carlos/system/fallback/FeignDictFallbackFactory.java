@@ -31,17 +31,17 @@ public class FeignDictFallbackFactory implements FallbackFactory<ApiDict> {
 
             @Override
             public Result<Dict> getById(String id) {
-                return Result.fail();
+                return Result.error();
             }
 
             @Override
             public Result<Dict> getByCode(String code) {
-                return Result.fail();
+                return Result.error();
             }
 
             @Override
             public Result<List<DictItemAO>> list(String code) {
-                return Result.fail();
+                return Result.error();
             }
         };
     }

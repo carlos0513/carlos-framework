@@ -62,19 +62,19 @@ public class MessageSendService {
 
         // 1. 参数校验
         if (CollUtil.isEmpty(param.getReceivers())) {
-            return Result.fail("接收人不能为空");
+            return Result.error("接收人不能为空");
         }
         if (StrUtil.isBlank(param.getTemplateCode())) {
-            return Result.fail("模板编码不能为空");
+            return Result.error("模板编码不能为空");
         }
 
         // 2. 查询模板信息
         MessageTemplateDTO template = messageTemplateManager.getByTemplateCode(param.getTemplateCode());
         if (template == null) {
-            return Result.fail("模板不存在: " + param.getTemplateCode());
+            return Result.error("模板不存在: " + param.getTemplateCode());
         }
         if (Boolean.FALSE.equals(template.getEnabled())) {
-            return Result.fail("消息模板已禁用: " + param.getTemplateCode());
+            return Result.error("消息模板已禁用: " + param.getTemplateCode());
         }
 
         // 3. 生成消息ID
@@ -111,7 +111,7 @@ public class MessageSendService {
         }
         if (CollUtil.isEmpty(channelCodes)) {
             messageRecordManager.updateStatistics(messageId, 0, param.getReceivers().size());
-            return Result.fail("未指定发送渠道");
+            return Result.error("未指定发送渠道");
         }
 
         // 7. 保存接收人记录并发送消息
@@ -200,7 +200,7 @@ public class MessageSendService {
         log.info("消息发送完成, messageId={}, total={}, success={}, fail={}",
             messageId, param.getReceivers().size(), totalSuccess, totalFail);
 
-        return Result.ok(messageId);
+        return Result.success(messageId);
     }
 
     /**
@@ -214,16 +214,16 @@ public class MessageSendService {
         log.info("异步发送消息: {}", param);
 
         if (CollUtil.isEmpty(param.getReceivers())) {
-            return Result.fail("接收人不能为空");
+            return Result.error("接收人不能为空");
         }
         if (StrUtil.isBlank(param.getTemplateCode())) {
-            return Result.fail("模板编码不能为空");
+            return Result.error("模板编码不能为空");
         }
 
         // 查询模板
         MessageTemplateDTO template = messageTemplateManager.getByTemplateCode(param.getTemplateCode());
         if (template == null) {
-            return Result.fail("模板不存在: " + param.getTemplateCode());
+            return Result.error("模板不存在: " + param.getTemplateCode());
         }
 
         // 生成消息ID
@@ -278,7 +278,7 @@ public class MessageSendService {
         // 通过独立 Bean 异步执行发送（避免 @Async 自调用代理失效）
         messageAsyncExecutor.doSendAsync(messageId, messageContent, messageTitle, template.getTypeCode(), param);
 
-        return Result.ok(messageId);
+        return Result.success(messageId);
     }
 
     /**
@@ -293,19 +293,19 @@ public class MessageSendService {
         log.info("定时发送消息, 时间: {}", scheduleTime);
 
         if (scheduleTime == null || scheduleTime.isBefore(LocalDateTime.now())) {
-            return Result.fail("定时时间无效，必须是未来时间");
+            return Result.error("定时时间无效，必须是未来时间");
         }
         if (CollUtil.isEmpty(param.getReceivers())) {
-            return Result.fail("接收人不能为空");
+            return Result.error("接收人不能为空");
         }
         if (StrUtil.isBlank(param.getTemplateCode())) {
-            return Result.fail("模板编码不能为空");
+            return Result.error("模板编码不能为空");
         }
 
         // 查询模板
         MessageTemplateDTO template = messageTemplateManager.getByTemplateCode(param.getTemplateCode());
         if (template == null) {
-            return Result.fail("模板不存在: " + param.getTemplateCode());
+            return Result.error("模板不存在: " + param.getTemplateCode());
         }
 
         // 生成消息ID
@@ -357,7 +357,7 @@ public class MessageSendService {
         }
 
         log.info("消息已加入定时队列: {}, 发送时间: {}", messageId, scheduleTime);
-        return Result.ok(messageId);
+        return Result.success(messageId);
     }
 
     /**
@@ -371,7 +371,7 @@ public class MessageSendService {
 
         MessageRecord record = messageRecordManager.getByMessageId(messageId);
         if (record == null) {
-            return Result.fail("消息不存在: " + messageId);
+            return Result.error("消息不存在: " + messageId);
         }
 
         List<MessageReceiver> receivers = messageReceiverManager.listByMessageId(messageId);
@@ -385,7 +385,7 @@ public class MessageSendService {
             }
         }
         log.info("撤回消息完成, messageId={}, revokedCount={}", messageId, revokedCount);
-        return Result.ok(true);
+        return Result.success(true);
     }
 
     /**

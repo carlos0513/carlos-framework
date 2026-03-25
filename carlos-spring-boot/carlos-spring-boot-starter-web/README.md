@@ -19,7 +19,7 @@ public class UserController {
     @PostMapping("/user")
     public Result<User> createUser(@Valid @RequestBody UserDTO dto) {
         // 参数验证失败会被自动捕获并返回友好的错误信息
-        return Result.ok(userService.create(dto));
+        return Result.success(userService.create(dto));
     }
 
     @GetMapping("/user/{id}")
@@ -59,7 +59,7 @@ public class UserController {
     // 已经是 Result 类型的不会重复包装
     @GetMapping("/user/list")
     public Result<List<User>> listUsers() {
-        return Result.ok(userService.list());
+        return Result.success(userService.list());
     }
 }
 ```
@@ -202,7 +202,7 @@ public Result<List<User>> search(
     @RequestParam LocalDateTime createTime
 ) {
     // 字符串自动转换为 Date、LocalDateTime 等类型
-    return Result.ok(userService.search(keyword, startDate, createTime));
+    return Result.success(userService.search(keyword, startDate, createTime));
 }
 ```
 
@@ -364,13 +364,13 @@ public class UserController {
     @Operation(summary = "创建用户", description = "创建新用户")
     @PostMapping
     public Result<User> create(@RequestBody UserDTO dto) {
-        return Result.ok(userService.create(dto));
+        return Result.success(userService.create(dto));
     }
 
     @Operation(summary = "查询用户", description = "根据 ID 查询用户")
     @GetMapping("/{id}")
     public Result<User> getById(@PathVariable Long id) {
-        return Result.ok(userService.getById(id));
+        return Result.success(userService.getById(id));
     }
 }
 ```

@@ -1,5 +1,7 @@
 package com.carlos.gateway.exception;
 
+import com.carlos.core.response.CommonErrorCode;
+
 /**
  * <p>
  * 重放攻击异常
@@ -25,13 +27,13 @@ public class ReplayAttackException extends GatewayException {
     private final String requestId;
 
     public ReplayAttackException(String message) {
-        super(message, 403, 54031);
+        super(CommonErrorCode.FORBIDDEN, message);
         this.attackType = AttackType.UNKNOWN;
         this.requestId = null;
     }
 
     public ReplayAttackException(String message, AttackType attackType, String requestId) {
-        super(message, 403, 54031);
+        super(CommonErrorCode.FORBIDDEN, message);
         this.attackType = attackType;
         this.requestId = requestId;
     }

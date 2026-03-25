@@ -4,7 +4,7 @@ import com.carlos.core.auth.UserContext;
 import com.carlos.core.exception.ComponentException;
 import com.carlos.core.exception.ServiceException;
 import com.carlos.core.interfaces.ApplicationExtend;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.CommonErrorCode;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +56,7 @@ public final class ExtendInfoUtil {
         final UserContext context = extend.getUserContext();
         final Serializable roleId = context.getRoleId();
         if (roleId == null) {
-            throw new ServiceException(StatusCode.NOT_PERMISSION);
+            throw new ServiceException(CommonErrorCode.FORBIDDEN);
         }
         return roleId;
     }
@@ -75,7 +75,7 @@ public final class ExtendInfoUtil {
         final UserContext context = extend.getUserContext();
         final Serializable departmentId = context.getDepartmentId();
         if (departmentId == null) {
-            throw new ServiceException(StatusCode.NOT_PERMISSION);
+            throw new ServiceException(CommonErrorCode.FORBIDDEN);
         }
         return departmentId;
     }

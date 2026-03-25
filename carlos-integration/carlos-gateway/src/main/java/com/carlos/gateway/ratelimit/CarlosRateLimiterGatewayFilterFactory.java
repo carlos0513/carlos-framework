@@ -1,5 +1,6 @@
 package com.carlos.gateway.ratelimit;
 
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.ErrorResponse;
 import com.carlos.gateway.ratelimit.config.CarlosRateLimiterProperties;
 import com.carlos.gateway.ratelimit.keyresolver.CarlosKeyResolver;
@@ -208,8 +209,8 @@ public class CarlosRateLimiterGatewayFilterFactory
 
             ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(statusCode.value())
-                .code(5429)  // 业务错误码
-                .message("请求过于频繁，请稍后重试")
+                .code(CommonErrorCode.SERVICE_UNAVAILABLE.getCode())  // 业务错误码
+                .msg("请求过于频繁，请稍后重试")
                 .extra(Map.of(
                     "limitKey", key,
                     "retryAfter", responseConfig.getRetryAfter()
@@ -223,9 +224,10 @@ public class CarlosRateLimiterGatewayFilterFactory
                 } catch (Exception e) {
                     log.error("Failed to serialize rate limit response", e);
                     String fallback = String.format(
-                        "{\"success\":false,\"status\":%d,\"code\":5429,\"message\":\"Too Many Requests\"}",
+                        "{\"success\":false,\"status\":%d,\"code\":5429,\"msg\":\"Too Many Requests\"}",
                         statusCode.value()
                     );
+                    // TODO: Carlos 2026-03-25
                     return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
                 }
             }));
@@ -244,8 +246,8 @@ public class CarlosRateLimiterGatewayFilterFactory
 
         ErrorResponse errorResponse = ErrorResponse.builder()
             .status(HttpStatus.FORBIDDEN.value())
-            .code(5403)
-            .message("访问被拒绝")
+            .code(CommonErrorCode.SERVICE_CALL_ERROR.getCode())
+            .msg("访问被拒绝")
             .detail(reason)
             .extra(Map.of("key", key))
             .build();
@@ -255,7 +257,8 @@ public class CarlosRateLimiterGatewayFilterFactory
                 byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
                 return response.bufferFactory().wrap(bytes);
             } catch (Exception e) {
-                String fallback = "{\"success\":false,\"status\":403,\"code\":5403,\"message\":\"Forbidden\"}";
+                // TODO: Carlos 2026-03-25
+                String fallback = "{\"success\":false,\"status\":403,\"code\":5403,\"msg\":\"Forbidden\"}";
                 return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
             }
         }));

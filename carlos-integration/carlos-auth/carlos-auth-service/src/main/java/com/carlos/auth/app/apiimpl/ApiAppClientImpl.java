@@ -44,7 +44,7 @@ public class ApiAppClientImpl implements ApiAppClient {
     @GetMapping(value = "/id")
     public Result<AppClientAO> getById(@RequestParam("id") Serializable id) {
         AppClientDTO client = service.findById(id, true);
-        return Result.ok(AppClientConvert.INSTANCE.toAO(client));
+        return Result.success(AppClientConvert.INSTANCE.toAO(client));
     }
 
     /**
@@ -59,7 +59,7 @@ public class ApiAppClientImpl implements ApiAppClient {
     @GetMapping(value = "/appKey")
     public Result<AppClientAO> getByAppKey(@RequestParam("appKey") String appKey) {
         AppClientDTO client = service.findByAppkey(appKey, true);
-        return Result.ok(AppClientConvert.INSTANCE.toAO(client));
+        return Result.success(AppClientConvert.INSTANCE.toAO(client));
     }
 
 }

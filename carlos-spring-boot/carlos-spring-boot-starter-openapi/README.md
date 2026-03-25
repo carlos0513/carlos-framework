@@ -282,7 +282,7 @@ public class InternalController {
     
     // 响应定义
     responses = {
-        @ApiResponse(
+        @Result(
             responseCode = "200",
             description = "查询成功",
             content = @Content(
@@ -290,8 +290,8 @@ public class InternalController {
                 schema = @Schema(implementation = UserVO.class)
             )
         ),
-        @ApiResponse(responseCode = "404", description = "用户不存在"),
-        @ApiResponse(responseCode = "500", description = "服务器内部错误")
+        @Result(responseCode = "404", description = "用户不存在"),
+        @Result(responseCode = "500", description = "服务器内部错误")
     }
 )
 @GetMapping("/{id}")
@@ -300,11 +300,11 @@ public UserVO getUser(@PathVariable Long id, @RequestParam(defaultValue = "false
 }
 ```
 
-@ApiResponses / @ApiResponse - 响应定义
+@Results / @Result - 响应定义
 
 ```java
-@ApiResponses(value = {
-    @ApiResponse(
+@Results(value = {
+    @Result(
         responseCode = "201",
         description = "创建成功",
         content = @Content(
@@ -319,14 +319,14 @@ public UserVO getUser(@PathVariable Long id, @RequestParam(defaultValue = "false
             schema = @Schema(type = "string")
         )
     ),
-    @ApiResponse(
+    @Result(
         responseCode = "400", 
         description = "请求参数错误",
         content = @Content(
             schema = @Schema(implementation = ErrorResponse.class)
         )
     ),
-    @ApiResponse(responseCode = "409", description = "用户已存在")
+    @Result(responseCode = "409", description = "用户已存在")
 })
 @PostMapping
 public ResponseEntity<UserVO> createUser(@RequestBody UserDTO dto) {
@@ -511,7 +511,7 @@ public enum UserStatus {
                         schema = @Schema(implementation = EventDTO.class)
                     )
                 ),
-                responses = @ApiResponse(responseCode = "200", description = "接收成功")
+                responses = @Result(responseCode = "200", description = "接收成功")
             )
         )
     }
@@ -538,13 +538,13 @@ public class UserController {
         summary = "创建用户",
         description = "创建新用户，用户名不能重复",
         responses = {
-            @ApiResponse(
+            @Result(
                 responseCode = "201",
                 description = "创建成功",
                 content = @Content(schema = @Schema(implementation = UserVO.class))
             ),
-            @ApiResponse(responseCode = "400", description = "参数校验失败"),
-            @ApiResponse(responseCode = "409", description = "用户名已存在")
+            @Result(responseCode = "400", description = "参数校验失败"),
+            @Result(responseCode = "409", description = "用户名已存在")
         }
     )
     @ApiOperationSupport(order = 33)
@@ -594,8 +594,8 @@ public class UserController {
         summary = "更新用户",
         description = "根据ID更新用户信息",
         responses = {
-            @ApiResponse(responseCode = "200", description = "更新成功"),
-            @ApiResponse(responseCode = "404", description = "用户不存在", content = @Content)
+            @Result(responseCode = "200", description = "更新成功"),
+            @Result(responseCode = "404", description = "用户不存在", content = @Content)
         }
     )
     @PutMapping("/{id}")
@@ -611,8 +611,8 @@ public class UserController {
         description = "逻辑删除用户",
         deprecated = true,  // 标记为废弃
         responses = {
-            @ApiResponse(responseCode = "204", description = "删除成功", content = @Content),
-            @ApiResponse(responseCode = "404", description = "用户不存在")
+            @Result(responseCode = "204", description = "删除成功", content = @Content),
+            @Result(responseCode = "404", description = "用户不存在")
         }
     )
     @DeleteMapping("/{id}")
@@ -696,7 +696,7 @@ springdoc:
 | 方法描述 | `@ApiOperation`          | `@Operation`                    |
 | 参数描述 | `@ApiParam`              | `@Parameter`                    |
 | 模型描述 | `@ApiModel`              | `@Schema`                       |
-| 响应描述 | `@ApiResponse`           | `@ApiResponse`（保留）              |
+| 响应描述 | `@Result`                | `@Result`（保留）                   |
 | 请求体  | 不支持                      | `@RequestBody`                  |
 | 回调   | 不支持                      | `@Callback`                     |
 | 链接   | 不支持                      | `@Link`                         |
@@ -768,13 +768,13 @@ public OpenAPI customOpenAPI() {
 
 ```java
 @Operation(summary = "获取用户", responses = {
-    @ApiResponse(responseCode = "200", description = "成功",
+    @Result(responseCode = "200", description = "成功",
         content = @Content(schema = @Schema(implementation = User.class),
         examples = @ExampleObject(
             name = "成功示例",
             value = "{\"code\":2000,\"message\":\"成功\",\"data\":{\"id\":1,\"username\":\"admin\"}}"
         ))),
-    @ApiResponse(responseCode = "404", description = "用户不存在")
+    @Result(responseCode = "404", description = "用户不存在")
 })
 @GetMapping("/{id}")
 public Result<User> getUser(@PathVariable Long id) {

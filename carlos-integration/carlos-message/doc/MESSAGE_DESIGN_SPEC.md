@@ -485,7 +485,7 @@ public interface MessageSendApi {
      * @return 发送结果
      */
     @PostMapping("/send")
-    Result<SendResult> send(@RequestBody @Valid MessageSendParam request);
+   Result<SendResult> send(@RequestBody @Valid MessageSendParam request);
     
     /**
      * 异步发送消息
@@ -494,7 +494,7 @@ public interface MessageSendApi {
      * @return 消息ID
      */
     @PostMapping("/sendAsync")
-    Result<String> sendAsync(@RequestBody @Valid MessageSendParam request);
+   Result<String> sendAsync(@RequestBody @Valid MessageSendParam request);
     
     /**
      * 批量发送消息
@@ -503,7 +503,7 @@ public interface MessageSendApi {
      * @return 批量发送结果
      */
     @PostMapping("/sendBatch")
-    Result<BatchSendResult> sendBatch(@RequestBody @Valid List<MessageSendParam> requests);
+   Result<BatchSendResult> sendBatch(@RequestBody @Valid List<MessageSendParam> requests);
     
     /**
      * 定时发送消息
@@ -513,7 +513,7 @@ public interface MessageSendApi {
      * @return 消息ID
      */
     @PostMapping("/schedule")
-    Result<String> schedule(
+   Result<String> schedule(
         @RequestBody @Valid MessageSendParam request,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime scheduleTime
     );
@@ -525,7 +525,7 @@ public interface MessageSendApi {
      * @return 是否成功
      */
     @PostMapping("/{messageId}/revoke")
-    Result<Boolean> revoke(@PathVariable String messageId);
+   Result<Boolean> revoke(@PathVariable String messageId);
     
     /**
      * 查询消息状态
@@ -534,7 +534,7 @@ public interface MessageSendApi {
      * @return 消息状态
      */
     @GetMapping("/{messageId}/status")
-    Result<MessageStatusAO> queryStatus(@PathVariable String messageId);
+   Result<MessageStatusAO> queryStatus(@PathVariable String messageId);
 }
 ```
 
@@ -559,7 +559,7 @@ public interface MessageQueryApi {
      * @return 消息记录
      */
     @GetMapping("/{messageId}")
-    Result<MessageRecordAO> getById(@PathVariable String messageId);
+   Result<MessageRecordAO> getById(@PathVariable String messageId);
     
     /**
      * 分页查询消息记录
@@ -568,7 +568,7 @@ public interface MessageQueryApi {
      * @return 分页结果
      */
     @PostMapping("/page")
-    Result<Paging<MessageRecordAO>> page(@RequestBody @Valid MessagePageParam param);
+   Result<Paging<MessageRecordAO>> page(@RequestBody @Valid MessagePageParam param);
     
     /**
      * 查询消息接收人列表
@@ -577,7 +577,7 @@ public interface MessageQueryApi {
      * @return 接收人列表
      */
     @GetMapping("/{messageId}/receivers")
-    Result<List<MessageReceiverAO>> getReceivers(@PathVariable String messageId);
+   Result<List<MessageReceiverAO>> getReceivers(@PathVariable String messageId);
     
     /**
      * 查询用户的未读消息
@@ -586,7 +586,7 @@ public interface MessageQueryApi {
      * @return 未读消息列表
      */
     @GetMapping("/unread/{userId}")
-    Result<List<MessageRecordAO>> getUnread(@PathVariable String userId);
+   Result<List<MessageRecordAO>> getUnread(@PathVariable String userId);
 }
 ```
 
@@ -603,23 +603,23 @@ public class MessageTemplateController {
     
     @PostMapping
     @Operation(summary = "创建模板")
-    Result<Long> create(@RequestBody @Valid TemplateCreateParam param);
+   Result<Long> create(@RequestBody @Valid TemplateCreateParam param);
     
     @PutMapping("/{id}")
     @Operation(summary = "更新模板")
-    Result<Void> update(@PathVariable Long id, @RequestBody @Valid TemplateUpdateParam param);
+   Result<Void> update(@PathVariable Long id, @RequestBody @Valid TemplateUpdateParam param);
     
     @DeleteMapping("/{id}")
     @Operation(summary = "删除模板")
-    Result<Void> delete(@PathVariable Long id);
+   Result<Void> delete(@PathVariable Long id);
     
     @GetMapping("/{code}")
     @Operation(summary = "根据编码查询模板")
-    Result<MessageTemplateVO> getByCode(@PathVariable String code);
+   Result<MessageTemplateVO> getByCode(@PathVariable String code);
     
     @PostMapping("/page")
     @Operation(summary = "分页查询模板")
-    Result<Paging<MessageTemplateVO>> page(@RequestBody @Valid TemplatePageParam param);
+   Result<Paging<MessageTemplateVO>> page(@RequestBody @Valid TemplatePageParam param);
 }
 
 /**
@@ -632,27 +632,27 @@ public class MessageChannelController {
     
     @PostMapping
     @Operation(summary = "创建渠道")
-    Result<Long> create(@RequestBody @Valid ChannelCreateParam param);
+   Result<Long> create(@RequestBody @Valid ChannelCreateParam param);
     
     @PutMapping("/{id}")
     @Operation(summary = "更新渠道")
-    Result<Void> update(@PathVariable Long id, @RequestBody @Valid ChannelUpdateParam param);
+   Result<Void> update(@PathVariable Long id, @RequestBody @Valid ChannelUpdateParam param);
     
     @PostMapping("/{code}/enable")
     @Operation(summary = "启用渠道")
-    Result<Void> enable(@PathVariable String code);
+   Result<Void> enable(@PathVariable String code);
     
     @PostMapping("/{code}/disable")
     @Operation(summary = "禁用渠道")
-    Result<Void> disable(@PathVariable String code);
+   Result<Void> disable(@PathVariable String code);
     
     @GetMapping("/{code}")
     @Operation(summary = "根据编码查询渠道")
-    Result<MessageChannelVO> getByCode(@PathVariable String code);
+   Result<MessageChannelVO> getByCode(@PathVariable String code);
     
     @PostMapping("/page")
     @Operation(summary = "分页查询渠道")
-    Result<Paging<MessageChannelVO>> page(@RequestBody @Valid ChannelPageParam param);
+   Result<Paging<MessageChannelVO>> page(@RequestBody @Valid ChannelPageParam param);
 }
 ```
 

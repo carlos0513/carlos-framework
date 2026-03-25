@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
@@ -40,8 +39,8 @@ public class DemoController {
         }
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = UserVO.class))),
-        @ApiResponse(responseCode = "404", description = "用户不存在")
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = UserVO.class))),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "用户不存在")
     })
     @GetMapping("/user/{id}")
     public Result<UserVO> getUserById(@PathVariable Long id) {
@@ -50,7 +49,7 @@ public class DemoController {
         user.setName("张三");
         user.setAge(25);
         user.setEmail("zhangsan@example.com");
-        return Result.ok(user);
+        return Result.success(user);
     }
 
     /**
@@ -66,8 +65,8 @@ public class DemoController {
         content = @Content(schema = @Schema(implementation = UserCreateParam.class))
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "创建成功", content = @Content(schema = @Schema(implementation = UserVO.class))),
-        @ApiResponse(responseCode = "400", description = "参数错误")
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "创建成功", content = @Content(schema = @Schema(implementation = UserVO.class))),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "参数错误")
     })
     @PostMapping("/user")
     public Result<UserVO> createUser(@RequestBody UserCreateParam param) {
@@ -76,7 +75,7 @@ public class DemoController {
         user.setName(param.getName());
         user.setAge(param.getAge());
         user.setEmail(param.getEmail());
-        return Result.ok(user);
+        return Result.success(user);
     }
 
     /**
@@ -97,7 +96,7 @@ public class DemoController {
         user.setName(param.getName());
         user.setAge(param.getAge());
         user.setEmail(param.getEmail());
-        return Result.ok(user);
+        return Result.success(user);
     }
 
     /**
@@ -110,7 +109,7 @@ public class DemoController {
     @Parameter(name = "id", description = "用户ID", required = true, in = ParameterIn.PATH)
     @DeleteMapping("/user/{id}")
     public Result<Boolean> deleteUser(@PathVariable Long id) {
-        return Result.ok(true);
+        return Result.success(true);
     }
 
     /**
@@ -132,7 +131,7 @@ public class DemoController {
         @RequestParam(required = false, defaultValue = "1") Integer status,
         @RequestParam(required = false, defaultValue = "1") Integer pageNum,
         @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        return Result.ok(List.of());
+        return Result.success(List.of());
     }
 
     /**
@@ -145,7 +144,7 @@ public class DemoController {
     @Parameter(name = "ids", description = "用户ID列表", required = true, example = "[1,2,3]")
     @PostMapping("/user/batch-delete")
     public Result<Boolean> batchDeleteUsers(@RequestBody List<Long> ids) {
-        return Result.ok(true);
+        return Result.success(true);
     }
 
     /**

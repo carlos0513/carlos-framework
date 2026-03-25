@@ -1,6 +1,6 @@
 package com.carlos.integration.common.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -22,12 +22,12 @@ public class DockingRequestException extends DockingException {
         super(message);
     }
 
-    public DockingRequestException(Integer errorCode, String message) {
+    public DockingRequestException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public DockingRequestException(StatusCode statusCode) {
-        super(statusCode);
+    public DockingRequestException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public DockingRequestException(Throwable cause) {

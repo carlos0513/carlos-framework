@@ -43,7 +43,7 @@ public class ApiMenuImpl implements ApiMenu {
     public Result<MenuAO> getMenuById(@RequestParam("id") String id) {
         MenuDTO dto = menuManager.getDtoById(id);
         MenuAO ao = MenuConvert.INSTANCE.toAO(dto);
-        return Result.ok(ao);
+        return Result.success(ao);
     }
 
 
@@ -52,10 +52,10 @@ public class ApiMenuImpl implements ApiMenu {
     @Operation(summary = "获取菜单信息")
     public Result<List<MenuAO>> listMenus(@RequestBody Set<String> ids) {
         if (CollectionUtil.isEmpty(ids)) {
-            return Result.ok(Collections.emptyList());
+            return Result.success(Collections.emptyList());
         }
         List<MenuDTO> menus = menuService.getByIds(ids);
-        return Result.ok(MenuConvert.INSTANCE.toAOList(menus));
+        return Result.success(MenuConvert.INSTANCE.toAOList(menus));
     }
 
 
@@ -64,7 +64,7 @@ public class ApiMenuImpl implements ApiMenu {
     @Override
     public Result<List<MenuAO>> allMenu() {
         List<MenuDTO> menus = menuService.all();
-        return Result.ok(MenuConvert.INSTANCE.toAOList(menus));
+        return Result.success(MenuConvert.INSTANCE.toAOList(menus));
     }
 
     /**
@@ -78,7 +78,7 @@ public class ApiMenuImpl implements ApiMenu {
     @GetMapping(value = "type")
     public Result<List<MenuAO>> listMenuByType(MenuType menuType) {
         List<MenuDTO> menus = menuService.listByType(menuType);
-        return Result.ok(MenuConvert.INSTANCE.toAOList(menus));
+        return Result.success(MenuConvert.INSTANCE.toAOList(menus));
     }
 }
 

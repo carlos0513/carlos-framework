@@ -55,7 +55,7 @@ public class ApmController {
 
         log.info("[TraceId: {}] 获取追踪信息", unifiedTraceId);
 
-        return Result.ok(traceInfo);
+        return Result.success(traceInfo);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ApmController {
 
         log.info("[TraceId: {}] 获取 SkyWalking 信息", traceId);
 
-        return Result.ok(swInfo);
+        return Result.success(swInfo);
     }
 
     /**
@@ -118,7 +118,7 @@ public class ApmController {
         TraceUtil.annotate("Order created successfully");
         SkyWalkingUtil.logInfo("订单创建成功: " + order.get("orderId"));
 
-        return Result.ok(order);
+        return Result.success(order);
     }
 
     /**
@@ -144,7 +144,7 @@ public class ApmController {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("[TraceId: {}] 耗时操作被中断", traceId);
-            return Result.fail("操作被中断");
+            return Result.error("操作被中断");
         }
 
         long actualTime = System.currentTimeMillis() - startTime;
@@ -155,7 +155,7 @@ public class ApmController {
         result.put("actualTime", actualTime);
         result.put("traceId", traceId);
 
-        return Result.ok(result);
+        return Result.success(result);
     }
 
     /**
@@ -174,7 +174,7 @@ public class ApmController {
             SkyWalkingUtil.setError("用户触发模拟错误");
             SkyWalkingUtil.setTag("error.simulated", "true");
             log.error("[TraceId: {}] 模拟错误已触发", traceId);
-            return Result.fail("模拟的错误响应");
+            return Result.error("模拟的错误响应");
         }
 
         Map<String, Object> result = new HashMap<>();
@@ -184,7 +184,7 @@ public class ApmController {
 
         SkyWalkingUtil.logInfo("模拟错误场景处理成功");
 
-        return Result.ok(result);
+        return Result.success(result);
     }
 
     /**
@@ -204,6 +204,6 @@ public class ApmController {
 
         log.info("[TraceId: {}] 获取 MDC 信息", traceId);
 
-        return Result.ok(mdcInfo);
+        return Result.success(mdcInfo);
     }
 }

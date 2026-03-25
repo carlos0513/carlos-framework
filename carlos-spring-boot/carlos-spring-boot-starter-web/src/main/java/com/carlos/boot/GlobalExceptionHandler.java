@@ -4,184 +4,379 @@ import cn.hutool.json.JSONConfig;
 import cn.hutool.json.JSONUtil;
 import com.carlos.boot.request.RequestInfo;
 import com.carlos.boot.request.RequestUtil;
-import com.carlos.core.exception.DaoException;
-import com.carlos.core.exception.GlobalException;
-import com.carlos.core.exception.RestException;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.*;
+import com.carlos.core.response.CommonErrorCode;
+import com.carlos.core.response.ErrorCode;
+import com.carlos.core.response.FieldErrorDetail;
 import com.carlos.core.response.Result;
-import com.carlos.core.response.StatusCode;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
+ * 全局异常处理器
  * <p>
- * 全局异常监听
- * </p>
+ * 统一处理各类异常，转换为标准 Result 响应格式
+ * <p>
+ * 错误码规范：5位数字字符串 A-BB-CC
+ * <ul>
+ *   <li>A - 错误级别：0成功，1客户端错误，2业务错误，3第三方错误，5系统错误</li>
+ *   <li>BB - 模块编码：00通用，01用户，02认证等</li>
+ *   <li>CC - 具体错误序号</li>
+ * </ul>
  *
  * @author carlos
- * @date 2020/4/10 15:32
+ * @since 1.0.0
+ * @see Result
+ * @see CommonErrorCode
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // ==================== 参数校验异常 ====================
+
     /**
-     * 接口参数校验异常
+     * 处理 @Valid @RequestBody 校验失败
      *
      * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.OK)
-    public Result<List<String>> handleMethodArgumentNotValidExceptionHandler(final MethodArgumentNotValidException exception) {
-        log.error("MethodArgumentNotValidException ", exception);
+    public ResponseEntity<Result<Void>> handleMethodArgumentNotValid(
+        MethodArgumentNotValidException exception, HttpServletRequest request) {
+
+        List<FieldErrorDetail> details = exception.getBindingResult().getFieldErrors().stream()
+            .map(this::convertToDetail)
+            .collect(Collectors.toList());
+
+        log.warn("[参数校验失败] {} - {}", request.getRequestURI(), details);
         printRequestDetail();
-        final BindingResult bindingResult = exception.getBindingResult();
-        final List<String> list = new ArrayList<>();
-        final List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        for (final FieldError fieldError : fieldErrors) {
-            list.add(fieldError.getDefaultMessage());
-        }
-        Collections.sort(list);
-        log.error(getApiCodeString(StatusCode.PARAMETER_EXCEPTION) + ":" + list);
-        return Result.fail(StatusCode.PARAMETER_EXCEPTION, list.get(0));
+
+        Result<Void> response = Result.validationError(details);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     /**
-     * 参数校验异常
+     * 处理 @ModelAttribute / @RequestParam 绑定校验失败
      *
-     * @return com.carlos.core.response.ResultVO<java.lang.String>
-     * @author carlos
-     * @date 2020/10/24 0:16
+     * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
      */
     @ExceptionHandler(BindException.class)
-    @ResponseStatus(HttpStatus.OK)
-    public Result<String> bindExceptionHandler(final BindException exception) {
-        final List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-        final String errorMessage = fieldErrors.get(0).getDefaultMessage();
-        log.error(errorMessage, exception);
-        return Result.fail(StatusCode.PARAMETER_EXCEPTION, errorMessage);
+    public ResponseEntity<Result<Void>> handleBindException(
+        BindException exception, HttpServletRequest request) {
 
-    }
+        List<FieldErrorDetail> details = exception.getFieldErrors().stream()
+            .map(this::convertToDetail)
+            .collect(Collectors.toList());
 
-
-    /**
-     * HTTP解析请求参数异常
-     *
-     * @param exception 异常对象
-     */
-    @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.OK)
-    public Result<Boolean> httpMessageNotReadableException(final HttpMessageNotReadableException exception) {
+        String firstError = details.isEmpty() ? "参数绑定失败" : details.get(0).getMessage();
+        log.warn("[参数绑定失败] {} - {}", request.getRequestURI(), firstError);
         printRequestDetail();
-        printApiCodeException(StatusCode.PARAMETER_EXCEPTION, exception);
-        return Result.fail(StatusCode.PARAMETER_EXCEPTION);
+
+        Result<Void> response = Result.validationError(details);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     /**
-     * HTTP
+     * 处理 @RequestParam @PathVariable 校验失败（@Validated）
      *
      * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
      */
-    @ExceptionHandler(value = HttpMediaTypeException.class)
-    @ResponseStatus(HttpStatus.OK)
-    public Result<Boolean> httpMediaTypeException(final HttpMediaTypeException exception) {
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Result<Void>> handleConstraintViolation(
+        ConstraintViolationException exception, HttpServletRequest request) {
+
+        List<FieldErrorDetail> details = exception.getConstraintViolations().stream()
+            .map(this::convertToDetail)
+            .collect(Collectors.toList());
+
+        String firstError = details.isEmpty() ? "参数约束违反" : details.get(0).getMessage();
+        log.warn("[参数约束违反] {} - {}", request.getRequestURI(), firstError);
         printRequestDetail();
-        printApiCodeException(StatusCode.HTTP_MEDIA_TYPE_EXCEPTION, exception);
-        return Result.fail(StatusCode.HTTP_MEDIA_TYPE_EXCEPTION);
+
+        Result<Void> response = Result.validationError(details);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     /**
-     * 自定义业务/数据异常处理
+     * 处理缺少必需参数
      *
      * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
      */
-    @ExceptionHandler(value = {GlobalException.class})
-    @ResponseStatus(HttpStatus.OK)
-    public Result<Boolean> globalException(final GlobalException exception) {
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Result<Void>> handleMissingServletRequestParameter(
+        MissingServletRequestParameterException exception, HttpServletRequest request) {
+
+        String message = String.format("缺少必要参数: %s", exception.getParameterName());
+        log.warn("[缺少参数] {} - {}", request.getRequestURI(), message);
         printRequestDetail();
-        log.error("请求异常:", exception);
-        final int errorCode;
+
+        Result<Void> response = Result.error(CommonErrorCode.PARAM_MISSING, message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    /**
+     * 处理参数类型不匹配
+     *
+     * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Result<Void>> handleMethodArgumentTypeMismatch(
+        MethodArgumentTypeMismatchException exception, HttpServletRequest request) {
+
+        String message = String.format("参数类型错误: %s 期望类型 %s",
+            exception.getName(),
+            exception.getRequiredType() != null ? exception.getRequiredType().getSimpleName() : "未知");
+        log.warn("[参数类型错误] {} - {}", request.getRequestURI(), message);
+        printRequestDetail();
+
+        Result<Void> response = Result.error(CommonErrorCode.PARAM_TYPE_ERROR, message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    /**
+     * 处理HTTP消息不可读异常（JSON解析失败等）
+     *
+     * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Result<Void>> handleHttpMessageNotReadable(
+        HttpMessageNotReadableException exception, HttpServletRequest request) {
+
+        log.warn("[请求体解析失败] {} - {}", request.getRequestURI(), exception.getMessage());
+        printRequestDetail();
+
+        Result<Void> response = Result.error(CommonErrorCode.PARAM_FORMAT_ERROR, "请求参数格式错误");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // ==================== 业务异常 ====================
+
+    /**
+     * 处理业务异常（新体系）
+     *
+     * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
+     */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Result<Void>> handleBusinessException(
+        BusinessException exception, HttpServletRequest request) {
+
+        log.warn("[业务异常] {} - code={}, message={}",
+            request.getRequestURI(),
+            exception.getErrorCode().getCode(),
+            exception.getFinalMessage());
+        printRequestDetail();
+
+        Result<Void> response = Result.error(exception.getErrorCode(), exception.getFinalMessage());
+        return ResponseEntity.status(exception.getErrorCode().getHttpStatus()).body(response);
+    }
+
+    /**
+     * 处理系统异常（新体系）
+     *
+     * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
+     */
+    @ExceptionHandler(SystemException.class)
+    public ResponseEntity<Result<Void>> handleSystemException(
+        SystemException exception, HttpServletRequest request) {
+
+        log.error("[系统异常] {} - {}", request.getRequestURI(), exception.getMessage(), exception);
+        printRequestDetail();
+
+        Result<Void> response = Result.error(exception.getErrorCode(), exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    /**
+     * 处理旧版全局异常（兼容层）
+     *
+     * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
+     */
+    @ExceptionHandler(GlobalException.class)
+    public ResponseEntity<Result<Void>> handleGlobalException(
+        GlobalException exception, HttpServletRequest request) {
+
+        printRequestDetail();
+
+        ErrorCode errorCode;
         if (exception instanceof ServiceException) {
-            errorCode = StatusCode.BUSINESS_EXCEPTION.getCode();
+            errorCode = CommonErrorCode.BUSINESS_ERROR;
         } else if (exception instanceof DaoException) {
-            errorCode = StatusCode.DAO_EXCEPTION.getCode();
+            errorCode = CommonErrorCode.DATABASE_ERROR;
         } else if (exception instanceof RestException) {
-            errorCode = StatusCode.FAIL.getCode();
+            errorCode = CommonErrorCode.BAD_REQUEST;
         } else {
-            errorCode = StatusCode.FAIL.getCode();
+            errorCode = CommonErrorCode.INTERNAL_ERROR;
         }
-        return Result.fail(errorCode, exception.getMessage(), null);
+
+        log.error("[全局异常] {} - type={}, message={}",
+            request.getRequestURI(), exception.getClass().getSimpleName(), exception.getMessage());
+
+        Result<Void> response = Result.error(errorCode, exception.getMessage());
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
+    // ==================== HTTP 相关异常 ====================
+
     /**
-     * 请求方式异常
+     * 处理请求方法不支持异常
      *
      * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
      */
-    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
-    @ResponseStatus(HttpStatus.OK)
-    public Result<String> httpRequestMethodNotSupportedExceptionHandler(final Exception exception) {
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Result<Void>> handleHttpRequestMethodNotSupported(
+        HttpRequestMethodNotSupportedException exception, HttpServletRequest request) {
+
+        log.warn("[请求方法不支持] {} {}", exception.getMethod(), request.getRequestURI());
         printRequestDetail();
-        printApiCodeException(StatusCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION, exception);
-        return Result.fail(StatusCode.HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION, exception.getMessage());
+
+        String message = String.format("不支持的请求方法: %s", exception.getMethod());
+        Result<Void> response = Result.error(CommonErrorCode.METHOD_NOT_ALLOWED, message);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
     }
 
     /**
-     * 默认的异常处理
+     * 处理HTTP媒体类型异常
      *
      * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
      */
-    @ExceptionHandler(value = Exception.class)
-    @ResponseStatus(HttpStatus.OK)
-    public Result<Boolean> exceptionHandler(final Exception exception) {
+    @ExceptionHandler(HttpMediaTypeException.class)
+    public ResponseEntity<Result<Void>> handleHttpMediaType(
+        HttpMediaTypeException exception, HttpServletRequest request) {
+
+        log.warn("[媒体类型错误] {} - {}", request.getRequestURI(), exception.getMessage());
         printRequestDetail();
-        printApiCodeException(StatusCode.FAIL, exception);
-        return Result.fail(StatusCode.FAIL);
+
+        Result<Void> response = Result.error(CommonErrorCode.BAD_REQUEST, "Content-Type 不支持");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    /**
+     * 处理404找不到处理器
+     *
+     * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<Result<Void>> handleNoHandlerFound(
+        NoHandlerFoundException exception, HttpServletRequest request) {
+
+        log.warn("[资源不存在] {} {}", exception.getHttpMethod(), exception.getRequestURL());
+
+        Result<Void> response = Result.error(CommonErrorCode.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    // ==================== 兜底异常 ====================
 
     /**
-     * 获取ApiCode格式化字符串
+     * 处理未预期的异常
      *
-     * @param statusCode 状态码
+     * @param exception 异常对象
+     * @param request   HTTP请求
+     * @return Result
      */
-    private String getApiCodeString(final StatusCode statusCode) {
-        if (statusCode != null) {
-            return String.format("errorCode: %s, errorMessage: %s", statusCode.getCode(), statusCode.getMessage());
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Result<Void>> handleException(
+        Exception exception, HttpServletRequest request) {
+
+        log.error("[未预期异常] {} - {}", request.getRequestURI(), exception.getMessage(), exception);
+        printRequestDetail();
+
+        // 生产环境不暴露详细错误信息
+        String message = isProduction() ? "系统繁忙，请稍后重试" : exception.getMessage();
+        Result<Void> response = Result.error(CommonErrorCode.INTERNAL_ERROR, message);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    // ==================== 工具方法 ====================
+
+    /**
+     * 转换 FieldError 为 FieldErrorDetail
+     */
+    private FieldErrorDetail convertToDetail(FieldError fieldError) {
+        return FieldErrorDetail.builder()
+            .field(fieldError.getField())
+            .message(fieldError.getDefaultMessage())
+            .rejectedValue(fieldError.getRejectedValue())
+            .build();
+    }
+
+    /**
+     * 转换 ConstraintViolation 为 FieldErrorDetail
+     */
+    private FieldErrorDetail convertToDetail(ConstraintViolation<?> violation) {
+        String field = violation.getPropertyPath().toString();
+        // 简化字段路径
+        if (field.contains(".")) {
+            field = field.substring(field.lastIndexOf('.') + 1);
         }
-        return null;
-    }
-
-    /**
-     * 打印错误码及异常
-     *
-     * @param statusCode 状态码
-     * @param exception  异常对象
-     */
-    private void printApiCodeException(final StatusCode statusCode, final Exception exception) {
-        log.error(getApiCodeString(statusCode), exception);
+        return FieldErrorDetail.builder()
+            .field(field)
+            .message(violation.getMessage())
+            .rejectedValue(violation.getInvalidValue())
+            .build();
     }
 
     /**
      * 打印请求详情
      */
     private void printRequestDetail() {
-        final RequestInfo requestInfo = RequestUtil.getRequestInfo();
-        // 忽略空值打印json
-        log.error("异常来源：{}", JSONUtil.toJsonStr(requestInfo, JSONConfig.create().setIgnoreNullValue(true).setIgnoreError(true)));
+        try {
+            RequestInfo requestInfo = RequestUtil.getRequestInfo();
+            log.error("异常来源：{}",
+                JSONUtil.toJsonStr(requestInfo, JSONConfig.create().setIgnoreNullValue(true).setIgnoreError(true)));
+        } catch (Exception e) {
+            log.error("打印请求详情失败", e);
+        }
     }
+
+    /**
+     * 判断是否为生产环境
+     */
+    private boolean isProduction() {
+        String profile = System.getProperty("spring.profiles.active", "");
+        return "prod".equals(profile) || "production".equals(profile);
+    }
+
 }

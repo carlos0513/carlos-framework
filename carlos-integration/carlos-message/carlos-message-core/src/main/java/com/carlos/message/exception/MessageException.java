@@ -2,7 +2,7 @@ package com.carlos.message.exception;
 
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -22,12 +22,12 @@ public class MessageException extends ComponentException {
         super(message);
     }
 
-    public MessageException(Integer errorCode, String message) {
+    public MessageException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public MessageException(StatusCode statusCode) {
-        super(statusCode);
+    public MessageException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public MessageException(Throwable cause) {

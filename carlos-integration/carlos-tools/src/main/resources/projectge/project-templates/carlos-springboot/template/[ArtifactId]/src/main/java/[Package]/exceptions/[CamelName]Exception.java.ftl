@@ -1,7 +1,7 @@
 package ${project.packageName}.exceptions;
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
 * <p>
@@ -21,12 +21,12 @@ public ${project.camelName}Exception(String message) {
 super(message);
 }
 
-public ${project.camelName}Exception(Integer errorCode, String message) {
+public ${project.camelName}Exception(ErrorCode errorCode, String message) {
 super(errorCode, message);
 }
 
-public ${project.camelName}Exception(StatusCode statusCode) {
-super(statusCode);
+public ${project.camelName}Exception(StatusCode errorCode) {
+super(errorCode);
 }
 
 public ${project.camelName}Exception(Throwable cause) {

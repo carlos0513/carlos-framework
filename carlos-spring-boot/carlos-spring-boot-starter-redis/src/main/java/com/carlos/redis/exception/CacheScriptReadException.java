@@ -1,7 +1,7 @@
 package com.carlos.redis.exception;
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 缓存异常父类
@@ -21,12 +21,12 @@ public class CacheScriptReadException extends ComponentException {
         super(message);
     }
 
-    public CacheScriptReadException(Integer errorCode, String message) {
+    public CacheScriptReadException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public CacheScriptReadException(StatusCode statusCode) {
-        super(statusCode);
+    public CacheScriptReadException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public CacheScriptReadException(Throwable cause) {

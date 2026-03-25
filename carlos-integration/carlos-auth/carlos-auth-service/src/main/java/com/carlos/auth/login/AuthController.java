@@ -86,25 +86,25 @@ public class AuthController {
             // 检查IP速率限制
             if (!rateLimitService.tryIpAccess(clientIp)) {
                 log.warn("IP rate limit exceeded: {}", clientIp);
-                return Result.fail("请求过于频繁，请稍后再试");
+                return Result.error("请求过于频繁，请稍后再试");
             }
 
             // 检查用户速率限制
             if (!rateLimitService.tryLogin(loginRequest.getUsername())) {
                 log.warn("Login rate limit exceeded for user: {}", loginRequest.getUsername());
-                return Result.fail("请求过于频繁，请稍后再试");
+                return Result.error("请求过于频繁，请稍后再试");
             }
 
             // 检查IP是否被封禁
             if (ipBlockManager.isIpBlocked(httpRequest)) {
                 log.warn("IP is blocked: {}", clientIp);
-                return Result.fail("登录失败次数过多，请1小时后再试");
+                return Result.error("登录失败次数过多，请1小时后再试");
             }
 
             // 检查账号是否被锁定
             if (loginService.isAccountLocked(loginRequest.getUsername())) {
                 log.warn("Account is locked: {}", loginRequest.getUsername());
-                return Result.fail("账号已锁定，请15分钟后再试");
+                return Result.error("账号已锁定，请15分钟后再试");
             }
 
             // 执行登录
@@ -116,7 +116,7 @@ public class AuthController {
             log.info("Login successful for user: {} (IP: {}, Location: {})",
                 loginRequest.getUsername(), clientIp, ipLocationUtil.getLocation(clientIp));
 
-            return Result.ok(loginResponse, "登录成功");
+            return Result.success(loginResponse, "登录成功");
 
         } catch (BadCredentialsException e) {
             log.warn("Login failed - bad credentials for user: {}", loginRequest.getUsername());
@@ -134,7 +134,7 @@ public class AuthController {
                 }
             }
 
-            return Result.fail("用户名或密码错误");
+            return Result.error("用户名或密码错误");
 
         } catch (InternalAuthenticationServiceException e) {
             log.error("Login failed - internal error for user: {}", loginRequest.getUsername(), e);
@@ -142,7 +142,7 @@ public class AuthController {
             // 记录登录失败（只记录IP，不记录账号）
             ipBlockManager.recordLoginFailure(httpRequest);
 
-            return Result.fail("登录失败，请稍后重试");
+            return Result.error("登录失败，请稍后重试");
 
         } catch (Exception e) {
             log.error("Unexpected error during login for user: {}", loginRequest.getUsername(), e);
@@ -150,7 +150,7 @@ public class AuthController {
             // 记录登录失败（只记录IP）
             ipBlockManager.recordLoginFailure(httpRequest);
 
-            return Result.fail("登录失败，请稍后重试");
+            return Result.error("登录失败，请稍后重试");
         }
     }
 
@@ -177,11 +177,11 @@ public class AuthController {
             SecurityContextHolder.clearContext();
 
             log.info("Logout successful");
-            return Result.ok("登出成功");
+            return Result.success("登出成功");
 
         } catch (Exception e) {
             log.error("Error during logout", e);
-            return Result.fail("登出失败");
+            return Result.error("登出失败");
         }
     }
 
@@ -214,15 +214,15 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            return Result.fail("未登录");
+            return Result.error("未登录");
         }
 
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {
-            return Result.ok((UserDetails) principal);
+            return Result.success((UserDetails) principal);
         }
 
-        return Result.fail("无法获取用户信息");
+        return Result.error("无法获取用户信息");
     }
 
     /**

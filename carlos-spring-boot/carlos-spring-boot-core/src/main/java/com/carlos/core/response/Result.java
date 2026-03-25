@@ -1,284 +1,256 @@
 package com.carlos.core.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Instant;
+import java.util.*;
 
 /**
+ * 统一 API 响应对象
  * <p>
- * REST API 返回结果
- * </p>
+ * 标准响应结构：
+ * <pre>
+ * {
+ *   "success": true,
+ *   "code": "00000",
+ *   "msg": "操作成功",
+ *   "data": { ... },
+ *   "timestamp": 1710638258000,
+ *   "details": null
+ * }
+ * </pre>
  *
+ * @param <T> 响应数据类型
  * @author carlos
- * @date 2020/4/11 22:57
+ * @since 3.0.0
  */
 @Data
-@Accessors(chain = true)
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result<T> implements Serializable {
 
-    /**
-     * 响应的状态码
-     */
-    private Integer code;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 是否成功
+     * 成功标志
      */
-    private boolean success;
+    private Boolean success;
 
     /**
-     * 响应信息，用来说明响应情况
+     * 错误码（5位数字字符串）
      */
-    private String message;
+    private String code;
 
     /**
-     * 异常栈信息
+     * 响应消息
      */
-    private String stack;
+    private String msg;
 
     /**
      * 响应数据
      */
     private T data;
 
+    /**
+     * 响应时间戳（毫秒）
+     */
+    private Long timestamp;
 
-    public Result() {
+    /**
+     * 字段级错误详情（仅校验错误时返回）
+     */
+    private List<FieldErrorDetail> details;
 
-    }
+    // ==================== 成功响应工厂方法 ====================
 
-    public static <T> Result<T> result(boolean flag) {
-        if (flag) {
-            return ok();
-        }
-        return fail();
-    }
-
-    public static <T> Result<T> result(StatusCode statusCode) {
-        return result(statusCode, null);
-    }
-
-    public static <T> Result<T> result(StatusCode statusCode, T data) {
-        return result(statusCode, null, data);
+    /**
+     * 创建成功响应（无数据）
+     *
+     * @param <T> 数据类型
+     * @return Result
+     */
+    public static <T> Result<T> success() {
+        return success(null);
     }
 
     /**
-     * 响应数据封装
+     * 创建成功响应（带数据）
      *
-     * @author carlos
-     * @date 2020/5/16 23:32
+     * @param data 响应数据
+     * @param <T>  数据类型
+     * @return Result
      */
-    public static <T> Result<T> result(StatusCode statusCode, String message, T data) {
-        boolean success = false;
-        if (statusCode.getCode() == StatusCode.SUCCESS.getCode()) {
-            success = true;
-        }
-        String apiMessage = statusCode.getMessage();
-        if (StringUtils.isBlank(message)) {
-            message = apiMessage;
-        }
+    public static <T> Result<T> success(T data) {
         return Result.<T>builder()
-            .code(statusCode.getCode())
-            .message(message)
+            .success(true)
+            .code(CommonErrorCode.SUCCESS.getCode())
+            .msg(CommonErrorCode.SUCCESS.getMessage())
             .data(data)
-            .success(success)
+            .timestamp(currentTimestamp())
             .build();
     }
-    // region----------------------  成功响应相关结果 start  ------------------------
 
     /**
-     * 快速返回状态码200
+     * 创建成功响应（带数据和自定义消息）
      *
-     * @author carlos
-     * @date 2020/5/16 23:38
+     * @param data    响应数据
+     * @param message 自定义消息
+     * @param <T>     数据类型
+     * @return Result
      */
-    public static <T> Result<T> ok() {
-        return ok(null);
+    public static <T> Result<T> success(T data, String message) {
+        return Result.<T>builder()
+            .success(true)
+            .code(CommonErrorCode.SUCCESS.getCode())
+            .msg(message)
+            .data(data)
+            .timestamp(currentTimestamp())
+            .build();
     }
 
     /**
-     * 成功返回Data数据
+     * 创建成功响应（返回单个键值对）
      *
-     * @author carlos
-     * @date 2020/5/16 23:38
+     * @param key   键
+     * @param value 值
+     * @return Result
      */
-    public static <T> Result<T> ok(T data) {
-        return result(StatusCode.SUCCESS, data);
-    }
-
-    /**
-     * 成功返回数据，并且自定义返回消息
-     *
-     * @author carlos
-     * @date 2020/5/16 23:39
-     */
-    public static <T> Result<T> ok(T data, String message) {
-        return result(StatusCode.SUCCESS, message, data);
-    }
-
-    /**
-     * 快速返回一个键值对数据
-     *
-     * @author carlos
-     * @date 2020/5/16 23:41
-     */
-    public static Result<Map<String, Object>> ok(String key, Object value) {
-        Map<String, Object> map = new HashMap<>(1, 1);
+    public static Result<Map<String, Object>> success(String key, Object value) {
+        Map<String, Object> map = new HashMap<>(2);
         map.put(key, value);
-        return ok(map);
+        return success(map);
     }
 
-    // endregion----------------------   成功响应相关结果 end   ------------------------
-
-    // region----------------------  失败相关结果 start  ------------------------
-
+    // ==================== 失败响应工厂方法 ====================
 
     /**
-     * 响应数据封装
+     * 创建失败响应（使用错误码默认消息）
      *
-     * @author carlos
-     * @date 2020/5/16 23:32
+     * @param errorCode 错误码
+     * @param <T>       数据类型
+     * @return Result
      */
-    public static <T> Result<T> fail(Integer code, String message, String stack) {
-        if (code == null) {
-            code = StatusCode.FAIL.getCode();
-        }
+    public static <T> Result<T> error(ErrorCode errorCode) {
+        return error(errorCode, errorCode.getMessage(), null);
+    }
+
+    /**
+     * 创建失败响应（使用错误码默认消息）
+     *
+     * @param message 自定义消息
+     * @param <T>     数据类型
+     * @return Result
+     */
+    public static <T> Result<T> error(String message) {
+        return error(CommonErrorCode.INTERNAL_ERROR, message, null);
+    }
+
+    /**
+     * 创建失败响应（使用默认错误码）
+     *
+     * @param <T> 数据类型
+     * @return Result
+     */
+    public static <T> Result<T> error() {
+        return error(CommonErrorCode.INTERNAL_ERROR);
+    }
+
+    /**
+     * 创建失败响应（自定义消息）
+     *
+     * @param errorCode 错误码
+     * @param message   自定义消息
+     * @param <T>       数据类型
+     * @return Result
+     */
+    public static <T> Result<T> error(ErrorCode errorCode, String message) {
+        return error(errorCode, message, null);
+    }
+
+    /**
+     * 创建失败响应（带字段错误详情）
+     *
+     * @param errorCode 错误码
+     * @param message   自定义消息
+     * @param details   字段错误详情
+     * @param <T>       数据类型
+     * @return Result
+     */
+    public static <T> Result<T> error(ErrorCode errorCode, String message, List<FieldErrorDetail> details) {
         return Result.<T>builder()
-            .code(code)
-            .message(message)
-            .stack(stack)
             .success(false)
+            .code(errorCode.getCode())
+            .msg(message != null ? message : errorCode.getMessage())
+            .details(details)
+            .timestamp(currentTimestamp())
             .build();
     }
 
     /**
-     * 响应数据封装
+     * 创建参数校验错误响应
      *
-     * @author carlos
-     * @date 2020/5/16 23:32
+     * @param details 字段错误详情列表
+     * @param <T>     数据类型
+     * @return Result
      */
-    public static <T> Result<T> fail(String message, String stack) {
-        return fail(StatusCode.FAIL, message, stack);
+    public static <T> Result<T> validationError(List<FieldErrorDetail> details) {
+        return error(CommonErrorCode.PARAM_VALIDATION_ERROR, "参数校验失败", details);
     }
 
-
     /**
-     * 响应数据封装
+     * 创建参数校验错误响应（单字段）
      *
-     * @author carlos
-     * @date 2020/5/16 23:32
+     * @param field    字段名
+     * @param message  错误消息
+     * @param rejectedValue 被拒绝的值
+     * @param <T>      数据类型
+     * @return Result
      */
-    public static <T> Result<T> fail(StatusCode statusCode, String message, String stack) {
-        if (statusCode == null) {
-            statusCode = StatusCode.FAIL;
-        }
-
-        if (StringUtils.isBlank(message)) {
-            message = statusCode.getMessage();
-        }
-        return Result.<T>builder()
-            .code(statusCode.getCode())
+    public static <T> Result<T> validationError(String field, String message, Object rejectedValue) {
+        FieldErrorDetail detail = FieldErrorDetail.builder()
+            .field(field)
             .message(message)
-            .stack(stack)
-            .success(false)
+            .rejectedValue(rejectedValue)
             .build();
+        return error(CommonErrorCode.PARAM_VALIDATION_ERROR, "参数校验失败", Collections.singletonList(detail));
+    }
+
+    // ==================== 便捷方法 ====================
+
+    /**
+     * 判断响应是否成功
+     *
+     * @return true 表示成功
+     */
+    public boolean isSuccess() {
+        return success != null && success;
     }
 
     /**
-     * 请求失败结果，返回500，并使用默认的失败信息
+     * 获取数据（如果是失败返回空Optional）
      *
-     * @author carlos
-     * @date 2020/5/16 23:46
+     * @return Optional 包装的数据
      */
-    public static <T> Result<T> fail() {
-        return fail(StatusCode.FAIL);
-    }
-
-    /**
-     * 失败快速返回，指定状态码， 使用默认的失败信息
-     *
-     * @author carlos
-     * @date 2020/5/16 23:41
-     */
-    public static <T> Result<T> fail(StatusCode statusCode) {
-        return fail(statusCode, null, null);
-    }
-
-    /**
-     * fail
-     *
-     * @param statusCode 状态码
-     * @param message    错误信息
-     * @return com.carlos.core.response.Result<T>
-     * @author Carlos
-     * @date 2022/11/16 9:55
-     */
-    public static <T> Result<T> fail(StatusCode statusCode, String message) {
-        return fail(statusCode, message, null);
-    }
-
-    /**
-     * 返回状态码500，并自定义失败信息
-     *
-     * @author carlos
-     * @date 2020/5/16 23:42
-     */
-    public static <T> Result<T> fail(String message) {
-        return fail(StatusCode.FAIL, message, null);
-
-    }
-
-    /**
-     * 返回失败数据和指定状态码
-     *
-     * @author carlos
-     * @date 2020/5/16 23:43
-     */
-    public static <T> Result<T> fail(StatusCode statusCode, T data) {
-        if (StatusCode.SUCCESS == statusCode) {
-            throw new RuntimeException("失败结果状态码不能为" + StatusCode.SUCCESS.getCode());
-        }
-        return result(statusCode, data);
-
-    }
-
-    /**
-     * 失败返回自定义状态码和自定义失败信息
-     *
-     * @author carlos
-     * @date 2020/5/16 23:45
-     */
-    public static Result<String> fail(Integer errorCode, String message) {
-        return new Result<String>()
-            .setSuccess(false)
-            .setCode(errorCode)
-            .setMessage(message);
-    }
-
-
-    /**
-     * 获取请求结果中的数据
-     *
-     * @return java.util.Optional<?>
-     * @author Carlos
-     * @date 2023/7/3 23:37
-     */
-    public Optional<T> data() {
-
-        if (Boolean.FALSE.equals(this.success)) {
+    public Optional<T> dataOpt() {
+        if (!isSuccess()) {
             return Optional.empty();
         }
-        return Optional.ofNullable(this.data);
+        return Optional.ofNullable(data);
     }
 
-
-    // endregion----------------------   失败相关结果 end   ------------------------
+    /**
+     * 获取当前时间戳
+     *
+     * @return 毫秒时间戳
+     */
+    private static long currentTimestamp() {
+        return Instant.now().toEpochMilli();
+    }
 }

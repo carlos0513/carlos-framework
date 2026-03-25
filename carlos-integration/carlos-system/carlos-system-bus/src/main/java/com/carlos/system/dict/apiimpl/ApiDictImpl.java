@@ -50,7 +50,7 @@ public class ApiDictImpl implements ApiDict {
             throw new RestException("字典选项id不能为空");
         }
         Dict dict = cacheManager.getDictByItemId(id);
-        return Result.ok(dict);
+        return Result.success(dict);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ApiDictImpl implements ApiDict {
             throw new RestException("字典选项code不能为空");
         }
         Dict dict = cacheManager.getDictByItemCode(code);
-        return Result.ok(dict);
+        return Result.success(dict);
     }
 
     @Override
@@ -72,6 +72,6 @@ public class ApiDictImpl implements ApiDict {
             throw new RestException("字典code不能为空");
         }
         List<SysDictItemDTO> dtos = dictItemService.getItemCache(code);
-        return Result.ok(SysDictItemConvert.INSTANCE.toAOList(dtos));
+        return Result.success(SysDictItemConvert.INSTANCE.toAOList(dtos));
     }
 }

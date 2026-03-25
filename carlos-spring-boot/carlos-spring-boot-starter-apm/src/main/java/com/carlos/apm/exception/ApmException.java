@@ -2,7 +2,7 @@ package com.carlos.apm.exception;
 
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 组件异常父类
@@ -23,8 +23,8 @@ public class ApmException extends ComponentException {
     }
 
 
-    public ApmException(StatusCode statusCode) {
-        super(statusCode);
+    public ApmException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public ApmException(Throwable cause) {

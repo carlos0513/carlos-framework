@@ -1,7 +1,7 @@
 package com.carlos.integration.common.exception;
 
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * <p>
@@ -23,12 +23,12 @@ public class DockingException extends ComponentException {
         super(message);
     }
 
-    public DockingException(Integer errorCode, String message) {
+    public DockingException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public DockingException(StatusCode statusCode) {
-        super(statusCode);
+    public DockingException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public DockingException(Throwable cause) {

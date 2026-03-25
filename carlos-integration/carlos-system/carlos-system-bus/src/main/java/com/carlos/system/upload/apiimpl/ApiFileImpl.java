@@ -56,9 +56,9 @@ public class ApiFileImpl implements ApiFile {
         try {
             dto = fileService.getFileInfo(id, false);
         } catch (Exception e) {
-            Result.fail(e.getMessage());
+            Result.error(e.getMessage());
         }
-        return Result.ok(UploadFileConvert.INSTANCE.toAO(dto));
+        return Result.success(UploadFileConvert.INSTANCE.toAO(dto));
     }
 
     @Override
@@ -66,10 +66,10 @@ public class ApiFileImpl implements ApiFile {
     @Operation(summary = "获取文件流")
     public Result<FileInfoAO> getFileStreamInfo(@PathVariable("id") String id) {
         if (StrUtil.isBlank(id)) {
-            return Result.fail("文件id不能为空");
+            return Result.error("文件id不能为空");
         }
         UploadFileDTO fileInfo = fileService.getFileInfo(id, true);
-        return Result.ok(UploadFileConvert.INSTANCE.toAO(fileInfo));
+        return Result.success(UploadFileConvert.INSTANCE.toAO(fileInfo));
     }
 
 
@@ -81,7 +81,7 @@ public class ApiFileImpl implements ApiFile {
             return null;
         }
         List<UploadFileDTO> files = fileService.getFileGroup(groupId);
-        return Result.ok(UploadRecordConvert.INSTANCE.uploadFile2AO(files));
+        return Result.success(UploadRecordConvert.INSTANCE.uploadFile2AO(files));
     }
 
     @Override
@@ -89,10 +89,10 @@ public class ApiFileImpl implements ApiFile {
     @GetMapping("info/ids")
     public Result<List<FileInfoAO>> getFiles(@RequestParam("ids") Set<String> ids) {
         if (CollectionUtils.isEmpty(ids)) {
-            return Result.ok(Collections.emptyList());
+            return Result.success(Collections.emptyList());
         }
         List<UploadFileDTO> files = fileService.getFileInfo(ids);
-        return Result.ok(UploadRecordConvert.INSTANCE.uploadFile2AO(files));
+        return Result.success(UploadRecordConvert.INSTANCE.uploadFile2AO(files));
     }
 
     @Override
@@ -107,6 +107,6 @@ public class ApiFileImpl implements ApiFile {
             return uploadFileDTO;
         }).collect(Collectors.toList());
         UploadResultDTO result = fileService.upload(params.getNamespace(), dtos);
-        return Result.ok(UploadFileConvert.INSTANCE.toAO(result));
+        return Result.success(UploadFileConvert.INSTANCE.toAO(result));
     }
 }

@@ -13,8 +13,8 @@ import com.carlos.apm.TraceUtil;
 import com.carlos.core.auth.AuthConstant;
 import com.carlos.core.auth.UserContext;
 import com.carlos.core.constant.CoreConstant;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.core.response.Result;
-import com.carlos.core.response.StatusCode;
 import com.carlos.json.jackson.JacksonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -240,7 +240,7 @@ public class RequestUtil {
      */
     public static void printResponseInfo(Result<?> result) {
         String response = objectToJson(result);
-        if (result.getCode() == StatusCode.SUCCESS.getCode()) {
+        if (Objects.equals(result.getCode(), CommonErrorCode.SUCCESS.getCode())) {
             log.info("response info:{}", response);
         } else {
             log.info("response info:{}", response);

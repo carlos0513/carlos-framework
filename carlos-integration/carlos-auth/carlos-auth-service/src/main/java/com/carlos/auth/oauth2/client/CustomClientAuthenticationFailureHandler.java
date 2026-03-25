@@ -1,8 +1,8 @@
 package com.carlos.auth.oauth2.client;
 
 import com.carlos.boot.util.ResponseUtil;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.core.response.Result;
-import com.carlos.core.response.StatusCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class CustomClientAuthenticationFailureHandler implements AuthenticationF
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) {
         log.info("Client authentication failed ：message:{}", exception.getLocalizedMessage());
-        ResponseUtil.printJson(response, Result.fail(StatusCode.NOT_PERMISSION, "客户端认证失败！"));
+        ResponseUtil.printJson(response, Result.error(CommonErrorCode.UNAUTHORIZED, "客户端认证失败！"));
     }
 
 

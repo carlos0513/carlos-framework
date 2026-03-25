@@ -1,6 +1,8 @@
 package com.carlos.gateway.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.exception.GlobalException;
+import com.carlos.core.response.CommonErrorCode;
+import com.carlos.core.response.ErrorCode;
 import lombok.Getter;
 
 /**
@@ -13,7 +15,7 @@ import lombok.Getter;
  * @date 2026/3/24
  */
 @Getter
-public class GatewayException extends RuntimeException {
+public class GatewayException extends GlobalException {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,43 +25,49 @@ public class GatewayException extends RuntimeException {
     private final int httpStatus;
 
     /**
-     * 业务错误码
-     */
-    private final Integer errorCode;
-
-    /**
      * 错误路径
      */
     private String path;
 
     public GatewayException(String message) {
-        super(message);
+        super(CommonErrorCode.INTERNAL_ERROR);
         this.httpStatus = 500;
-        this.errorCode = StatusCode.FAIL.getCode();
     }
 
     public GatewayException(String message, int httpStatus) {
-        super(message);
+        super(CommonErrorCode.INTERNAL_ERROR);
         this.httpStatus = httpStatus;
-        this.errorCode = StatusCode.FAIL.getCode();
     }
 
-    public GatewayException(String message, int httpStatus, Integer errorCode) {
-        super(message);
+    public GatewayException(String message, int httpStatus, String errorCode) {
+        super(CommonErrorCode.INTERNAL_ERROR, message);
         this.httpStatus = httpStatus;
-        this.errorCode = errorCode;
     }
 
     public GatewayException(String message, Throwable cause) {
-        super(message, cause);
+        super(CommonErrorCode.INTERNAL_ERROR, cause);
         this.httpStatus = 500;
-        this.errorCode = StatusCode.FAIL.getCode();
+    }
+
+
+    public GatewayException(ErrorCode errorCode) {
+        super(errorCode);
+        this.httpStatus = errorCode.getHttpStatus();
+    }
+
+    public GatewayException(ErrorCode errorCode, String message, Throwable cause) {
+        super(errorCode, message, cause);
+        this.httpStatus = errorCode.getHttpStatus();
+    }
+
+    public GatewayException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+        this.httpStatus = errorCode.getHttpStatus();
     }
 
     public GatewayException(String message, int httpStatus, Throwable cause) {
         super(message, cause);
         this.httpStatus = httpStatus;
-        this.errorCode = StatusCode.FAIL.getCode();
     }
 
     public GatewayException withPath(String path) {

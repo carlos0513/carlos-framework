@@ -1,6 +1,6 @@
 package com.carlos.redis.exception;
 
-import com.carlos.core.response.StatusCode;
+import com.carlos.core.response.ErrorCode;
 
 /**
  * 缓存更新异常
@@ -20,12 +20,12 @@ public class CacheEvictException extends CacheException {
         super(message);
     }
 
-    public CacheEvictException(Integer errorCode, String message) {
+    public CacheEvictException(ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public CacheEvictException(StatusCode statusCode) {
-        super(statusCode);
+    public CacheEvictException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
     public CacheEvictException(Throwable cause) {

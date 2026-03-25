@@ -1,6 +1,7 @@
 package com.carlos.gateway.security;
 
 import cn.hutool.core.util.StrUtil;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.ErrorResponse;
 import com.carlos.gateway.exception.ReplayAttackException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -229,8 +230,8 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         // 构建标准化的错误响应
         ErrorResponse errorResponse = ErrorResponse.builder()
             .status(HttpStatus.FORBIDDEN.value())
-            .code(54031)
-            .message(message)
+            .code(CommonErrorCode.FORBIDDEN.getCode())
+            .msg(message)
             .path(path)
             .method(exchange.getRequest().getMethod() != null ? exchange.getRequest().getMethod().name() : "UNKNOWN")
             .extra(java.util.Map.of(

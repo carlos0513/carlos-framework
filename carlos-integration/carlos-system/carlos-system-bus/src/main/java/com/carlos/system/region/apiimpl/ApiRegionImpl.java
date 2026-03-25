@@ -47,7 +47,7 @@ public class ApiRegionImpl implements ApiRegion {
     @Operation(summary = "区域预览指定父级")
     public Result<List<String>> previewRegionName(@RequestParam("regionCode") String regionCode, @RequestParam(value = "limit", required = false) Integer limit) {
         List<String> strings = this.regionService.previewRegionName(regionCode, limit);
-        return Result.ok(strings);
+        return Result.success(strings);
     }
 
     @Override
@@ -58,21 +58,21 @@ public class ApiRegionImpl implements ApiRegion {
             parentCode = Lists.newArrayList();
         }
         parentCode.add(regionCode);
-        return Result.ok(parentCode);
+        return Result.success(parentCode);
     }
 
     @Override
     @GetMapping("subCodes")
     @Operation(summary = "获取当前区域及子级区域编码")
     public Result<Set<String>> getSubRegionCodes(@RequestParam("regionCode") String regionCode) {
-        return Result.ok(this.regionService.getRegionSubCodes(regionCode));
+        return Result.success(this.regionService.getRegionSubCodes(regionCode));
     }
 
     @Override
     @GetMapping("info")
     @Operation(summary = "获取区域信息")
     public Result<RegionInfo> getRegionInfo(@RequestParam("regionCode") String regionCode, @RequestParam("limit") Integer limit) {
-        return Result.ok(this.regionService.getRegionInfo(regionCode, limit));
+        return Result.success(this.regionService.getRegionInfo(regionCode, limit));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ApiRegionImpl implements ApiRegion {
     public Result<List<SysRegionAO>> getRegionTree() {
         List<SysRegionDTO> regionTree = this.regionService.getRegionTree();
         List<SysRegionAO> aos = SysRegionConvert.INSTANCE.toAOList(regionTree);
-        return Result.ok(aos);
+        return Result.success(aos);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ApiRegionImpl implements ApiRegion {
     public Result<List<SysRegionAO>> all() {
         List<SysRegionDTO> regionTree = this.regionService.listAll();
         List<SysRegionAO> aos = SysRegionConvert.INSTANCE.toAOList(regionTree);
-        return Result.ok(aos);
+        return Result.success(aos);
     }
 
 
@@ -98,10 +98,10 @@ public class ApiRegionImpl implements ApiRegion {
         try {
             SysRegionDTO dto = SysRegionConvert.INSTANCE.toDTO(region);
             this.regionService.addSysRegion(dto);
-            return Result.ok(SysRegionConvert.INSTANCE.toAO(dto));
+            return Result.success(SysRegionConvert.INSTANCE.toAO(dto));
         } catch (Exception e) {
             log.error("{}", e.getMessage(), e);
-            return Result.fail("新增区域失败");
+            return Result.error("新增区域失败");
         }
     }
 

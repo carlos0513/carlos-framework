@@ -1,5 +1,7 @@
 package com.carlos.gateway.exception;
 
+import com.carlos.core.response.CommonErrorCode;
+
 /**
  * <p>
  * 熔断异常
@@ -30,14 +32,14 @@ public class CircuitBreakerException extends GatewayException {
     private final float failureRate;
 
     public CircuitBreakerException(String message) {
-        super(message, 503, 5503);
+        super(CommonErrorCode.SERVICE_CALL_ERROR, message);
         this.circuitBreakerName = "unknown";
         this.circuitBreakerState = "UNKNOWN";
         this.failureRate = 0.0f;
     }
 
     public CircuitBreakerException(String message, String circuitBreakerName, String circuitBreakerState, float failureRate) {
-        super(message, 503, 5503);
+        super(CommonErrorCode.SERVICE_CALL_ERROR, message);
         this.circuitBreakerName = circuitBreakerName;
         this.circuitBreakerState = circuitBreakerState;
         this.failureRate = failureRate;

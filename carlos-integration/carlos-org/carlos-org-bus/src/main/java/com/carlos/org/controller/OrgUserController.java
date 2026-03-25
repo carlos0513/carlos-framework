@@ -149,7 +149,7 @@ public class OrgUserController {
     @PostMapping("import")
     @Operation(summary = "UM-010 用户导入")
     public Result<List<Serializable>> importUser(@RequestParam("file") MultipartFile file) {
-        return Result.ok(userService.importUser(file));
+        return Result.success(userService.importUser(file));
     }
 
 

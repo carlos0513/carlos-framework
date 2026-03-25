@@ -45,7 +45,7 @@ public class FileController {
     public Result<UploadResultVO> upload(@RequestPart @RequestParam("files") MultipartFile[] files, @RequestParam("namespace") String namespace) {
         UploadResultDTO dto = fileService.uploadMultipartFile(namespace, Arrays.asList(files));
         UploadResultVO vo = UploadFileConvert.INSTANCE.toResultVO(dto);
-        return Result.ok(vo);
+        return Result.success(vo);
     }
 
     @PostMapping("singleUpload")
@@ -57,7 +57,7 @@ public class FileController {
             throw new RestException("文件上传失败！");
         }
         UploadFileDTO record = files.stream().findFirst().get();
-        return Result.ok(UploadFileConvert.INSTANCE.toFileVO(record));
+        return Result.success(UploadFileConvert.INSTANCE.toFileVO(record));
     }
 
     @PostMapping("singleUploadForAnonymous")
@@ -69,7 +69,7 @@ public class FileController {
             throw new RestException("文件上传失败！");
         }
         UploadFileDTO record = files.stream().findFirst().get();
-        return Result.ok(UploadFileConvert.INSTANCE.toFileVO(record));
+        return Result.success(UploadFileConvert.INSTANCE.toFileVO(record));
     }
 
     @Operation(summary = "获取二进制文件流", description = "下载文件或者播放文件")

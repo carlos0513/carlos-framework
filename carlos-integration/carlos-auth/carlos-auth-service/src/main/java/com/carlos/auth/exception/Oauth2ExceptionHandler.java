@@ -20,6 +20,6 @@ public class Oauth2ExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = OAuth2AuthenticationException.class)
     public Result<String> handleOauth2(OAuth2AuthenticationException e) {
-        return Result.fail(e.getMessage());
+        return Result.error(e.getMessage());
     }
 }

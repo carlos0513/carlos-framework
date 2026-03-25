@@ -40,7 +40,7 @@ public class MongodbController {
             document.setCreateTime(LocalDateTime.now());
         }
         LogDocument saved = logDocumentService.save(document);
-        return Result.ok(saved);
+        return Result.success(saved);
     }
 
     @PostMapping("/saveBatch")
@@ -52,7 +52,7 @@ public class MongodbController {
             }
         });
         List<LogDocument> saved = logDocumentService.saveBatch(documents);
-        return Result.ok(saved);
+        return Result.success(saved);
     }
 
     // ==================== 查询操作 ====================
@@ -62,14 +62,14 @@ public class MongodbController {
     @Parameter(name = "id", description = "文档ID", required = true)
     public Result<LogDocument> getById(@PathVariable String id) {
         Optional<LogDocument> document = logDocumentService.getById(id);
-        return document.map(Result::ok).orElseGet(() -> Result.fail("文档不存在"));
+        return document.map(Result::success).orElseGet(() -> Result.error("文档不存在"));
     }
 
     @GetMapping("/list")
     @Operation(summary = "查询所有", description = "查询所有日志文档")
     public Result<List<LogDocument>> list() {
         List<LogDocument> list = logDocumentService.list();
-        return Result.ok(list);
+        return Result.success(list);
     }
 
     @GetMapping("/page")
@@ -79,7 +79,7 @@ public class MongodbController {
         @RequestParam(defaultValue = "10") Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by(Sort.Direction.DESC, "createTime"));
         Page<LogDocument> page = logDocumentService.page(pageable);
-        return Result.ok(page);
+        return Result.success(page);
     }
 
     @GetMapping("/byLevel")
@@ -87,7 +87,7 @@ public class MongodbController {
     @Parameter(name = "level", description = "日志级别(INFO/WARN/ERROR)", required = true)
     public Result<List<LogDocument>> findByLevel(@RequestParam String level) {
         List<LogDocument> list = logDocumentService.findByLevel(level);
-        return Result.ok(list);
+        return Result.success(list);
     }
 
     @GetMapping("/byModule")
@@ -95,7 +95,7 @@ public class MongodbController {
     @Parameter(name = "module", description = "模块名称", required = true)
     public Result<List<LogDocument>> findByModuleLike(@RequestParam String module) {
         List<LogDocument> list = logDocumentService.findByModuleLike(module);
-        return Result.ok(list);
+        return Result.success(list);
     }
 
     @GetMapping("/byUserId")
@@ -103,7 +103,7 @@ public class MongodbController {
     @Parameter(name = "userId", description = "用户ID", required = true)
     public Result<List<LogDocument>> findByUserId(@RequestParam Long userId) {
         List<LogDocument> list = logDocumentService.findByUserId(userId);
-        return Result.ok(list);
+        return Result.success(list);
     }
 
     // ==================== 删除操作 ====================
@@ -113,21 +113,21 @@ public class MongodbController {
     @Parameter(name = "id", description = "文档ID", required = true)
     public Result<Void> removeById(@PathVariable String id) {
         logDocumentService.removeById(id);
-        return Result.ok();
+        return Result.success();
     }
 
     @DeleteMapping("/batch")
     @Operation(summary = "批量删除", description = "批量删除日志文档")
     public Result<Void> removeBatch(@RequestBody List<LogDocument> documents) {
         logDocumentService.removeBatch(documents);
-        return Result.ok();
+        return Result.success();
     }
 
     @DeleteMapping("/all")
     @Operation(summary = "删除所有", description = "清空所有日志文档(谨慎使用)")
     public Result<Void> removeAll() {
         logDocumentService.removeAll();
-        return Result.ok();
+        return Result.success();
     }
 
     // ==================== 统计操作 ====================
@@ -136,7 +136,7 @@ public class MongodbController {
     @Operation(summary = "统计数量", description = "统计日志总数")
     public Result<Long> count() {
         long count = logDocumentService.count();
-        return Result.ok(count);
+        return Result.success(count);
     }
 
     @GetMapping("/exists/{id}")
@@ -144,6 +144,6 @@ public class MongodbController {
     @Parameter(name = "id", description = "文档ID", required = true)
     public Result<Boolean> existsById(@PathVariable String id) {
         boolean exists = logDocumentService.existsById(id);
-        return Result.ok(exists);
+        return Result.success(exists);
     }
 }

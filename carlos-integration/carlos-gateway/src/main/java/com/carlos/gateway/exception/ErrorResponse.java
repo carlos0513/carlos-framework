@@ -33,12 +33,12 @@ public class ErrorResponse {
     /**
      * 业务错误码
      */
-    private Integer code;
+    private String code;
 
     /**
      * 错误消息
      */
-    private String message;
+    private String msg;
 
     /**
      * 错误详情（开发环境可展示）
@@ -63,7 +63,7 @@ public class ErrorResponse {
     /**
      * 请求 ID（链路追踪）
      */
-    private String requestId;
+    private String traceId;
 
     /**
      * 时间戳

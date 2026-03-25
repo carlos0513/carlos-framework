@@ -41,7 +41,7 @@ public class DatacenterController {
             createDictItem("3", "待审核", "pending", 3)
         );
 
-        return Result.ok(dictList);
+        return Result.success(dictList);
     }
 
     /**
@@ -57,7 +57,7 @@ public class DatacenterController {
         dict.put("remark", "系统启用状态");
         dict.put("createTime", "2024-01-01 00:00:00");
 
-        return Result.ok(dict);
+        return Result.success(dict);
     }
 
     /**
@@ -78,7 +78,7 @@ public class DatacenterController {
         );
 
         String configValue = configMap.getOrDefault(configKey, "default_value");
-        return Result.ok(configValue);
+        return Result.success(configValue);
     }
 
     /**
@@ -96,7 +96,7 @@ public class DatacenterController {
             createConfigItem("upload.allowedTypes", "jpg,png,gif,pdf", "允许上传的文件类型", "上传配置")
         );
 
-        return Result.ok(configList);
+        return Result.success(configList);
     }
 
     /**
@@ -107,7 +107,7 @@ public class DatacenterController {
     public Result<Void> refreshDictCache() {
         log.info("刷新数据字典缓存");
         // 模拟刷新缓存操作
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -118,7 +118,7 @@ public class DatacenterController {
     public Result<Void> refreshConfigCache() {
         log.info("刷新参数配置缓存");
         // 模拟刷新缓存操作
-        return Result.ok();
+        return Result.success();
     }
 
     /**
@@ -138,7 +138,7 @@ public class DatacenterController {
             ));
         }
 
-        return Result.ok(result);
+        return Result.success(result);
     }
 
     // ==================== 私有辅助方法 ====================

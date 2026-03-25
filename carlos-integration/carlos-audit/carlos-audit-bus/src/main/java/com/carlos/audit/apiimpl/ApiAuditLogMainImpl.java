@@ -51,7 +51,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
     public Result<AuditLogMainAO> saveAuditLog(@RequestBody ApiAuditLogMainParam param) {
         try {
             if (param == null) {
-                return Result.fail("审计日志参数不能为空");
+                return Result.error("审计日志参数不能为空");
             }
 
             // 参数转换为 DTO
@@ -64,11 +64,11 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             AuditLogMainAO ao = AuditLogMainConvert.INSTANCE.toAO(dto);
 
             log.debug("审计日志异步保存成功，logType: {}", param.getLogType());
-            return Result.ok(ao, "审计日志保存成功");
+            return Result.success(ao, "审计日志保存成功");
 
         } catch (Exception e) {
             log.error("审计日志异步保存失败: {}", e.getMessage(), e);
-            return Result.fail("审计日志保存失败: " + e.getMessage());
+            return Result.error("审计日志保存失败: " + e.getMessage());
         }
     }
 
@@ -86,7 +86,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
                                                    @RequestParam(value = "timeoutMs", defaultValue = "5000") long timeoutMs) {
         try {
             if (param == null) {
-                return Result.fail("审计日志参数不能为空");
+                return Result.error("审计日志参数不能为空");
             }
 
             // 参数转换为 DTO
@@ -97,18 +97,18 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
 
             if (!success) {
                 log.warn("审计日志同步保存超时，logType: {}", param.getLogType());
-                return Result.fail("审计日志保存超时");
+                return Result.error("审计日志保存超时");
             }
 
             // 转换为 AO 返回
             AuditLogMainAO ao = AuditLogMainConvert.INSTANCE.toAO(dto);
 
             log.debug("审计日志同步保存成功，logType: {}", param.getLogType());
-            return Result.ok(ao, "审计日志保存成功");
+            return Result.success(ao, "审计日志保存成功");
 
         } catch (Exception e) {
             log.error("审计日志同步保存失败: {}", e.getMessage(), e);
-            return Result.fail("审计日志保存失败: " + e.getMessage());
+            return Result.error("审计日志保存失败: " + e.getMessage());
         }
     }
 
@@ -124,7 +124,7 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
     public Result<Void> batchSaveAuditLog(@RequestBody List<ApiAuditLogMainParam> params) {
         try {
             if (params == null || params.isEmpty()) {
-                return Result.fail("审计日志参数列表不能为空");
+                return Result.error("审计日志参数列表不能为空");
             }
 
             // 批量转换为 DTO
@@ -136,11 +136,11 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             logMainService.batchAddAuditLogMain(dtos);
 
             log.debug("批量审计日志异步保存成功，数量: {}", params.size());
-            return Result.ok();
+            return Result.success();
 
         } catch (Exception e) {
             log.error("批量审计日志保存失败: {}", e.getMessage(), e);
-            return Result.fail("批量审计日志保存失败: " + e.getMessage());
+            return Result.error("批量审计日志保存失败: " + e.getMessage());
         }
     }
 
@@ -197,11 +197,11 @@ public class ApiAuditLogMainImpl implements ApiAuditLogMain {
             AuditLogMainAO ao = AuditLogMainConvert.INSTANCE.toAO(dto);
 
             log.debug("简单审计日志保存成功，logType: {}", logType);
-            return Result.ok(ao, "审计日志保存成功");
+            return Result.success(ao, "审计日志保存成功");
 
         } catch (Exception e) {
             log.error("简单审计日志保存失败: {}", e.getMessage(), e);
-            return Result.fail("审计日志保存失败: " + e.getMessage());
+            return Result.error("审计日志保存失败: " + e.getMessage());
         }
     }
 }
