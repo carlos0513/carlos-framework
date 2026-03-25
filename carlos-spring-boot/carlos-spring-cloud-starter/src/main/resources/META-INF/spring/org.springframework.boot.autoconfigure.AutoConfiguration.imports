@@ -1,3 +1,4 @@
+com.carlos.cloud.feign.FallbackFactoryAutoRegistrar
 com.carlos.cloud.feign.FeignConfig
 com.carlos.cloud.feign.FeignGlobalExceptionHandler
 com.carlos.cloud.nacos.NacosConfig

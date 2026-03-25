@@ -7,12 +7,15 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -57,6 +60,9 @@ import java.util.Set;
  * @date 2026-03-24
  */
 @Slf4j
+@Service
+@ConditionalOnClass(FallbackFactory.class)
+@ConditionalOnProperty(prefix = "carlos.feign.fallback", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class FallbackFactoryAutoRegistrar implements BeanDefinitionRegistryPostProcessor, EnvironmentAware {
 
     /**
