@@ -15,8 +15,7 @@ import cn.hutool.json.JSONUtil;
 import com.carlos.core.exception.ServiceException;
 import com.carlos.core.response.Result;
 import com.carlos.core.util.ExecutorUtil;
-import com.carlos.minio.utils.MinioUtil;
-import com.carlos.minio.utils.ObjectOptUtil;
+import com.carlos.oss.utils.OssUtil;
 import com.carlos.system.upload.config.SystemFileProperties;
 import com.carlos.system.upload.convert.UploadFileConvert;
 import com.carlos.system.upload.pojo.dto.UploadFileDTO;
@@ -77,7 +76,7 @@ public class FileService {
      */
     public UploadResultDTO upload(String namespace, List<UploadFileDTO> files) {
         if (CharSequenceUtil.isBlank(namespace)) {
-            namespace = MinioUtil.getDefaultBucket();
+            namespace = OssUtil.getDefaultBucket();
             log.warn("file namespace is null, use default bucket: {}", namespace);
         }
         // 检查文件类型
@@ -97,7 +96,7 @@ public class FileService {
                 final String obj = prefix + suffix;
 
                 try {
-                    ObjectOptUtil.putObject(finalNamespace, obj, IoUtil.toStream(file.getBytes()));
+                    OssUtil.putObject(finalNamespace, obj, IoUtil.toStream(file.getBytes()));
                 } catch (Exception e) {
                     throw new ServiceException("文件上传失败！文件名称：" + originalFilename, e);
                 }
@@ -211,7 +210,7 @@ public class FileService {
         fileinfo.setName(dto.getOriginalName());
         fileinfo.setDesc(dto.getOriginalName());
         if (loadStream) {
-            InputStream stream = ObjectOptUtil.getObject(dto.getRepositoryName(), dto.getRepositoryUrl());
+            InputStream stream = OssUtil.getObject(dto.getRepositoryName(), dto.getRepositoryUrl());
             if (stream != null) {
                 fileinfo.setBytes(IoUtil.readBytes(stream));
             }

@@ -1,7 +1,7 @@
 package com.carlos.system.upload.controller;
 
 
-import com.carlos.minio.utils.BucketOptUtil;
+import com.carlos.oss.utils.OssUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
@@ -35,13 +35,13 @@ public class FileBucketController {
     public void create(@RequestBody BucketArray param) {
         List<Bucket> buckets = param.getBuckets();
         for (Bucket bucket : buckets) {
-            BucketOptUtil.make(bucket.getName());
+            OssUtil.createBucket(bucket.getName());
             switch (bucket.getPolicy()) {
                 case PRIVATE:
-                    BucketOptUtil.setBucketPrivate(bucket.getName());
+                    OssUtil.setBucketPrivate(bucket.getName());
                     break;
                 case PUBLIC:
-                    BucketOptUtil.setBucketPublic(bucket.getName());
+                    OssUtil.setBucketPublic(bucket.getName());
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + bucket.getPolicy());
@@ -57,10 +57,10 @@ public class FileBucketController {
         for (Bucket bucket : buckets) {
             switch (bucket.getPolicy()) {
                 case PRIVATE:
-                    BucketOptUtil.setBucketPrivate(bucket.getName());
+                    OssUtil.setBucketPrivate(bucket.getName());
                     break;
                 case PUBLIC:
-                    BucketOptUtil.setBucketPublic(bucket.getName());
+                    OssUtil.setBucketPublic(bucket.getName());
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + bucket.getPolicy());
