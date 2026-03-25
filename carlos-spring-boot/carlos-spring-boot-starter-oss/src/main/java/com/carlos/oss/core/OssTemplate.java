@@ -205,4 +205,34 @@ public interface OssTemplate {
      * @return 文件信息
      */
     OssFile putObjectFromUrl(String objectName, String url);
+
+    /**
+     * 设置存储桶访问策略
+     *
+     * @param bucketName 桶名称
+     * @param policy     策略 JSON 字符串
+     */
+    void setBucketPolicy(String bucketName, String policy);
+
+    /**
+     * 设置存储桶为公共读
+     *
+     * @param bucketName 桶名称
+     */
+    void setBucketPublic(String bucketName);
+
+    /**
+     * 设置存储桶为私有
+     *
+     * @param bucketName 桶名称
+     */
+    void setBucketPrivate(String bucketName);
+
+    /**
+     * 获取存储桶访问策略
+     *
+     * @param bucketName 桶名称
+     * @return 策略 JSON 字符串
+     */
+    String getBucketPolicy(String bucketName);
 }

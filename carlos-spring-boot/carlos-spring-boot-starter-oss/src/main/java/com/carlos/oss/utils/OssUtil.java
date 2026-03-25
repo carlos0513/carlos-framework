@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -102,12 +103,123 @@ public class OssUtil {
     }
 
     /**
+     * 判断默认存储桶是否存在
+     *
+     * @return 是否存在
+     */
+    public static boolean bucketExists() {
+        return getTemplate().bucketExists(getDefaultBucket());
+    }
+
+    /**
      * 列出所有存储桶
      *
      * @return 桶名称列表
      */
     public static List<String> listBuckets() {
         return getTemplate().listBuckets();
+    }
+
+    /**
+     * 创建默认存储桶
+     */
+    public static void createBucket() {
+        createBucket(getDefaultBucket());
+    }
+
+    /**
+     * 创建存储桶并设置为公共读（如果配置允许）
+     *
+     * @param bucketName 桶名称
+     */
+    public static void makeBucket(String bucketName) {
+        if (!bucketExists(bucketName)) {
+            createBucket(bucketName);
+        }
+    }
+
+    /**
+     * 创建默认存储桶（如果不存在）
+     */
+    public static void makeBucket() {
+        makeBucket(getDefaultBucket());
+    }
+
+    /**
+     * 删除默认存储桶
+     */
+    public static void deleteBucket() {
+        deleteBucket(getDefaultBucket());
+    }
+
+    /**
+     * 设置存储桶为公共读
+     *
+     * @param bucketName 桶名称
+     */
+    public static void setBucketPublic(String bucketName) {
+        getTemplate().setBucketPublic(bucketName);
+    }
+
+    /**
+     * 设置默认存储桶为公共读
+     */
+    public static void setBucketPublic() {
+        setBucketPublic(getDefaultBucket());
+    }
+
+    /**
+     * 设置存储桶为私有
+     *
+     * @param bucketName 桶名称
+     */
+    public static void setBucketPrivate(String bucketName) {
+        getTemplate().setBucketPrivate(bucketName);
+    }
+
+    /**
+     * 设置默认存储桶为私有
+     */
+    public static void setBucketPrivate() {
+        setBucketPrivate(getDefaultBucket());
+    }
+
+    /**
+     * 设置存储桶策略
+     *
+     * @param bucketName 桶名称
+     * @param policy     策略 JSON 字符串
+     */
+    public static void setBucketPolicy(String bucketName, String policy) {
+        getTemplate().setBucketPolicy(bucketName, policy);
+    }
+
+    /**
+     * 设置默认存储桶策略
+     *
+     * @param policy 策略 JSON 字符串
+     */
+    public static void setBucketPolicy(String policy) {
+        setBucketPolicy(getDefaultBucket(), policy);
+    }
+
+    /**
+     * 获取存储桶策略
+     *
+     * @param bucketName 桶名称
+     * @return 策略 JSON 字符串
+     */
+    public static String getBucketPolicy(String bucketName) {
+        return getTemplate().getBucketPolicy(bucketName);
+    }
+
+    /**
+     * 获取默认存储桶策略
+     *
+     * @return 策略 JSON 字符串
+     */
+    public static String getBucketPolicy() {
+        return getTemplate().getBucketPolicy(getDefaultBucket());
     }
 
     // endregion----------------------  桶操作 end  ------------------------
@@ -140,6 +252,29 @@ public class OssUtil {
     }
 
     /**
+     * 上传文件（无 contentType，使用默认 application/octet-stream）
+     *
+     * @param bucketName  桶名称
+     * @param objectName  对象名称（文件路径）
+     * @param inputStream 文件流
+     * @return 文件信息
+     */
+    public static OssFile putObject(String bucketName, String objectName, InputStream inputStream) {
+        return getTemplate().putObject(bucketName, objectName, inputStream, "application/octet-stream");
+    }
+
+    /**
+     * 上传文件（使用默认桶，无 contentType）
+     *
+     * @param objectName  对象名称（文件路径）
+     * @param inputStream 文件流
+     * @return 文件信息
+     */
+    public static OssFile putObject(String objectName, InputStream inputStream) {
+        return getTemplate().putObject(objectName, inputStream, "application/octet-stream");
+    }
+
+    /**
      * 上传文件（字节数组）
      *
      * @param bucketName  桶名称
@@ -150,6 +285,18 @@ public class OssUtil {
      */
     public static OssFile putObject(String bucketName, String objectName, byte[] bytes, String contentType) {
         return getTemplate().putObject(bucketName, objectName, bytes, contentType);
+    }
+
+    /**
+     * 上传文件（字节数组，无 contentType，使用默认 application/octet-stream）
+     *
+     * @param bucketName 桶名称
+     * @param objectName 对象名称
+     * @param bytes      文件字节数组
+     * @return 文件信息
+     */
+    public static OssFile putObject(String bucketName, String objectName, byte[] bytes) {
+        return getTemplate().putObject(bucketName, objectName, bytes, "application/octet-stream");
     }
 
     /**
@@ -193,7 +340,7 @@ public class OssUtil {
      */
     public static OssFile uploadFile(String bucketName, String objectName, File file) {
         try {
-            String contentType = java.nio.file.Files.probeContentType(file.toPath());
+            String contentType = Files.probeContentType(file.toPath());
             return getTemplate().putObject(bucketName, objectName, new java.io.FileInputStream(file), contentType);
         } catch (Exception e) {
             throw new OssException("Failed to upload file: " + file.getAbsolutePath(), e);

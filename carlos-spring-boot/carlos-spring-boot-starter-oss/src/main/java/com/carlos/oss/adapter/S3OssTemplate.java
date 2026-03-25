@@ -313,4 +313,68 @@ public class S3OssTemplate extends AbstractOssTemplate {
             return false;
         }
     }
+
+    @Override
+    public void setBucketPolicy(String bucketName, String policy) {
+        try {
+            s3Client.putBucketPolicy(PutBucketPolicyRequest.builder()
+                .bucket(bucketName)
+                .policy(policy)
+                .build());
+            log.info("Set bucket policy for bucket: {}", bucketName);
+        } catch (Exception e) {
+            throw new OssException("Failed to set bucket policy: " + bucketName, e);
+        }
+    }
+
+    @Override
+    public void setBucketPublic(String bucketName) {
+        try {
+            // S3 公共读策略：允许任何人读取桶中的对象
+            String publicPolicy = "{"
+                + "\"Version\": \"2012-10-17\","
+                + "\"Statement\": [{"
+                + "\"Sid\": \"PublicReadGetObject\","
+                + "\"Effect\": \"Allow\","
+                + "\"Principal\": \"*\","
+                + "\"Action\": \"s3:GetObject\","
+                + "\"Resource\": \"arn:aws:s3:::" + bucketName + "/*\""
+                + "}]"
+                + "}";
+
+            s3Client.putBucketPolicy(PutBucketPolicyRequest.builder()
+                .bucket(bucketName)
+                .policy(publicPolicy)
+                .build());
+            log.info("Set bucket public: {}", bucketName);
+        } catch (Exception e) {
+            throw new OssException("Failed to set bucket public: " + bucketName, e);
+        }
+    }
+
+    @Override
+    public void setBucketPrivate(String bucketName) {
+        try {
+            // 删除桶策略，使桶变为私有
+            s3Client.deleteBucketPolicy(DeleteBucketPolicyRequest.builder()
+                .bucket(bucketName)
+                .build());
+            log.info("Set bucket private: {}", bucketName);
+        } catch (Exception e) {
+            throw new OssException("Failed to set bucket private: " + bucketName, e);
+        }
+    }
+
+    @Override
+    public String getBucketPolicy(String bucketName) {
+        try {
+            GetBucketPolicyResponse response = s3Client.getBucketPolicy(GetBucketPolicyRequest.builder()
+                .bucket(bucketName)
+                .build());
+            return response.policy();
+        } catch (Exception e) {
+            throw new OssException("Failed to get bucket policy: " + bucketName, e);
+        }
+    }
+
 }

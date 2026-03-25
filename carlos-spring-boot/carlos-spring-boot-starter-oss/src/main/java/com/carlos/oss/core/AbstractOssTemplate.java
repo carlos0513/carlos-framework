@@ -128,4 +128,24 @@ public abstract class AbstractOssTemplate implements OssTemplate {
             throw new OssException("Failed to download file from URL: " + url, e);
         }
     }
+
+    @Override
+    public void setBucketPolicy(String bucketName, String policy) {
+        throw new UnsupportedOperationException("setBucketPolicy is not supported by this OSS provider");
+    }
+
+    @Override
+    public void setBucketPublic(String bucketName) {
+        throw new UnsupportedOperationException("setBucketPublic is not supported by this OSS provider");
+    }
+
+    @Override
+    public void setBucketPrivate(String bucketName) {
+        throw new UnsupportedOperationException("setBucketPrivate is not supported by this OSS provider");
+    }
+
+    @Override
+    public String getBucketPolicy(String bucketName) {
+        throw new UnsupportedOperationException("getBucketPolicy is not supported by this OSS provider");
+    }
 }
