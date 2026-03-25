@@ -5,7 +5,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.datasource.base.BaseServiceImpl;
 import com.carlos.datasource.pagination.MybatisPage;
@@ -99,7 +99,7 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
         }
         SysRegionDTO region = this.getDtoById(id);
         if (region == null) {
-            throw new ServiceException("区域不存在");
+            throw new BusinessException("区域不存在");
         }
         boolean success = this.removeById(id);
         if (!success) {
@@ -378,7 +378,7 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
             log.info("Region cache init success with pagination");
         } catch (Exception e) {
             log.error("Failed to init region cache with pagination", e);
-            throw new ServiceException("初始化区域缓存失败", e);
+            throw new BusinessException("初始化区域缓存失败", e);
         }
     }
 

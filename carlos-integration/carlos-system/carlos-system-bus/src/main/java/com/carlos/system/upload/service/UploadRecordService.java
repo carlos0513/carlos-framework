@@ -1,7 +1,7 @@
 package com.carlos.system.upload.service;
 
 
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.system.upload.manager.UploadRecordManager;
 import com.carlos.system.upload.pojo.dto.UploadRecordDTO;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +65,7 @@ public class UploadRecordService {
     public UploadRecordDTO getInfoById(final String id) {
         final UploadRecordDTO dto = recordManager.getDtoById(id);
         if (dto == null) {
-            throw new ServiceException("文件不存在！ id=" + id);
+            throw new BusinessException("文件不存在！ id=" + id);
         }
         return dto;
     }

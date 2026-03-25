@@ -3,7 +3,7 @@ package com.carlos.system.menu.service;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.core.constant.CoreConstant;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.system.enums.MenuType;
 import com.carlos.system.menu.manager.MenuManager;
 import com.carlos.system.menu.pojo.dto.MenuDTO;
@@ -78,7 +78,7 @@ public class MenuService {
             // 只能删除已启用的功能菜单
             MenuDTO menu = menuManager.getDtoById(id);
             if (menu.getState()) {
-                throw new ServiceException("已启用的菜单无法删除");
+                throw new BusinessException("已启用的菜单无法删除");
             }
             boolean success = menuManager.delete(id);
             if (!success) {
@@ -131,7 +131,7 @@ public class MenuService {
         MenuDTO dto = menuManager.getDtoById(parentId);
         if (dto == null) {
             log.error("Not found menu data, id:{}", parentId);
-            throw new ServiceException("数据不存在！");
+            throw new BusinessException("数据不存在！");
         }
         return dto.getLevel() + 1;
     }
@@ -145,7 +145,7 @@ public class MenuService {
      */
     private void checkSubMenus(Serializable id) {
         if (menuManager.getSubMenuCount(id) > 0) {
-            throw new ServiceException("菜单下存在其他菜单！");
+            throw new BusinessException("菜单下存在其他菜单！");
         }
     }
 

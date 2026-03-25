@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.core.base.Dict;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.datasource.pagination.PageInfo;
 import com.carlos.redis.ICacheManager;
 import com.carlos.redis.util.RedisUtil;
@@ -111,7 +111,7 @@ public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
             log.info("init dict cache success");
         } catch (Exception e) {
             log.error("Failed to init dict cache with pagination", e);
-            throw new ServiceException("初始化字典缓存失败", e);
+            throw new BusinessException("初始化字典缓存失败", e);
         }
 
 

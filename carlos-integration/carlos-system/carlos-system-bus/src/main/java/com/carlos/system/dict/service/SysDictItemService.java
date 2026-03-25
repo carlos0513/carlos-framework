@@ -5,7 +5,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.system.dict.convert.SysDictItemConvert;
 import com.carlos.system.dict.manager.SysDictCacheManager;
 import com.carlos.system.dict.manager.SysDictItemManager;
@@ -55,11 +55,11 @@ public class SysDictItemService {
     @Transactional(rollbackFor = Exception.class)
     public void addDictItem(Serializable dictId, List<SysDictItemDTO> items) {
         if (dictId == null) {
-            throw new ServiceException("字典id不能为空!");
+            throw new BusinessException("字典id不能为空!");
         }
         SysDictDTO dict = dictManager.getDictById(dictId);
         if (dict == null) {
-            throw new ServiceException("字典不存在!");
+            throw new BusinessException("字典不存在!");
         }
         if (CollUtil.isEmpty(items)) {
             return;
@@ -67,10 +67,10 @@ public class SysDictItemService {
         for (SysDictItemDTO dto : items) {
             dto.setDictId(Convert.toLong(dictId));
             if (dictItemManager.count(dictId, null, null, dto.getItemCode()) > 0) {
-                throw new ServiceException("字典选项编码已存在!");
+                throw new BusinessException("字典选项编码已存在!");
             }
             if (dictItemManager.count(dictId, null, dto.getItemName(), null) > 0) {
-                throw new ServiceException("字典选项名称已存在!");
+                throw new BusinessException("字典选项名称已存在!");
             }
             dto.setEnable(true);
             if (dto.getSort() == null) {
@@ -127,7 +127,7 @@ public class SysDictItemService {
     public boolean updateDictItem(final SysDictItemDTO dto) {
         final Serializable dictId = dictItemManager.getDictIdById(dto.getId());
         if (dictItemManager.count(dictId, dto.getId(), dto.getItemName(), null) > 0) {
-            throw new ServiceException("字典选项名称已存在!");
+            throw new BusinessException("字典选项名称已存在!");
         }
         final boolean b = dictItemManager.updateById(SysDictItemConvert.INSTANCE.toDO(dto));
         if (b) {
@@ -213,7 +213,7 @@ public class SysDictItemService {
         }
         final Serializable dictId = dictManager.getIdByCode(code);
         if (dictId == null) {
-            throw new ServiceException("字典不存在:code=" + code);
+            throw new BusinessException("字典不存在:code=" + code);
         }
 
         // 过滤已关闭的选项

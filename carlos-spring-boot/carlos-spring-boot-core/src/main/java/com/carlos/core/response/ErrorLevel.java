@@ -77,4 +77,86 @@ public enum ErrorLevel {
         }
         return fromCode(codeStr.charAt(0));
     }
+
+    /**
+     * 根据错误码获取错误级别
+     * <p>
+     * 错误码格式为5位数字字符串，第一位表示级别
+     *
+     * @param errorCode 错误码，如 "20101"
+     * @return ErrorLevel
+     */
+    public static ErrorLevel fromErrorCode(String errorCode) {
+        if (errorCode == null || errorCode.length() < 5) {
+            return SYSTEM_ERROR;
+        }
+        return fromCode(errorCode.charAt(0));
+    }
+
+    /**
+     * 判断是否为成功级别
+     *
+     * @return true 表示成功
+     */
+    public boolean isSuccess() {
+        return this == SUCCESS;
+    }
+
+    /**
+     * 判断是否为客户端错误
+     *
+     * @return true 表示客户端错误
+     */
+    public boolean isClientError() {
+        return this == CLIENT_ERROR;
+    }
+
+    /**
+     * 判断是否为业务错误
+     *
+     * @return true 表示业务错误
+     */
+    public boolean isBusinessError() {
+        return this == BUSINESS_ERROR;
+    }
+
+    /**
+     * 判断是否为第三方服务错误
+     *
+     * @return true 表示第三方错误
+     */
+    public boolean isThirdPartyError() {
+        return this == THIRD_PARTY_ERROR;
+    }
+
+    /**
+     * 判断是否为系统错误
+     *
+     * @return true 表示系统错误
+     */
+    public boolean isSystemError() {
+        return this == SYSTEM_ERROR;
+    }
+
+    /**
+     * 是否需要记录堆栈
+     * <p>
+     * 系统错误和第三方错误通常需要记录堆栈以便排查问题
+     *
+     * @return true 表示需要记录堆栈
+     */
+    public boolean shouldLogStackTrace() {
+        return this == SYSTEM_ERROR || this == THIRD_PARTY_ERROR;
+    }
+
+    /**
+     * 是否需要告警
+     * <p>
+     * 系统错误和第三方错误通常需要触发告警
+     *
+     * @return true 表示需要告警
+     */
+    public boolean shouldAlert() {
+        return this == SYSTEM_ERROR || this == THIRD_PARTY_ERROR;
+    }
 }

@@ -1,8 +1,8 @@
 package com.carlos.boot.util;
 
 import com.carlos.core.auth.UserContext;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.exception.ComponentException;
-import com.carlos.core.exception.ServiceException;
 import com.carlos.core.interfaces.ApplicationExtend;
 import com.carlos.core.response.CommonErrorCode;
 import org.springframework.lang.Nullable;
@@ -56,7 +56,7 @@ public final class ExtendInfoUtil {
         final UserContext context = extend.getUserContext();
         final Serializable roleId = context.getRoleId();
         if (roleId == null) {
-            throw new ServiceException(CommonErrorCode.FORBIDDEN);
+            throw new BusinessException(CommonErrorCode.FORBIDDEN);
         }
         return roleId;
     }
@@ -75,7 +75,7 @@ public final class ExtendInfoUtil {
         final UserContext context = extend.getUserContext();
         final Serializable departmentId = context.getDepartmentId();
         if (departmentId == null) {
-            throw new ServiceException(CommonErrorCode.FORBIDDEN);
+            throw new BusinessException(CommonErrorCode.FORBIDDEN);
         }
         return departmentId;
     }
@@ -93,7 +93,7 @@ public final class ExtendInfoUtil {
         }
         final UserContext context = extend.getUserContext();
         if (extend == null) {
-            throw new ServiceException("用户登陆信息为空");
+            throw new BusinessException("用户登陆信息为空");
         }
         return context;
     }

@@ -281,7 +281,9 @@ src/main/resources/
 |-----------------|-------------------------------------------------|-----------------------|
 | **数据查询**        | 使用 MyBatis-Plus + mybatis-plus-join 在 Manager 层 | 严禁直接编写 SQL            |
 | **Redis 缓存**    | 在 Manager 层统一实现                                 | Service 层禁止直接操作 Redis |
-| **异常处理**        | 使用框架定义异常类（ServiceException 等）                   | 严禁使用 RuntimeException |
+| **异常处理**        | 使用框架定义异常类（BusinessException/SystemException）    | 严禁使用 RuntimeException |
+| **错误码**         | 使用 CommonErrorCode 或自定义 ErrorCode               | 严禁硬编码错误码              |
+| **统一响应**        | 使用 ApiResponse/Result 返回                        | 严禁直接返回裸数据             |
 | **Lombok**      | 使用注解生成 getter/setter                            | 严禁手写 get/set 方法       |
 | **属性注入**        | 使用 @ConfigurationProperties                     | 严禁使用 @Value           |
 | **Service 返回值** | 返回 DTO 或 Entity                                 | 严禁返回 VO               |
@@ -293,6 +295,78 @@ src/main/resources/
 - **工具模块**: `com.carlos.utils.*`
 - **Spring Boot 模块**: `com.carlos.boot.*`、`com.carlos.redis.*` 等
 - **测试模块**: `com.carlos.test.*`
+
+---
+
+### 统一响应格式
+
+**所有 API 必须返回统一响应格式：**
+
+```java
+// ✅ 正确：使用 ApiResponse
+@GetMapping("/user/{id}")
+public ApiResponse<UserVO> getUser(@PathVariable Long id) {
+    UserDTO user = userService.getById(id);
+    return Result.success(userConvert.dtoToVo(user));
+}
+
+// ❌ 错误：直接返回裸数据
+@GetMapping("/user/{id}")
+public UserVO getUser(@PathVariable Long id) {  // 严禁！
+    // ...
+}
+```
+
+**响应结构：**
+
+```json
+{
+  "success": true,
+  "code": "00000",
+  "msg": "操作成功",
+  "data": { },
+  "timestamp": 1710638258000,
+  "details": null
+}
+```
+
+---
+
+### 错误码规范
+
+**错误码格式：5位数字字符串 `A-BB-CC`**
+
+- `A` - 错误级别：0成功，1客户端错误，2业务错误，3第三方错误，5系统错误
+- `BB` - 模块编码：00通用，01用户，02认证等
+- `CC` - 具体序号
+
+**抛出异常：**
+
+```java
+// ✅ 正确：使用 CommonErrorCode
+throw CommonErrorCode.USER_NOT_FOUND.exception();
+throw CommonErrorCode.USER_ACCOUNT_LOCKED.exception("账号已被锁定，%d分钟后重试", 30);
+
+// ✅ 正确：使用 BusinessException
+throw new BusinessException(CommonErrorCode.USER_NOT_FOUND);
+throw new BusinessException(CommonErrorCode.USER_NOT_FOUND, "自定义消息", 404);
+
+// ❌ 错误：硬编码错误码或使用原生异常
+throw new BusinessException("20101", "用户不存在");  // 严禁！
+throw new RuntimeException("用户不存在");  // 严禁！
+```
+
+**常用错误码：**
+| 错误码 | 消息 | HTTP | 说明 |
+|-------|------|------|------|
+| `00000` | 操作成功 | 200 | 通用成功 |
+| `10001` | 请求参数错误 | 400 | 通用参数错误 |
+| `10002` | 未授权，请先登录 | 401 | 未登录或 Token 过期 |
+| `10004` | 请求的资源不存在 | 404 | 资源不存在 |
+| `10101` | 参数校验失败 | 400 | 字段校验失败 |
+| `20101` | 用户不存在 | 404 | 用户不存在 |
+| `20201` | 登录凭证已过期 | 401 | Token 过期 |
+| `50001` | 系统内部错误 | 500 | 未预期异常 |
 
 ---
 
@@ -594,6 +668,7 @@ mvn spring-boot:run
 | 文档                                                               | 说明                 |
 |------------------------------------------------------------------|--------------------|
 | `.claude/skills/carlos-framework-standard/SKILL.md`              | **编码规范（必读）**       |
+| `carlos-spring-boot/carlos-spring-boot-core/ERROR_CODE_SPEC.md`  | **错误码设计规范（必读）**    |
 | `CLAUDE.md`                                                      | 项目结构、Maven 命令、开发指南 |
 | `carlos-commons/carlos-spring-boot-core/README.md`               | 核心模块文档             |
 | `carlos-parent/README.md`                                        | 父模块说明              |

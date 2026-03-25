@@ -11,7 +11,7 @@ import com.carlos.auth.app.manager.AppClientManager;
 import com.carlos.auth.app.pojo.dto.AppClientDTO;
 import com.carlos.auth.app.pojo.enums.ClientStateEnum;
 import com.carlos.auth.app.pojo.excel.AppClientExcel;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.encrypt.EncryptUtil;
 import com.carlos.util.easyexcel.ExcelUtil;
 import com.google.common.collect.Lists;
@@ -48,7 +48,7 @@ public class AppClientService {
         // 检查名称是否重复
         AppClientDTO client = appClientManager.getByClientName(dto.getAppName());
         if (client != null) {
-            throw new ServiceException("应用名称已存在");
+            throw new BusinessException("应用名称已存在");
         }
 
         // 生成appKey和秘钥
@@ -66,7 +66,7 @@ public class AppClientService {
         boolean success = appClientManager.add(dto);
         if (!success) {
             // 保存失败的应对措施
-            throw new ServiceException("添加失败！");
+            throw new BusinessException("添加失败！");
         }
         Serializable id = dto.getId();
         dto.setAppSecret(secret);
@@ -110,7 +110,7 @@ public class AppClientService {
         }
         AppClientDTO dto = appClientManager.getDtoById(id);
         if (dto == null) {
-            throw new ServiceException("未查询到对应的应用信息");
+            throw new BusinessException("未查询到对应的应用信息");
         }
         String secret = RandomUtil.randomString(16);
         dto = new AppClientDTO();
@@ -133,7 +133,7 @@ public class AppClientService {
      */
     public AppClientDTO findById(Serializable id, boolean deEncrypt) {
         if (ObjectUtil.isEmpty(id)) {
-            throw new ServiceException("client id can't be null");
+            throw new BusinessException("client id can't be null");
         }
         AppClientDTO dto = appClientManager.getDtoById(id);
         if (deEncrypt) {
@@ -154,7 +154,7 @@ public class AppClientService {
      */
     public AppClientDTO findByAppkey(String appKey, boolean deEncrypt) {
         if (ObjectUtil.isEmpty(appKey)) {
-            throw new ServiceException("client id can't be null");
+            throw new BusinessException("client id can't be null");
         }
         AppClientDTO client = appClientManager.getByAppkey(appKey);
         if (deEncrypt) {
@@ -214,7 +214,7 @@ public class AppClientService {
         try {
             ExcelUtil.download(response, name, AppClientExcel.class, data);
         } catch (Exception e) {
-            throw new ServiceException("应用信息导出失败");
+            throw new BusinessException("应用信息导出失败");
         }
     }
 }

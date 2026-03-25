@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.carlos.core.auth.UserContext;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.response.CommonErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
@@ -49,7 +49,7 @@ public class OpaqueTokenValidator implements TokenValidator {
     @Override
     public Mono<UserContext> validate(String token) {
         if (StrUtil.isBlank(token)) {
-            return Mono.error(new ServiceException(CommonErrorCode.UNAUTHORIZED, "Token is empty"));
+            return Mono.error(new BusinessException(CommonErrorCode.UNAUTHORIZED, "Token is empty"));
         }
 
         // 先从缓存中获取
@@ -83,7 +83,7 @@ public class OpaqueTokenValidator implements TokenValidator {
                 // 检查 Token 是否有效
                 Boolean active = json.getBool("active");
                 if (active == null || !active) {
-                    return Mono.error(new ServiceException(CommonErrorCode.UNAUTHORIZED, "Token is not active"));
+                    return Mono.error(new BusinessException(CommonErrorCode.UNAUTHORIZED, "Token is not active"));
                 }
 
                 UserContext context = buildUserContext(json);
@@ -93,11 +93,11 @@ public class OpaqueTokenValidator implements TokenValidator {
                     .thenReturn(context);
             })
             .onErrorMap(e -> {
-                if (e instanceof ServiceException) {
+                if (e instanceof BusinessException) {
                     return e;
                 }
                 log.error("Token introspection failed", e);
-                return new ServiceException(CommonErrorCode.UNAUTHORIZED, "Token validation failed");
+                return new BusinessException(CommonErrorCode.UNAUTHORIZED, "Token validation failed");
             });
     }
 
