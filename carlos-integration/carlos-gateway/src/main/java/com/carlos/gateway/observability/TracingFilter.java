@@ -4,6 +4,7 @@ import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.propagation.Propagator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -20,12 +21,19 @@ import java.util.Optional;
  * 分布式链路追踪过滤器
  * 基于 Micrometer Tracing（兼容 Brave/OpenTelemetry）
  * </p>
+ * <p>
+ * 注意：此过滤器已被 {@link RequestTracingFilter} 替代，请使用新的过滤器。
+ * 新过滤器同时处理了 Request ID 和 Trace ID。
+ * </p>
  *
  * @author carlos
  * @date 2026/3/16
+ * @deprecated 请使用 {@link RequestTracingFilter}
  */
 @Slf4j
 @Component
+@Deprecated
+@ConditionalOnProperty(prefix = "carlos.gateway.tracing", name = "enabled", havingValue = "false")
 public class TracingFilter implements GlobalFilter, Ordered {
 
     private final Tracer tracer;
@@ -63,8 +71,8 @@ public class TracingFilter implements GlobalFilter, Ordered {
 
             // 将 Trace ID 添加到响应头
             ServerHttpResponse response = exchange.getResponse();
-            response.getHeaders().set("X-Trace-Id", span.context().traceId());
-            response.getHeaders().set("X-Span-Id", span.context().spanId());
+            response.getHeaders().set(com.carlos.core.constant.HttpHeadersConstant.X_TRACE_ID, span.context().traceId());
+            response.getHeaders().set(com.carlos.core.constant.HttpHeadersConstant.X_SPAN_ID, span.context().spanId());
 
             // 将追踪上下文注入到出站请求
             ServerHttpRequest mutatedRequest = injectTracingContext(request, span);

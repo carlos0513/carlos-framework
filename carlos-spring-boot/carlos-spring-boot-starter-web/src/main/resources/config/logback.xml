@@ -1,48 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-  <!--  单文件最大  -->
+<!--
+  Carlos Web Starter 日志配置
+
+  特性：
+  1. 支持链路追踪：Request ID + Trace ID + Span ID
+  2. 支持 SkyWalking 集成
+  3. 彩色控制台输出
+  4. 分级别日志文件（debug/info/error）
+  5. 异步日志提升性能
+
+  MDC 变量：
+  - requestId: 业务请求ID
+  - traceId: Micrometer Tracing Trace ID
+  - spanId: Micrometer Tracing Span ID
+  - tid: SkyWalking Trace ID
+-->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+  <!-- ==================== 基础配置 ==================== -->
+  <!-- 单文件最大 -->
   <property name="MAX_FILE_SIZE" value="50MB"/>
-  <!--最长保存时间-->
+  <!-- 最长保存时间 -->
   <property name="MAX_HISTORY" value="360"/>
-
+  <!-- 日志路径 -->
   <property name="LOG_PATH" value="${LOG_PATH:-.}"/>
+  <!-- 应用名称 -->
+  <property name="APP_NAME" value="${spring.application.name:-carlos-app}"/>
 
-  <contextName>${CONTEXT_NAME:-carlos-framework}</contextName>
+  <contextName>${APP_NAME}</contextName>
 
-  <!-- 彩色日志 -->
+  <!-- 禁用 logback 自身日志输出 -->
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+  <!-- ==================== 彩色日志 ==================== -->
   <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
   <conversionRule conversionWord="wex"
                   converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
   <conversionRule conversionWord="wEx"
                   converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
 
-  <!-- 控制台日志样式 -->
-  <property name="CONSOLE_LOG_PATTERN"
-            value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([%15.15t]){faint} [%X{requestId}] %clr(%-40.40logger{39}){cyan}[%L]%clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
-  <!-- 文件日志样式 -->
-  <property name="FILE_LOG_PATTERN"
-            value="${FILE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:-%5p} [%t] %-40.40logger{39} [%L]:%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
-
-  <!-- 禁用logback自身日志输出 -->
-  <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
-
+  <!-- ==================== 日志格式 ==================== -->
   <!--
-  Appender: 设置日志信息的去向,常用的有以下几个
-  ch.qos.logback.core.ConsoleAppender (控制台)
-  ch.qos.logback.core.rolling.RollingFileAppender (文件大小到达指定尺寸的时候产生一个新文件)
-  ch.qos.logback.core.FileAppender (文件，不推荐使用)
+      格式说明：
+      %d: 日期时间
+      %thread: 线程名
+      %-5level: 级别，5个字符宽度，左对齐
+      %logger: Logger 名
+      %X{requestId}: Request ID（业务追踪）
+      %X{traceId}: Trace ID（分布式链路追踪）
+      %X{spanId}: Span ID
+      %msg: 日志消息
+      %n: 换行符
   -->
-  <!-- 控制台 -->
+
+  <!-- 控制台日志样式（彩色，包含链路追踪信息） -->
+  <property name="CONSOLE_LOG_PATTERN"
+            value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr([%15.15t]){faint} [%clr(%X{requestId:-}){yellow}] [%clr(%X{traceId:-}-%X{spanId:-}){cyan}] %clr(%-40.40logger{39}){cyan}[%L]%clr(:){faint} %m%n%wEx"/>
+
+  <!-- 文件日志样式（包含链路追踪信息） -->
+  <property name="FILE_LOG_PATTERN"
+            value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%thread] [%X{requestId:-}] [%X{traceId:-}-%X{spanId:-}] %-40.40logger{39} [%L]:%m%n%wEx"/>
+
+  <!-- ==================== Appender 定义 ==================== -->
+
+  <!-- 控制台输出 -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
     </encoder>
   </appender>
 
-  <!-- 运行日志文件 -->
+  <!-- Debug 日志文件 -->
   <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <encoder>
       <pattern>${FILE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
     </encoder>
     <file>${LOG_PATH}/debug.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -52,10 +85,11 @@
     </rollingPolicy>
   </appender>
 
-  <!-- 运行日志文件 -->
+  <!-- Info 日志文件 -->
   <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <encoder>
       <pattern>${FILE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
     </encoder>
     <file>${LOG_PATH}/info.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -69,10 +103,11 @@
     </filter>
   </appender>
 
-  <!-- 运行日志文件 -->
+  <!-- Warn 日志文件（默认注释，需要时取消注释） -->
   <!--<appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
   <!--    <encoder>-->
   <!--        <pattern>${FILE_LOG_PATTERN}</pattern>-->
+  <!--        <charset>UTF-8</charset>-->
   <!--    </encoder>-->
   <!--    <file>${LOG_PATH}/warn.log</file>-->
   <!--    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
@@ -91,6 +126,7 @@
   <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <encoder>
       <pattern>${FILE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
     </encoder>
     <file>${LOG_PATH}/error.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -109,29 +145,41 @@
   <appender name="ASYNC_INFO_FILE" class="ch.qos.logback.classic.AsyncAppender">
     <discardingThreshold>0</discardingThreshold>
     <queueSize>8192</queueSize>
+    <neverBlock>true</neverBlock>
     <appender-ref ref="DEBUG"/>
   </appender>
   <appender name="ASYNC_DEBUG_FILE" class="ch.qos.logback.classic.AsyncAppender">
     <discardingThreshold>0</discardingThreshold>
     <queueSize>8192</queueSize>
+    <neverBlock>true</neverBlock>
     <appender-ref ref="INFO"/>
   </appender>
   <appender name="ASYNC_ERROR_FILE" class="ch.qos.logback.classic.AsyncAppender">
     <discardingThreshold>0</discardingThreshold>
     <queueSize>8192</queueSize>
+    <neverBlock>true</neverBlock>
     <appender-ref ref="ERROR"/>
   </appender>
 
+  <!-- SkyWalking GRPC 日志上报（可选） -->
+  <appender name="SKYWALKING" class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.log.GRPCLogClientAppender">
+    <encoder>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
 
-  <!-- 解决SpringBootAdmin错误日志问题 -->
+  <!-- 解决 SpringBootAdmin 错误日志问题 -->
   <logger name="org.apache.catalina.connector.CoyoteAdapter" level="OFF"/>
 
+  <!-- ==================== Root 配置 ==================== -->
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="DEBUG"/>
     <appender-ref ref="INFO"/>
     <appender-ref ref="ERROR"/>
     <!--<appender-ref ref="WARN"/>-->
+    <!--<appender-ref ref="SKYWALKING"/>-->
   </root>
 
 </configuration>

@@ -1,5 +1,6 @@
 package com.carlos.apm.config;
 
+import com.carlos.core.constant.HttpHeadersConstant;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -131,6 +132,11 @@ public class ApmProperties {
         private boolean enabled = true;
 
         /**
+         * Request ID 在 MDC 中的 key（兼容原有自定义 requestId）
+         */
+        private String requestIdKey = "requestId";
+
+        /**
          * Trace ID 在 MDC 中的 key
          */
         private String traceIdKey = "traceId";
@@ -141,13 +147,23 @@ public class ApmProperties {
         private String spanIdKey = "spanId";
 
         /**
-         * 是否将 Trace ID 添加到响应头
+         * 是否将 Request ID / Trace ID 添加到响应头
          */
         private boolean addToResponse = true;
 
         /**
-         * 响应头名称
+         * Request ID 响应头名称
          */
-        private String responseHeaderName = "X-Trace-Id";
+        private String requestIdHeaderName = HttpHeadersConstant.X_REQUEST_ID;
+
+        /**
+         * Trace ID 响应头名称
+         */
+        private String responseHeaderName = HttpHeadersConstant.X_TRACE_ID;
+
+        /**
+         * 如果请求未提供 Request ID，是否自动生成
+         */
+        private boolean autoGenerateRequestId = true;
     }
 }

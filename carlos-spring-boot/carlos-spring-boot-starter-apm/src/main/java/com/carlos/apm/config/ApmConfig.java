@@ -29,7 +29,8 @@ import org.springframework.context.annotation.Import;
 @Import({
     com.carlos.apm.sleuth.config.SleuthConfig.class,
     com.carlos.apm.skywalking.config.SkywalkingConfig.class,
-    com.carlos.apm.mdc.MdcConfig.class
+    com.carlos.apm.mdc.MdcConfig.class,
+    com.carlos.apm.config.ApmFeignConfig.class
 })
 public class ApmConfig {
 

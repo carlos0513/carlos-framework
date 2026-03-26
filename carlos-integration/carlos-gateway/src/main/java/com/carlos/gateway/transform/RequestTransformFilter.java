@@ -171,8 +171,9 @@ public class RequestTransformFilter implements GlobalFilter, Ordered {
         builder.header("X-Gateway-Timestamp", String.valueOf(System.currentTimeMillis()));
 
         // 如果客户端没有传递 Request-ID，生成一个
-        if (request.getHeaders().getFirst("X-Request-Id") == null) {
-            builder.header("X-Request-Id", java.util.UUID.randomUUID().toString().replace("-", ""));
+        if (request.getHeaders().getFirst(com.carlos.core.constant.HttpHeadersConstant.X_REQUEST_ID) == null) {
+            builder.header(com.carlos.core.constant.HttpHeadersConstant.X_REQUEST_ID,
+                java.util.UUID.randomUUID().toString().replace("-", ""));
         }
 
         return builder.build();

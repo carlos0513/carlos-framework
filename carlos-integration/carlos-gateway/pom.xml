@@ -92,7 +92,7 @@
     </dependency>
 
 
-    <!-- ==================== 链路追踪（Micrometer Tracing） ==================== -->
+    <!-- ==================== 链路追踪（Micrometer Tracing + Brave） ==================== -->
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-tracing</artifactId>
@@ -101,6 +101,18 @@
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-tracing-bridge-brave</artifactId>
+    </dependency>
+
+    <!-- Brave 核心（用于手动创建 Span） -->
+    <dependency>
+      <groupId>io.zipkin.brave</groupId>
+      <artifactId>brave</artifactId>
+    </dependency>
+
+    <!-- Brave 传播器 -->
+    <dependency>
+      <groupId>io.zipkin.brave</groupId>
+      <artifactId>brave-instrumentation-http</artifactId>
     </dependency>
 
     <!-- Zipkin 导出器 -->

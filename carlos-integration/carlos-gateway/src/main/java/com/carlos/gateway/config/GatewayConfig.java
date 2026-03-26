@@ -7,9 +7,7 @@ import com.carlos.gateway.filter.PathPrefixFilter;
 import com.carlos.gateway.gray.GrayReleaseFilter;
 import com.carlos.gateway.gray.GrayReleaseProperties;
 import com.carlos.gateway.oauth2.*;
-import com.carlos.gateway.observability.MetricsFilter;
-import com.carlos.gateway.observability.TracingFilter;
-import com.carlos.gateway.observability.TracingProperties;
+import com.carlos.gateway.observability.*;
 import com.carlos.gateway.security.ReplayProtectionFilter;
 import com.carlos.gateway.security.ReplayProtectionProperties;
 import com.carlos.gateway.security.WafFilter;
@@ -17,7 +15,6 @@ import com.carlos.gateway.security.WafProperties;
 import com.carlos.gateway.transform.RequestTransformFilter;
 import com.carlos.gateway.transform.TransformProperties;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.propagation.Propagator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -57,7 +54,8 @@ import org.springframework.web.reactive.function.client.WebClient;
     CacheProperties.class,
     TracingProperties.class,
     TransformProperties.class,
-    ExceptionProperties.class
+    ExceptionProperties.class,
+    AccessLogProperties.class
 })
 public class GatewayConfig {
 
@@ -149,14 +147,29 @@ public class GatewayConfig {
 
     // ==================== 可观测性配置 ====================
 
+    /**
+     * 统一链路追踪过滤器
+     * 替代旧的 TracingFilter，同时处理 Request ID 和 Trace ID
+     */
     @Bean
     @ConditionalOnProperty(name = "carlos.gateway.tracing.enabled", havingValue = "true", matchIfMissing = true)
-    public TracingFilter tracingFilter(
-        Tracer tracer,
+    public RequestTracingFilter requestTracingFilter(
+        brave.Tracer tracer,
         Propagator propagator,
         TracingProperties properties) {
-        log.info("Initializing Tracing Filter");
-        return new TracingFilter(tracer, propagator, properties);
+        log.info("Initializing Request Tracing Filter");
+        return new RequestTracingFilter(tracer, propagator, properties);
+    }
+
+    /**
+     * 访问日志过滤器
+     * 记录所有请求的访问日志
+     */
+    @Bean
+    @ConditionalOnProperty(name = "carlos.gateway.access-log.enabled", havingValue = "true", matchIfMissing = true)
+    public AccessLogFilter accessLogFilter() {
+        log.info("Initializing Access Log Filter");
+        return new AccessLogFilter();
     }
 
     @Bean

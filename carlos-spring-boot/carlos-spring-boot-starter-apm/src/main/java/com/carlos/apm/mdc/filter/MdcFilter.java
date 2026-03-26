@@ -39,14 +39,22 @@ public class MdcFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         try {
-            // 设置 Sleuth Trace ID 到 MDC
+            // 1. 从请求头中提取自定义 Request ID，如果没有则生成
+            String requestId = httpRequest.getHeader(MdcUtil.REQUEST_ID_HEADER);
+            requestId = MdcUtil.setRequestId(requestId);
+
+            // 2. 设置 Micrometer Tracing Trace ID 到 MDC
             MdcUtil.setTraceId();
 
-            // 设置 SkyWalking Trace ID 到 MDC
+            // 3. 设置 SkyWalking Trace ID 到 MDC
             MdcUtil.setSkyWalkingTraceId();
 
-            // 将 Trace ID 添加到响应头
+            // 4. 将 Request ID 和 Trace ID 添加到响应头
             if (apmProperties.getMdc().isAddToResponse()) {
+                // 返回 Request ID（业务追踪用）
+                httpResponse.setHeader(MdcUtil.RESPONSE_ID_HEADER, requestId);
+
+                // 返回 Trace ID（链路追踪用）
                 String traceId = MdcUtil.getTraceId();
                 if (traceId != null) {
                     httpResponse.setHeader(apmProperties.getMdc().getResponseHeaderName(), traceId);
