@@ -2,6 +2,7 @@ package com.carlos.gateway.security;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.constant.GatewayHeaderConstants;
 import com.carlos.gateway.exception.ErrorResponse;
@@ -66,9 +67,9 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         }
 
         // 2. 获取必要参数
-        String timestamp = request.getHeaders().getFirst(GatewayHeaderConstants.X_TIMESTAMP);
-        String nonce = request.getHeaders().getFirst(GatewayHeaderConstants.X_NONCE);
-        String signature = request.getHeaders().getFirst(GatewayHeaderConstants.X_SIGNATURE);
+        String timestamp = request.getHeaders().getFirst(HttpHeadersConstant.X_TIMESTAMP);
+        String nonce = request.getHeaders().getFirst(HttpHeadersConstant.X_NONCE);
+        String signature = request.getHeaders().getFirst(HttpHeadersConstant.X_SIGNATURE);
 
         // 如果是 GET 请求且不需要签名验证，可以只检查时间戳
         if (request.getMethod() == org.springframework.http.HttpMethod.GET &&
@@ -89,8 +90,8 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         // 严格模式：必须包含所有参数
         if (StrUtil.isBlank(timestamp) || StrUtil.isBlank(nonce) || StrUtil.isBlank(signature)) {
             return blockRequest(exchange, ReplayAttackException.AttackType.UNKNOWN, nonce,
-                "缺少必要的安全请求头（" + GatewayHeaderConstants.X_TIMESTAMP + ", " +
-                    GatewayHeaderConstants.X_NONCE + ", " + GatewayHeaderConstants.X_SIGNATURE + "）");
+                "缺少必要的安全请求头（" + HttpHeadersConstant.X_TIMESTAMP + ", " +
+                    HttpHeadersConstant.X_NONCE + ", " + HttpHeadersConstant.X_SIGNATURE + "）");
         }
 
         // 3. 验证时间戳

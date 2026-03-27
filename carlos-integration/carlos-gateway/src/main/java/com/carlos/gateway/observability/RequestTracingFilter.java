@@ -150,7 +150,7 @@ public class RequestTracingFilter implements GlobalFilter, Ordered {
             .ifPresent(ip -> span.tag("http.client_ip", ip));
 
         // 添加用户 ID（如果已认证）
-        Optional.ofNullable(request.getHeaders().getFirst("X-User-Id"))
+        Optional.ofNullable(request.getHeaders().getFirst(HttpHeadersConstant.X_USER_ID))
             .ifPresent(userId -> span.tag("user.id", userId));
 
         return span;

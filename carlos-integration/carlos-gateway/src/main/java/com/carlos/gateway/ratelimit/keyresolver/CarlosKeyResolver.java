@@ -1,5 +1,6 @@
 package com.carlos.gateway.ratelimit.keyresolver;
 
+import com.carlos.core.constant.HttpHeadersConstant;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import reactor.core.publisher.Mono;
 
@@ -35,7 +36,7 @@ public enum CarlosKeyResolver {
         @Override
         public KeyResolver getResolver() {
             return exchange -> {
-                String userId = exchange.getRequest().getHeaders().getFirst("X-User-Id");
+                String userId = exchange.getRequest().getHeaders().getFirst(HttpHeadersConstant.X_USER_ID);
                 return Mono.just(userId != null ? userId : "anonymous");
             };
         }
@@ -89,7 +90,7 @@ public enum CarlosKeyResolver {
                 String ip = exchange.getRequest().getRemoteAddress() != null
                     ? exchange.getRequest().getRemoteAddress().getAddress().getHostAddress()
                     : "unknown";
-                String userId = exchange.getRequest().getHeaders().getFirst("X-User-Id");
+                String userId = exchange.getRequest().getHeaders().getFirst(HttpHeadersConstant.X_USER_ID);
                 return Mono.just(ip + ":" + (userId != null ? userId : "anonymous"));
             };
         }

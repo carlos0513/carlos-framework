@@ -5,7 +5,6 @@ import com.carlos.core.auth.AuthConstant;
 import com.carlos.core.auth.UserContext;
 import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.core.util.PathMatchUtil;
-import com.carlos.gateway.constant.GatewayHeaderConstants;
 import com.carlos.gateway.oauth2.validator.TokenValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -109,7 +108,7 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         }
 
         // 3. 从 Query 参数提取（用于 WebSocket 等场景）
-        String tokenParam = request.getQueryParams().getFirst(GatewayHeaderConstants.ACCESS_TOKEN_PARAM);
+        String tokenParam = request.getQueryParams().getFirst(HttpHeadersConstant.ACCESS_TOKEN_PARAM);
         if (StrUtil.isNotBlank(tokenParam)) {
             return tokenParam;
         }

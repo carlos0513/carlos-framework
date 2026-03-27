@@ -72,7 +72,7 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
 
             // 添加灰度标记头
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                .header(GatewayHeaderConstants.X_GRAY_RELEASE, "true")
+                .header(HttpHeadersConstant.X_GRAY_RELEASE, "true")
                 .build();
             ServerWebExchange mutatedExchange = exchange.mutate()
                 .request(mutatedRequest)

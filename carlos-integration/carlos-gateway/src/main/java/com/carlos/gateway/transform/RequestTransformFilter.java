@@ -76,10 +76,10 @@ public class RequestTransformFilter implements GlobalFilter, Ordered {
         String path = request.getURI().getPath();
 
         // 从 Header 中获取版本
-        String versionHeader = request.getHeaders().getFirst(GatewayHeaderConstants.X_API_VERSION);
+        String versionHeader = request.getHeaders().getFirst(HttpHeadersConstant.X_API_VERSION);
         if (versionHeader != null) {
             return request.mutate()
-                .header(GatewayHeaderConstants.X_ROUTED_VERSION, versionHeader)
+                .header(HttpHeadersConstant.X_ROUTED_VERSION, versionHeader)
                 .build();
         }
 
@@ -88,7 +88,7 @@ public class RequestTransformFilter implements GlobalFilter, Ordered {
         if (matcher.find()) {
             String version = matcher.group(1);
             return request.mutate()
-                .header(GatewayHeaderConstants.X_ROUTED_VERSION, version)
+                .header(HttpHeadersConstant.X_ROUTED_VERSION, version)
                 .build();
         }
 

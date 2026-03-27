@@ -225,4 +225,69 @@ public interface HttpHeadersConstant {
      */
     String X_APP_VERSION = "X-App-Version";
 
+    // ==================== 灰度发布 ====================
+
+    /**
+     * 灰度发布标记请求头（传递给后端服务）
+     */
+    String X_GRAY_RELEASE = "X-Gray-Release";
+
+    // ==================== API 版本控制 ====================
+
+    /**
+     * API 版本请求头（客户端传入）
+     */
+    String X_API_VERSION = "X-API-Version";
+
+    /**
+     * 路由后的 API 版本请求头（传递给后端）
+     */
+    String X_ROUTED_VERSION = "X-Routed-Version";
+
+    // ==================== 安全防护 ====================
+
+    /**
+     * 请求时间戳头（用于防重放攻击验证）
+     */
+    String X_TIMESTAMP = "X-Timestamp";
+
+    /**
+     * 请求随机数头（用于防重放攻击验证）
+     */
+    String X_NONCE = "X-Nonce";
+
+    /**
+     * 请求签名头（用于防重放攻击验证）
+     */
+    String X_SIGNATURE = "X-Signature";
+
+    /**
+     * CSRF Token 请求头
+     */
+    String X_CSRF_TOKEN = "X-CSRF-Token";
+
+    // ==================== 缓存控制 ====================
+
+    /**
+     * 缓存命中标记头
+     */
+    String X_CACHE = "X-Cache";
+
+    /**
+     * 缓存命中标记值
+     */
+    String CACHE_HIT = "HIT";
+
+    /**
+     * 缓存未命中标记值
+     */
+    String CACHE_MISS = "MISS";
+
+    // ==================== OAuth2 / Token ====================
+
+    /**
+     * Query 参数中的 Token 键名（用于 WebSocket 等场景）
+     */
+    String ACCESS_TOKEN_PARAM = "access_token";
+
 }

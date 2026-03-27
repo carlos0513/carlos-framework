@@ -1,5 +1,6 @@
 package com.carlos.gateway.cache;
 
+import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.gateway.constant.GatewayHeaderConstants;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -100,7 +101,7 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(cached.getStatusCode());
         response.getHeaders().putAll(cached.getHeaders());
-        response.getHeaders().set(GatewayHeaderConstants.X_CACHE, GatewayHeaderConstants.CACHE_HIT);
+        response.getHeaders().set(HttpHeadersConstant.X_CACHE, HttpHeadersConstant.CACHE_HIT);
 
         return response.writeWith(Mono.just(response.bufferFactory().wrap(cached.getBody())));
     }
