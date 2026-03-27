@@ -34,11 +34,23 @@ import java.util.*;
 
 /**
  * <p>
- * Jackson序列化工具类
+ * Jackson 序列化工具类
  * </p>
+ *
+ * <p><strong>注意：</strong>业务代码请优先使用 {@link com.carlos.json.JsonUtils}，
+ * 该类提供统一的 JSON 操作接口，支持引擎切换（Jackson/Fastjson/Gson）。</p>
+ *
+ * <p>此类保留以下 Jackson 特有功能：</p>
+ * <ul>
+ *   <li>JsonNode 操作（readTree, createObjectNode, createArrayNode）</li>
+ *   <li>JavaType 构造（getMapType, getListType, getParametricType）</li>
+ *   <li>Tree 模型转换（treeToValue, valueToTree）</li>
+ *   <li>Hutool JSON trim（jsonTrim, jsonTrimArray）</li>
+ * </ul>
  *
  * @author carlos
  * @date 2020/4/16 9:21
+ * @see com.carlos.json.JsonUtils
  */
 @Slf4j
 @Component
@@ -57,7 +69,9 @@ public class JacksonUtil {
      * @param object 输出的对象
      * @author carlos
      * @date 2020/4/16 10:49
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toJson(Object)}
      */
+    @Deprecated
     public static String toJsonString(Object object) {
         return toJsonString(object, false);
     }
@@ -69,7 +83,9 @@ public class JacksonUtil {
      * @param enableFormat 是否需要进行格式化
      * @author carlos
      * @date 2020/4/16 9:24
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toJson(Object)} 或 {@link com.carlos.json.JsonUtils#toJsonPretty(Object)}
      */
+    @Deprecated
     public static String toJsonString(Object object, boolean enableFormat) {
         return toJson(object, false, enableFormat);
     }
@@ -80,7 +96,9 @@ public class JacksonUtil {
      * @param object 需要输出的对象
      * @author carlos
      * @date 2020/4/16 10:45
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toJsonWithNulls(Object)}
      */
+    @Deprecated
     public static String toJsonStringNonNull(Object object) {
         return toJsonStringNonNull(object, false);
     }
@@ -93,7 +111,9 @@ public class JacksonUtil {
      * @param enableFormat 是否进行json格式化
      * @author carlos
      * @date 2020/4/16 10:45
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toJsonWithNulls(Object)}
      */
+    @Deprecated
     public static String toJsonStringNonNull(Object object, boolean enableFormat) {
         return toJson(object, true, enableFormat);
     }
@@ -107,7 +127,9 @@ public class JacksonUtil {
      * @param enableFormat 是否进行json格式化
      * @author carlos
      * @date 2020/4/16 10:45
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toJson(Object)} 或 {@link com.carlos.json.JsonUtils#toJsonPretty(Object)}
      */
+    @Deprecated
     public static String toJson(Object obj, boolean printNull, boolean enableFormat) {
         if (obj == null) {
             return null;
@@ -136,7 +158,9 @@ public class JacksonUtil {
      * @return java.util.List<T>
      * @author carlos
      * @date 2022/1/27 10:29
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toList(String, Class)}
      */
+    @Deprecated
     public static <T> List<T> str2list(String json, Class<T> T) throws Exception {
         CollectionType type = objectMapper.getTypeFactory().constructCollectionType(List.class, T);
         return objectMapper.readValue(json, type);
@@ -151,7 +175,9 @@ public class JacksonUtil {
      * @return T
      * @author carlos
      * @date 2022/1/27 10:23
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(String, Class)}
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static <T> T string2Obj(String str, Class<T> clazz) {
         if (StrUtil.isEmpty(str) || clazz == null) {
@@ -224,7 +250,9 @@ public class JacksonUtil {
      *
      * @param object javaBean
      * @return jsonString json字符串
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toJson(Object)}
      */
+    @Deprecated
     public static String toJson(@Nullable Object object) {
         if (object == null) {
             return null;
@@ -241,7 +269,9 @@ public class JacksonUtil {
      *
      * @param object javaBean
      * @return jsonString json字符串
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toJsonBytes(Object)}
      */
+    @Deprecated
     public static byte[] toJsonAsBytes(@Nullable Object object) {
         if (object == null) {
             return new byte[0];
@@ -320,7 +350,9 @@ public class JacksonUtil {
      * @param valueType class
      * @param <T>       T 泛型标记
      * @return Bean
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(byte[], Class)}
      */
+    @Deprecated
     @Nullable
     public static <T> T readValue(@Nullable byte[] content, Class<T> valueType) {
         if (ObjUtil.isEmpty(content)) {
@@ -340,7 +372,9 @@ public class JacksonUtil {
      * @param valueType  class
      * @param <T>        T 泛型标记
      * @return Bean
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(String, Class)}
      */
+    @Deprecated
     @Nullable
     public static <T> T readValue(@Nullable String jsonString, Class<T> valueType) {
         if (StringUtils.isEmpty(jsonString)) {
@@ -360,7 +394,9 @@ public class JacksonUtil {
      * @param in        InputStream
      * @param valueType class
      * @return Bean
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(InputStream, Class)}
      */
+    @Deprecated
     @Nullable
     public static <T> T readValue(@Nullable InputStream in, Class<T> valueType) {
         if (in == null) {
@@ -380,7 +416,9 @@ public class JacksonUtil {
      * @param typeReference 泛型类型
      * @param <T>           T 泛型标记
      * @return Bean
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(byte[], TypeReference)}
      */
+    @Deprecated
     @Nullable
     public static <T> T readValue(@Nullable byte[] content, TypeReference<T> typeReference) {
         if (ObjUtil.isEmpty(content)) {
@@ -400,7 +438,9 @@ public class JacksonUtil {
      * @param typeReference 泛型类型
      * @param <T>           T 泛型标记
      * @return Bean
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(String, TypeReference)}
      */
+    @Deprecated
     @Nullable
     public static <T> T readValue(@Nullable String jsonString, TypeReference<T> typeReference) {
         if (StringUtils.isEmpty(jsonString)) {
@@ -420,7 +460,9 @@ public class JacksonUtil {
      * @param typeReference 泛型类型
      * @param <T>           T 泛型标记
      * @return Bean
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(InputStream, TypeReference)}
      */
+    @Deprecated
     @Nullable
     public static <T> T readValue(@Nullable InputStream in, TypeReference<T> typeReference) {
         if (in == null) {
@@ -546,7 +588,9 @@ public class JacksonUtil {
      * @param elementClass elementClass
      * @param <T>          泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toList(String, Class)}
      */
+    @Deprecated
     public static <T> List<T> readList(@Nullable byte[] content, Class<T> elementClass) {
         if (ObjUtil.isEmpty(content)) {
             return Collections.emptyList();
@@ -565,7 +609,9 @@ public class JacksonUtil {
      * @param elementClass elementClass
      * @param <T>          泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(InputStream, TypeReference)}
      */
+    @Deprecated
     public static <T> List<T> readList(@Nullable InputStream content, Class<T> elementClass) {
         if (content == null) {
             return Collections.emptyList();
@@ -584,7 +630,9 @@ public class JacksonUtil {
      * @param elementClass elementClass
      * @param <T>          泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toList(String, Class)}
      */
+    @Deprecated
     public static <T> List<T> readList(@Nullable String content, Class<T> elementClass) {
         if (ObjUtil.isEmpty(content)) {
             return Collections.emptyList();
@@ -601,7 +649,9 @@ public class JacksonUtil {
      *
      * @param content bytes
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(byte[])}
      */
+    @Deprecated
     public static Map<String, Object> readMap(@Nullable byte[] content) {
         return readMap(content, Object.class);
     }
@@ -611,7 +661,9 @@ public class JacksonUtil {
      *
      * @param content InputStream
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(InputStream)}
      */
+    @Deprecated
     public static Map<String, Object> readMap(@Nullable InputStream content) {
         return readMap(content, Object.class);
     }
@@ -621,7 +673,9 @@ public class JacksonUtil {
      *
      * @param content bytes
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(String)}
      */
+    @Deprecated
     public static Map<String, Object> readMap(@Nullable String content) {
         return readMap(content, Object.class);
     }
@@ -633,7 +687,9 @@ public class JacksonUtil {
      * @param valueClass 值类型
      * @param <V>        泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(byte[], Class)}
      */
+    @Deprecated
     public static <V> Map<String, V> readMap(@Nullable byte[] content, Class<?> valueClass) {
         return readMap(content, String.class, valueClass);
     }
@@ -645,7 +701,9 @@ public class JacksonUtil {
      * @param valueClass 值类型
      * @param <V>        泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(InputStream, Class)}
      */
+    @Deprecated
     public static <V> Map<String, V> readMap(@Nullable InputStream content, Class<?> valueClass) {
         return readMap(content, String.class, valueClass);
     }
@@ -657,7 +715,9 @@ public class JacksonUtil {
      * @param valueClass 值类型
      * @param <V>        泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(String, Class)}
      */
+    @Deprecated
     public static <V> Map<String, V> readMap(@Nullable String content, Class<?> valueClass) {
         return readMap(content, String.class, valueClass);
     }
@@ -671,7 +731,9 @@ public class JacksonUtil {
      * @param <K>        泛型
      * @param <V>        泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(byte[], Class, Class)}
      */
+    @Deprecated
     public static <K, V> Map<K, V> readMap(@Nullable byte[] content, Class<?> keyClass, Class<?> valueClass) {
         if (ObjUtil.isEmpty(content)) {
             return Collections.emptyMap();
@@ -692,7 +754,9 @@ public class JacksonUtil {
      * @param <K>        泛型
      * @param <V>        泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(InputStream, Class, Class)}
      */
+    @Deprecated
     public static <K, V> Map<K, V> readMap(@Nullable InputStream content, Class<?> keyClass, Class<?> valueClass) {
         if (ObjUtil.isEmpty(content)) {
             return Collections.emptyMap();
@@ -713,7 +777,9 @@ public class JacksonUtil {
      * @param <K>        泛型
      * @param <V>        泛型
      * @return 集合
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#toMap(String, Class, Class)}
      */
+    @Deprecated
     public static <K, V> Map<K, V> readMap(@Nullable String content, Class<?> keyClass, Class<?> valueClass) {
         if (ObjUtil.isEmpty(content)) {
             return Collections.emptyMap();
@@ -732,7 +798,9 @@ public class JacksonUtil {
      * @param toValueType 转换的类型
      * @param <T>         泛型标记
      * @return 转换结果
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#convertValue(Object, Class)}
      */
+    @Deprecated
     public static <T> T convertValue(Object fromValue, Class<T> toValueType) {
         return getInstance().convertValue(fromValue, toValueType);
     }
@@ -756,7 +824,9 @@ public class JacksonUtil {
      * @param toValueTypeRef 泛型类型
      * @param <T>            泛型标记
      * @return 转换结果
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#convertValue(Object, TypeReference)}
      */
+    @Deprecated
     public static <T> T convertValue(Object fromValue, TypeReference<T> toValueTypeRef) {
         return getInstance().convertValue(fromValue, toValueTypeRef);
     }
@@ -793,7 +863,9 @@ public class JacksonUtil {
      *
      * @param value 对象
      * @return 是否可以序列化
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#canSerialize(Object)}
      */
+    @Deprecated
     public static boolean canSerialize(@Nullable Object value) {
         if (value == null) {
             return true;
@@ -816,7 +888,9 @@ public class JacksonUtil {
      *
      * @param jsonString json 字符串
      * @return 是否成功
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#isValidJson(String)}
      */
+    @Deprecated
     public static boolean isValidJson(String jsonString) {
         return isValidJson(mapper -> {
             assert mapper != null;
@@ -829,7 +903,9 @@ public class JacksonUtil {
      *
      * @param content json byte array
      * @return 是否成功
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#isValidJson(byte[])}
      */
+    @Deprecated
     public static boolean isValidJson(byte[] content) {
         return isValidJson(mapper -> mapper.readTree(content));
     }
@@ -839,7 +915,9 @@ public class JacksonUtil {
      *
      * @param input json input stream
      * @return 是否成功
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#isValidJson(InputStream)}
      */
+    @Deprecated
     public static boolean isValidJson(InputStream input) {
         return isValidJson(mapper -> mapper.readTree(input));
     }
@@ -849,7 +927,9 @@ public class JacksonUtil {
      *
      * @param jsonParser json parser
      * @return 是否成功
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#isValidJson(JsonParser)}
      */
+    @Deprecated
     public static boolean isValidJson(JsonParser jsonParser) {
         return isValidJson(mapper -> mapper.readTree(jsonParser));
     }

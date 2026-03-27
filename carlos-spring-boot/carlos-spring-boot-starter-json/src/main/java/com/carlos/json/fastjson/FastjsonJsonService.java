@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.filter.ValueFilter;
 import com.carlos.json.config.JsonProperties;
 import com.carlos.json.core.JsonService;
 import com.carlos.json.exception.JsonParseException;
@@ -31,6 +32,7 @@ public class FastjsonJsonService implements JsonService {
     private final JsonProperties properties;
     private JSONWriter.Feature[] writerFeatures;
     private com.alibaba.fastjson2.JSONReader.Feature[] readerFeatures;
+    private final ValueFilter emptyStringFilter;
 
     public FastjsonJsonService() {
         this(null);
@@ -38,12 +40,27 @@ public class FastjsonJsonService implements JsonService {
 
     public FastjsonJsonService(JsonProperties properties) {
         this.properties = properties;
+        this.emptyStringFilter = createEmptyStringFilter();
         configureFeatures();
+    }
+
+    private ValueFilter createEmptyStringFilter() {
+        if (properties != null && properties.isIgnoreEmptyString()) {
+            return (object, name, value) -> {
+                if (value instanceof String str && str.isEmpty()) {
+                    return null; // 返回 null 会导致该字段被忽略
+                }
+                return value;
+            };
+        }
+        return null;
     }
 
     private void configureFeatures() {
         // 配置序列化特性
-        if (properties != null && properties.isPrettyPrint()) {
+        boolean indentOutput = properties != null && properties.getSerialization() != null
+            && properties.getSerialization().isIndentOutput();
+        if (indentOutput) {
             writerFeatures = new JSONWriter.Feature[]{
                 JSONWriter.Feature.PrettyFormat,
                 JSONWriter.Feature.WriteLongAsString
@@ -65,6 +82,9 @@ public class FastjsonJsonService implements JsonService {
     public String toJson(Object object) {
         if (object == null) {
             return "{}";
+        }
+        if (emptyStringFilter != null) {
+            return JSON.toJSONString(object, emptyStringFilter, writerFeatures);
         }
         return JSON.toJSONString(object, writerFeatures);
     }

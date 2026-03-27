@@ -83,6 +83,19 @@ public class GsonJsonService implements JsonService {
                     builder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES);
                 }
             }
+
+            // 忽略空字符串
+            if (properties.isIgnoreEmptyString()) {
+                builder.registerTypeAdapter(String.class, new JsonSerializer<String>() {
+                    @Override
+                    public JsonElement serialize(String src, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
+                        if (src == null || src.isEmpty()) {
+                            return null; // 返回 null 会跳过该字段
+                        }
+                        return new JsonPrimitive(src);
+                    }
+                });
+            }
         }
 
         // 容错处理
