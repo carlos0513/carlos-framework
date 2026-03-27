@@ -1,5 +1,6 @@
 package com.carlos.gateway.cache;
 
+import com.carlos.gateway.constant.GatewayHeaderConstants;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -31,7 +31,6 @@ import java.util.List;
  * @date 2026/3/16
  */
 @Slf4j
-@Component
 public class ResponseCacheFilter implements GlobalFilter, Ordered {
 
     private final CacheProperties properties;
@@ -101,7 +100,7 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(cached.getStatusCode());
         response.getHeaders().putAll(cached.getHeaders());
-        response.getHeaders().set("X-Cache", "HIT");
+        response.getHeaders().set(GatewayHeaderConstants.X_CACHE, GatewayHeaderConstants.CACHE_HIT);
 
         return response.writeWith(Mono.just(response.bufferFactory().wrap(cached.getBody())));
     }
@@ -149,9 +148,9 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
                 }
                 hexString.append(hex);
             }
-            return "cache:response:" + hexString.substring(0, 16);
+            return GatewayHeaderConstants.CACHE_KEY_PREFIX + hexString.substring(0, 16);
         } catch (Exception e) {
-            return "cache:response:" + key.hashCode();
+            return GatewayHeaderConstants.CACHE_KEY_PREFIX + key.hashCode();
         }
     }
 

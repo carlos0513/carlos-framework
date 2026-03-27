@@ -4,6 +4,7 @@ import brave.Span;
 import brave.Tracer;
 import brave.propagation.TraceContext;
 import brave.propagation.TraceContextOrSamplingFlags;
+import cn.hutool.core.util.IdUtil;
 import com.carlos.core.constant.HttpHeadersConstant;
 import io.micrometer.tracing.propagation.Propagator;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
@@ -32,36 +32,8 @@ import java.util.Optional;
  * @date 2025-03-26
  */
 @Slf4j
-@Component
 public class RequestTracingFilter implements GlobalFilter, Ordered {
 
-    /**
-     * Request ID 请求头名称
-     * @deprecated 使用 {@link HttpHeadersConstant#X_REQUEST_ID}
-     */
-    @Deprecated
-    public static final String REQUEST_ID_HEADER = HttpHeadersConstant.X_REQUEST_ID;
-
-    /**
-     * Trace ID 请求头名称（B3 格式）
-     * @deprecated 使用 {@link HttpHeadersConstant#X_TRACE_ID}
-     */
-    @Deprecated
-    public static final String TRACE_ID_HEADER = HttpHeadersConstant.X_TRACE_ID;
-
-    /**
-     * Span ID 请求头名称
-     * @deprecated 使用 {@link HttpHeadersConstant#X_SPAN_ID}
-     */
-    @Deprecated
-    public static final String SPAN_ID_HEADER = HttpHeadersConstant.X_SPAN_ID;
-
-    /**
-     * B3 单头格式（兼容 Sleuth/Micrometer）
-     * @deprecated 使用 {@link HttpHeadersConstant#B3}
-     */
-    @Deprecated
-    public static final String B3_HEADER = HttpHeadersConstant.B3;
 
     private final Tracer tracer;
     private final Propagator propagator;
@@ -92,9 +64,9 @@ public class RequestTracingFilter implements GlobalFilter, Ordered {
         ServerHttpResponse response = exchange.getResponse();
 
         // 4. 设置响应头
-        response.getHeaders().set(REQUEST_ID_HEADER, requestId);
-        response.getHeaders().set(TRACE_ID_HEADER, span.context().traceIdString());
-        response.getHeaders().set(SPAN_ID_HEADER, span.context().spanIdString());
+        response.getHeaders().set(HttpHeadersConstant.X_REQUEST_ID, requestId);
+        response.getHeaders().set(HttpHeadersConstant.X_TRACE_ID, span.context().traceIdString());
+        response.getHeaders().set(HttpHeadersConstant.X_SPAN_ID, span.context().spanIdString());
 
         // 5. 构建新的 Exchange
         ServerWebExchange mutatedExchange = exchange.mutate()
@@ -136,7 +108,7 @@ public class RequestTracingFilter implements GlobalFilter, Ordered {
 
         // 3. 如果还没有，生成新的
         if (requestId == null || requestId.isEmpty()) {
-            requestId = generateRequestId();
+            requestId = IdUtil.fastSimpleUUID();
             log.debug("[Gateway Tracing] 生成新的 Request ID: {}", requestId);
         } else {
             log.debug("[Gateway Tracing] 使用传入的 Request ID: {}", requestId);
@@ -145,12 +117,6 @@ public class RequestTracingFilter implements GlobalFilter, Ordered {
         return requestId;
     }
 
-    /**
-     * 生成 Request ID
-     */
-    private String generateRequestId() {
-        return java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16);
-    }
 
     /**
      * 创建新的 Span 或继续已有的追踪
@@ -271,18 +237,18 @@ public class RequestTracingFilter implements GlobalFilter, Ordered {
         ServerHttpRequest.Builder builder = request.mutate();
 
         // 1. 注入 Request ID
-        builder.header(REQUEST_ID_HEADER, requestId);
+        builder.header(HttpHeadersConstant.X_REQUEST_ID, requestId);
 
         // 2. 注入 B3 追踪头（供下游服务使用）
         TraceContext context = span.context();
-        builder.header(B3_HEADER, String.format("%s-%s-1",
+        builder.header(HttpHeadersConstant.B3, String.format("%s-%s-1",
             context.traceIdString(),
             context.spanIdString()));
 
         // 3. 注入多头部格式（兼容旧版）
-        builder.header("X-B3-TraceId", context.traceIdString());
-        builder.header("X-B3-SpanId", context.spanIdString());
-        builder.header("X-B3-Sampled", "1");
+        builder.header(HttpHeadersConstant.X_B3_TRACE_ID, context.traceIdString());
+        builder.header(HttpHeadersConstant.X_B3_SPAN_ID, context.spanIdString());
+        builder.header(HttpHeadersConstant.X_B3_SAMPLED, "1");
 
         // 4. 注入 SkyWalking 上下文（如果可用）
         try {

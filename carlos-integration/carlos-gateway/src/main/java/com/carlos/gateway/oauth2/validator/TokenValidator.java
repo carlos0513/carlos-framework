@@ -1,6 +1,7 @@
-package com.carlos.gateway.oauth2;
+package com.carlos.gateway.oauth2.validator;
 
 import com.carlos.core.auth.UserContext;
+import com.carlos.gateway.oauth2.OAuth2GatewayProperties;
 import reactor.core.publisher.Mono;
 
 /**

@@ -1,4 +1,4 @@
-package com.carlos.gateway.oauth2;
+package com.carlos.gateway.oauth2.validator;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
@@ -10,6 +10,7 @@ import cn.hutool.jwt.signers.JWTSignerUtil;
 import com.carlos.core.auth.UserContext;
 import com.carlos.core.exception.BusinessException;
 import com.carlos.core.response.CommonErrorCode;
+import com.carlos.gateway.oauth2.OAuth2GatewayProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;

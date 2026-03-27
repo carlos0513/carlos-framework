@@ -5,7 +5,6 @@ import com.carlos.gateway.ratelimit.CarlosRedisRateLimiter;
 import com.carlos.gateway.ratelimit.keyresolver.CarlosKeyResolver;
 import com.carlos.gateway.ratelimit.listener.RateLimitAlertListener;
 import com.carlos.gateway.ratelimit.listener.RateLimitMetricsListener;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -117,11 +116,10 @@ public class CarlosRateLimiterAutoConfiguration {
     @ConditionalOnMissingBean(CarlosRateLimiterGatewayFilterFactory.class)
     public CarlosRateLimiterGatewayFilterFactory carlosRateLimiterGatewayFilterFactory(
         CarlosRedisRateLimiter rateLimiter,
-        CarlosRateLimiterProperties properties,
-        ObjectMapper objectMapper) {
+        CarlosRateLimiterProperties properties) {
 
         log.info("Carlos Rate Limiter: Initializing CarlosRateLimiterGatewayFilterFactory");
-        return new CarlosRateLimiterGatewayFilterFactory(rateLimiter, properties, objectMapper);
+        return new CarlosRateLimiterGatewayFilterFactory(rateLimiter, properties);
     }
 
     /**

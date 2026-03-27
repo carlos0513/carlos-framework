@@ -1,4 +1,4 @@
-package com.carlos.gateway.oauth2;
+package com.carlos.gateway.oauth2.provider;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
@@ -19,7 +19,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class DefaultPermissionProvider implements OAuth2AuthorizationFilter.PermissionProvider {
+public class DefaultPermissionProvider implements PermissionProvider {
 
     private final ReactiveStringRedisTemplate redisTemplate;
 

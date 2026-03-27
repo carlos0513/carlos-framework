@@ -1,6 +1,7 @@
 package com.carlos.gateway.gray;
 
-import lombok.Data;
+import com.carlos.core.constant.HttpHeadersConstant;
+import com.carlos.gateway.constant.GatewayHeaderConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
@@ -9,7 +10,6 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2026/3/16
  */
 @Slf4j
-@Component
 public class GrayReleaseFilter implements GlobalFilter, Ordered {
 
     private final GrayReleaseProperties properties;
@@ -65,7 +64,7 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
         boolean isGrayUser = isGrayUser(exchange, strategy);
 
         // 设置灰度标记
-        exchange.getAttributes().put("gray.release", isGrayUser);
+        exchange.getAttributes().put(GatewayHeaderConstants.GRAY_RELEASE_ATTR, isGrayUser);
 
         if (isGrayUser) {
             log.debug("Gray release enabled for service: {}, request: {}",
@@ -73,7 +72,7 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
 
             // 添加灰度标记头
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                .header("X-Gray-Release", "true")
+                .header(GatewayHeaderConstants.X_GRAY_RELEASE, "true")
                 .build();
             ServerWebExchange mutatedExchange = exchange.mutate()
                 .request(mutatedRequest)
@@ -108,7 +107,7 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
         }
 
         // 2. 基于用户的灰度
-        String userId = request.getHeaders().getFirst("X-User-Id");
+        String userId = request.getHeaders().getFirst(HttpHeadersConstant.X_USER_ID);
         if (userId != null && strategy.getUserIds() != null) {
             return strategy.getUserIds().contains(userId);
         }
@@ -138,22 +137,14 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
      * 计算请求的哈希值（用于权重分配）
      */
     private int hashRequest(ServerHttpRequest request, GrayStrategy strategy) {
-        String key;
-        switch (strategy.getHashKey()) {
-            case USER:
-                key = request.getHeaders().getFirst("X-User-Id");
-                break;
-            case IP:
-                key = request.getRemoteAddress() != null
-                    ? request.getRemoteAddress().getAddress().getHostAddress()
-                    : "0.0.0.0";
-                break;
-            case HEADER:
-                key = request.getHeaders().getFirst(strategy.getHeaderName());
-                break;
-            default:
-                key = UUID.randomUUID().toString();
-        }
+        String key = switch (strategy.getHashKey()) {
+            case USER -> request.getHeaders().getFirst(HttpHeadersConstant.X_USER_ID);
+            case IP -> request.getRemoteAddress() != null
+                ? request.getRemoteAddress().getAddress().getHostAddress()
+                : "0.0.0.0";
+            case HEADER -> request.getHeaders().getFirst(strategy.getHeaderName());
+            default -> UUID.randomUUID().toString();
+        };
 
         if (key == null) {
             key = UUID.randomUUID().toString();
@@ -179,8 +170,8 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
                 List<ServiceInstance> grayInstances = instances.stream()
                     .filter(instance -> {
                         Map<String, String> metadata = instance.getMetadata();
-                        return "true".equals(metadata.get("gray.release")) ||
-                            "true".equals(metadata.get("gray"));
+                        return "true".equals(metadata.get(GatewayHeaderConstants.GRAY_METADATA_KEY)) ||
+                            "true".equals(metadata.get(GatewayHeaderConstants.GRAY_METADATA_SHORT));
                     })
                     .toList();
 
@@ -213,34 +204,5 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
         return -100; // 在负载均衡之前执行
     }
 
-    @Data
-    public static class GrayStrategy {
 
-        private boolean enabled = false;
-
-        // 基于权重的灰度（0-100）
-        private int weight = 0;
-
-        // 基于用户的灰度
-        private Set<String> userIds;
-
-        // 基于 IP 的灰度
-        private Set<String> ipRanges;
-
-        // 基于请求头的灰度
-        private Map<String, String> headers;
-
-        // 基于版本的灰度
-        private String version;
-
-        // 哈希键类型
-        private HashKeyType hashKey = HashKeyType.IP;
-
-        // 自定义 Header 名称
-        private String headerName;
-
-        public enum HashKeyType {
-            IP, USER, HEADER, RANDOM
-        }
-    }
 }

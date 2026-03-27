@@ -19,13 +19,13 @@
 
   <!-- ==================== 基础配置 ==================== -->
   <!-- 单文件最大 -->
-    <property name="MAX_FILE_SIZE" value="50MB"/>
+  <property name="MAX_FILE_SIZE" value="50MB"/>
   <!-- 最长保存时间 -->
-    <property name="MAX_HISTORY" value="30"/>
+  <property name="MAX_HISTORY" value="30"/>
   <!-- 日志路径 -->
   <property name="LOG_PATH" value="${LOG_PATH:-./logs}"/>
   <!-- 应用名称 -->
-  <property name="APP_NAME" value="${spring.application.name:-carlos-gateway}"/>
+  <property name="APP_NAME" value="${spring.application.name}"/>
 
   <!-- 上下文名称 -->
   <contextName>${APP_NAME}</contextName>
@@ -34,7 +34,7 @@
   <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
   <!-- ==================== 彩色日志 ==================== -->
-    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+  <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
   <conversionRule conversionWord="wex"
                   converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
   <conversionRule conversionWord="wEx"
@@ -57,12 +57,12 @@
   -->
 
   <!-- 控制台日志样式（彩色，包含链路追踪信息） -->
-    <property name="CONSOLE_LOG_PATTERN"
-              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr([%15.15t]){faint} [%clr(%X{requestId:-}){yellow}] [%clr(%X{traceId:-}-%X{spanId:-}){cyan}] %clr(%-40.40logger{39}){cyan} : %m%n%wEx"/>
+  <property name="CONSOLE_LOG_PATTERN"
+            value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr([%15.15t]){faint} [%clr(%X{requestId:-}){yellow}] [%clr(%X{traceId:-}-%X{spanId:-}){cyan}] %clr(%-40.40logger{39}){cyan} : %m%n%wEx"/>
 
   <!-- 文件日志样式（包含链路追踪信息） -->
-    <property name="FILE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{requestId:-}] [%X{traceId:-}-%X{spanId:-}] %logger{50} - %msg%n"/>
+  <property name="FILE_LOG_PATTERN"
+            value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{requestId:-}] [%X{traceId:-}-%X{spanId:-}] %logger{50} - %msg%n"/>
 
   <!-- 访问日志格式 -->
   <property name="ACCESS_LOG_PATTERN"
@@ -71,86 +71,86 @@
   <!-- ==================== Appender 定义 ==================== -->
 
   <!-- 控制台输出 -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-      <encoder>
-        <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-        <charset>UTF-8</charset>
-      </encoder>
-    </appender>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
 
   <!-- Debug 日志文件 -->
-    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>debug</level>
-        </filter>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-          <charset>UTF-8</charset>
-        </encoder>
-        <file>${LOG_PATH}/debug.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
-        </rollingPolicy>
-    </appender>
+  <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>debug</level>
+    </filter>
+    <encoder>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+    <file>${LOG_PATH}/debug.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_PATH}/debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+      <maxHistory>${MAX_HISTORY}</maxHistory>
+    </rollingPolicy>
+  </appender>
 
   <!-- Info 日志文件（只记录 info 级别） -->
-    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>info</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-        </encoder>
-        <file>${LOG_PATH}/info.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/info-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
-            <totalSizeCap>4GB</totalSizeCap>
-        </rollingPolicy>
-    </appender>
+  <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>info</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+    </encoder>
+    <file>${LOG_PATH}/info.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_PATH}/info-%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>${MAX_HISTORY}</maxHistory>
+      <totalSizeCap>4GB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
 
   <!-- Warn 日志文件（只记录 warn 级别） -->
-    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
-      <filter class="ch.qos.logback.classic.filter.LevelFilter">
-        <level>warn</level>
-        <onMatch>ACCEPT</onMatch>
-        <onMismatch>DENY</onMismatch>
-      </filter>
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-        </encoder>
-        <file>${LOG_PATH}/warn.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
-        </rollingPolicy>
-    </appender>
+  <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>warn</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+    </encoder>
+    <file>${LOG_PATH}/warn.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_PATH}/warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+      <maxHistory>${MAX_HISTORY}</maxHistory>
+    </rollingPolicy>
+  </appender>
 
   <!-- Error 日志文件（只记录 error 级别） -->
-    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-        </encoder>
-        <file>${LOG_PATH}/error.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
-        </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>error</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
+  <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+    </encoder>
+    <file>${LOG_PATH}/error.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_PATH}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+      <maxHistory>${MAX_HISTORY}</maxHistory>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>error</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+  </appender>
 
   <!-- 访问日志文件（独立记录请求访问信息） -->
   <appender name="ACCESS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -167,18 +167,18 @@
   </appender>
 
   <!-- 异步 Appender（提升性能） -->
-    <appender name="ASYNC_INFO_FILE" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>1024</queueSize>
-      <neverBlock>true</neverBlock>
-        <appender-ref ref="INFO"/>
-    </appender>
-    <appender name="ASYNC_ERROR_FILE" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>1024</queueSize>
-      <neverBlock>true</neverBlock>
-        <appender-ref ref="ERROR"/>
-    </appender>
+  <appender name="ASYNC_INFO_FILE" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>1024</queueSize>
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="INFO"/>
+  </appender>
+  <appender name="ASYNC_ERROR_FILE" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>1024</queueSize>
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="ERROR"/>
+  </appender>
 
   <!-- SkyWalking GRPC 日志上报（可选） -->
   <appender name="SKYWALKING" class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.log.GRPCLogClientAppender">
@@ -196,10 +196,10 @@
   </logger>
 
   <!-- Carlos 包日志 -->
-    <logger name="com.carlos" level="debug" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="DEBUG"/>
-    </logger>
+  <logger name="com.carlos" level="debug" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="DEBUG"/>
+  </logger>
 
   <!-- Spring 框架日志 -->
   <logger name="org.springframework" level="WARN"/>
@@ -211,12 +211,12 @@
   <logger name="reactor.netty" level="INFO"/>
 
   <!-- ==================== Root 配置 ==================== -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="DEBUG"/>
-        <appender-ref ref="INFO"/>
-        <appender-ref ref="WARN"/>
-      <appender-ref ref="ERROR"/>
-    </root>
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="DEBUG"/>
+    <appender-ref ref="INFO"/>
+    <appender-ref ref="WARN"/>
+    <appender-ref ref="ERROR"/>
+  </root>
 
 </configuration>

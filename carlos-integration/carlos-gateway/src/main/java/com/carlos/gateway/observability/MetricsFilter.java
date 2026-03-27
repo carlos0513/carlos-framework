@@ -1,5 +1,6 @@
 package com.carlos.gateway.observability;
 
+import com.carlos.gateway.constant.GatewayHeaderConstants;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -9,7 +10,6 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -28,15 +28,14 @@ import java.util.concurrent.TimeUnit;
  * @date 2026/3/16
  */
 @Slf4j
-@Component
 public class MetricsFilter implements GlobalFilter, Ordered {
 
     private final MeterRegistry meterRegistry;
 
     // 指标名称
-    private static final String REQUEST_COUNTER = "gateway.requests.total";
-    private static final String REQUEST_LATENCY = "gateway.requests.duration";
-    private static final String ACTIVE_REQUESTS = "gateway.requests.active";
+    private static final String REQUEST_COUNTER = GatewayHeaderConstants.METRIC_REQUEST_COUNTER;
+    private static final String REQUEST_LATENCY = GatewayHeaderConstants.METRIC_REQUEST_LATENCY;
+    private static final String ACTIVE_REQUESTS = GatewayHeaderConstants.METRIC_ACTIVE_REQUESTS;
 
     public MetricsFilter(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
@@ -92,18 +91,18 @@ public class MetricsFilter implements GlobalFilter, Ordered {
         // 根据状态码分类
         if (statusCode != null) {
             if (statusCode.is2xxSuccessful()) {
-                Counter.builder("gateway.requests.success")
+                Counter.builder(GatewayHeaderConstants.METRIC_SUCCESS)
                     .tag("route", routeId)
                     .register(meterRegistry)
                     .increment();
             } else if (statusCode.is4xxClientError()) {
-                Counter.builder("gateway.requests.client_error")
+                Counter.builder(GatewayHeaderConstants.METRIC_CLIENT_ERROR)
                     .tag("route", routeId)
                     .tag("status", status)
                     .register(meterRegistry)
                     .increment();
             } else if (statusCode.is5xxServerError()) {
-                Counter.builder("gateway.requests.server_error")
+                Counter.builder(GatewayHeaderConstants.METRIC_SERVER_ERROR)
                     .tag("route", routeId)
                     .tag("status", status)
                     .register(meterRegistry)
@@ -113,14 +112,14 @@ public class MetricsFilter implements GlobalFilter, Ordered {
 
         // 记录特定错误
         if (statusCode == HttpStatus.TOO_MANY_REQUESTS) {
-            Counter.builder("gateway.requests.rate_limited")
+            Counter.builder(GatewayHeaderConstants.METRIC_RATE_LIMITED)
                 .tag("route", routeId)
                 .register(meterRegistry)
                 .increment();
         }
 
         if (statusCode == HttpStatus.FORBIDDEN) {
-            Counter.builder("gateway.requests.blocked")
+            Counter.builder(GatewayHeaderConstants.METRIC_BLOCKED)
                 .tag("route", routeId)
                 .register(meterRegistry)
                 .increment();

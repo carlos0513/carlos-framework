@@ -1,10 +1,10 @@
 package com.carlos.gateway.ratelimit;
 
+import cn.hutool.json.JSONUtil;
 import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.ErrorResponse;
 import com.carlos.gateway.ratelimit.config.CarlosRateLimiterProperties;
 import com.carlos.gateway.ratelimit.keyresolver.CarlosKeyResolver;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -51,15 +51,12 @@ public class CarlosRateLimiterGatewayFilterFactory
 
     private final CarlosRedisRateLimiter rateLimiter;
     private final CarlosRateLimiterProperties properties;
-    private final ObjectMapper objectMapper;
 
     public CarlosRateLimiterGatewayFilterFactory(CarlosRedisRateLimiter rateLimiter,
-                                                 CarlosRateLimiterProperties properties,
-                                                 ObjectMapper objectMapper) {
+                                                 CarlosRateLimiterProperties properties) {
         super(Config.class);
         this.rateLimiter = rateLimiter;
         this.properties = properties;
-        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -218,18 +215,9 @@ public class CarlosRateLimiterGatewayFilterFactory
                 .build();
 
             return response.writeWith(Mono.fromSupplier(() -> {
-                try {
-                    byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
-                    return response.bufferFactory().wrap(bytes);
-                } catch (Exception e) {
-                    log.error("Failed to serialize rate limit response", e);
-                    String fallback = String.format(
-                        "{\"success\":false,\"status\":%d,\"code\":5429,\"msg\":\"Too Many Requests\"}",
-                        statusCode.value()
-                    );
-                    // TODO: Carlos 2026-03-25
-                    return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
-                }
+                byte[] bytes = JSONUtil.toJsonStr(errorResponse).getBytes(StandardCharsets.UTF_8);
+                return response.bufferFactory().wrap(bytes);
+
             }));
         } else {
             // 简单响应
@@ -253,14 +241,9 @@ public class CarlosRateLimiterGatewayFilterFactory
             .build();
 
         return response.writeWith(Mono.fromSupplier(() -> {
-            try {
-                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
-                return response.bufferFactory().wrap(bytes);
-            } catch (Exception e) {
-                // TODO: Carlos 2026-03-25
-                String fallback = "{\"success\":false,\"status\":403,\"code\":5403,\"msg\":\"Forbidden\"}";
-                return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
-            }
+            byte[] bytes = JSONUtil.toJsonStr(errorResponse).getBytes(StandardCharsets.UTF_8);
+            return response.bufferFactory().wrap(bytes);
+
         }));
     }
 

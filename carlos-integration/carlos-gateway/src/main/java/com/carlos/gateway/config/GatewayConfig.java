@@ -1,243 +1,65 @@
 package com.carlos.gateway.config;
 
-import com.carlos.gateway.cache.CacheProperties;
-import com.carlos.gateway.cache.ResponseCacheFilter;
-import com.carlos.gateway.circuitbreaker.Resilience4jCircuitBreakerFilter;
-import com.carlos.gateway.filter.PathPrefixFilter;
-import com.carlos.gateway.gray.GrayReleaseFilter;
-import com.carlos.gateway.gray.GrayReleaseProperties;
-import com.carlos.gateway.oauth2.*;
-import com.carlos.gateway.observability.*;
-import com.carlos.gateway.security.ReplayProtectionFilter;
-import com.carlos.gateway.security.ReplayProtectionProperties;
-import com.carlos.gateway.security.WafFilter;
-import com.carlos.gateway.security.WafProperties;
-import com.carlos.gateway.transform.RequestTransformFilter;
-import com.carlos.gateway.transform.TransformProperties;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.tracing.propagation.Propagator;
+import com.carlos.gateway.cache.CacheGatewayAutoConfiguration;
+import com.carlos.gateway.circuitbreaker.CircuitBreakerAutoConfiguration;
+import com.carlos.gateway.filter.FilterAutoConfiguration;
+import com.carlos.gateway.gray.GrayReleaseAutoConfiguration;
+import com.carlos.gateway.oauth2.OAuth2GatewayAutoConfiguration;
+import com.carlos.gateway.observability.ObservabilityAutoConfiguration;
+import com.carlos.gateway.security.SecurityGatewayAutoConfiguration;
+import com.carlos.gateway.transform.TransformAutoConfiguration;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
-import org.springframework.boot.web.reactive.error.ErrorAttributes;
-import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
-import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
-import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-
+import org.springframework.context.annotation.Import;
 
 /**
  * <p>
  * 现代网关自动配置类
  * 整合所有网关组件
  * </p>
+ * <p>
+ * 配置结构说明：
+ * 本类作为主配置入口，通过 @Import 导入各个功能模块的独立配置类，
+ * 遵循高内聚低耦合原则，每个功能模块负责自己的 Bean 定义。
+ * </p>
+ *
+ * <ul>
+ *   <li>基础配置：{@link InfrastructureAutoConfiguration} - WebClient、Redis、异常处理等</li>
+ *   <li>过滤器配置：{@link com.carlos.gateway.filter.FilterAutoConfiguration} - 路径前缀过滤器等</li>
+ *   <li>OAuth2配置：{@link com.carlos.gateway.oauth2.OAuth2GatewayAutoConfiguration} - 认证授权</li>
+ *   <li>熔断配置：{@link com.carlos.gateway.circuitbreaker.CircuitBreakerAutoConfiguration} - 熔断降级</li>
+ *   <li>灰度配置：{@link com.carlos.gateway.gray.GrayReleaseAutoConfiguration} - 灰度发布</li>
+ *   <li>安全配置：{@link com.carlos.gateway.security.SecurityGatewayAutoConfiguration} - WAF、防重放</li>
+ *   <li>缓存配置：{@link com.carlos.gateway.cache.CacheGatewayAutoConfiguration} - 响应缓存</li>
+ *   <li>可观测性配置：{@link com.carlos.gateway.observability.ObservabilityAutoConfiguration} - 链路追踪、日志、指标</li>
+ *   <li>转换配置：{@link com.carlos.gateway.transform.TransformAutoConfiguration} - 请求转换</li>
+ * </ul>
  *
  * @author carlos
  * @date 2026/3/16
+ * @updated 2026/3/27 重构为配置聚合入口，各功能模块独立配置
  */
 @Slf4j
 @Configuration
 @EnableConfigurationProperties({
-    GatewayProperties.class,
-    OAuth2GatewayProperties.class,
-    GrayReleaseProperties.class,
-    WafProperties.class,
-    ReplayProtectionProperties.class,
-    CacheProperties.class,
-    TracingProperties.class,
-    TransformProperties.class,
-    ExceptionProperties.class,
-    AccessLogProperties.class
+        GatewayProperties.class,
+        ExceptionProperties.class
+})
+@Import({
+        InfrastructureAutoConfiguration.class,
+        FilterAutoConfiguration.class,
+        OAuth2GatewayAutoConfiguration.class,
+        CircuitBreakerAutoConfiguration.class,
+        GrayReleaseAutoConfiguration.class,
+        SecurityGatewayAutoConfiguration.class,
+        CacheGatewayAutoConfiguration.class,
+        ObservabilityAutoConfiguration.class,
+        TransformAutoConfiguration.class
 })
 public class GatewayConfig {
 
-    // ==================== 路径前缀配置 ====================
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.prefix-enabled", havingValue = "true", matchIfMissing = true)
-    public PathPrefixFilter pathPrefixFilter(GatewayProperties gatewayProperties) {
-        log.info("Initializing Path Prefix Filter with prefix: {}", gatewayProperties.getPrefix());
-        return new PathPrefixFilter(gatewayProperties);
-    }
-
-    // ==================== OAuth2 认证配置 ====================
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.oauth2.enabled", havingValue = "true", matchIfMissing = true)
-    public TokenValidator tokenValidator(OAuth2GatewayProperties properties,
-                                         ReactiveStringRedisTemplate redisTemplate,
-                                         WebClient.Builder webClientBuilder) {
-        return switch (properties.getTokenType()) {
-            case JWT -> new JwtTokenValidator(properties, redisTemplate);
-            case OPAQUE -> new OpaqueTokenValidator(properties, webClientBuilder, redisTemplate);
-        };
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.oauth2.enabled", havingValue = "true", matchIfMissing = true)
-    public OAuth2AuthenticationFilter oAuth2AuthenticationFilter(
-        OAuth2GatewayProperties properties,
-        TokenValidator tokenValidator) {
-        log.info("Initializing OAuth2 Authentication Filter with type: {}", properties.getTokenType());
-        return new OAuth2AuthenticationFilter(properties, tokenValidator);
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.oauth2.authorization-enabled", havingValue = "true")
-    public OAuth2AuthorizationFilter oAuth2AuthorizationFilter(
-        OAuth2GatewayProperties properties,
-        DefaultPermissionProvider permissionProvider) {
-        log.info("Initializing OAuth2 Authorization Filter with mode: {}", properties.getAuthorizationMode());
-        return new OAuth2AuthorizationFilter(properties, permissionProvider);
-    }
-
-    // ==================== 熔断配置 ====================
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.circuitbreaker.enabled", havingValue = "true", matchIfMissing = true)
-    public Resilience4jCircuitBreakerFilter circuitBreakerFilter() {
-        log.info("Initializing Circuit Breaker Filter");
-        return new Resilience4jCircuitBreakerFilter();
-    }
-
-    // ==================== 灰度发布配置 ====================
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.gray.enabled", havingValue = "true")
-    public GrayReleaseFilter grayReleaseFilter(GrayReleaseProperties properties,
-                                               ReactiveDiscoveryClient discoveryClient) {
-        log.info("Initializing Gray Release Filter");
-        return new GrayReleaseFilter(properties, discoveryClient);
-    }
-
-    // ==================== 安全防护配置 ====================
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.waf.enabled", havingValue = "true", matchIfMissing = true)
-    public WafFilter wafFilter(WafProperties properties) {
-        log.info("Initializing WAF Filter");
-        return new WafFilter(properties);
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.replay.enabled", havingValue = "true", matchIfMissing = true)
-    public ReplayProtectionFilter replayProtectionFilter(
-        ReplayProtectionProperties properties,
-        ReactiveStringRedisTemplate redisTemplate) {
-        log.info("Initializing Replay Protection Filter");
-        return new ReplayProtectionFilter(properties, redisTemplate);
-    }
-
-    // ==================== 缓存配置 ====================
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.cache.enabled", havingValue = "true", matchIfMissing = true)
-    public ResponseCacheFilter responseCacheFilter(CacheProperties properties) {
-        log.info("Initializing Response Cache Filter");
-        return new ResponseCacheFilter(properties);
-    }
-
-    // ==================== 可观测性配置 ====================
-
-    /**
-     * 统一链路追踪过滤器
-     * 替代旧的 TracingFilter，同时处理 Request ID 和 Trace ID
-     */
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.tracing.enabled", havingValue = "true", matchIfMissing = true)
-    public RequestTracingFilter requestTracingFilter(
-        brave.Tracer tracer,
-        Propagator propagator,
-        TracingProperties properties) {
-        log.info("Initializing Request Tracing Filter");
-        return new RequestTracingFilter(tracer, propagator, properties);
-    }
-
-    /**
-     * 访问日志过滤器
-     * 记录所有请求的访问日志
-     */
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.access-log.enabled", havingValue = "true", matchIfMissing = true)
-    public AccessLogFilter accessLogFilter() {
-        log.info("Initializing Access Log Filter");
-        return new AccessLogFilter();
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.metrics.enabled", havingValue = "true", matchIfMissing = true)
-    public MetricsFilter metricsFilter(
-        MeterRegistry meterRegistry) {
-        log.info("Initializing Metrics Filter");
-        return new MetricsFilter(meterRegistry);
-    }
-
-    // ==================== 转换配置 ====================
-
-    @Bean
-    @ConditionalOnProperty(name = "carlos.gateway.transform.enabled", havingValue = "true", matchIfMissing = true)
-    public RequestTransformFilter requestTransformFilter(TransformProperties properties) {
-        log.info("Initializing Request Transform Filter");
-        return new RequestTransformFilter(properties);
-    }
-
-    // ==================== 工具 Bean ====================
-
-    @Bean
-    @ConditionalOnMissingBean
-    public WebClient webClient() {
-        return WebClient.builder().build();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "webClientBuilder")
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
-    }
-    @Bean
-    @ConditionalOnMissingBean
-    public ReactiveStringRedisTemplate reactiveStringRedisTemplate(
-        ReactiveRedisConnectionFactory connectionFactory) {
-        return new ReactiveStringRedisTemplate(connectionFactory);
-    }
-
-    @Bean
-    public GatewayRunnerWorker gatewayRunnerWorker() {
-        return new GatewayRunnerWorker();
-    }
-
-    // ==================== 全局异常处理配置 ====================
-
-    /**
-     * 网关全局异常处理器
-     * 覆盖 Spring Boot 默认的异常处理，返回统一的 JSON 格式错误响应
-     * 优先级最高，确保最先处理异常
-     */
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public ErrorWebExceptionHandler gatewayErrorWebExceptionHandler(ExceptionProperties exceptionProperties) {
-        log.info("Initializing Gateway Exception Handler (devMode: {}, showStackTrace: {})",
-            exceptionProperties.isDevMode(), exceptionProperties.isShowStackTrace());
-        return new GatewayExceptionHandler(exceptionProperties.isDevMode(), exceptionProperties.isShowStackTrace());
-    }
-
-    /**
-     * 错误属性扩展
-     * 扩展 Spring Boot 默认的错误属性，添加网关特定的字段
-     */
-    @Bean
-    @ConditionalOnMissingBean(value = ErrorAttributes.class, search = SearchStrategy.CURRENT)
-    public DefaultErrorAttributes errorAttributes(ExceptionProperties exceptionProperties) {
-        log.info("Initializing Gateway Error Attributes (devMode: {})", exceptionProperties.isDevMode());
-        GatewayErrorAttributes attributes = new GatewayErrorAttributes(exceptionProperties.isDevMode());
-        return attributes;
+    public GatewayConfig() {
+        log.info("GatewayConfig initialized - all module configurations imported");
     }
 }

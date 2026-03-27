@@ -1,8 +1,8 @@
 package com.carlos.gateway.circuitbreaker;
 
+import cn.hutool.json.JSONUtil;
 import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.ErrorResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
@@ -13,7 +13,6 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
@@ -35,17 +34,14 @@ import java.util.concurrent.TimeoutException;
  * @updated 2026/3/24 优化异常处理，统一响应格式
  */
 @Slf4j
-@Component
 public class Resilience4jCircuitBreakerFilter extends
     AbstractGatewayFilterFactory<Resilience4jCircuitBreakerFilter.Config> {
 
     private final CircuitBreakerRegistry circuitBreakerRegistry;
     private final ConcurrentHashMap<String, CircuitBreaker> circuitBreakers = new ConcurrentHashMap<>();
-    private final ObjectMapper objectMapper;
 
     public Resilience4jCircuitBreakerFilter() {
         super(Config.class);
-        this.objectMapper = new ObjectMapper();
 
         // 默认配置
         CircuitBreakerConfig defaultConfig = CircuitBreakerConfig.custom()
@@ -143,16 +139,22 @@ public class Resilience4jCircuitBreakerFilter extends
         // 这里选择直接返回响应，避免额外的异常处理开销
         return response.writeWith(Mono.fromSupplier(() -> {
             try {
-                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
+                byte[] bytes = JSONUtil.toJsonStr(errorResponse).getBytes(StandardCharsets.UTF_8);
                 return response.bufferFactory().wrap(bytes);
             } catch (Exception e) {
                 log.error("Failed to serialize circuit breaker response", e);
-                String fallback = String.format(
-                    "{\"success\":false,\"status\":503,\"code\":5503,\"message\":\"Service temporarily unavailable\"," +
-                        "\"extra\":{\"circuitBreakerName\":\"%s\",\"circuitBreakerState\":\"%s\"}}",
-                    circuitBreakerName, state.name());
-                // TODO: Carlos 2026-03-25
-                return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
+                // 使用 ErrorResponse 对象构建降级响应
+                ErrorResponse fallbackResponse = ErrorResponse.builder()
+                    .status(HttpStatus.SERVICE_UNAVAILABLE.value())
+                    .code("5503")
+                    .msg("Service temporarily unavailable")
+                    .extra(java.util.Map.of(
+                        "circuitBreakerName", circuitBreakerName,
+                        "circuitBreakerState", state.name()
+                    ))
+                    .build();
+                return response.bufferFactory().wrap(
+                    JSONUtil.toJsonStr(fallbackResponse).getBytes(StandardCharsets.UTF_8));
             }
         }));
     }
