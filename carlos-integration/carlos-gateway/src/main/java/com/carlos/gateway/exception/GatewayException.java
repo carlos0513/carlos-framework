@@ -19,10 +19,6 @@ public class GatewayException extends GlobalException {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * HTTP 状态码
-     */
-    private final int httpStatus;
 
     /**
      * 错误路径
@@ -31,43 +27,35 @@ public class GatewayException extends GlobalException {
 
     public GatewayException(String message) {
         super(CommonErrorCode.INTERNAL_ERROR);
-        this.httpStatus = 500;
     }
 
     public GatewayException(String message, int httpStatus) {
-        super(CommonErrorCode.INTERNAL_ERROR);
-        this.httpStatus = httpStatus;
+        super(message, httpStatus);
     }
 
     public GatewayException(String message, int httpStatus, String errorCode) {
         super(CommonErrorCode.INTERNAL_ERROR, message);
-        this.httpStatus = httpStatus;
     }
 
     public GatewayException(String message, Throwable cause) {
-        super(CommonErrorCode.INTERNAL_ERROR, cause);
-        this.httpStatus = 500;
+        super(message, cause);
     }
 
 
     public GatewayException(ErrorCode errorCode) {
         super(errorCode);
-        this.httpStatus = errorCode.getHttpStatus();
     }
 
     public GatewayException(ErrorCode errorCode, String message, Throwable cause) {
         super(errorCode, message, cause);
-        this.httpStatus = errorCode.getHttpStatus();
     }
 
     public GatewayException(ErrorCode errorCode, String message) {
         super(errorCode, message);
-        this.httpStatus = errorCode.getHttpStatus();
     }
 
     public GatewayException(String message, int httpStatus, Throwable cause) {
-        super(message, cause);
-        this.httpStatus = httpStatus;
+        super(message, httpStatus, cause);
     }
 
     public GatewayException withPath(String path) {

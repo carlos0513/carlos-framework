@@ -1,8 +1,8 @@
 package com.carlos.gateway.security;
 
+import cn.hutool.json.JSONUtil;
 import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.ErrorResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -35,11 +34,9 @@ import java.util.regex.Pattern;
  * @updated 2026/3/24 优化异常处理，统一响应格式
  */
 @Slf4j
-@Component
 public class WafFilter implements GlobalFilter, Ordered {
 
     private final WafProperties properties;
-    private final ObjectMapper objectMapper;
 
     // SQL 注入检测模式
     private static final Pattern SQL_INJECTION_PATTERN = Pattern.compile(
@@ -81,7 +78,6 @@ public class WafFilter implements GlobalFilter, Ordered {
 
     public WafFilter(WafProperties properties) {
         this.properties = properties;
-        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -284,18 +280,9 @@ public class WafFilter implements GlobalFilter, Ordered {
                 "clientIp", clientIp
             ))
             .build();
-
         return response.writeWith(Mono.fromSupplier(() -> {
-            try {
-                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
-                return response.bufferFactory().wrap(bytes);
-            } catch (Exception e) {
-                log.error("Failed to serialize WAF block response", e);
-                String fallback = String.format(
-                    "{\"success\":false,\"status\":403,\"code\":5403,\"message\":\"%s\"}",
-                    message);
-                return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
-            }
+            byte[] bytes = JSONUtil.toJsonStr(errorResponse).getBytes(StandardCharsets.UTF_8);
+            return response.bufferFactory().wrap(bytes);
         }));
     }
 

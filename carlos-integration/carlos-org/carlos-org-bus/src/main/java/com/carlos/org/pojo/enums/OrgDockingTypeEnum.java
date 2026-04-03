@@ -3,7 +3,7 @@ package com.carlos.org.pojo.enums;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.carlos.core.enums.AppEnum;
 import com.carlos.core.enums.BaseEnum;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -36,7 +36,7 @@ public enum OrgDockingTypeEnum implements BaseEnum {
                 return value;
             }
         }
-        throw new ServiceException("数据类型不合法");
+        throw new BusinessException("数据类型不合法");
     }
 
 

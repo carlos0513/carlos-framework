@@ -2,7 +2,7 @@ package com.carlos.system.enums;
 
 import com.carlos.core.enums.AppEnum;
 import com.carlos.core.enums.BaseEnum;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -35,6 +35,6 @@ public enum ConfigValueType implements BaseEnum {
                 return value;
             }
         }
-        throw new ServiceException("Can't find enum of code " + code);
+        throw new BusinessException("Can't find enum of code " + code);
     }
 }

@@ -2,7 +2,7 @@ package com.carlos.system.dict;
 
 import com.carlos.core.dict.Dict;
 import com.carlos.core.dict.DictEnum;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -49,6 +49,6 @@ public enum SysResourceType implements DictEnum {
                 return value;
             }
         }
-        throw new ServiceException("Can't find enum of code " + code);
+        throw new BusinessException("Can't find enum of code " + code);
     }
 }

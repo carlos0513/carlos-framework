@@ -6,18 +6,18 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
-* <p>
-    * 微服务启动类
-    * </p>
-*
-* @author  ${project.author}
-* @date    ${.now}
-*/
+ * <p>
+ * 微服务启动类
+ * </p>
+ *
+ * @author  ${project.author}
+ * @date    ${.now}
+ */
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class ${project.camelName}CloudApplication {
 
-public static void main ( final String[] args){
-SpringApplication.run(${project.camelName}CloudApplication.class, args);
-}
+    public static void main ( final String[] args){
+        SpringApplication.run(${project.camelName}CloudApplication.class, args);
+    }
 }

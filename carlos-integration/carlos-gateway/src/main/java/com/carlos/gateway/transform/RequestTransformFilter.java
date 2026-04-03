@@ -1,11 +1,12 @@
 package com.carlos.gateway.transform;
 
+import com.carlos.core.constant.HttpHeadersConstant;
+import com.carlos.gateway.constant.GatewayHeaderConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +23,6 @@ import java.util.regex.Pattern;
  * @date 2026/3/16
  */
 @Slf4j
-@Component
 public class RequestTransformFilter implements GlobalFilter, Ordered {
 
     private final TransformProperties properties;
@@ -76,10 +76,10 @@ public class RequestTransformFilter implements GlobalFilter, Ordered {
         String path = request.getURI().getPath();
 
         // 从 Header 中获取版本
-        String versionHeader = request.getHeaders().getFirst("X-API-Version");
+        String versionHeader = request.getHeaders().getFirst(HttpHeadersConstant.X_API_VERSION);
         if (versionHeader != null) {
             return request.mutate()
-                .header("X-Routed-Version", versionHeader)
+                .header(HttpHeadersConstant.X_ROUTED_VERSION, versionHeader)
                 .build();
         }
 
@@ -88,7 +88,7 @@ public class RequestTransformFilter implements GlobalFilter, Ordered {
         if (matcher.find()) {
             String version = matcher.group(1);
             return request.mutate()
-                .header("X-Routed-Version", version)
+                .header(HttpHeadersConstant.X_ROUTED_VERSION, version)
                 .build();
         }
 
@@ -165,14 +165,15 @@ public class RequestTransformFilter implements GlobalFilter, Ordered {
         ServerHttpRequest.Builder builder = request.mutate();
 
         // 添加网关标识
-        builder.header("X-Gateway-Id", properties.getGatewayId());
+        builder.header(GatewayHeaderConstants.X_GATEWAY_ID, properties.getGatewayId());
 
         // 添加转发时间戳
-        builder.header("X-Gateway-Timestamp", String.valueOf(System.currentTimeMillis()));
+        builder.header(GatewayHeaderConstants.X_GATEWAY_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
 
         // 如果客户端没有传递 Request-ID，生成一个
-        if (request.getHeaders().getFirst("X-Request-Id") == null) {
-            builder.header("X-Request-Id", java.util.UUID.randomUUID().toString().replace("-", ""));
+        if (request.getHeaders().getFirst(HttpHeadersConstant.X_REQUEST_ID) == null) {
+            builder.header(HttpHeadersConstant.X_REQUEST_ID,
+                java.util.UUID.randomUUID().toString().replace("-", ""));
         }
 
         return builder.build();

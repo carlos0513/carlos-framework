@@ -1,7 +1,6 @@
 package com.carlos.system.pojo.ao;
 
-import com.carlos.json.jackson.annotation.UserIdField;
-import com.carlos.json.jackson.annotation.UserIdField.SerializerType;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -43,7 +42,6 @@ public class SysNewsDetailAO implements Serializable {
     private String introducing;
     @Schema(description = "是否已读")
     private Boolean isRead;
-    @UserIdField(type = SerializerType.REALNAME)
     @Schema(description = "创建者")
     private Long createBy;
     @Schema(description = "创建时间")

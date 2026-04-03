@@ -1,5 +1,6 @@
 package com.carlos.gateway.observability;
 
+import com.carlos.core.constant.HttpHeadersConstant;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -39,4 +40,35 @@ public class TracingProperties {
      * 忽略的 URL 前缀
      */
     private String[] ignorePatterns = {"/actuator/**", "/health", "/prometheus"};
+
+    /**
+     * Request ID 配置
+     */
+    private RequestIdConfig requestId = new RequestIdConfig();
+
+    /**
+     * Request ID 配置类
+     */
+    @Data
+    public static class RequestIdConfig {
+        /**
+         * 请求头名称
+         */
+        private String headerName = HttpHeadersConstant.X_REQUEST_ID;
+
+        /**
+         * 是否自动生成（当请求未提供时）
+         */
+        private boolean autoGenerate = true;
+
+        /**
+         * 是否添加到响应头
+         */
+        private boolean addToResponse = true;
+
+        /**
+         * 前缀
+         */
+        private String prefix = "";
+    }
 }

@@ -9,12 +9,13 @@ import com.carlos.auth.app.pojo.dto.AppClientDTO;
 import com.carlos.auth.app.pojo.excel.AppClientExcel;
 import com.carlos.auth.app.service.AppClientService;
 import com.carlos.boot.util.ResponseUtil;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.util.easyexcel.ExcelUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -30,6 +31,7 @@ import java.util.List;
  * @author Carlos
  * @date 2025-03-27 13:58
  */
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
 @RequiredArgsConstructor
@@ -82,7 +84,7 @@ public class AppClientExcelListener extends AnalysisEventListener<AppClientExcel
         try {
             ExcelUtil.download(response, name, AppClientExcel.class, errorList);
         } catch (Exception e) {
-            throw new ServiceException("应用信息导出失败");
+            throw new BusinessException("应用信息导出失败");
         }
     }
 
@@ -100,7 +102,7 @@ public class AppClientExcelListener extends AnalysisEventListener<AppClientExcel
             final CellData<?> cellData = excelDataConvertException.getCellData();
             log.error("第{}行，第{}列解析异常，数据为:{}", excelDataConvertException.getRowIndex(),
                 excelDataConvertException.getColumnIndex(), excelDataConvertException.getCellData());
-            throw new ServiceException("第" + rowIndex + "行，第" + columnIndex + "列解析异常，数据为:" + cellData + "");
+            throw new BusinessException("第" + rowIndex + "行，第" + columnIndex + "列解析异常，数据为:" + cellData + "");
         }
     }
 

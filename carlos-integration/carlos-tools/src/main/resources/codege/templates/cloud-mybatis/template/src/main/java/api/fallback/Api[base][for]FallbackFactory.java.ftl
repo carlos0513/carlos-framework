@@ -24,11 +24,4 @@ public class Api${table.classPrefix}FallbackFactory implements FallbackFactory<A
 
         };
     }
-
-
-    // 将此段配置放入配置类中进行Bean加载
-    // @Bean
-    // public Api${table.classPrefix}FallbackFactory ${table.classMainPrefix}FallbackFactory() {
-    //     return new Api${table.classPrefix}FallbackFactory();
-    // }
 }

@@ -103,7 +103,7 @@ public class UserService {
 #### 异常处理
 
 ```java
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.response.ErrorCode;
 
 @Service

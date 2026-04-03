@@ -6,7 +6,7 @@ import cn.idev.excel.exception.ExcelDataConvertException;
 import cn.idev.excel.metadata.data.CellData;
 import cn.idev.excel.read.listener.ReadListener;
 import cn.idev.excel.util.ListUtils;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.system.region.convert.SysRegionConvert;
 import com.carlos.system.region.pojo.dto.SysRegionDTO;
 import com.carlos.system.region.pojo.excel.RegionExcel;
@@ -57,7 +57,7 @@ public class RegionExcelListener implements ReadListener<RegionExcel> {
             final CellData<?> cellData = excelDataConvertException.getCellData();
             log.error("第{}行，第{}列解析异常，数据为:{}", excelDataConvertException.getRowIndex(),
                 excelDataConvertException.getColumnIndex(), excelDataConvertException.getCellData());
-            throw new ServiceException("第" + rowIndex + "行，第" + columnIndex + "列解析异常，数据为:" + cellData + "");
+            throw new BusinessException("第" + rowIndex + "行，第" + columnIndex + "列解析异常，数据为:" + cellData + "");
         }
     }
 

@@ -2,7 +2,7 @@ package com.carlos.org.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.org.manager.OrgDockingMappingManager;
 import com.carlos.org.pojo.dto.OrgDockingMappingDTO;
 import com.carlos.org.pojo.enums.OrgDockingTypeEnum;
@@ -64,13 +64,13 @@ public class OrgDockingMappingService {
      */
     public OrgDockingMappingDTO getDockingMapping(OrgDockingTypeEnum type, String targetCode, String targetId) {
         if (type == null) {
-            throw new ServiceException("OrgDockingType can't be null！");
+            throw new BusinessException("OrgDockingType can't be null！");
         }
         if (StrUtil.isBlank(targetId)) {
-            throw new ServiceException("targetId can't be null！");
+            throw new BusinessException("targetId can't be null！");
         }
         if (StrUtil.isBlank(targetCode)) {
-            throw new ServiceException("targetCode can't be null！");
+            throw new BusinessException("targetCode can't be null！");
         }
         OrgDockingMappingDTO dockingMapping = dockingMappingManager.getDockingMapping(type, targetCode, targetId);
         return dockingMapping;
@@ -85,7 +85,7 @@ public class OrgDockingMappingService {
      */
     public OrgDockingMappingDTO getDockingMappingByTargetId(String targetId) {
         if (StrUtil.isBlank(targetId)) {
-            throw new ServiceException("targetId can't be null！");
+            throw new BusinessException("targetId can't be null！");
         }
         OrgDockingMappingDTO dockingMapping = dockingMappingManager.getDockingMappingByTargetId(targetId);
         return dockingMapping;
@@ -93,7 +93,7 @@ public class OrgDockingMappingService {
 
     public List<OrgDockingMappingDTO> listByTargetIds(Set<String> targetIds) {
         if (CollUtil.isEmpty(targetIds)) {
-            throw new ServiceException("目标系统ids为空，用户信息对接关联信息失败");
+            throw new BusinessException("目标系统ids为空，用户信息对接关联信息失败");
         }
         return dockingMappingManager.listByTargetIds(targetIds);
     }
@@ -108,7 +108,7 @@ public class OrgDockingMappingService {
      */
     public List<OrgDockingMappingDTO> listBySystemIds(Set<String> systemIds) {
         if (CollUtil.isEmpty(systemIds)) {
-            throw new ServiceException("系统ids为空，用户信息对接关联信息失败");
+            throw new BusinessException("系统ids为空，用户信息对接关联信息失败");
         }
         return dockingMappingManager.listBySystemIds(systemIds);
     }

@@ -1,11 +1,9 @@
 package com.carlos.gateway.config;
 
+import cn.hutool.json.JSONUtil;
 import com.carlos.core.exception.GlobalException;
 import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.support.NotFoundException;
@@ -48,12 +46,8 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      */
     private boolean showStackTrace = false;
 
-    private final ObjectMapper objectMapper;
 
     public GatewayExceptionHandler() {
-        this.objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     public GatewayExceptionHandler(boolean devMode, boolean showStackTrace) {
@@ -90,14 +84,8 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         // 写入响应体
         return response.writeWith(Mono.fromSupplier(() -> {
             DataBufferFactory bufferFactory = response.bufferFactory();
-            try {
-                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
-                return bufferFactory.wrap(bytes);
-            } catch (Exception e) {
-                log.error("Failed to write error response", e);
-                String fallback = "{\"success\":false,\"code\":500,\"message\":\"Internal Server Error\"}";
-                return bufferFactory.wrap(fallback.getBytes(StandardCharsets.UTF_8));
-            }
+            byte[] bytes = JSONUtil.toJsonStr(errorResponse).getBytes(StandardCharsets.UTF_8);
+            return bufferFactory.wrap(bytes);
         }));
     }
 
@@ -207,7 +195,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      */
     private void handleNotFoundException(NotFoundException ex, ErrorResponse.ErrorResponseBuilder builder) {
         String message = "服务未找到";
-        if (ex.getMessage() != null && ex.getMessage().contains("Unable to find instance")) {
+        if (ex.getMessage().contains("Unable to find instance")) {
             String serviceName = extractServiceName(ex.getMessage());
             message = String.format("服务 [%s] 暂不可用，请稍后重试", serviceName);
         }
@@ -285,57 +273,36 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      * 错误码映射为 HTTP 状态码
      */
     private HttpStatus mapErrorCodeToHttpStatus(String errorCode) {
-        switch (errorCode) {
-            case "4001":
-                return HttpStatus.UNAUTHORIZED;      // 非法访问
-            case "4003":
-                return HttpStatus.FORBIDDEN;         // 没有权限
-            case "4004":
-                return HttpStatus.NOT_FOUND;         // 资源不存在
-            case "5001":
-                return HttpStatus.BAD_REQUEST;       // 参数校验异常
-            case "5104":
-                return HttpStatus.UNAUTHORIZED;      // 登录授权异常
-            case "5105":
-            case "5106":
-                return HttpStatus.FORBIDDEN;         // 没有访问权限
-            case "5107":
-                return HttpStatus.UNAUTHORIZED;      // Token 解析异常
-            case "5108":
-                return HttpStatus.METHOD_NOT_ALLOWED;// 请求方式不合法
-            default:
-                return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+        return switch (errorCode) {
+            case "4001" -> HttpStatus.UNAUTHORIZED;      // 非法访问
+            case "4003" -> HttpStatus.FORBIDDEN;         // 没有权限
+            case "4004" -> HttpStatus.NOT_FOUND;         // 资源不存在
+            case "5001" -> HttpStatus.BAD_REQUEST;       // 参数校验异常
+            case "5104" -> HttpStatus.UNAUTHORIZED;      // 登录授权异常
+            case "5105", "5106" -> HttpStatus.FORBIDDEN;         // 没有访问权限
+            case "5107" -> HttpStatus.UNAUTHORIZED;      // Token 解析异常
+            case "5108" -> HttpStatus.METHOD_NOT_ALLOWED;// 请求方式不合法
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
     }
 
     /**
      * HTTP 状态码映射为业务错误码
      */
     private String mapHttpStatusToCode(HttpStatus status) {
-        switch (status) {
-            case BAD_REQUEST:
-                return CommonErrorCode.BAD_REQUEST.getCode();
-            case UNAUTHORIZED:
-                return CommonErrorCode.UNAUTHORIZED.getCode();
-            case FORBIDDEN:
-                return CommonErrorCode.FORBIDDEN.getCode();
-            case NOT_FOUND:
-                return CommonErrorCode.NOT_FOUND.getCode();
-            case METHOD_NOT_ALLOWED:
-                return CommonErrorCode.METHOD_NOT_ALLOWED.getCode();
-            case TOO_MANY_REQUESTS:
-                return CommonErrorCode.TOO_MANY_REQUESTS.getCode();
-            case INTERNAL_SERVER_ERROR:
-                return CommonErrorCode.INTERNAL_ERROR.getCode();
-            case BAD_GATEWAY:
-                return CommonErrorCode.SERVICE_CALL_ERROR.getCode();
-            case SERVICE_UNAVAILABLE:
-                return CommonErrorCode.SERVICE_UNAVAILABLE.getCode();
-            case GATEWAY_TIMEOUT:
-                return CommonErrorCode.SERVICE_UNAVAILABLE.getCode();
-            default:
-                return CommonErrorCode.INTERNAL_ERROR.getCode();
-        }
+        return switch (status) {
+            case BAD_REQUEST -> CommonErrorCode.BAD_REQUEST.getCode();
+            case UNAUTHORIZED -> CommonErrorCode.UNAUTHORIZED.getCode();
+            case FORBIDDEN -> CommonErrorCode.FORBIDDEN.getCode();
+            case NOT_FOUND -> CommonErrorCode.NOT_FOUND.getCode();
+            case METHOD_NOT_ALLOWED -> CommonErrorCode.METHOD_NOT_ALLOWED.getCode();
+            case TOO_MANY_REQUESTS -> CommonErrorCode.TOO_MANY_REQUESTS.getCode();
+            case INTERNAL_SERVER_ERROR -> CommonErrorCode.INTERNAL_ERROR.getCode();
+            case BAD_GATEWAY -> CommonErrorCode.SERVICE_CALL_ERROR.getCode();
+            case SERVICE_UNAVAILABLE -> CommonErrorCode.SERVICE_UNAVAILABLE.getCode();
+            case GATEWAY_TIMEOUT -> CommonErrorCode.SERVICE_UNAVAILABLE.getCode();
+            default -> CommonErrorCode.INTERNAL_ERROR.getCode();
+        };
     }
 
     /**
@@ -396,11 +363,4 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         return sb.toString();
     }
 
-    public void setDevMode(boolean devMode) {
-        this.devMode = devMode;
-    }
-
-    public void setShowStackTrace(boolean showStackTrace) {
-        this.showStackTrace = showStackTrace;
-    }
 }

@@ -8,7 +8,7 @@ import com.carlos.auth.exception.UserNotFoundException;
 import com.carlos.auth.security.service.LoginService;
 import com.carlos.auth.security.service.UserDetailServiceImpl;
 import com.carlos.boot.request.RequestUtil;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -137,7 +137,7 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
                 throw new UserNotFoundException(ex.getMessage());
             }
         } else {
-            throw new ServiceException("不存在的登录方式");
+            throw new BusinessException("不存在的登录方式");
         }
 
     }

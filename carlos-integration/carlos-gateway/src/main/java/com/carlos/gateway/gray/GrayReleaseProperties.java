@@ -26,5 +26,5 @@ public class GrayReleaseProperties {
     /**
      * 灰度策略配置（Key: 服务名，Value: 策略）
      */
-    private Map<String, GrayReleaseFilter.GrayStrategy> strategies = new HashMap<>();
+    private Map<String, GrayStrategy> strategies = new HashMap<>();
 }

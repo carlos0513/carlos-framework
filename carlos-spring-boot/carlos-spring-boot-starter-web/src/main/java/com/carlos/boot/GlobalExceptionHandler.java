@@ -4,11 +4,11 @@ import cn.hutool.json.JSONConfig;
 import cn.hutool.json.JSONUtil;
 import com.carlos.boot.request.RequestInfo;
 import com.carlos.boot.request.RequestUtil;
-import com.carlos.core.exception.*;
-import com.carlos.core.response.CommonErrorCode;
-import com.carlos.core.response.ErrorCode;
-import com.carlos.core.response.FieldErrorDetail;
-import com.carlos.core.response.Result;
+import com.carlos.core.exception.BusinessException;
+import com.carlos.core.exception.DaoException;
+import com.carlos.core.exception.GlobalException;
+import com.carlos.core.exception.RestException;
+import com.carlos.core.response.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -180,46 +180,6 @@ public class GlobalExceptionHandler {
     }
 
     // ==================== 业务异常 ====================
-
-    /**
-     * 处理业务异常（新体系）
-     *
-     * @param exception 异常对象
-     * @param request   HTTP请求
-     * @return Result
-     */
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Result<Void>> handleBusinessException(
-        BusinessException exception, HttpServletRequest request) {
-
-        log.warn("[业务异常] {} - code={}, message={}",
-            request.getRequestURI(),
-            exception.getErrorCode().getCode(),
-            exception.getFinalMessage());
-        printRequestDetail();
-
-        Result<Void> response = Result.error(exception.getErrorCode(), exception.getFinalMessage());
-        return ResponseEntity.status(exception.getErrorCode().getHttpStatus()).body(response);
-    }
-
-    /**
-     * 处理系统异常（新体系）
-     *
-     * @param exception 异常对象
-     * @param request   HTTP请求
-     * @return Result
-     */
-    @ExceptionHandler(SystemException.class)
-    public ResponseEntity<Result<Void>> handleSystemException(
-        SystemException exception, HttpServletRequest request) {
-
-        log.error("[系统异常] {} - {}", request.getRequestURI(), exception.getMessage(), exception);
-        printRequestDetail();
-
-        Result<Void> response = Result.error(exception.getErrorCode(), exception.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-
     /**
      * 处理旧版全局异常（兼容层）
      *
@@ -234,7 +194,7 @@ public class GlobalExceptionHandler {
         printRequestDetail();
 
         ErrorCode errorCode;
-        if (exception instanceof ServiceException) {
+        if (exception instanceof BusinessException) {
             errorCode = CommonErrorCode.BUSINESS_ERROR;
         } else if (exception instanceof DaoException) {
             errorCode = CommonErrorCode.DATABASE_ERROR;
@@ -244,11 +204,13 @@ public class GlobalExceptionHandler {
             errorCode = CommonErrorCode.INTERNAL_ERROR;
         }
 
-        log.error("[全局异常] {} - type={}, message={}",
-            request.getRequestURI(), exception.getClass().getSimpleName(), exception.getMessage());
+        int httpStatus = exception.getHttpStatus();
+
+        log.error("[全局异常] {} - type={}, httpStatus={}, message={}",
+            request.getRequestURI(), exception.getClass().getSimpleName(), httpStatus, exception.getMessage());
 
         Result<Void> response = Result.error(errorCode, exception.getMessage());
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
+        return ResponseEntity.status(httpStatus).body(response);
     }
 
     // ==================== HTTP 相关异常 ====================
@@ -377,6 +339,47 @@ public class GlobalExceptionHandler {
     private boolean isProduction() {
         String profile = System.getProperty("spring.profiles.active", "");
         return "prod".equals(profile) || "production".equals(profile);
+    }
+
+    /**
+     * 根据错误级别记录不同级别的日志
+     *
+     * @param level   错误级别
+     * @param message 日志消息
+     */
+    private void logByLevel(ErrorLevel level, String message) {
+        switch (level) {
+            case CLIENT_ERROR:
+                // 客户端错误使用 warn 级别
+                log.warn(message);
+                break;
+            case BUSINESS_ERROR:
+                // 业务错误使用 warn 级别
+                log.warn(message);
+                break;
+            case THIRD_PARTY_ERROR:
+                // 第三方错误使用 error 级别
+                log.error(message);
+                break;
+            case SYSTEM_ERROR:
+                // 系统错误使用 error 级别
+                log.error(message);
+                break;
+            default:
+                // 其他使用 info 级别
+                log.info(message);
+        }
+    }
+
+    /**
+     * 根据错误级别判断是否打印堆栈
+     *
+     * @param level 错误级别
+     * @return true 表示需要打印堆栈
+     */
+    private boolean shouldPrintStackTrace(ErrorLevel level) {
+        // 系统错误和第三方错误打印堆栈
+        return level == ErrorLevel.SYSTEM_ERROR || level == ErrorLevel.THIRD_PARTY_ERROR;
     }
 
 }

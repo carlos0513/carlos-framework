@@ -2,11 +2,9 @@ package com.carlos.json.jackson;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.carlos.core.exception.ComponentException;
-import com.carlos.json.jackson.exception.JacksonException;
 import com.carlos.util.function.CheckedConsumer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -14,17 +12,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.CollectionLikeType;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,137 +29,26 @@ import java.util.*;
 
 /**
  * <p>
- * Jackson序列化工具类
+ * Jackson 序列化工具类
  * </p>
+ *
+ * <p><strong>注意：</strong>业务代码请优先使用 {@link com.carlos.json.JsonUtils}，
+ * 该类提供统一的 JSON 操作接口，支持引擎切换（Jackson/Fastjson/Gson）。</p>
+ *
+ * <p>此类保留以下 Jackson 特有功能：</p>
+ * <ul>
+ *   <li>JsonNode 操作（readTree, createObjectNode, createArrayNode）</li>
+ *   <li>JavaType 构造（getMapType, getListType, getParametricType）</li>
+ *   <li>Tree 模型转换（treeToValue, valueToTree）</li>
+ *   <li>Hutool JSON trim（jsonTrim, jsonTrimArray）</li>
+ * </ul>
  *
  * @author carlos
  * @date 2020/4/16 9:21
+ * @see com.carlos.json.JsonUtils
  */
 @Slf4j
-@Component
 public class JacksonUtil {
-
-
-    private static ObjectMapper objectMapper;
-
-    public JacksonUtil(ObjectMapper objectMapper) {
-        JacksonUtil.objectMapper = objectMapper;
-    }
-
-    /**
-     * 输出对象不为空字段 （不进行格式化）
-     *
-     * @param object 输出的对象
-     * @author carlos
-     * @date 2020/4/16 10:49
-     */
-    public static String toJsonString(Object object) {
-        return toJsonString(object, false);
-    }
-
-    /**
-     * 输出对象不为空字段
-     *
-     * @param object       需要输出的对象
-     * @param enableFormat 是否需要进行格式化
-     * @author carlos
-     * @date 2020/4/16 9:24
-     */
-    public static String toJsonString(Object object, boolean enableFormat) {
-        return toJson(object, false, enableFormat);
-    }
-
-    /**
-     * 输出对象所有的的字段（不进行格式化）
-     *
-     * @param object 需要输出的对象
-     * @author carlos
-     * @date 2020/4/16 10:45
-     */
-    public static String toJsonStringNonNull(Object object) {
-        return toJsonStringNonNull(object, false);
-    }
-
-
-    /**
-     * 输出对象所有的字段
-     *
-     * @param object       输出的对象
-     * @param enableFormat 是否进行json格式化
-     * @author carlos
-     * @date 2020/4/16 10:45
-     */
-    public static String toJsonStringNonNull(Object object, boolean enableFormat) {
-        return toJson(object, true, enableFormat);
-    }
-
-
-    /**
-     * 输出对象
-     *
-     * @param obj       输出的对象
-     * @param printNull    是否输出为空的字段
-     * @param enableFormat 是否进行json格式化
-     * @author carlos
-     * @date 2020/4/16 10:45
-     */
-    public static String toJson(Object obj, boolean printNull, boolean enableFormat) {
-        if (obj == null) {
-            return null;
-        }
-        try {
-            ObjectMapper selected = objectMapper.copy();
-            if (enableFormat) {
-                selected = selected.enable(SerializationFeature.INDENT_OUTPUT);
-            }
-            if (!printNull) {
-                selected.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-            }
-            return selected.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            throw new JacksonException("Jackson 序列化失败", e);
-        }
-    }
-
-
-    /**
-     * Json字符串转List
-     *
-     * @param json 参数0
-     * @param T    参数1
-     * @return java.util.List<T>
-     * @author carlos
-     * @date 2022/1/27 10:29
-     */
-    public static <T> List<T> str2list(String json, Class<T> T) throws Exception {
-        CollectionType type = objectMapper.getTypeFactory().constructCollectionType(List.class, T);
-        return objectMapper.readValue(json, type);
-    }
-
-
-    /**
-     * JSON字符串转对象
-     *
-     * @param str   参数0
-     * @param clazz 参数1
-     * @return T
-     * @author carlos
-     * @date 2022/1/27 10:23
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T string2Obj(String str, Class<T> clazz) {
-        if (StrUtil.isEmpty(str) || clazz == null) {
-            return null;
-        }
-        try {
-
-            return clazz.equals(String.class) ? (T) str : objectMapper.readValue(str, clazz);
-        } catch (Exception e) {
-            log.error("{}", e.getMessage(), e);
-            return null;
-        }
-    }
 
     /**
      * 清空JSONArray 值前后空格
@@ -216,41 +100,6 @@ public class JacksonUtil {
         }
 
         return jsonObject;
-    }
-
-
-    /**
-     * 将对象序列化成json字符串
-     *
-     * @param object javaBean
-     * @return jsonString json字符串
-     */
-    public static String toJson(@Nullable Object object) {
-        if (object == null) {
-            return null;
-        }
-        try {
-            return getInstance().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 将对象序列化成 json byte 数组
-     *
-     * @param object javaBean
-     * @return jsonString json字符串
-     */
-    public static byte[] toJsonAsBytes(@Nullable Object object) {
-        if (object == null) {
-            return new byte[0];
-        }
-        try {
-            return getInstance().writeValueAsBytes(object);
-        } catch (JsonProcessingException e) {
-            throw new ComponentException(e);
-        }
     }
 
     /**
@@ -320,7 +169,9 @@ public class JacksonUtil {
      * @param valueType class
      * @param <T>       T 泛型标记
      * @return Bean
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#fromJson(byte[], Class)}
      */
+    @Deprecated
     @Nullable
     public static <T> T readValue(@Nullable byte[] content, Class<T> valueType) {
         if (ObjUtil.isEmpty(content)) {
@@ -328,106 +179,6 @@ public class JacksonUtil {
         }
         try {
             return getInstance().readValue(content, valueType);
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 将json反序列化成对象
-     *
-     * @param jsonString jsonString
-     * @param valueType  class
-     * @param <T>        T 泛型标记
-     * @return Bean
-     */
-    @Nullable
-    public static <T> T readValue(@Nullable String jsonString, Class<T> valueType) {
-        if (StringUtils.isEmpty(jsonString)) {
-            return null;
-        }
-        try {
-            return getInstance().readValue(jsonString, valueType);
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 将json反序列化成对象
-     *
-     * @param <T>       T 泛型标记
-     * @param in        InputStream
-     * @param valueType class
-     * @return Bean
-     */
-    @Nullable
-    public static <T> T readValue(@Nullable InputStream in, Class<T> valueType) {
-        if (in == null) {
-            return null;
-        }
-        try {
-            return getInstance().readValue(in, valueType);
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 将json反序列化成对象
-     *
-     * @param content       bytes
-     * @param typeReference 泛型类型
-     * @param <T>           T 泛型标记
-     * @return Bean
-     */
-    @Nullable
-    public static <T> T readValue(@Nullable byte[] content, TypeReference<T> typeReference) {
-        if (ObjUtil.isEmpty(content)) {
-            return null;
-        }
-        try {
-            return getInstance().readValue(content, typeReference);
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 将json反序列化成对象
-     *
-     * @param jsonString    jsonString
-     * @param typeReference 泛型类型
-     * @param <T>           T 泛型标记
-     * @return Bean
-     */
-    @Nullable
-    public static <T> T readValue(@Nullable String jsonString, TypeReference<T> typeReference) {
-        if (StringUtils.isEmpty(jsonString)) {
-            return null;
-        }
-        try {
-            return getInstance().readValue(jsonString, typeReference);
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 将json反序列化成对象
-     *
-     * @param in            InputStream
-     * @param typeReference 泛型类型
-     * @param <T>           T 泛型标记
-     * @return Bean
-     */
-    @Nullable
-    public static <T> T readValue(@Nullable InputStream in, TypeReference<T> typeReference) {
-        if (in == null) {
-            return null;
-        }
-        try {
-            return getInstance().readValue(in, typeReference);
         } catch (IOException e) {
             throw new ComponentException(e);
         }
@@ -540,204 +291,6 @@ public class JacksonUtil {
     }
 
     /**
-     * 读取集合
-     *
-     * @param content      bytes
-     * @param elementClass elementClass
-     * @param <T>          泛型
-     * @return 集合
-     */
-    public static <T> List<T> readList(@Nullable byte[] content, Class<T> elementClass) {
-        if (ObjUtil.isEmpty(content)) {
-            return Collections.emptyList();
-        }
-        try {
-            return getInstance().readValue(content, getListType(elementClass));
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content      InputStream
-     * @param elementClass elementClass
-     * @param <T>          泛型
-     * @return 集合
-     */
-    public static <T> List<T> readList(@Nullable InputStream content, Class<T> elementClass) {
-        if (content == null) {
-            return Collections.emptyList();
-        }
-        try {
-            return getInstance().readValue(content, getListType(elementClass));
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content      bytes
-     * @param elementClass elementClass
-     * @param <T>          泛型
-     * @return 集合
-     */
-    public static <T> List<T> readList(@Nullable String content, Class<T> elementClass) {
-        if (ObjUtil.isEmpty(content)) {
-            return Collections.emptyList();
-        }
-        try {
-            return getInstance().readValue(content, getListType(elementClass));
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content bytes
-     * @return 集合
-     */
-    public static Map<String, Object> readMap(@Nullable byte[] content) {
-        return readMap(content, Object.class);
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content InputStream
-     * @return 集合
-     */
-    public static Map<String, Object> readMap(@Nullable InputStream content) {
-        return readMap(content, Object.class);
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content bytes
-     * @return 集合
-     */
-    public static Map<String, Object> readMap(@Nullable String content) {
-        return readMap(content, Object.class);
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content    bytes
-     * @param valueClass 值类型
-     * @param <V>        泛型
-     * @return 集合
-     */
-    public static <V> Map<String, V> readMap(@Nullable byte[] content, Class<?> valueClass) {
-        return readMap(content, String.class, valueClass);
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content    InputStream
-     * @param valueClass 值类型
-     * @param <V>        泛型
-     * @return 集合
-     */
-    public static <V> Map<String, V> readMap(@Nullable InputStream content, Class<?> valueClass) {
-        return readMap(content, String.class, valueClass);
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content    bytes
-     * @param valueClass 值类型
-     * @param <V>        泛型
-     * @return 集合
-     */
-    public static <V> Map<String, V> readMap(@Nullable String content, Class<?> valueClass) {
-        return readMap(content, String.class, valueClass);
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content    bytes
-     * @param keyClass   key类型
-     * @param valueClass 值类型
-     * @param <K>        泛型
-     * @param <V>        泛型
-     * @return 集合
-     */
-    public static <K, V> Map<K, V> readMap(@Nullable byte[] content, Class<?> keyClass, Class<?> valueClass) {
-        if (ObjUtil.isEmpty(content)) {
-            return Collections.emptyMap();
-        }
-        try {
-            return getInstance().readValue(content, getMapType(keyClass, valueClass));
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content    InputStream
-     * @param keyClass   key类型
-     * @param valueClass 值类型
-     * @param <K>        泛型
-     * @param <V>        泛型
-     * @return 集合
-     */
-    public static <K, V> Map<K, V> readMap(@Nullable InputStream content, Class<?> keyClass, Class<?> valueClass) {
-        if (ObjUtil.isEmpty(content)) {
-            return Collections.emptyMap();
-        }
-        try {
-            return getInstance().readValue(content, getMapType(keyClass, valueClass));
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * 读取集合
-     *
-     * @param content    bytes
-     * @param keyClass   key类型
-     * @param valueClass 值类型
-     * @param <K>        泛型
-     * @param <V>        泛型
-     * @return 集合
-     */
-    public static <K, V> Map<K, V> readMap(@Nullable String content, Class<?> keyClass, Class<?> valueClass) {
-        if (ObjUtil.isEmpty(content)) {
-            return Collections.emptyMap();
-        }
-        try {
-            return getInstance().readValue(content, getMapType(keyClass, valueClass));
-        } catch (IOException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * jackson 的类型转换
-     *
-     * @param fromValue   来源对象
-     * @param toValueType 转换的类型
-     * @param <T>         泛型标记
-     * @return 转换结果
-     */
-    public static <T> T convertValue(Object fromValue, Class<T> toValueType) {
-        return getInstance().convertValue(fromValue, toValueType);
-    }
-
-    /**
      * jackson 的类型转换
      *
      * @param fromValue   来源对象
@@ -749,17 +302,6 @@ public class JacksonUtil {
         return getInstance().convertValue(fromValue, toValueType);
     }
 
-    /**
-     * jackson 的类型转换
-     *
-     * @param fromValue      来源对象
-     * @param toValueTypeRef 泛型类型
-     * @param <T>            泛型标记
-     * @return 转换结果
-     */
-    public static <T> T convertValue(Object fromValue, TypeReference<T> toValueTypeRef) {
-        return getInstance().convertValue(fromValue, toValueTypeRef);
-    }
 
     /**
      * tree 转对象
@@ -793,7 +335,9 @@ public class JacksonUtil {
      *
      * @param value 对象
      * @return 是否可以序列化
+     * @deprecated 请使用 {@link com.carlos.json.JsonUtils#canSerialize(Object)}
      */
+    @Deprecated
     public static boolean canSerialize(@Nullable Object value) {
         if (value == null) {
             return true;
@@ -811,48 +355,6 @@ public class JacksonUtil {
         return getInstance().canDeserialize(type);
     }
 
-    /**
-     * 检验 json 格式
-     *
-     * @param jsonString json 字符串
-     * @return 是否成功
-     */
-    public static boolean isValidJson(String jsonString) {
-        return isValidJson(mapper -> {
-            assert mapper != null;
-            mapper.readTree(jsonString);
-        });
-    }
-
-    /**
-     * 检验 json 格式
-     *
-     * @param content json byte array
-     * @return 是否成功
-     */
-    public static boolean isValidJson(byte[] content) {
-        return isValidJson(mapper -> mapper.readTree(content));
-    }
-
-    /**
-     * 检验 json 格式
-     *
-     * @param input json input stream
-     * @return 是否成功
-     */
-    public static boolean isValidJson(InputStream input) {
-        return isValidJson(mapper -> mapper.readTree(input));
-    }
-
-    /**
-     * 检验 json 格式
-     *
-     * @param jsonParser json parser
-     * @return 是否成功
-     */
-    public static boolean isValidJson(JsonParser jsonParser) {
-        return isValidJson(mapper -> mapper.readTree(jsonParser));
-    }
 
     /**
      * 检验 json 格式

@@ -3,12 +3,15 @@ package com.carlos.gateway.oauth2;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.core.auth.AuthConstant;
 import com.carlos.core.auth.UserContext;
+import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.core.util.PathMatchUtil;
+import com.carlos.gateway.oauth2.validator.TokenValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -55,7 +58,7 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         }
 
         // 跨域预检请求放行
-        if (request.getMethod() == org.springframework.http.HttpMethod.OPTIONS) {
+        if (request.getMethod() == HttpMethod.OPTIONS) {
             return chain.filter(exchange);
         }
 
@@ -94,8 +97,8 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
     private String extractToken(ServerHttpRequest request) {
         // 1. 从 Authorization 头提取 Bearer Token
         String authorization = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-        if (StrUtil.isNotBlank(authorization) && authorization.startsWith("Bearer ")) {
-            return authorization.substring(7);
+        if (StrUtil.isNotBlank(authorization) && authorization.startsWith(HttpHeadersConstant.BEARER_PREFIX)) {
+            return authorization.substring(HttpHeadersConstant.BEARER_PREFIX.length());
         }
 
         // 2. 从自定义 Token 头提取
@@ -105,7 +108,7 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         }
 
         // 3. 从 Query 参数提取（用于 WebSocket 等场景）
-        String tokenParam = request.getQueryParams().getFirst("access_token");
+        String tokenParam = request.getQueryParams().getFirst(HttpHeadersConstant.ACCESS_TOKEN_PARAM);
         if (StrUtil.isNotBlank(tokenParam)) {
             return tokenParam;
         }
@@ -119,24 +122,15 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
     private ServerHttpRequest injectUserContext(ServerHttpRequest request, UserContext context) {
         ServerHttpRequest.Builder builder = request.mutate();
 
-        Optional.ofNullable(context.getToken())
-            .ifPresent(v -> builder.header(AuthConstant.USER_TOKEN, v));
-        Optional.ofNullable(context.getAccount())
-            .ifPresent(v -> builder.header(AuthConstant.USER_ACCOUNT, v));
-        Optional.ofNullable(context.getUserId())
-            .ifPresent(v -> builder.header(AuthConstant.USER_ID, String.valueOf(v)));
-        Optional.ofNullable(context.getDepartmentId())
-            .ifPresent(v -> builder.header(AuthConstant.DEPT_ID, String.valueOf(v)));
-        Optional.ofNullable(context.getRoleId())
-            .ifPresent(v -> builder.header(AuthConstant.ROLE_ID, String.valueOf(v)));
-        Optional.ofNullable(context.getTenantId())
-            .ifPresent(v -> builder.header(AuthConstant.TENANT_ID, String.valueOf(v)));
-        Optional.ofNullable(context.getPhone())
-            .ifPresent(v -> builder.header(AuthConstant.USER_PHONE, v));
-        Optional.ofNullable(context.getRoleIds())
-            .ifPresent(v -> builder.header(AuthConstant.ROLE_IDS, StrUtil.join(",", v)));
-        Optional.ofNullable(context.getDepartmentIds())
-            .ifPresent(v -> builder.header(AuthConstant.DEPT_IDS, StrUtil.join(",", v)));
+        Optional.ofNullable(context.getToken()).ifPresent(v -> builder.header(AuthConstant.USER_TOKEN, v));
+        Optional.ofNullable(context.getAccount()).ifPresent(v -> builder.header(AuthConstant.USER_ACCOUNT, v));
+        Optional.ofNullable(context.getUserId()).ifPresent(v -> builder.header(AuthConstant.USER_ID, String.valueOf(v)));
+        Optional.ofNullable(context.getDepartmentId()).ifPresent(v -> builder.header(AuthConstant.DEPT_ID, String.valueOf(v)));
+        Optional.ofNullable(context.getRoleId()).ifPresent(v -> builder.header(AuthConstant.ROLE_ID, String.valueOf(v)));
+        Optional.ofNullable(context.getTenantId()).ifPresent(v -> builder.header(AuthConstant.TENANT_ID, String.valueOf(v)));
+        Optional.ofNullable(context.getPhone()).ifPresent(v -> builder.header(AuthConstant.USER_PHONE, v));
+        Optional.ofNullable(context.getRoleIds()).ifPresent(v -> builder.header(AuthConstant.ROLE_IDS, StrUtil.join(",", v)));
+        Optional.ofNullable(context.getDepartmentIds()).ifPresent(v -> builder.header(AuthConstant.DEPT_IDS, StrUtil.join(",", v)));
 
         return builder.build();
     }

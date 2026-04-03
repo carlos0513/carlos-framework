@@ -42,15 +42,15 @@ public class ${table.classPrefix}Controller {
 
 
     @PostMapping("add")
-@Operation(summary = "新增" + BASE_NAME)
+    @Operation(summary = "新增" + BASE_NAME)
     public void add(@RequestBody @Validated ${table.classPrefix}CreateParam param) {
         ${table.classPrefix}DTO dto = ${table.classPrefix}Convert.INSTANCE.toDTO(param);
         ${table.classMainPrefix}Service.add${table.classPrefix}(dto);
     }
 
 
-@PostMapping("delete")
-@Operation(summary = "删除" + BASE_NAME)
+    @PostMapping("delete")
+    @Operation(summary = "删除" + BASE_NAME)
     public void delete(@RequestBody ParamIdSet<Serializable> param) {
         ${table.classMainPrefix}Service.delete${table.classPrefix}(param.getIds());
     }

@@ -3,7 +3,7 @@ package com.carlos.system.region.controller;
 
 import cn.hutool.core.util.StrUtil;
 import cn.idev.excel.EasyExcel;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.core.response.Result;
@@ -121,7 +121,7 @@ public class SysRegionController {
         try {
             final String filename = file.getOriginalFilename();
             if (StrUtil.isBlank(filename)) {
-                throw new ServiceException("文件名不能为空");
+                throw new BusinessException("文件名不能为空");
             }
             ExcelUtil.checkExcel(filename);
             EasyExcel.read(file.getInputStream(), RegionExcel.class, listener).sheet().doRead();

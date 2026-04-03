@@ -6,6 +6,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.http.Header;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import com.carlos.core.constant.CoreConstant;
+import com.carlos.core.constant.HttpHeadersConstant;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
@@ -99,12 +100,12 @@ public class FeignRequestInterceptor implements RequestInterceptor {
         }
 
         // 如果没有 X-Request-Id，生成一个
-        if (headerProps.isPassRequestId() && !headers.containsKey("X-Request-Id")) {
-            String requestId = request.getHeader("X-Request-Id");
+        if (headerProps.isPassRequestId() && !headers.containsKey(HttpHeadersConstant.X_REQUEST_ID)) {
+            String requestId = request.getHeader(HttpHeadersConstant.X_REQUEST_ID);
             if (CharSequenceUtil.isBlank(requestId)) {
                 requestId = java.util.UUID.randomUUID().toString().replace("-", "");
             }
-            requestTemplate.header("X-Request-Id", requestId);
+            requestTemplate.header(HttpHeadersConstant.X_REQUEST_ID, requestId);
         }
     }
 

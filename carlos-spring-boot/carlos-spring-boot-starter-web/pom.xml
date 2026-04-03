@@ -27,6 +27,10 @@
       <groupId>com.carlos</groupId>
       <artifactId>carlos-spring-boot-starter-apm</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.carlos</groupId>
+      <artifactId>carlos-spring-boot-starter-translation</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

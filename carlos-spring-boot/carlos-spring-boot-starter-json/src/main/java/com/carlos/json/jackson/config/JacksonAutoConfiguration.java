@@ -3,13 +3,15 @@ package com.carlos.json.jackson.config;
 import com.carlos.json.JsonFactory;
 import com.carlos.json.config.JsonProperties;
 import com.carlos.json.jackson.JacksonJsonService;
-import com.carlos.json.jackson.JacksonUtil;
+import com.carlos.json.jackson.filter.EmptyStringPropertyFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -146,6 +148,23 @@ public class JacksonAutoConfiguration {
             objectMapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
         }
 
+        // 允许未转义的控制字符
+        if (deserialization.isAllowUnescapedControlChars()) {
+            objectMapper.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature());
+        }
+
+        // 允许反斜杠转义任何字符
+        if (deserialization.isAllowBackslashEscapingAnyChar()) {
+            objectMapper.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature());
+        }
+
+        // 忽略空字符串配置
+        if (jsonProperties.isIgnoreEmptyString()) {
+            SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+            filterProvider.addFilter(EmptyStringPropertyFilter.FILTER_NAME, new EmptyStringPropertyFilter());
+            objectMapper.setFilterProvider(filterProvider);
+        }
+
         // 设置全局 ObjectMapper
         JsonFactory.setGlobalObjectMapper(objectMapper);
 
@@ -163,21 +182,12 @@ public class JacksonAutoConfiguration {
     }
 
     /**
-     * 配置 JacksonUtil
-     */
-    @Bean
-    @ConditionalOnMissingBean(JacksonUtil.class)
-    public JacksonUtil jacksonUtil(ObjectMapper objectMapper) {
-        return new JacksonUtil(objectMapper);
-    }
-
-    /**
      * 配置 JsonFactory
      */
     @Bean
-    public com.carlos.json.JsonFactory jsonFactoryInitializer(ObjectMapper objectMapper) {
+    public JsonFactory jsonFactoryInitializer(ObjectMapper objectMapper) {
         JsonFactory.setGlobalObjectMapper(objectMapper);
         JsonFactory.setGlobalProperties(jsonProperties);
-        return new com.carlos.json.JsonFactory();
+        return new JsonFactory();
     }
 }

@@ -12,7 +12,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.http.ContentType;
 import cn.hutool.json.JSONUtil;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.response.Result;
 import com.carlos.core.util.ExecutorUtil;
 import com.carlos.oss.utils.OssUtil;
@@ -98,7 +98,7 @@ public class FileService {
                 try {
                     OssUtil.putObject(finalNamespace, obj, IoUtil.toStream(file.getBytes()));
                 } catch (Exception e) {
-                    throw new ServiceException("文件上传失败！文件名称：" + originalFilename, e);
+                    throw new BusinessException("文件上传失败！文件名称：" + originalFilename, e);
                 }
                 final UploadRecordDTO record = new UploadRecordDTO();
                 record.setGroupId(groupId);
@@ -146,7 +146,7 @@ public class FileService {
                 bytes = i.getBytes();
             } catch (IOException e) {
                 log.error("get file error! Error message:{}", e.getMessage(), e);
-                throw new ServiceException(e);
+                throw new BusinessException(e);
             }
             file.setBytes(bytes);
             // file.setBase64(codeBase64(bytes, FileTypeUtil.getTypeByPath(file.getName())));
@@ -201,7 +201,7 @@ public class FileService {
     public UploadFileDTO getFileInfo(String id, boolean loadStream) {
         UploadRecordDTO dto = uploadRecordService.getInfoById(id);
         if (dto == null) {
-            throw new ServiceException("文件不存在！ id=" + id);
+            throw new BusinessException("文件不存在！ id=" + id);
         }
         UploadFileDTO fileinfo = new UploadFileDTO();
         fileinfo.setId(dto.getId());
@@ -315,7 +315,7 @@ public class FileService {
         }
         for (String ext : exts) {
             if (!supportExt.contains(ext)) {
-                throw new ServiceException("不支持" + ext + "类型文件上传！仅支持" + CollUtil.join(supportExt, StrUtil.SLASH) + "格式");
+                throw new BusinessException("不支持" + ext + "类型文件上传！仅支持" + CollUtil.join(supportExt, StrUtil.SLASH) + "格式");
             }
         }
     }

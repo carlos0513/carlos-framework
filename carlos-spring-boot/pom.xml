@@ -39,6 +39,7 @@
     <module>carlos-spring-boot-starter-redis</module>
     <module>carlos-spring-boot-starter-sms</module>
     <module>carlos-spring-boot-starter-snowflake</module>
+    <module>carlos-spring-boot-starter-translation</module>
     <module>carlos-spring-boot-starter-web</module>
     <module>carlos-spring-cloud-starter</module>
   </modules>

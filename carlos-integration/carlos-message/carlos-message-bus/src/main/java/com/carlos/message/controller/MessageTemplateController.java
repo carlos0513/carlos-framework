@@ -1,7 +1,7 @@
 package com.carlos.message.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.message.convert.MessageTemplateConvert;
@@ -87,7 +87,7 @@ public class MessageTemplateController {
     @Parameter(name = "templateCode", description = "模板编码", required = true)
     public MessageTemplateVO getByCode(@RequestParam String templateCode) {
         if (StrUtil.isBlank(templateCode)) {
-            throw new ServiceException("模板编码不能为空");
+            throw new BusinessException("模板编码不能为空");
         }
         MessageTemplateDTO dto = templateService.getByTemplateCode(templateCode);
         return MessageTemplateConvert.INSTANCE.toVO(dto);
@@ -117,7 +117,7 @@ public class MessageTemplateController {
         String templateCode = (String) request.get("templateCode");
         Map<String, Object> params = (Map<String, Object>) request.get("params");
         if (StrUtil.isBlank(templateCode)) {
-            throw new ServiceException("模板编码不能为空");
+            throw new BusinessException("模板编码不能为空");
         }
         templateService.validateTemplateParams(templateCode, params);
     }

@@ -573,6 +573,12 @@
         <artifactId>carlos-spring-boot-starter-mq</artifactId>
         <version>${revision}</version>
       </dependency>
+      <!-- 字段翻译组件 -->
+      <dependency>
+        <groupId>com.carlos</groupId>
+        <artifactId>carlos-spring-boot-starter-translation</artifactId>
+        <version>${revision}</version>
+      </dependency>
 
       <!-- Redis & Redisson -->
       <dependency>

@@ -14,7 +14,7 @@ import com.carlos.auth.app.pojo.vo.AppClientListVO;
 import com.carlos.auth.app.pojo.vo.AppClientPageVO;
 import com.carlos.auth.app.pojo.vo.AppClientVO;
 import com.carlos.auth.app.service.AppClientService;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamId;
 import com.carlos.core.param.ParamIdSet;
@@ -109,12 +109,12 @@ public class AppClientController {
         try {
             final String filename = file.getOriginalFilename();
             if (StrUtil.isBlank(filename)) {
-                throw new ServiceException("文件名不能为空");
+                throw new BusinessException("文件名不能为空");
             }
             ExcelUtil.checkExcel(filename);
             FastExcel.read(file.getInputStream(), AppClientExcel.class, listener).sheet().doRead();
         } catch (final IOException e) {
-            throw new ServiceException("文件读取失败");
+            throw new BusinessException("文件读取失败");
         }
     }
 

@@ -2,8 +2,9 @@ package com.carlos.gateway.oauth2;
 
 import com.carlos.core.auth.AuthConstant;
 import com.carlos.core.auth.UserContext;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.response.CommonErrorCode;
+import com.carlos.gateway.oauth2.provider.PermissionProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -14,7 +15,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <p>
@@ -52,7 +52,7 @@ public class OAuth2AuthorizationFilter implements GlobalFilter, Ordered {
         UserContext userContext = exchange.getAttribute(AuthConstant.USER_CONTEXT);
         if (userContext == null) {
             log.warn("No user context found for path: {}", path);
-            throw new ServiceException(CommonErrorCode.UNAUTHORIZED, "Authentication required");
+            throw new BusinessException(CommonErrorCode.UNAUTHORIZED, "Authentication required");
         }
 
         // 根据授权模式进行权限校验
@@ -67,7 +67,7 @@ public class OAuth2AuthorizationFilter implements GlobalFilter, Ordered {
             }
             log.warn("User {} has no permission for {} {}",
                 userContext.getAccount(), method, path);
-            throw new ServiceException(CommonErrorCode.FORBIDDEN, "Access denied");
+            throw new BusinessException(CommonErrorCode.FORBIDDEN, "Access denied");
         });
     }
 
@@ -125,19 +125,5 @@ public class OAuth2AuthorizationFilter implements GlobalFilter, Ordered {
         return OAuth2AuthenticationFilter.OAuth2FilterOrder.AUTHORIZATION;
     }
 
-    /**
-     * 权限提供者接口
-     */
-    public interface PermissionProvider {
 
-        /**
-         * 获取用户权限列表
-         */
-        Mono<Set<String>> getUserPermissions(String userId);
-
-        /**
-         * 评估 ABAC 策略
-         */
-        Mono<Boolean> evaluateAbacPolicy(Map<String, Object> attributes);
-    }
 }

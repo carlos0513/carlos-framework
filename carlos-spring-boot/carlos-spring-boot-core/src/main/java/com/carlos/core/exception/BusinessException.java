@@ -1,91 +1,82 @@
 package com.carlos.core.exception;
 
 import com.carlos.core.response.ErrorCode;
-import lombok.Getter;
 
 /**
  * 业务异常
  * <p>
- * 用于表示可预期的业务错误，如：
- * <ul>
- *   <li>用户不存在</li>
- *   <li>权限不足</li>
- *   <li>业务规则限制</li>
- *   <li>数据状态不正确</li>
- * </ul>
- * <p>
- * 使用方式：
- * <pre>
- * // 使用默认消息
- * throw CommonErrorCode.USER_NOT_FOUND.exception();
- *
- * // 自定义消息
- * throw CommonErrorCode.USER_NOT_FOUND.exception("该手机号未注册");
- *
- * // 格式化消息
- * throw CommonErrorCode.USER_ACCOUNT_LOCKED.exception("账号已被锁定，%d分钟后重试", 30);
- * </pre>
+ * 用于表示可预期的业务错误，如用户不存在、权限不足、业务规则限制等
  *
  * @author carlos
- * @since 3.0.0
+ * @since 1.0.0
  */
-@Getter
-public class BusinessException extends RuntimeException {
+public final class BusinessException extends GlobalException {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 错误码
+     * 默认 HTTP 状态码（400 Bad Request）
      */
-    private final ErrorCode errorCode;
+    public static final int DEFAULT_HTTP_STATUS = 400;
 
-    /**
-     * 自定义错误消息（为空时使用错误码默认消息）
-     */
-    private final String customMessage;
-
-    /**
-     * 创建业务异常（使用错误码默认消息）
-     *
-     * @param errorCode 错误码
-     */
-    public BusinessException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
-        this.customMessage = null;
+    public BusinessException() {
+        super("业务处理异常！");
+        setHttpStatus(DEFAULT_HTTP_STATUS);
     }
 
-    /**
-     * 创建业务异常（自定义消息）
-     *
-     * @param errorCode 错误码
-     * @param message   自定义消息
-     */
-    public BusinessException(ErrorCode errorCode, String message) {
+    public BusinessException(String message) {
         super(message);
-        this.errorCode = errorCode;
-        this.customMessage = message;
+        setHttpStatus(DEFAULT_HTTP_STATUS);
     }
 
-    /**
-     * 创建业务异常（自定义消息和原因）
-     *
-     * @param errorCode 错误码
-     * @param message   自定义消息
-     * @param cause     原始异常
-     */
-    public BusinessException(ErrorCode errorCode, String message, Throwable cause) {
+    public BusinessException(String message, Throwable cause) {
         super(message, cause);
-        this.errorCode = errorCode;
-        this.customMessage = message;
+        setHttpStatus(DEFAULT_HTTP_STATUS);
     }
 
-    /**
-     * 获取最终错误消息
-     *
-     * @return 自定义消息或错误码默认消息
-     */
-    public String getFinalMessage() {
-        return customMessage != null ? customMessage : errorCode.getMessage();
+    public BusinessException(String message, int httpStatus) {
+        super(message, httpStatus);
+    }
+
+    public BusinessException(String message, int httpStatus, Throwable cause) {
+        super(message, httpStatus, cause);
+    }
+
+    public BusinessException(ErrorCode errorCode) {
+        super(errorCode);
+    }
+
+    public BusinessException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+    }
+
+    public BusinessException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
+    }
+
+    public BusinessException(ErrorCode errorCode, String message, Throwable cause) {
+        super(errorCode, message, cause);
+    }
+
+    public BusinessException(String errorCode, String message) {
+        super(errorCode, message);
+        setHttpStatus(DEFAULT_HTTP_STATUS);
+    }
+
+    public BusinessException(String errorCode, String message, int httpStatus) {
+        super(errorCode, message, httpStatus);
+    }
+
+    public BusinessException(String errorCode, String message, int httpStatus, Throwable cause) {
+        super(errorCode, message, httpStatus, cause);
+    }
+
+    public BusinessException(Throwable cause) {
+        super(cause);
+        setHttpStatus(DEFAULT_HTTP_STATUS);
+    }
+
+    public BusinessException(Throwable cause, int httpStatus) {
+        super(cause, httpStatus);
     }
 }

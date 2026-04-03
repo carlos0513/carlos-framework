@@ -1,10 +1,12 @@
 package com.carlos.gateway.security;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.core.response.CommonErrorCode;
+import com.carlos.gateway.constant.GatewayHeaderConstants;
 import com.carlos.gateway.exception.ErrorResponse;
 import com.carlos.gateway.exception.ReplayAttackException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -14,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -33,12 +34,10 @@ import java.util.Optional;
  * @updated 2026/3/24 优化异常处理，统一响应格式
  */
 @Slf4j
-@Component
 public class ReplayProtectionFilter implements GlobalFilter, Ordered {
 
     private final ReplayProtectionProperties properties;
     private final ReactiveStringRedisTemplate redisTemplate;
-    private final ObjectMapper objectMapper;
 
     // 时间戳允许的最大误差（秒）
     private static final long TIMESTAMP_TOLERANCE = 300; // 5分钟
@@ -47,7 +46,6 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
                                   ReactiveStringRedisTemplate redisTemplate) {
         this.properties = properties;
         this.redisTemplate = redisTemplate;
-        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -69,9 +67,9 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         }
 
         // 2. 获取必要参数
-        String timestamp = request.getHeaders().getFirst("X-Timestamp");
-        String nonce = request.getHeaders().getFirst("X-Nonce");
-        String signature = request.getHeaders().getFirst("X-Signature");
+        String timestamp = request.getHeaders().getFirst(HttpHeadersConstant.X_TIMESTAMP);
+        String nonce = request.getHeaders().getFirst(HttpHeadersConstant.X_NONCE);
+        String signature = request.getHeaders().getFirst(HttpHeadersConstant.X_SIGNATURE);
 
         // 如果是 GET 请求且不需要签名验证，可以只检查时间戳
         if (request.getMethod() == org.springframework.http.HttpMethod.GET &&
@@ -92,7 +90,8 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         // 严格模式：必须包含所有参数
         if (StrUtil.isBlank(timestamp) || StrUtil.isBlank(nonce) || StrUtil.isBlank(signature)) {
             return blockRequest(exchange, ReplayAttackException.AttackType.UNKNOWN, nonce,
-                "缺少必要的安全请求头（X-Timestamp, X-Nonce, X-Signature）");
+                "缺少必要的安全请求头（" + HttpHeadersConstant.X_TIMESTAMP + ", " +
+                    HttpHeadersConstant.X_NONCE + ", " + HttpHeadersConstant.X_SIGNATURE + "）");
         }
 
         // 3. 验证时间戳
@@ -146,7 +145,7 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
      * 检查 Nonce（确保唯一性）
      */
     private Mono<Boolean> checkNonce(String nonce) {
-        String key = "nonce:" + nonce;
+        String key = GatewayHeaderConstants.NONCE_CACHE_PREFIX + nonce;
         return redisTemplate.hasKey(key)
             .flatMap(exists -> {
                 if (Boolean.TRUE.equals(exists)) {
@@ -242,16 +241,9 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
             .build();
 
         return response.writeWith(Mono.fromSupplier(() -> {
-            try {
-                byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
-                return response.bufferFactory().wrap(bytes);
-            } catch (Exception e) {
-                log.error("Failed to serialize replay protection response", e);
-                String fallback = String.format(
-                    "{\"success\":false,\"status\":403,\"code\":54031,\"message\":\"%s\"}",
-                    message);
-                return response.bufferFactory().wrap(fallback.getBytes(StandardCharsets.UTF_8));
-            }
+            byte[] bytes = JSONUtil.toJsonStr(errorResponse).getBytes(StandardCharsets.UTF_8);
+            return response.bufferFactory().wrap(bytes);
+
         }));
     }
 

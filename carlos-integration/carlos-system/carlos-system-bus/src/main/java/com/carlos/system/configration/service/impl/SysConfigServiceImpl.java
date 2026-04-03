@@ -2,7 +2,7 @@ package com.carlos.system.configration.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.system.configration.manager.SysConfigManager;
 import com.carlos.system.configration.pojo.dto.SysConfigDTO;
 import com.carlos.system.configration.pojo.vo.SysConfigLoginPageVO;
@@ -42,7 +42,7 @@ public class SysConfigServiceImpl implements SysConfigService {
         // 检查code是否重复
         List<SysConfigDTO> config = configManager.listByCodes(Sets.newHashSet(dto.getConfigCode()));
         if (CollUtil.isNotEmpty(config)) {
-            throw new ServiceException("配置键已存在");
+            throw new BusinessException("配置键已存在");
         }
         boolean success = configManager.add(dto);
         if (!success) {

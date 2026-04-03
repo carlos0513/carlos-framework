@@ -3,6 +3,7 @@ package com.carlos.json.jackson;
 import com.carlos.json.config.JsonProperties;
 import com.carlos.json.core.JsonService;
 import com.carlos.json.exception.JsonParseException;
+import com.carlos.json.jackson.filter.EmptyStringPropertyFilter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.jayway.jsonpath.JsonPath;
@@ -41,13 +43,13 @@ public class JacksonJsonService implements JsonService {
     public JacksonJsonService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         this.prettyObjectMapper = objectMapper.copy().enable(SerializationFeature.INDENT_OUTPUT);
-        this.withNullsObjectMapper = objectMapper.copy().setSerializationInclusion(null);
+        this.withNullsObjectMapper = objectMapper.copy();
     }
 
     public JacksonJsonService(ObjectMapper objectMapper, JsonProperties properties) {
         this.objectMapper = configureMapper(objectMapper, properties);
         this.prettyObjectMapper = this.objectMapper.copy().enable(SerializationFeature.INDENT_OUTPUT);
-        this.withNullsObjectMapper = this.objectMapper.copy().setSerializationInclusion(null);
+        this.withNullsObjectMapper = this.objectMapper.copy();
     }
 
     private ObjectMapper configureMapper(ObjectMapper mapper, JsonProperties properties) {
@@ -55,7 +57,7 @@ public class JacksonJsonService implements JsonService {
             return mapper;
         }
         // 应用配置
-        if (properties.isPrettyPrint()) {
+        if (properties.getSerialization().isIndentOutput()) {
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
         if (properties.getSerialization().isFailOnEmptyBeans()) {
@@ -64,12 +66,20 @@ public class JacksonJsonService implements JsonService {
             mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         }
         if (properties.isIgnoreNull()) {
-            mapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
+            mapper.setDefaultPropertyInclusion(
+                com.fasterxml.jackson.annotation.JsonInclude.Value.construct(
+                    com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL,
+                    com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS));
         }
         if (properties.getDeserialization().isFailOnUnknownProperties()) {
             mapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         } else {
             mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        }
+        if (properties.isIgnoreEmptyString()) {
+            SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+            filterProvider.addFilter(EmptyStringPropertyFilter.FILTER_NAME, new EmptyStringPropertyFilter());
+            mapper.setFilterProvider(filterProvider);
         }
         return mapper;
     }

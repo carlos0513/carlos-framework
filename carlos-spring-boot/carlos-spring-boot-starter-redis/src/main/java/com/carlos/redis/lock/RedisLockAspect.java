@@ -1,7 +1,7 @@
 package com.carlos.redis.lock;
 
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.ServiceException;
+import com.carlos.core.exception.BusinessException;
 import com.carlos.core.util.SpelUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -144,7 +144,7 @@ public class RedisLockAspect {
         log.warn("[RedisLock] Failed to acquire lock: {}, strategy: {}", lockKey, strategy);
 
         return switch (strategy) {
-            case FAIL_FAST -> throw new ServiceException(failMsg);
+            case FAIL_FAST -> throw new BusinessException(failMsg);
             case SKIP -> {
                 log.info("[RedisLock] Skip method execution due to lock acquire failure: {}", lockKey);
                 yield null;

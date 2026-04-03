@@ -28,13 +28,6 @@
       <artifactId>spring-boot-starter-json</artifactId>
     </dependency>
 
-    <!-- Spring Web（用于 Web 响应处理） -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- Fastjson2 -->
     <dependency>
       <groupId>com.alibaba.fastjson2</groupId>

@@ -5,7 +5,7 @@ import cn.hutool.core.map.MapUtil;
 import com.carlos.core.constant.CoreConstant;
 import com.carlos.core.enums.AppEnum;
 import com.carlos.core.enums.BaseEnum;
-import com.carlos.core.enums.Enum;
+import com.carlos.core.enums.EnumInfo;
 import com.google.common.collect.Sets;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class EnumService {
     /**
      * 枚举字典缓存
      */
-    public static Map<String, List<Enum>> ENUM_CACHE = new ConcurrentHashMap<>();
+    public static Map<String, List<EnumInfo>> ENUM_CACHE = new ConcurrentHashMap<>();
 
     public static final String SPRING_BOOT_JAR_PREFIX = "BOOT-INF.classes.";
 
@@ -79,14 +79,14 @@ public class EnumService {
                 return;
             }
             // 循环获取BaseEnum枚举
-            List<Enum> list;
+            List<EnumInfo> list;
             for (final Class<? extends BaseEnum> clazz : baseEnums) {
                 final BaseEnum[] constants = clazz.getEnumConstants();
                 list = new ArrayList<>();
                 try {
-                    Enum e;
+                    EnumInfo e;
                     for (final BaseEnum baseEnum : constants) {
-                        e = new Enum();
+                        e = new EnumInfo();
                         e.setCode(baseEnum.getCode());
                         e.setDesc(baseEnum.getDesc().intern());
                         e.setName(baseEnum.toString());
@@ -118,7 +118,7 @@ public class EnumService {
      *
      * @return java.util.Map<java.lang.String, java.util.List < com.carlos.core.enums.EnumVo < com.carlos.core.enums.BaseEnum>>>
      */
-    public Map<String, List<Enum>> getEnumList() {
+    public Map<String, List<EnumInfo>> getEnumList() {
         if (MapUtil.isEmpty(ENUM_CACHE)) {
             init();
         }
@@ -130,7 +130,7 @@ public class EnumService {
      *
      * @param name 枚举类的名称
      */
-    public List<Enum> getEnumInfo(final String name) {
+    public List<EnumInfo> getEnumInfo(final String name) {
         return ENUM_CACHE.get(name);
     }
 }

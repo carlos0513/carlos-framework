@@ -48,11 +48,6 @@
       <groupId>cn.idev.excel</groupId>
       <artifactId>fastexcel</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.tika</groupId>
-      <artifactId>tika-core</artifactId>
-      <version>3.2.3</version>
-    </dependency>
   </dependencies>
 
 

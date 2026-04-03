@@ -30,8 +30,8 @@ public interface BaseEnum {
      * @author carlos
      * @date 2021/11/25 14:03
      */
-    default Enum getEnumVo() {
-        Enum vo = new Enum();
+    default EnumInfo getEnumVo() {
+        EnumInfo vo = new EnumInfo();
         vo.setCode(getCode());
         vo.setDesc(getDesc());
         vo.setName(this.toString());
