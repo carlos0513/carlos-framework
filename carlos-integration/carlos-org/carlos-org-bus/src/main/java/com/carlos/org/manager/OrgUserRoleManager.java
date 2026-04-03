@@ -1,70 +1,61 @@
 package com.carlos.org.manager;
 
-import com.carlos.core.pagination.Paging;
-import com.carlos.datasource.base.BaseService;
-import com.carlos.org.pojo.dto.OrgUserRoleDTO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.carlos.core.base.BaseManager;
 import com.carlos.org.pojo.entity.OrgUserRole;
-import com.carlos.org.pojo.param.OrgUserRolePageParam;
-import com.carlos.org.pojo.vo.OrgUserRoleVO;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * <p>
- * 用户角色 查询封装接口
- * </p>
+ * 用户角色关联 Manager
  *
  * @author Carlos
- * @date 2026年2月28日 下午1:25:36
+ * @version 1.0.0
+ * @since 2026-04-03
  */
-public interface OrgUserRoleManager extends BaseService<OrgUserRole> {
+@Component
+public class OrgUserRoleManager extends BaseManager<OrgUserRole> {
 
     /**
-     * 新增用户角色
-     *
-     * @param dto 用户角色数据
-     * @return boolean
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 根据用户ID查询角色列表
      */
-    boolean add(OrgUserRoleDTO dto);
+    public List<OrgUserRole> getByUserId(Long userId) {
+        LambdaQueryWrapper<OrgUserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgUserRole::getUserId, userId);
+        return list(wrapper);
+    }
 
     /**
-     * 删除用户角色
-     *
-     * @param id 用户角色id
-     * @return boolean
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 批量保存用户角色关联
      */
-    boolean delete(Serializable id);
+    @Transactional(rollbackFor = Exception.class)
+    public void saveUserRoles(Long userId, List<Long> roleIds) {
+        // 先删除原有关系
+        deleteByUserId(userId);
+
+        // 保存新关系
+        if (roleIds != null && !roleIds.isEmpty()) {
+            List<OrgUserRole> entities = roleIds.stream()
+                .map(roleId -> {
+                    OrgUserRole entity = new OrgUserRole();
+                    entity.setUserId(userId);
+                    entity.setRoleId(roleId);
+                    return entity;
+                })
+                .collect(Collectors.toList());
+            saveBatch(entities);
+        }
+    }
 
     /**
-     * 修改用户角色信息
-     *
-     * @param dto 对象信息
-     * @return boolean
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 根据用户ID删除关联
      */
-    boolean modify(OrgUserRoleDTO dto);
-
-    /**
-     * 获取数据详情
-     *
-     * @param id 主键id
-     * @return com.carlos.org.pojo.dto.OrgUserRoleDTO
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
-     */
-    OrgUserRoleDTO getDtoById(Serializable id);
-
-    /**
-     * 分页列表
-     *
-     * @param  param 分页参数
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
-     */
-    Paging<OrgUserRoleVO> getPage(OrgUserRolePageParam param);
+    public void deleteByUserId(Long userId) {
+        LambdaQueryWrapper<OrgUserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgUserRole::getUserId, userId);
+        remove(wrapper);
+    }
 }

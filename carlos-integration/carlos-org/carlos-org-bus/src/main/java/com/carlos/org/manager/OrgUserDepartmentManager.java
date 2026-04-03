@@ -1,70 +1,77 @@
 package com.carlos.org.manager;
 
-import com.carlos.core.pagination.Paging;
-import com.carlos.datasource.base.BaseService;
-import com.carlos.org.pojo.dto.OrgUserDepartmentDTO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.carlos.core.base.BaseManager;
+import com.carlos.org.pojo.dto.UserDepartmentDTO;
 import com.carlos.org.pojo.entity.OrgUserDepartment;
-import com.carlos.org.pojo.param.OrgUserDepartmentPageParam;
-import com.carlos.org.pojo.vo.OrgUserDepartmentVO;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * <p>
- * 用户部门 查询封装接口
- * </p>
+ * 用户部门关联 Manager
  *
  * @author Carlos
- * @date 2026年2月28日 下午1:25:36
+ * @version 1.0.0
+ * @since 2026-04-03
  */
-public interface OrgUserDepartmentManager extends BaseService<OrgUserDepartment> {
+@Component
+public class OrgUserDepartmentManager extends BaseManager<OrgUserDepartment> {
 
     /**
-     * 新增用户部门
-     *
-     * @param dto 用户部门数据
-     * @return boolean
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 根据用户ID查询部门列表
      */
-    boolean add(OrgUserDepartmentDTO dto);
+    public List<OrgUserDepartment> getByUserId(Long userId) {
+        LambdaQueryWrapper<OrgUserDepartment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgUserDepartment::getUserId, userId);
+        return list(wrapper);
+    }
 
     /**
-     * 删除用户部门
-     *
-     * @param id 用户部门id
-     * @return boolean
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 批量保存用户部门关联
      */
-    boolean delete(Serializable id);
+    @Transactional(rollbackFor = Exception.class)
+    public void saveUserDepartments(Long userId, List<UserDepartmentDTO> departments) {
+        // 先删除原有关系
+        deleteByUserId(userId);
+
+        // 保存新关系
+        if (departments != null && !departments.isEmpty()) {
+            List<OrgUserDepartment> entities = departments.stream()
+                .map(dto -> {
+                    OrgUserDepartment entity = new OrgUserDepartment();
+                    entity.setUserId(userId);
+                    entity.setDepartmentId(dto.getDepartmentId());
+                    entity.setIsMain(dto.getMain() != null && dto.getMain() ? 1 : 0);
+                    return entity;
+                })
+                .collect(Collectors.toList());
+            saveBatch(entities);
+        }
+    }
 
     /**
-     * 修改用户部门信息
-     *
-     * @param dto 对象信息
-     * @return boolean
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 根据用户ID删除关联
      */
-    boolean modify(OrgUserDepartmentDTO dto);
+    public void deleteByUserId(Long userId) {
+        LambdaQueryWrapper<OrgUserDepartment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgUserDepartment::getUserId, userId);
+        remove(wrapper);
+    }
 
     /**
-     * 获取数据详情
-     *
-     * @param id 主键id
-     * @return com.carlos.org.pojo.dto.OrgUserDepartmentDTO
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
+     * 获取用户主部门ID
      */
-    OrgUserDepartmentDTO getDtoById(Serializable id);
-
-    /**
-     * 分页列表
-     *
-     * @param  param 分页参数
-     * @author Carlos
-     * @date 2026年2月28日 下午1:25:36
-     */
-    Paging<OrgUserDepartmentVO> getPage(OrgUserDepartmentPageParam param);
+    public Long getMainDepartmentId(Long userId) {
+        LambdaQueryWrapper<OrgUserDepartment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrgUserDepartment::getUserId, userId)
+               .eq(OrgUserDepartment::getIsMain, 1)
+               .last("LIMIT 1");
+        OrgUserDepartment entity = getOne(wrapper);
+        return entity != null ? entity.getDepartmentId() : null;
+    }
 }
