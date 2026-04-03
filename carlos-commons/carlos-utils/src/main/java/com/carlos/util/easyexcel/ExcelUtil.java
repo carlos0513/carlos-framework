@@ -6,6 +6,7 @@ import cn.idev.excel.ExcelReader;
 import cn.idev.excel.FastExcel;
 import cn.idev.excel.event.AnalysisEventListener;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,7 @@ import java.util.List;
  * @author Carlos
  * @date 2022/11/28 16:48
  */
+@Slf4j
 public class ExcelUtil {
 
     /**
@@ -117,7 +119,7 @@ public class ExcelUtil {
 
             return excelReader;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("读取Excel文件失败: {}", excel.getOriginalFilename(), e);
         }
 
         return null;
@@ -162,7 +164,7 @@ public class ExcelUtil {
 
             return excelReader;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("读取Excel文件失败(无头模式): {}", excel.getOriginalFilename(), e);
         }
 
         return null;

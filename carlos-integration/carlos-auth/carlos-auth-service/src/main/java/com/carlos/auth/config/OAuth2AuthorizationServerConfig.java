@@ -1,8 +1,10 @@
 package com.carlos.auth.config;
 
+import com.carlos.auth.config.repository.JdbcOAuth2AuthorizationService;
 import com.carlos.auth.config.repository.RedisOAuth2AuthorizationConsentService;
 import com.carlos.auth.config.repository.RedisOAuth2AuthorizationService;
 import com.carlos.auth.security.KeyPairManager;
+import com.carlos.auth.security.SM4PasswordEncoder;
 import com.carlos.auth.service.ExtendUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -29,6 +31,8 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
@@ -43,6 +47,7 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.util.StringUtils;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -490,6 +495,20 @@ public class OAuth2AuthorizationServerConfig {
     }
 
     /**
+     * JWT 编码器
+     *
+     * <p>用于生成 JWT Token 的签名。</p>
+     *
+     * @param jwkSource JWK 密钥源
+     * @return JwtEncoder JWT 编码器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+        return new NimbusJwtEncoder(jwkSource);
+    }
+
+    /**
      * 授权服务器设置
      *
      * <p>配置授权服务器的端点路径和 Issuer 标识。</p>
@@ -528,24 +547,29 @@ public class OAuth2AuthorizationServerConfig {
      * <h3>支持的编码器：</h3>
      * <ul>
      *   <li><strong>bcrypt</strong> - 默认，安全性高</li>
-     *   <li><strong>sm4</strong> - 国密算法（需额外配置）</li>
+     *   <li><strong>sm4</strong> - 国密算法（需配置密钥）</li>
      * </ul>
      *
      * <h3>自定义扩展：</h3>
      * <p>如果需要使用其他编码器，可以注册 PasswordEncoder Bean 替换默认实现。</p>
      *
+     * @param oauth2Properties OAuth2 配置属性
      * @return PasswordEncoder 密码编码器
      */
     @Bean
     @ConditionalOnMissingBean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder(OAuth2Properties oauth2Properties) {
         String encoderType = oauth2Properties.getSecurity().getPasswordEncoder();
 
         if ("sm4".equalsIgnoreCase(encoderType)) {
-            // 使用国密 SM4 加密
-            log.info("Using SM4 password encoder");
-            // TODO: 实现 SM4PasswordEncoder
-            return new BCryptPasswordEncoder();
+            String sm4Key = oauth2Properties.getSecurity().getSm4Key();
+            if (StringUtils.hasText(sm4Key)) {
+                log.info("Using SM4 password encoder with configured key");
+                return new SM4PasswordEncoder(sm4Key);
+            } else {
+                log.warn("SM4 key not configured, falling back to BCrypt");
+                log.warn("Please configure: carlos.oauth2.security.sm4-key");
+            }
         }
 
         log.info("Using BCrypt password encoder");
@@ -609,11 +633,14 @@ public class OAuth2AuthorizationServerConfig {
      * <p>通过配置 {@code carlos.auth.security.token-storage} 选择存储方式。</p>
      *
      * @param redisService Redis 授权服务（如果启用 Redis 存储）
+     * @param jdbcService JDBC 授权服务（如果启用 JDBC 存储）
      * @return OAuth2AuthorizationService 授权服务
      */
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2AuthorizationService authorizationService(@Autowired(required = false) RedisOAuth2AuthorizationService redisService) {
+    public OAuth2AuthorizationService authorizationService(
+            @Autowired(required = false) RedisOAuth2AuthorizationService redisService,
+            @Autowired(required = false) JdbcOAuth2AuthorizationService jdbcService) {
 
         String storageType = oauth2Properties.getSecurity().getTokenStorage();
 
@@ -628,9 +655,15 @@ public class OAuth2AuthorizationServerConfig {
                 log.warn("Please ensure Redis is configured and RedisTemplate bean is present");
             }
         } else if ("jdbc".equalsIgnoreCase(storageType)) {
-            log.info("Using JDBC OAuth2 Authorization Service");
-            // TODO: 实现 JDBC OAuth2AuthorizationService
-            log.warn("JDBC OAuth2AuthorizationService not implemented yet, using in-memory fallback");
+            if (jdbcService != null) {
+                log.info("==========================================================================");
+                log.info(" Using JDBC OAuth2 Authorization Service (production ready)");
+                log.info("==========================================================================");
+                return jdbcService;
+            } else {
+                log.warn("JDBC OAuth2 Authorization Service not available, falling back to in-memory storage");
+                log.warn("Please ensure DataSource bean is present and database is configured");
+            }
         }
 
         log.info("Using In-Memory OAuth2 Authorization Service (for development only)");
