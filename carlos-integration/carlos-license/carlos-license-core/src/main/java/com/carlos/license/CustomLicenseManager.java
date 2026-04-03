@@ -203,7 +203,7 @@ public class CustomLicenseManager extends LicenseManager {
 
             return decoder.readObject();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("XML解析失败：不支持的编码", e);
         } finally {
             try {
                 if (decoder != null) {

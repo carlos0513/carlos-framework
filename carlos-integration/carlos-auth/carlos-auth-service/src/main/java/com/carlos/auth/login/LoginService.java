@@ -7,6 +7,7 @@ import com.carlos.auth.login.dto.LoginResponse;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.IpBlockManager;
+import com.carlos.auth.security.JwtTokenProvider;
 import com.carlos.auth.security.LoginAttemptManager;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,11 @@ public class LoginService {
      * 事件发布器
      */
     private final ApplicationEventPublisher eventPublisher;
+
+    /**
+     * JWT 令牌提供者
+     */
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 用户登录
@@ -181,12 +187,14 @@ public class LoginService {
             .phone(user.getPhone())
             .build();
 
-        // TODO: 实现真正的JWT令牌颁发
-        // 临时使用空令牌，后续集成OAuth2Server
+        // 使用 JwtTokenProvider 生成 JWT 令牌
+        JwtTokenProvider.TokenResponse tokenResponse = jwtTokenProvider.generateTokens(authentication, user);
+
         return LoginResponse.builder()
-            .accessToken("")
-            .tokenType("Bearer")
-            .expiresIn(7200L)
+            .accessToken(tokenResponse.getAccessToken())
+            .refreshToken(tokenResponse.getRefreshToken())
+            .tokenType(tokenResponse.getTokenType())
+            .expiresIn(tokenResponse.getExpiresIn())
             .userInfo(userInfo)
             .build();
     }

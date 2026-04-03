@@ -38,8 +38,7 @@
     <!-- Spring Security 版本由 Spring Boot 3.5.9 统一管理，不指定显式版本 -->
     <spring-boot-starter-security.version>3.2.12</spring-boot-starter-security.version>
     <spring-cloud-oauth2.version>2.2.5.RELEASE</spring-cloud-oauth2.version>
-    <spring-security-oauth2-jose.version>5.7.3</spring-security-oauth2-jose.version>
-    <spring-boot-starter-security.version>2.7.4</spring-boot-starter-security.version>
+    <!-- 注意：旧版本定义已移除，避免版本冲突 -->
 
     <!-- 数据层 -->
     <mybatis-plus.version>3.5.15</mybatis-plus.version>          <!-- 已支持 SB3 -->
