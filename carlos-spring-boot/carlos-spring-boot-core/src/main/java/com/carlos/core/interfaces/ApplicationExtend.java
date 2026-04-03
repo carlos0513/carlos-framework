@@ -7,6 +7,8 @@ import com.carlos.core.base.RegionInfo;
 import com.carlos.core.base.UserInfo;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -139,4 +141,44 @@ public interface ApplicationExtend {
     }
 
 
+    /**
+     * 根据用户id批量获取用户信息
+     *
+     * @param ids 用户id
+     * @return java.util.Map<java.io.Serializable, com.carlos.core.base.UserInfo>
+     * @author carlos
+     * @date 2023/8/9 16:49
+     */
+    Map<Serializable, UserInfo> getUserByIds(Set<Serializable> ids);
+
+    /**
+     * 根据字典code批量获取字典信息
+     *
+     * @param type   字典类型
+     * @param value  字典code
+     * @return java.util.Map<java.lang.String, com.carlos.core.base.Dict>
+     * @author carlos
+     * @date 2023/8/9 16:49
+     */
+    Map<String, Dict> getDictVos(String type, Set<String> value);
+
+    /**
+     * 根据部门id批量获取部门信息
+     *
+     * @param missIds 部门id
+     * @return java.util.Map<java.io.Serializable, com.carlos.core.base.DepartmentInfo>
+     * @author carlos
+     * @date 2023/8/9 16:49
+     */
+    Map<Serializable, DepartmentInfo> getDepartmentByIds(Set<Serializable> missIds);
+
+    /**
+     * 根据区域code批量获取区域信息
+     *
+     * @param missCodes 区域code
+     * @return java.util.Map<java.lang.String, com.carlos.core.base.RegionInfo>
+     * @author carlos
+     * @date 2023/8/9 16:49
+     */
+    Map<String, RegionInfo> getRegionByCodes(Set<String> missCodes);
 }

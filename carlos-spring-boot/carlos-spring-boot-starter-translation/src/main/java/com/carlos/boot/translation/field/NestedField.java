@@ -15,7 +15,7 @@ import java.util.Collection;
 public class NestedField extends TranslatableField {
     private final TransNested annotation;
 
-    NestedField(Field field, TransNested annotation) {
+    public NestedField(Field field, TransNested annotation) {
         super(field, field.getName());
         this.annotation = annotation;
     }

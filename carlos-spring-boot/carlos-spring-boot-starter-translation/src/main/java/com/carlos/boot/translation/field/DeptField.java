@@ -19,7 +19,7 @@ public class DeptField extends TranslatableField {
     private final Field sourceField;
     private final Field targetField;
 
-    DeptField(Field field, TransDept annotation) {
+    public DeptField(Field field, TransDept annotation) {
         super(field, field.getName());
         this.annotation = annotation;
 

@@ -17,7 +17,7 @@ public class EnumField extends TranslatableField {
     private final TransEnum annotation;
     private final Field targetField;
 
-    EnumField(Field field, TransEnum annotation) {
+    public EnumField(Field field, TransEnum annotation) {
         super(field, field.getName());
         this.annotation = annotation;
 

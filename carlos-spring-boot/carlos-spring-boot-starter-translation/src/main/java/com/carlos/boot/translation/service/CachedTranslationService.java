@@ -12,6 +12,7 @@ import com.carlos.core.base.UserInfo;
 import com.carlos.core.enums.BaseEnum;
 import com.carlos.core.enums.EnumInfo;
 import com.carlos.core.interfaces.ApplicationExtend;
+import com.carlos.core.util.EnumUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -284,16 +285,28 @@ public class CachedTranslationService implements TranslationService {
 
         for (Map.Entry<Class<? extends BaseEnum>, Set<Object>> entry : enumValues.entrySet()) {
             Class<? extends BaseEnum> enumClass = entry.getKey();
+            Set<Object> codes = entry.getValue();
 
-            for (Object code : entry.getValue()) {
-                BaseEnum enumItem = EnumUtil.getByCode(enumClass, code);
-                if (enumItem != null) {
-                    EnumInfo vo = enumItem.getEnumVo();
-                    result.put(enumClass.getName() + ":" + code, vo);
+            for (Object code : codes) {
+                try {
+                    // 使用 EnumUtil 根据 code 获取枚举实例
+                    BaseEnum enumItem = EnumUtil.getByCode(enumClass, code);
+                    if (enumItem != null) {
+                        EnumInfo vo = enumItem.getEnumVo();
+                        String key = enumClass.getName() + ":" + code;
+                        result.put(key, vo);
+                        log.debug("Translated enum: {} -> {}", key, vo);
+                    } else {
+                        log.warn("Enum not found: class={}, code={}", enumClass.getSimpleName(), code);
+                    }
+                } catch (Exception e) {
+                    log.error("Error translating enum: class={}, code={}", enumClass.getSimpleName(), code, e);
                 }
             }
         }
 
+        log.info("Translated {} enum values from {} types",
+            result.size(), enumValues.size());
         return result;
     }
 }

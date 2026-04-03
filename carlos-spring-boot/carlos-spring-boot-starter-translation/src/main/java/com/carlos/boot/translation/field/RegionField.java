@@ -18,7 +18,7 @@ public class RegionField extends TranslatableField {
     private final Field sourceField;
     private final Field targetField;
 
-    RegionField(Field field, TransRegion annotation) {
+    public RegionField(Field field, TransRegion annotation) {
         super(field, field.getName());
         this.annotation = annotation;
 

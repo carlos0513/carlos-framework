@@ -18,7 +18,7 @@ public class UserField extends TranslatableField {
     private final Field sourceField;
     private final Field targetField;
 
-    UserField(Field field, TransUser annotation) {
+    public UserField(Field field, TransUser annotation) {
         super(field, field.getName());
         this.annotation = annotation;
 

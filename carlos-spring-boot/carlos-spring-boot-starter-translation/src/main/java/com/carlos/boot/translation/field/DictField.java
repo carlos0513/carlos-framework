@@ -16,7 +16,7 @@ public class DictField extends TranslatableField {
     private final TransDict annotation;
     private final Field targetField;
 
-    DictField(Field field, TransDict annotation) {
+    public DictField(Field field, TransDict annotation) {
         super(field, field.getName());
         this.annotation = annotation;
 
