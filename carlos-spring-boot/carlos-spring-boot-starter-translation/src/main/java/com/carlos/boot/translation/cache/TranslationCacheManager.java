@@ -1,15 +1,10 @@
 package com.carlos.boot.translation.cache;
 
 import com.carlos.boot.translation.config.TranslationProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.carlos.redis.util.RedisUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -22,22 +17,12 @@ import java.util.concurrent.TimeUnit;
  * @author carlos
  * @date 2025/01/20
  */
-@Component
 @Slf4j
 public class TranslationCacheManager {
 
     private final Cache<String, Object> localCache;
-    private final StringRedisTemplate redisTemplate;
-    private final ObjectMapper objectMapper;
 
-    @Autowired
-    public TranslationCacheManager(
-        StringRedisTemplate redisTemplate,
-        TranslationProperties properties,
-        ObjectMapper objectMapper) {
-        this.redisTemplate = redisTemplate;
-        this.objectMapper = objectMapper;
-
+    public TranslationCacheManager(TranslationProperties properties) {
         // 构建 Caffeine 本地缓存
         this.localCache = Caffeine.newBuilder()
             .maximumSize(properties.getCache().getLocalSize())
@@ -63,18 +48,14 @@ public class TranslationCacheManager {
         }
 
         // L2: Redis
-        String json = redisTemplate.opsForValue().get(key);
-        if (StringUtils.hasText(json)) {
-            try {
-                T value = objectMapper.readValue(json, type);
-                // 回填本地缓存
-                localCache.put(key, value);
-                return value;
-            } catch (JsonProcessingException e) {
-                log.warn("Failed to deserialize cache value: {}", key, e);
-            }
+        try {
+            T value = RedisUtil.getValue(key);
+            // 回填本地缓存
+            localCache.put(key, value);
+            return value;
+        } catch (Throwable e) {
+            log.warn("Failed to deserialize cache value: {}", key, e);
         }
-
         return null;
     }
 
@@ -102,9 +83,8 @@ public class TranslationCacheManager {
 
         // L2
         try {
-            String json = objectMapper.writeValueAsString(value);
-            redisTemplate.opsForValue().set(key, json, timeout, unit);
-        } catch (JsonProcessingException e) {
+            RedisUtil.setValue(key, value, timeout, unit);
+        } catch (Throwable e) {
             log.warn("Failed to serialize cache value: {}", key, e);
         }
     }
@@ -134,24 +114,13 @@ public class TranslationCacheManager {
 
         // L2 批量查询（使用 Redis Pipeline）
         if (!missKeys.isEmpty()) {
-            List<String> values = redisTemplate.opsForValue().multiGet(missKeys);
-            for (int i = 0; i < missKeys.size(); i++) {
-                String key = missKeys.get(i);
-                String json = values.get(i);
-
-                if (StringUtils.hasText(json)) {
-                    try {
-                        T value = objectMapper.readValue(json, type);
-                        result.put(key, value);
-                        // 回填 L1
-                        localCache.put(key, value);
-                    } catch (JsonProcessingException e) {
-                        log.warn("Failed to deserialize cache value: {}", key, e);
-                    }
-                }
+            Map<String, T> valueList = RedisUtil.getValueMap(missKeys, 300);
+            result = valueList;
+            for (Map.Entry<String, T> entry : valueList.entrySet()) {
+                // 回填 L1
+                localCache.put(entry.getKey(), entry.getValue());
             }
         }
-
         return result;
     }
 
@@ -162,7 +131,7 @@ public class TranslationCacheManager {
      */
     public void evict(String key) {
         localCache.invalidate(key);
-        redisTemplate.delete(key);
+        RedisUtil.delete(key);
     }
 
     /**
@@ -172,7 +141,7 @@ public class TranslationCacheManager {
      */
     public void batchEvict(Collection<String> keys) {
         keys.forEach(localCache::invalidate);
-        redisTemplate.delete(keys);
+        RedisUtil.delete(keys);
     }
 
     /**

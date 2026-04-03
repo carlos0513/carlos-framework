@@ -726,18 +726,45 @@ public class RedisUtil {
      * @param batchSize 每批数量
      * @return 值列表，与 key 顺序一一对应
      */
-    public static <T> List<T> getValueList(@NonNull Set<String> keys, int batchSize) {
+    public static <T> Map<String, T> getValueMap(@NonNull Set<String> keys, int batchSize) {
+        return getValueMap(Lists.newArrayList(keys), batchSize);
+    }
+
+    /**
+     * 批量获取缓存（分批次并行获取）
+     *
+     * @param keys      key 集合
+     * @param batchSize 每批数量
+     * @return 值列表，与 key 顺序一一对应
+     */
+    public static <T> List<T> getValueList(@NonNull List<String> keys, int batchSize) {
+        Map<String, T> keyValMap = getValueMap(keys, batchSize);
+        // 按照原始 key 的顺序返回结果
+        return keys.stream()
+            .map(keyValMap::get)
+            .collect(Collectors.toList());
+    }
+
+
+    /**
+     * 批量获取缓存（分批次并行获取）
+     *
+     * @param keys      key 集合
+     * @param batchSize 每批数量
+     * @return 值列表，与 key 顺序一一对应
+     */
+    public static <T> Map<String, T> getValueMap(@NonNull List<String> keys, int batchSize) {
         if (CollUtil.isEmpty(keys)) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
 
         if (batchSize <= 0) {
             batchSize = DEFAULT_DELETE_BATCH;
         }
 
-        List<String> keyList = new ArrayList<>(keys);
-        Map<Integer, T> idxVal = new ConcurrentHashMap<>(keyList.size());
-        List<List<String>> batches = Lists.partition(keyList, batchSize);
+        // 使用 key 作为 Map 的 key，而不是索引
+        Map<String, T> keyValMap = new ConcurrentHashMap<>(keys.size());
+        List<List<String>> batches = Lists.partition(keys, batchSize);
 
         // 使用 CompletableFuture 并行处理
         List<CompletableFuture<Void>> futures = batches.stream()
@@ -745,23 +772,20 @@ public class RedisUtil {
                 try {
                     List<T> vs = (List<T>) valueOperations.multiGet(batch);
                     if (vs != null) {
-                        int offset = keyList.indexOf(batch.get(0));
+                        // 直接将 key 和 value 对应起来
                         for (int i = 0; i < batch.size() && i < vs.size(); i++) {
-                            idxVal.put(offset + i, vs.get(i));
+                            keyValMap.put(batch.get(i), vs.get(i));
                         }
                     }
                 } catch (Exception e) {
                     log.error("Redis mget batch error, batchSize={}", batch.size(), e);
                 }
             }, EXECUTOR))
-            .collect(Collectors.toList());
+            .toList();
 
         // 等待全部完成
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-
-        return keyList.stream()
-            .map(k -> idxVal.get(keyList.indexOf(k)))
-            .collect(Collectors.toList());
+        return keyValMap;
     }
 
     /**
@@ -770,7 +794,27 @@ public class RedisUtil {
      * @param keys keys
      * @return 值列表
      */
-    public static <T> List<T> getValueList(@NonNull Set<String> keys) {
+    public static <T> Map<String, T> getValueList(@NonNull Set<String> keys) {
+        return getValueMap(keys, DEFAULT_DELETE_BATCH);
+    }
+
+    /**
+     * 批量获取缓存（默认批次大小）
+     *
+     * @param keys keys
+     * @return 值列表
+     */
+    public static <T> Map<String, T> getValueMap(@NonNull Set<String> keys) {
+        return getValueMap(new ArrayList<>(keys), DEFAULT_DELETE_BATCH);
+    }
+
+    /**
+     * 批量获取缓存（默认批次大小）
+     *
+     * @param keys keys
+     * @return 值列表
+     */
+    public static <T> List<T> getValueList(@NonNull List<String> keys) {
         return getValueList(keys, DEFAULT_DELETE_BATCH);
     }
 
@@ -788,7 +832,7 @@ public class RedisUtil {
         if (CollUtil.isEmpty(keys)) {
             return Collections.emptyList();
         }
-        return getValueList(keys);
+        return getValueList(new ArrayList<>(keys));
     }
 
 

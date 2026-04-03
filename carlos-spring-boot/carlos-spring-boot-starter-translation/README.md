@@ -121,13 +121,54 @@ public class UserController {
 
 ### @Translated
 
-标记在类或方法上，启用字段翻译功能。
+标记在类或方法上，启用字段翻译功能。支持方法级配置覆盖类级配置。
 
 ```java
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Translated {
     boolean cacheEnabled() default true;   // 是否启用缓存
     long cacheMinutes() default 30;        // 缓存时间（分钟）
+}
+```
+
+**注解属性说明：**
+
+| 属性             | 类型      | 默认值  | 说明                                    |
+|----------------|---------|------|---------------------------------------|
+| `cacheEnabled` | boolean | true | 是否启用缓存。设置为 false 时直接查询数据库，不读取/写入缓存    |
+| `cacheMinutes` | long    | 30   | 缓存过期时间（分钟）。仅当 `cacheEnabled=true` 时生效 |
+
+**优先级规则：**
+
+1. 方法级别注解 > 类级别注解
+2. 注解配置 > 全局配置 (`application.yml`)
+
+**使用示例：**
+
+```java
+@RestController
+@Translated(cacheEnabled = true, cacheMinutes = 60)  // 类级别默认配置
+public class UserController {
+    
+    @GetMapping("/users/{id}")
+    public ApiResponse<UserVO> getUser(@PathVariable Long id) {
+        // 使用类级别的缓存配置（启用缓存，60分钟）
+        return Result.success(userService.getUser(id));
+    }
+    
+    @GetMapping("/users/realtime")
+    @Translated(cacheEnabled = false)  // 方法级别覆盖：禁用缓存
+    public ApiResponse<List<UserVO>> listRealtimeUsers() {
+        // 实时查询，不走缓存
+        return Result.success(userService.listRealtimeUsers());
+    }
+    
+    @GetMapping("/users/hot")
+    @Translated(cacheEnabled = true, cacheMinutes = 120)  // 方法级别覆盖：120分钟缓存
+    public ApiResponse<List<UserVO>> listHotUsers() {
+        // 热点数据，使用更长的缓存时间
+        return Result.success(userService.listHotUsers());
+    }
 }
 ```
 
@@ -353,6 +394,82 @@ cacheManager.evict(CacheKeys.userKey(userId));
 cacheManager.batchEvict(keys);
 
 // 清空本地缓存
+cacheManager.clearLocal();
+```
+
+## 高级用法
+
+### 编程式控制翻译上下文
+
+除了在注解中配置缓存参数外，还可以通过 `TranslationContext` 编程式地控制翻译行为。
+
+```java
+import com.carlos.boot.translation.core.TranslationContext;
+import com.carlos.boot.translation.service.TranslationService;
+
+@Service
+public class UserService {
+    
+    @Autowired
+    private TranslationService translationService;
+    
+    public UserVO getUserWithCache(Long id) {
+        UserVO user = userMapper.selectById(id);
+        
+        // 使用默认配置进行翻译（启用缓存，30分钟）
+        translationService.translate(user);
+        
+        return user;
+    }
+    
+    public UserVO getUserWithoutCache(Long id) {
+        UserVO user = userMapper.selectById(id);
+        
+        // 禁用缓存进行翻译
+        TranslationContext.disableCache();
+        try {
+            translationService.translate(user);
+        } finally {
+            TranslationContext.clear();
+        }
+        
+        return user;
+    }
+    
+    public UserVO getUserWithCustomCache(Long id) {
+        UserVO user = userMapper.selectById(id);
+        
+        // 使用自定义缓存配置（启用缓存，120分钟）
+        TranslationContext.setCacheConfig(true, 120);
+        try {
+            translationService.translate(user);
+        } finally {
+            TranslationContext.clear();
+        }
+        
+        return user;
+    }
+}
+```
+
+### 手动控制缓存失效
+
+```java
+@Autowired
+private TranslationCacheManager cacheManager;
+
+// 使单个用户缓存失效
+cacheManager.evict(CacheKeys.userKey(userId));
+
+// 使多个缓存同时失效
+List<String> keys = Arrays.asList(
+    CacheKeys.userKey(1L),
+    CacheKeys.userKey(2L),
+    CacheKeys.deptKey(10L)
+);
+cacheManager.batchEvict(keys);
+
+// 清空所有本地缓存（不影响 Redis）
 cacheManager.clearLocal();
 ```
 

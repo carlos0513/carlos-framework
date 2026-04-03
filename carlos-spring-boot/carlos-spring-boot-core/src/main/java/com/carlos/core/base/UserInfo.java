@@ -40,4 +40,14 @@ public class UserInfo implements Serializable {
      * 真实姓名
      */
     private String realName;
+
+    /**
+     * 真实姓名
+     */
+    private String phone;
+
+    /**
+     * 真实姓名
+     */
+    private String email;
 }

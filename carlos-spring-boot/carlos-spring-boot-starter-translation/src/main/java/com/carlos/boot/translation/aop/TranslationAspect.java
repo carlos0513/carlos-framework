@@ -1,6 +1,7 @@
 package com.carlos.boot.translation.aop;
 
 import com.carlos.boot.translation.annotation.Translated;
+import com.carlos.boot.translation.core.TranslationContext;
 import com.carlos.boot.translation.service.TranslationService;
 import com.carlos.core.response.Result;
 import lombok.AllArgsConstructor;
@@ -9,8 +10,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -24,8 +23,6 @@ import java.util.Collection;
  * @date 2025/01/20
  */
 @Aspect
-@Component
-@ConditionalOnProperty(prefix = "carlos.translation", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
 @AllArgsConstructor
 public class TranslationAspect {
@@ -42,26 +39,37 @@ public class TranslationAspect {
      */
     @Around("@annotation(translated)")
     public Object around(ProceedingJoinPoint point, Translated translated) throws Throwable {
-        Object result = point.proceed();
+        // 设置翻译上下文
+        setupContext(translated);
 
-        if (result == null) {
-            return null;
-        }
-
-        long start = System.currentTimeMillis();
         try {
-            processResult(result);
-        } finally {
-            if (log.isDebugEnabled()) {
-                log.debug("Translation completed in {}ms", System.currentTimeMillis() - start);
-            }
-        }
+            Object result = point.proceed();
 
-        return result;
+            if (result == null) {
+                return null;
+            }
+
+            long start = System.currentTimeMillis();
+            try {
+                processResult(result);
+            } finally {
+                if (log.isDebugEnabled()) {
+                    log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})",
+                        System.currentTimeMillis() - start,
+                        translated.cacheEnabled(),
+                        translated.cacheMinutes());
+                }
+            }
+
+            return result;
+        } finally {
+            // 清除上下文
+            TranslationContext.clear();
+        }
     }
 
     /**
-     * 拦截返回值类型为 ApiResponse/Result 的方法
+     * 拦截返回值类型为 Result 的方法
      *
      * @param point 切点
      * @return 结果
@@ -69,39 +77,72 @@ public class TranslationAspect {
      */
     @Around("execution(public * com.carlos..controller..*.*(..))")
     public Object aroundController(ProceedingJoinPoint point) throws Throwable {
-        Object result = point.proceed();
-
         // 检查类或方法是否有 @Translated 注解
         MethodSignature signature = (MethodSignature) point.getSignature();
         Method method = signature.getMethod();
         Class<?> targetClass = point.getTarget().getClass();
 
-        boolean needTranslate = method.isAnnotationPresent(Translated.class)
-            || targetClass.isAnnotationPresent(Translated.class);
+        Translated methodAnnotation = method.getAnnotation(Translated.class);
+        Translated classAnnotation = targetClass.getAnnotation(Translated.class);
+
+        boolean needTranslate = methodAnnotation != null || classAnnotation != null;
 
         if (!needTranslate) {
-            return result;
+            return point.proceed();
         }
 
-        if (result == null) {
-            return null;
-        }
+        // 优先使用方法级别的注解配置，否则使用类级别的配置
+        Translated translated = methodAnnotation != null ? methodAnnotation : classAnnotation;
 
-        // 解包 ApiResponse 或 Result
-        Object data = unwrapResult(result);
+        // 设置翻译上下文
+        setupContext(translated);
 
-        if (data != null) {
-            long start = System.currentTimeMillis();
-            try {
-                processResult(data);
-            } finally {
-                if (log.isDebugEnabled()) {
-                    log.debug("Translation completed in {}ms", System.currentTimeMillis() - start);
+        try {
+            Object result = point.proceed();
+
+            if (result == null) {
+                return null;
+            }
+
+            // 解包 ApiResponse 或 Result
+            Object data = unwrapResult(result);
+
+            if (data != null) {
+                long start = System.currentTimeMillis();
+                try {
+                    processResult(data);
+                } finally {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})",
+                            System.currentTimeMillis() - start,
+                            translated.cacheEnabled(),
+                            translated.cacheMinutes());
+                    }
                 }
             }
-        }
 
-        return result;
+            return result;
+        } finally {
+            // 清除上下文
+            TranslationContext.clear();
+        }
+    }
+
+    /**
+     * 设置翻译上下文
+     *
+     * @param translated 注解
+     */
+    private void setupContext(Translated translated) {
+        TranslationContext context = new TranslationContext();
+        context.setCacheEnabled(translated.cacheEnabled());
+        context.setCacheMinutes(translated.cacheMinutes());
+        TranslationContext.set(context);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Translation context set: cacheEnabled={}, cacheMinutes={}",
+                translated.cacheEnabled(), translated.cacheMinutes());
+        }
     }
 
     /**

@@ -4,7 +4,7 @@ import com.carlos.core.base.DepartmentInfo;
 import com.carlos.core.base.Dict;
 import com.carlos.core.base.RegionInfo;
 import com.carlos.core.base.UserInfo;
-import com.carlos.core.enums.Enum;
+import com.carlos.core.enums.EnumInfo;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class TranslationData {
     /**
      * 枚举数据 (enumClass:code -> Enum)
      */
-    private Map<String, Enum> enums = Collections.emptyMap();
+    private Map<String, EnumInfo> enums = Collections.emptyMap();
 
     public UserInfo getUser(Serializable id) {
         return id != null ? users.get(id) : null;
@@ -62,7 +62,7 @@ public class TranslationData {
     }
 
     @SuppressWarnings("unchecked")
-    public <E extends Enum> Enum getEnum(Class<?> enumClass, Object code) {
+    public <E extends EnumInfo> EnumInfo getEnum(Class<?> enumClass, Object code) {
         if (enumClass == null || code == null) {
             return null;
         }
@@ -85,7 +85,7 @@ public class TranslationData {
         this.regions = regions != null ? regions : Collections.emptyMap();
     }
 
-    public void setEnums(Map<String, Enum> enums) {
+    public void setEnums(Map<String, EnumInfo> enums) {
         this.enums = enums != null ? enums : Collections.emptyMap();
     }
 
@@ -105,7 +105,7 @@ public class TranslationData {
         return Collections.unmodifiableMap(regions);
     }
 
-    public Map<String, Enum> getEnums() {
+    public Map<String, EnumInfo> getEnums() {
         return Collections.unmodifiableMap(enums);
     }
 }

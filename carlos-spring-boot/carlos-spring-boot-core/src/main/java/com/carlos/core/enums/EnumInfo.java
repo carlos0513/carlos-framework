@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Enum implements Serializable {
+public class EnumInfo implements Serializable {
 
     /**
      * 枚举code

@@ -1,6 +1,7 @@
 package com.carlos.boot.translation.service;
 
 import com.carlos.boot.translation.core.TranslationBatch;
+import com.carlos.boot.translation.core.TranslationContext;
 import com.carlos.boot.translation.core.TranslationData;
 import com.carlos.boot.translation.core.TranslationMetadata;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,6 +32,16 @@ public interface TranslationService {
      * @param obj 对象
      */
     default void translate(Object obj) {
+        translate(obj, TranslationContext.get());
+    }
+
+    /**
+     * 单对象翻译（带上下文）
+     *
+     * @param obj     对象
+     * @param context 翻译上下文
+     */
+    default void translate(Object obj, TranslationContext context) {
         if (obj == null) {
             return;
         }
@@ -51,6 +62,16 @@ public interface TranslationService {
      * @param collection 集合
      */
     default void translateCollection(Collection<?> collection) {
+        translateCollection(collection, TranslationContext.get());
+    }
+
+    /**
+     * 集合翻译（带上下文）
+     *
+     * @param collection 集合
+     * @param context    翻译上下文
+     */
+    default void translateCollection(Collection<?> collection, TranslationContext context) {
         if (CollectionUtils.isEmpty(collection)) {
             return;
         }

@@ -23,9 +23,7 @@ spring:
       - optional:nacos:common.yml?DEFAULT_GROUP&refreshEnabled=true
       - optional:nacos:redis.yml?DEFAULT_GROUP&refreshEnabled=true
       - optional:nacos:mysql.yml?DEFAULT_GROUP&refreshEnabled=true
-          -
-            data-id: minio.yml
-            refresh: true
+
 
 # 本地调试环境
 ---
