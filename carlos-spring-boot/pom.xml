@@ -19,6 +19,7 @@
 
   <modules>
     <module>carlos-spring-boot-core</module>
+    <module>carlos-spring-boot-starter-ai</module>
     <module>carlos-spring-boot-starter-apm</module>
     <module>carlos-spring-boot-starter-datacenter</module>
     <module>carlos-spring-boot-starter-datascope</module>
