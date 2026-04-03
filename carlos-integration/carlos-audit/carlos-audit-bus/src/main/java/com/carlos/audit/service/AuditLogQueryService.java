@@ -1,5 +1,8 @@
 package com.carlos.audit.service;
 
+import com.carlos.audit.clickhouse.ClickHouseQueryBuilder;
+import com.carlos.audit.clickhouse.ClickHouseQueryClient;
+import com.carlos.audit.clickhouse.AuditLogRowMapper;
 import com.carlos.audit.manager.AuditLogMainManager;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
 import com.carlos.audit.pojo.vo.AuditLogStatsVO;
@@ -27,6 +30,9 @@ import java.util.List;
 public class AuditLogQueryService {
 
     private final AuditLogMainManager auditLogMainManager;
+    private final ClickHouseQueryClient clickHouseQueryClient;
+    private final ClickHouseQueryBuilder queryBuilder;
+    private final AuditLogRowMapper auditLogRowMapper;
 
     /**
      * 分页查询审计日志
@@ -45,17 +51,33 @@ public class AuditLogQueryService {
                                              String logType, String state) {
         log.debug("分页查询审计日志，tenantId={}, pageNum={}, pageSize={}", tenantId, pageNum, pageSize);
 
-        // TODO: 实现 ClickHouse 查询
-        // 示例 SQL:
-        // SELECT * FROM audit_log_main_local
-        // WHERE tenant_id = #{tenantId}
-        // AND server_time >= #{startTime} AND server_time <= #{endTime}
-        // AND (#{logType} IS NULL OR log_type = #{logType})
-        // AND (#{state} IS NULL OR state = #{state})
-        // ORDER BY server_time DESC
-        // LIMIT #{pageSize} OFFSET #{offset}
+        // 计算偏移量
+        long offset = (long) (pageNum - 1) * pageSize;
 
-        return new Paging<>();
+        // 构建计数 SQL
+        String countSql = queryBuilder.buildCountQuery(
+            tenantId, startTime, endTime, logType, state, null, null
+        );
+
+        // 构建查询 SQL
+        String querySql = queryBuilder.buildPageQuery(
+            tenantId, startTime, endTime, logType, state, null, null,
+            offset, pageSize
+        );
+
+        // 执行分页查询
+        ClickHouseQueryClient.PageResult<AuditLogMainDTO> pageResult =
+            clickHouseQueryClient.queryPage(countSql, querySql, auditLogRowMapper, pageNum, pageSize);
+
+        // 转换为 Paging 对象
+        Paging<AuditLogMainDTO> paging = new Paging<>();
+        paging.setPageNum(pageNum);
+        paging.setPageSize(pageSize);
+        paging.setTotal(pageResult.getTotal());
+        paging.setPages(pageResult.getPages());
+        paging.setList(pageResult.getRecords());
+
+        return paging;
     }
 
     /**
@@ -66,8 +88,12 @@ public class AuditLogQueryService {
      */
     public AuditLogMainDTO getById(Long id) {
         log.debug("查询审计日志详情，id={}", id);
-        // TODO: 实现查询
-        return null;
+
+        // 构建查询 SQL
+        String sql = queryBuilder.buildGetByIdQuery(id);
+
+        // 执行查询
+        return clickHouseQueryClient.queryOne(sql, auditLogRowMapper);
     }
 
     /**
@@ -80,12 +106,23 @@ public class AuditLogQueryService {
     public AuditLogStatsVO getRealtimeStats(String tenantId, LocalDate date) {
         log.debug("获取实时统计，tenantId={}, date={}", tenantId, date);
 
-        // TODO: 从物化视图查询统计
-        // 示例 SQL:
-        // SELECT * FROM audit_log_stats_mv_local
-        // WHERE tenant_id = #{tenantId} AND event_date = #{date}
+        // 构建统计查询 SQL
+        String sql = queryBuilder.buildStatsQuery(tenantId, date);
 
-        return new AuditLogStatsVO();
+        // 执行查询并解析结果
+        return clickHouseQueryClient.queryOne(sql, record -> {
+            AuditLogStatsVO stats = new AuditLogStatsVO();
+            try {
+                stats.setTotalCount(record.getValue("total_count").asLong());
+                stats.setSuccessCount(record.getValue("success_count").asLong());
+                stats.setFailCount(record.getValue("fail_count").asLong());
+                stats.setRiskEventCount(record.getValue("risk_count").asLong());
+                stats.setAvgDurationMs(record.getValue("avg_duration").asDouble());
+            } catch (Exception e) {
+                log.warn("解析统计结果失败", e);
+            }
+            return stats;
+        });
     }
 
     /**
@@ -114,13 +151,10 @@ public class AuditLogQueryService {
                                                 LocalDateTime startTime, LocalDateTime endTime) {
         log.debug("查询风险事件，tenantId={}, minRiskLevel={}", tenantId, minRiskLevel);
 
-        // TODO: 实现查询
-        // SELECT * FROM audit_log_main_local
-        // WHERE tenant_id = #{tenantId}
-        // AND risk_level >= #{minRiskLevel}
-        // AND server_time >= #{startTime} AND server_time <= #{endTime}
-        // ORDER BY risk_level DESC, server_time DESC
+        // 构建查询 SQL，限制返回 1000 条
+        String sql = queryBuilder.buildRiskEventsQuery(tenantId, minRiskLevel, startTime, endTime, 1000);
 
-        return Collections.emptyList();
+        // 执行查询
+        return clickHouseQueryClient.query(sql, auditLogRowMapper);
     }
 }
