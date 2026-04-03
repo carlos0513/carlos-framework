@@ -1,4 +1,1 @@
 com.carlos.json.config.JsonAutoConfig
-com.carlos.json.jackson.config.JacksonAutoConfiguration
-com.carlos.json.web.JsonWebConfiguration
-com.carlos.json.jackson.JacksonUtil

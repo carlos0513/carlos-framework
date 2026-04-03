@@ -3,7 +3,6 @@ package com.carlos.json.jackson.config;
 import com.carlos.json.JsonFactory;
 import com.carlos.json.config.JsonProperties;
 import com.carlos.json.jackson.JacksonJsonService;
-import com.carlos.json.jackson.JacksonUtil;
 import com.carlos.json.jackson.filter.EmptyStringPropertyFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -180,15 +179,6 @@ public class JacksonAutoConfiguration {
     @ConditionalOnMissingBean(JacksonJsonService.class)
     public JacksonJsonService jacksonJsonService(ObjectMapper objectMapper) {
         return new JacksonJsonService(objectMapper, jsonProperties);
-    }
-
-    /**
-     * 配置 JacksonUtil
-     */
-    @Bean
-    @ConditionalOnMissingBean(JacksonUtil.class)
-    public JacksonUtil jacksonUtil(ObjectMapper objectMapper) {
-        return new JacksonUtil(objectMapper);
     }
 
     /**

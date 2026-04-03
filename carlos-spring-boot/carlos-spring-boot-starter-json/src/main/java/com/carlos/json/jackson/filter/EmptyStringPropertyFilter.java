@@ -19,7 +19,6 @@ public class EmptyStringPropertyFilter extends SimpleBeanPropertyFilter {
 
     public static final String FILTER_NAME = "emptyStringFilter";
 
-    @SuppressWarnings("deprecation")
     @Override
     public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
         throws Exception {
