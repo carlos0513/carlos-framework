@@ -1,63 +1,33 @@
 package com.carlos.org.pojo.entity;
 
-
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * <p>
- * 用户部门 数据源对象
- * </p>
+ * 用户部门关联实体
  *
  * @author Carlos
- * @date 2026年2月28日 下午1:25:36
+ * @version 1.0.0
+ * @since 2026-04-03
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@Accessors(chain = true)
 @TableName("org_user_department")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrgUserDepartment extends Model<OrgUserDepartment> implements Serializable {
-    private static final long serialVersionUID = 1L;
-    /**
-     * 主键
-     */
-    @TableId(type = IdType.ASSIGN_ID, value = "id")
+public class OrgUserDepartment {
+
+    @TableId(type = IdType.AUTO)
     private Long id;
-    /**
-     * 用户id
-     */
-    @TableField(value = "user_id")
+
     private Long userId;
-    /**
-     * 部门id
-     */
-    @TableField(value = "dept_id")
-    private Long deptId;
-    /**
-     * 是否为主部门
-     */
-    @TableField(value = "is_main")
-    private Boolean mainDept;
-    /**
-     * 创建者
-     */
-    @TableField(value = "create_by")
-    private Long createBy;
-    /**
-     * 创建时间
-     */
-    @TableField(value = "create_time")
+
+    private Long departmentId;
+
+    private Integer isMain;
+
     private LocalDateTime createTime;
 
+    private LocalDateTime updateTime;
 }
