@@ -23,26 +23,31 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
- * 认证控制器
- * </p>
+ * 用户认证控制器
  *
- * <p>提供登录、登出等认证相关接口</p>
+ * <p>提供用户登录、登出、获取当前用户等认证相关接口。</p>
+ *
+ * <p><strong>与 {@link com.carlos.auth.web.TokenController} 的区别：</strong></p>
+ * <ul>
+ *   <li>此类：面向最终用户，处理用户名/密码登录、Session 管理等用户级操作</li>
+ *   <li>TokenController：面向 OAuth2 客户端，处理 Token 的撤销、检查等令牌级操作</li>
+ * </ul>
  *
  * @author Carlos
  * @date 2026-02-26
+ * @see com.carlos.auth.web.TokenController
  */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 @Tag(name = "用户认证", description = "用户登录、登出等认证接口")
-public class AuthController {
+public class UserAuthController {
 
     /**
      * 登录服务
      */
-    private final LoginService loginService;
+    private final UserLoginService loginService;
 
     /**
      * IP封禁管理器

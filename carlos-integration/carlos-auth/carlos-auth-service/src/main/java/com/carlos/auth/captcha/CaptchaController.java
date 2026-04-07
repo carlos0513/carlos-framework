@@ -48,7 +48,7 @@ public class CaptchaController {
         String phone = request.getPhone();
         log.info("SMS captcha send request for phone: {}", SensitiveDataUtil.maskPhone(phone));
 
-        // 检查发送限制（RateLimitService已在AuthController中调用，此处为双重保险）
+        // 检查发送限制（RateLimitService已在UserAuthController中调用，此处为双重保险）
         if (!rateLimitService.trySendCaptcha("sms", phone)) {
             log.warn("SMS captcha send rate limit exceeded for phone: {}", SensitiveDataUtil.maskPhone(phone));
             return Result.error("发送过于频繁，请稍后再试");

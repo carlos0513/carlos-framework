@@ -17,18 +17,25 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
+ * Token 管理控制器
  *
- * </p>
+ * <p>提供 OAuth2 Token 的管理接口，包括令牌检查、撤销等。</p>
+ *
+ * <p><strong>与 {@link com.carlos.auth.login.UserAuthController} 的区别：</strong></p>
+ * <ul>
+ *   <li>此类：面向 OAuth2 客户端/资源服务器，处理 Token 级别的操作（检查有效性、撤销令牌）</li>
+ *   <li>UserAuthController：面向最终用户，处理用户登录、登出等用户级操作</li>
+ * </ul>
  *
  * @author Carlos
  * @date 2022/11/13 21:14
+ * @see com.carlos.auth.login.UserAuthController
  */
 @AllArgsConstructor
 @RestController
 @RequestMapping("api/oauth")
 @Tag(name = "OAuth2认证")
-public class AuthController {
+public class TokenController {
 
     private final OAuth2AuthorizationService authorizationService;
 

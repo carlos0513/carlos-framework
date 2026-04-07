@@ -22,19 +22,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 /**
- * <p>
- * 登录服务
- * </p>
+ * 用户登录服务
  *
- * <p>处理用户登录逻辑，包括用户名密码验证、令牌颁发等</p>
+ * <p>处理用户登录逻辑，包括用户名密码验证、JWT 令牌颁发、登录审计等。</p>
+ *
+ * <p><strong>与 {@link com.carlos.auth.security.service.CaptchaService} 的区别：</strong></p>
+ * <ul>
+ *   <li>此类：处理完整的用户登录流程，包括身份验证、Token 生成、登录审计</li>
+ *   <li>CaptchaService：仅处理验证码的生成、存储和校验，不涉及用户身份验证</li>
+ * </ul>
  *
  * @author Carlos
  * @date 2026-02-26
+ * @see com.carlos.auth.security.service.CaptchaService
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LoginService {
+public class UserLoginService {
 
 
     /**

@@ -2,10 +2,8 @@ package com.carlos.auth.support.core;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.carlos.auth.enums.GrantType;
 import com.carlos.auth.exception.UserNotFoundException;
-import com.carlos.auth.security.service.LoginService;
 import com.carlos.boot.request.RequestUtil;
 import com.carlos.core.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -69,7 +67,8 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
         }
 
         if (StrUtil.equals(GrantType.APP.getCode(), grantType)) {
-            LoginService loginService = SpringUtil.getBean(LoginService.class);
+            // TODO: 验证码校验逻辑待实现
+            // CaptchaService captchaService = SpringUtil.getBean(CaptchaService.class);
             // TODO 暂时取固定值
 //            String userVerificationCode="123456";
 //            String userVerificationCode = loginService.getVerificationCode(authentication.getPrincipal().toString());
