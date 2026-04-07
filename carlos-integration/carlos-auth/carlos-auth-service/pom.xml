@@ -15,7 +15,6 @@
 
     本模块提供完整的 OAuth2 认证授权能力，包括：
     - 授权服务器（Authorization Server）- 基于 Spring Authorization Server 1.x
-    - 资源服务器（Resource Server）- 支持 JWT Token 验证
     - 多种授权模式：授权码模式、密码模式（扩展）、短信验证码模式（扩展）、客户端凭证模式
     - 国密 SM4 密码加密支持
     - 可扩展的用户详情服务和 Token 增强机制
@@ -83,12 +82,6 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-authorization-server</artifactId>
-    </dependency>
-
-    <!-- Spring Resource Server - 用于验证 JWT Token -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
     </dependency>
 
     <!-- Spring Security 核心 -->

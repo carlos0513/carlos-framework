@@ -13,12 +13,6 @@
       "sourceType": "com.carlos.auth.config.OAuth2Properties$AuthorizationServerProperties"
     },
     {
-      "name": "carlos.oauth2.resource-server",
-      "type": "com.carlos.auth.config.OAuth2Properties$ResourceServerProperties",
-      "description": "OAuth2 资源服务器配置",
-      "sourceType": "com.carlos.auth.config.OAuth2Properties$ResourceServerProperties"
-    },
-    {
       "name": "carlos.oauth2.jwt",
       "type": "com.carlos.auth.config.OAuth2Properties$JwtProperties",
       "description": "JWT Token 配置",
@@ -66,25 +60,6 @@
       "description": "是否重用刷新令牌（false 更安全）",
       "defaultValue": false,
       "sourceType": "com.carlos.auth.config.OAuth2Properties$AuthorizationServerProperties"
-    },
-    {
-      "name": "carlos.oauth2.resource-server.enabled",
-      "type": "java.lang.Boolean",
-      "description": "是否启用资源服务器（用于验证 Token）",
-      "defaultValue": false,
-      "sourceType": "com.carlos.auth.config.OAuth2Properties$ResourceServerProperties"
-    },
-    {
-      "name": "carlos.oauth2.resource-server.jwk-set-uri",
-      "type": "java.lang.String",
-      "description": "JWK Set URI，用于获取公钥验证 JWT",
-      "sourceType": "com.carlos.auth.config.OAuth2Properties$ResourceServerProperties"
-    },
-    {
-      "name": "carlos.oauth2.resource-server.issuer-uri",
-      "type": "java.lang.String",
-      "description": "Issuer URI，用于自动发现配置",
-      "sourceType": "com.carlos.auth.config.OAuth2Properties$ResourceServerProperties"
     },
     {
       "name": "carlos.oauth2.jwt.issuer",
