@@ -1,6 +1,5 @@
 package com.carlos.system.resource.pojo.vo;
 
-import com.carlos.json.jackson.annotation.DictField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -43,7 +42,6 @@ public class SysResourceVO implements Serializable {
     private String state;
     @Schema(description = "显示和隐藏，0：显示，1：隐藏")
     private Boolean hidden;
-    @DictField
     @Schema(description = "资源描述")
     private String description;
     @Schema(description = "创建时间")

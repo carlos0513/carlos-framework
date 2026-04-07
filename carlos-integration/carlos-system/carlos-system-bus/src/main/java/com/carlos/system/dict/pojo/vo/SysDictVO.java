@@ -1,6 +1,5 @@
 package com.carlos.system.dict.pojo.vo;
 
-import com.carlos.json.jackson.annotation.EnumField;
 import com.carlos.system.dict.pojo.enums.DictTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,7 +37,6 @@ public class SysDictVO implements Serializable {
     @Schema(description = "描述")
     private String description;
 
-    @EnumField(type = EnumField.SerializerType.FULL)
     @Schema(description = "字典类型 数字类型 字符类型")
     private DictTypeEnum type;
 

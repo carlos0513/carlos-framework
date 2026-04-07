@@ -4,7 +4,6 @@ import com.carlos.auth.config.repository.JdbcOAuth2AuthorizationService;
 import com.carlos.auth.config.repository.RedisOAuth2AuthorizationConsentService;
 import com.carlos.auth.config.repository.RedisOAuth2AuthorizationService;
 import com.carlos.auth.security.KeyPairManager;
-import com.carlos.auth.security.SM4PasswordEncoder;
 import com.carlos.auth.service.ExtendUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -47,7 +46,6 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.util.StringUtils;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -562,14 +560,15 @@ public class OAuth2AuthorizationServerConfig {
         String encoderType = oauth2Properties.getSecurity().getPasswordEncoder();
 
         if ("sm4".equalsIgnoreCase(encoderType)) {
-            String sm4Key = oauth2Properties.getSecurity().getSm4Key();
-            if (StringUtils.hasText(sm4Key)) {
-                log.info("Using SM4 password encoder with configured key");
-                return new SM4PasswordEncoder(sm4Key);
-            } else {
-                log.warn("SM4 key not configured, falling back to BCrypt");
-                log.warn("Please configure: carlos.oauth2.security.sm4-key");
-            }
+            // TODO: Carlos 2026-04-07 需重新组织加密
+            // String sm4Key = oauth2Properties.getSecurity().getSm4Key();
+            // if (StringUtils.hasText(sm4Key)) {
+            //     log.info("Using SM4 password encoder with configured key");
+            //     return new SM4PasswordEncoder(sm4Key);
+            // } else {
+            //     log.warn("SM4 key not configured, falling back to BCrypt");
+            //     log.warn("Please configure: carlos.oauth2.security.sm4-key");
+            // }
         }
 
         log.info("Using BCrypt password encoder");

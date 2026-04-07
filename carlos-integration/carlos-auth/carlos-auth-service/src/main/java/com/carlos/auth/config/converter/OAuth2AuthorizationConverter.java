@@ -1,19 +1,14 @@
 package com.carlos.auth.config.converter;
 
 import com.carlos.auth.pojo.OAuth2AuthorizationPOJO;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.OAuth2AuthorizationCode;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
-import org.springframework.security.oauth2.core.OAuth2Token;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationResponseType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationCodeType;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationCode;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -22,7 +17,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * OAuth2 授权信息转换器
@@ -36,7 +30,6 @@ import java.util.function.Consumer;
 @Slf4j
 public class OAuth2AuthorizationConverter {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * 将 OAuth2Authorization 转换为 POJO
@@ -50,19 +43,19 @@ public class OAuth2AuthorizationConverter {
         }
 
         OAuth2AuthorizationPOJO pojo = new OAuth2AuthorizationPOJO();
-        
+
         pojo.setId(authorization.getId());
         pojo.setRegisteredClientId(authorization.getRegisteredClientId());
         pojo.setPrincipalName(authorization.getPrincipalName());
         pojo.setAuthorizationGrantType(authorization.getAuthorizationGrantType().getValue());
-        pojo.setAuthorizedScopes(CollectionUtils.isEmpty(authorization.getAuthorizedScopes()) 
-            ? null 
+        pojo.setAuthorizedScopes(CollectionUtils.isEmpty(authorization.getAuthorizedScopes())
+            ? null
             : authorization.getAuthorizedScopes().stream().toList());
         pojo.setAttributes(convertAttributes(authorization.getAttributes()));
         pojo.setState(authorization.getAttribute(OAuth2ParameterNames.STATE));
 
         // 转换授权码
-        OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode = 
+        OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode =
             authorization.getToken(OAuth2AuthorizationCode.class);
         if (authorizationCode != null) {
             pojo.setAuthorizationCodeValue(authorizationCode.getToken().getTokenValue());
@@ -72,7 +65,7 @@ public class OAuth2AuthorizationConverter {
         }
 
         // 转换访问令牌
-        OAuth2Authorization.Token<OAuth2AccessToken> accessToken = 
+        OAuth2Authorization.Token<OAuth2AccessToken> accessToken =
             authorization.getToken(OAuth2AccessToken.class);
         if (accessToken != null) {
             pojo.setAccessTokenValue(accessToken.getToken().getTokenValue());
@@ -80,13 +73,13 @@ public class OAuth2AuthorizationConverter {
             pojo.setAccessTokenExpiresAt(accessToken.getToken().getExpiresAt());
             pojo.setAccessTokenMetadata(convertTokenMetadata(accessToken));
             pojo.setAccessTokenType(accessToken.getToken().getTokenType().getValue());
-            pojo.setAccessTokenScopes(CollectionUtils.isEmpty(accessToken.getToken().getScopes()) 
-                ? null 
+            pojo.setAccessTokenScopes(CollectionUtils.isEmpty(accessToken.getToken().getScopes())
+                ? null
                 : accessToken.getToken().getScopes().stream().toList());
         }
 
         // 转换刷新令牌
-        OAuth2Authorization.Token<OAuth2RefreshToken> refreshToken = 
+        OAuth2Authorization.Token<OAuth2RefreshToken> refreshToken =
             authorization.getRefreshToken();
         if (refreshToken != null) {
             pojo.setRefreshTokenValue(refreshToken.getToken().getTokenValue());
@@ -96,7 +89,7 @@ public class OAuth2AuthorizationConverter {
         }
 
         // 转换 OIDC ID 令牌
-        OAuth2Authorization.Token<OidcIdToken> idToken = 
+        OAuth2Authorization.Token<OidcIdToken> idToken =
             authorization.getToken(OidcIdToken.class);
         if (idToken != null) {
             pojo.setOidcIdTokenValue(idToken.getToken().getTokenValue());
@@ -162,8 +155,8 @@ public class OAuth2AuthorizationConverter {
                 tokenType = new OAuth2AccessToken.TokenType(pojo.getAccessTokenType());
             }
 
-            Set<String> scopes = CollectionUtils.isEmpty(pojo.getAccessTokenScopes()) 
-                ? null 
+            Set<String> scopes = CollectionUtils.isEmpty(pojo.getAccessTokenScopes())
+                ? null
                 : Set.copyOf(pojo.getAccessTokenScopes());
 
             OAuth2AccessToken accessToken = new OAuth2AccessToken(
