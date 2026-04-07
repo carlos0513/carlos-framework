@@ -1,7 +1,6 @@
 package com.carlos.auth.web;
 
 import cn.hutool.core.util.StrUtil;
-import com.carlos.auth.security.service.LoginService;
 import com.carlos.boot.request.RequestInfo;
 import com.carlos.boot.request.RequestUtil;
 import com.carlos.core.response.Result;
@@ -33,7 +32,6 @@ public class AuthController {
 
     private final OAuth2AuthorizationService authorizationService;
 
-    private final LoginService loginService;
     private final RegisteredClientRepository clientService;
 
     /**

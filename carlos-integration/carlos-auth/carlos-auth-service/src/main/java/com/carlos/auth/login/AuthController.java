@@ -79,7 +79,6 @@ public class AuthController {
     @PostMapping("/login")
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest httpRequest) {
         log.info("Received login request for user: {}", loginRequest.getUsername());
-
         String clientIp = ipLocationUtil.getClientIp(httpRequest);
 
         try {
@@ -117,7 +116,6 @@ public class AuthController {
                 loginRequest.getUsername(), clientIp, ipLocationUtil.getLocation(clientIp));
 
             return Result.success(loginResponse, "登录成功");
-
         } catch (BadCredentialsException e) {
             log.warn("Login failed - bad credentials for user: {}", loginRequest.getUsername());
 
@@ -133,9 +131,7 @@ public class AuthController {
                     securityAlertService.createBruteForceAlert(loginRequest.getUsername(), httpRequest);
                 }
             }
-
             return Result.error("用户名或密码错误");
-
         } catch (InternalAuthenticationServiceException e) {
             log.error("Login failed - internal error for user: {}", loginRequest.getUsername(), e);
 
@@ -164,21 +160,17 @@ public class AuthController {
     @PostMapping("/logout")
     public Result<Object> logout(@RequestHeader(value = "Authorization", required = false) String accessToken) {
         log.info("Received logout request");
-
         try {
             // 从Authorization头中提取令牌
             String token = extractTokenFromHeader(accessToken);
-
             if (token != null) {
                 loginService.logout(token, null);
             }
 
             // 清除安全上下文
             SecurityContextHolder.clearContext();
-
             log.info("Logout successful");
             return Result.success("登出成功");
-
         } catch (Exception e) {
             log.error("Error during logout", e);
             return Result.error("登出失败");
@@ -195,11 +187,9 @@ public class AuthController {
         if (authorizationHeader == null || authorizationHeader.isBlank()) {
             return null;
         }
-
         if (authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
         }
-
         return authorizationHeader;
     }
 
@@ -221,7 +211,6 @@ public class AuthController {
         if (principal instanceof UserDetails) {
             return Result.success((UserDetails) principal);
         }
-
         return Result.error("无法获取用户信息");
     }
 

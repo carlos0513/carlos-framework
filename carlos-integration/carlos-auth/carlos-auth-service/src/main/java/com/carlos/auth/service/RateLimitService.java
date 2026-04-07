@@ -91,7 +91,6 @@ public class RateLimitService {
         }
 
         long now = Instant.now().toEpochMilli();
-
         DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
         redisScript.setScriptText(TOKEN_BUCKET_SCRIPT);
         redisScript.setResultType(Long.class);

@@ -6,7 +6,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.carlos.auth.enums.GrantType;
 import com.carlos.auth.exception.UserNotFoundException;
 import com.carlos.auth.security.service.LoginService;
-import com.carlos.auth.security.service.UserDetailServiceImpl;
 import com.carlos.boot.request.RequestUtil;
 import com.carlos.core.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,7 +49,7 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
 
     private volatile String userNotFoundEncodedPassword;
 
-    private UserDetailsService userDetailsService;
+    private UserDetailsService detailsService;
 
     private UserDetailsPasswordService userDetailsPasswordService;
 
@@ -108,12 +107,11 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
         if (StrUtil.isBlank(clientId)) {
             clientId = BASIC_CONVERT.convert(request).getName();
         }
-        UserDetailServiceImpl detailService = SpringUtil.getBean(UserDetailServiceImpl.class);
         if (GrantType.PASSWORD.getCode().equals(grantType)) {
 
 
             try {
-                UserDetails loadedUser = detailService.loadUserByUsername(username);
+                UserDetails loadedUser = detailsService.loadUserByUsername(username);
                 if (loadedUser == null) {
                     throw new InternalAuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
                 }
@@ -128,7 +126,7 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
             }
         } else if (GrantType.APP.getCode().equals(grantType)) {
             try {
-                UserDetails loadedUser = detailService.loadUserByUsername(username);
+                UserDetails loadedUser = detailsService.loadUserByUsername(username);
                 if (loadedUser == null) {
                     throw new InternalAuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
                 }

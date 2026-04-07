@@ -1,4 +1,4 @@
-package com.carlos.auth.oauth2;
+package com.carlos.auth.security;
 
 import com.carlos.encrypt.EncryptUtil;
 import lombok.extern.slf4j.Slf4j;
