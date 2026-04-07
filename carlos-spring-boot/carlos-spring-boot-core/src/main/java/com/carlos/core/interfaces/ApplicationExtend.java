@@ -18,7 +18,7 @@ import java.util.Set;
  * @author carlos
  * @date 2020/6/3 11:09
  */
-public interface ApplicationExtend {
+public interface ApplicationExtend extends ApplicationExtendBatch {
 
     /**
      * 获取请求的token信息
@@ -61,6 +61,7 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2021/11/25 14:10
      */
+    @Override
     default Dict getDictVo(String code) {
         return null;
     }
@@ -85,6 +86,7 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2021/11/25 15:01
      */
+    @Override
     default UserInfo getUserById(Serializable userId) {
         return null;
     }
@@ -109,6 +111,7 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2022/12/30 11:01
      */
+    @Override
     default DepartmentInfo getDepartmentById(Serializable departmentId, Integer limit) {
         return null;
     }
@@ -122,6 +125,7 @@ public interface ApplicationExtend {
      * @author Carlos
      * @date 2022/12/30 13:54
      */
+    @Override
     default RegionInfo getRegionInfo(String regionCode, Integer limit) {
         return null;
     }
@@ -149,6 +153,7 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2023/8/9 16:49
      */
+    @Override
     default Map<Serializable, UserInfo> getUserByIds(Set<Serializable> ids) {
         return null;
     }
@@ -162,6 +167,7 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2023/8/9 16:49
      */
+    @Override
     default Map<String, Dict> getDictVos(String type, Set<String> value) {
         return null;
     }
@@ -174,6 +180,7 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2023/8/9 16:49
      */
+    @Override
     default Map<Serializable, DepartmentInfo> getDepartmentByIds(Set<Serializable> missIds) {
         return null;
     }
@@ -186,6 +193,7 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2023/8/9 16:49
      */
+    @Override
     default Map<String, RegionInfo> getRegionByCodes(Set<String> missCodes) {
         return null;
     }

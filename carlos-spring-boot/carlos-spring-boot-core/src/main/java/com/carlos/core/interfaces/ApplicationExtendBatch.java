@@ -1,4 +1,4 @@
-package com.carlos.boot.translation.ext;
+package com.carlos.core.interfaces;
 
 import com.carlos.core.base.DepartmentInfo;
 import com.carlos.core.base.Dict;
