@@ -1,4 +1,4 @@
-package com.carlos.auth.support;
+package com.carlos.auth.oauth2;
 
 /**
  * @author carlos

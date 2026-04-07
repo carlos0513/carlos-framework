@@ -1,6 +1,6 @@
-package com.carlos.auth.support.password;
+package com.carlos.auth.oauth2.grant.password;
 
-import com.carlos.auth.support.base.BaseAuthenticationProvider;
+import com.carlos.auth.oauth2.grant.BaseAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,7 +1,7 @@
-package com.carlos.auth.support.core;
+package com.carlos.auth.oauth2.config;
 
-import com.carlos.auth.support.handler.FormAuthenticationFailureHandler;
-import com.carlos.auth.support.handler.SsoLogoutSuccessHandler;
+import com.carlos.auth.oauth2.handler.FormAuthenticationFailureHandler;
+import com.carlos.auth.oauth2.handler.SsoLogoutSuccessHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 

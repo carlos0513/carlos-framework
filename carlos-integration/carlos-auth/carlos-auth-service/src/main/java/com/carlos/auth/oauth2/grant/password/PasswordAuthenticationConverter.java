@@ -1,7 +1,7 @@
-package com.carlos.auth.support.password;
+package com.carlos.auth.oauth2.grant.password;
 
 import cn.hutool.core.util.StrUtil;
-import com.carlos.auth.support.base.BaseAuthenticationConverter;
+import com.carlos.auth.oauth2.grant.BaseAuthenticationConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;

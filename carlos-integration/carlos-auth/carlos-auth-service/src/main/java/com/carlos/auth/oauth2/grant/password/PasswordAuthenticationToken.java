@@ -1,6 +1,6 @@
-package com.carlos.auth.support.password;
+package com.carlos.auth.oauth2.grant.password;
 
-import com.carlos.auth.support.base.BaseAuthenticationToken;
+import com.carlos.auth.oauth2.grant.BaseAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 

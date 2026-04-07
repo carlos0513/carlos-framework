@@ -5,7 +5,7 @@ import com.carlos.auth.login.dto.LoginRequest;
 import com.carlos.auth.login.dto.LoginResponse;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
-import com.carlos.auth.security.IpBlockManager;
+import com.carlos.auth.security.manager.IpBlockManager;
 import com.carlos.auth.service.RateLimitService;
 import com.carlos.auth.util.IpLocationUtil;
 import com.carlos.core.response.Result;

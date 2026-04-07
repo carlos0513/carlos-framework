@@ -3,7 +3,7 @@ package com.carlos.auth.mfa.service;
 import com.carlos.auth.mfa.pojo.dto.MfaSetupDTO;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
-import com.carlos.auth.security.TotpGenerator;
+import com.carlos.auth.security.token.TotpGenerator;
 import com.carlos.auth.util.QrCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

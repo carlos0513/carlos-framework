@@ -1,4 +1,4 @@
-package com.carlos.auth.support.handler;
+package com.carlos.auth.oauth2.handler;
 
 import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.carlos.auth.support.base;
+package com.carlos.auth.oauth2.grant;
 
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.http.HttpServletRequest;

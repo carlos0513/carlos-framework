@@ -1,6 +1,6 @@
-package com.carlos.auth.support.sms;
+package com.carlos.auth.oauth2.grant.sms;
 
-import com.carlos.auth.support.base.BaseAuthenticationProvider;
+import com.carlos.auth.oauth2.grant.BaseAuthenticationProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;

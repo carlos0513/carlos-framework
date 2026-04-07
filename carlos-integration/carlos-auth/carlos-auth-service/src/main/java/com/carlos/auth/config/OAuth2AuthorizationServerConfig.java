@@ -3,7 +3,7 @@ package com.carlos.auth.config;
 import com.carlos.auth.config.repository.JdbcOAuth2AuthorizationService;
 import com.carlos.auth.config.repository.RedisOAuth2AuthorizationConsentService;
 import com.carlos.auth.config.repository.RedisOAuth2AuthorizationService;
-import com.carlos.auth.security.KeyPairManager;
+import com.carlos.auth.security.manager.KeyPairManager;
 import com.carlos.auth.service.ExtendUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;

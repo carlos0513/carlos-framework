@@ -1,4 +1,4 @@
-package com.carlos.auth.security;
+package com.carlos.auth.security.manager;
 
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import jakarta.servlet.http.HttpServletRequest;

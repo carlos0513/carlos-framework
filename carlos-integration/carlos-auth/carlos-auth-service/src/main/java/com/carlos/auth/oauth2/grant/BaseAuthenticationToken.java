@@ -1,4 +1,4 @@
-package com.carlos.auth.support.base;
+package com.carlos.auth.oauth2.grant;
 
 import lombok.Getter;
 import lombok.Setter;

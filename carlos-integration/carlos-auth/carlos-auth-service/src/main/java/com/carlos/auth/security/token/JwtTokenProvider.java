@@ -1,8 +1,8 @@
-package com.carlos.auth.security;
+package com.carlos.auth.security.token;
 
 import com.carlos.auth.provider.UserInfo;
-import com.carlos.core.auth.LoginUserInfo;
 import com.carlos.auth.service.ExtendUserDetailsService;
+import com.carlos.core.auth.LoginUserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -84,7 +84,7 @@ public class JwtTokenProvider {
         if (userInfo != null) {
             claimsBuilder.claim("user_id", userInfo.getUserId());
             claimsBuilder.claim("username", userInfo.getUsername());
-            
+
             if (userInfo.getTenantId() != null) {
                 claimsBuilder.claim("tenant_id", userInfo.getTenantId());
             }
@@ -113,7 +113,7 @@ public class JwtTokenProvider {
         Set<String> authorities = authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.toSet());
-        
+
         if (!authorities.isEmpty()) {
             claimsBuilder.claim("authorities", String.join(",", authorities));
             claimsBuilder.claim("scope", String.join(" ", authorities));
@@ -123,8 +123,8 @@ public class JwtTokenProvider {
 
         // 编码生成 JWT
         String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        
-        log.debug("Generated access token for user: {} (expires in {} seconds)", 
+
+        log.debug("Generated access token for user: {} (expires in {} seconds)",
             username, ACCESS_TOKEN_EXPIRY_SECONDS);
 
         return token;
@@ -150,8 +150,8 @@ public class JwtTokenProvider {
             .build();
 
         String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        
-        log.debug("Generated refresh token for user: {} (expires in {} seconds)", 
+
+        log.debug("Generated refresh token for user: {} (expires in {} seconds)",
             username, REFRESH_TOKEN_EXPIRY_SECONDS);
 
         return token;

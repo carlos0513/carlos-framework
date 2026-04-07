@@ -1,4 +1,4 @@
-package com.carlos.auth.support.handler;
+package com.carlos.auth.oauth2.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

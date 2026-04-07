@@ -1,4 +1,4 @@
-package com.carlos.auth.security;
+package com.carlos.auth.security.manager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
