@@ -1,7 +1,7 @@
 package com.carlos.auth.mfa.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.carlos.auth.mfa.entity.MfaRecoveryCode;
+import com.carlos.auth.mfa.pojo.entity.MfaRecoveryCode;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
