@@ -5,7 +5,7 @@ import com.carlos.boot.interceptors.ApplicationInterceptorProperties;
 import com.carlos.boot.interceptors.GlobalInterceptorProperties;
 import com.carlos.boot.request.RequestUtil;
 import com.carlos.core.response.Result;
-import com.carlos.json.jackson.JacksonUtil;
+import com.carlos.json.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -96,7 +96,7 @@ public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
             // 转换为 JSON 字符串
             response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
             try {
-                return JacksonUtil.toJson(Result.success(body));
+                return JsonUtils.toJson(Result.success(body));
             } catch (Exception e) {
                 log.error("包装 String 响应失败", e);
                 return body;

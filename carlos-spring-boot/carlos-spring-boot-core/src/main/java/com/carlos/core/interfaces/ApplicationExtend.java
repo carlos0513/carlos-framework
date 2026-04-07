@@ -149,7 +149,9 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2023/8/9 16:49
      */
-    Map<Serializable, UserInfo> getUserByIds(Set<Serializable> ids);
+    default Map<Serializable, UserInfo> getUserByIds(Set<Serializable> ids) {
+        return null;
+    }
 
     /**
      * 根据字典code批量获取字典信息
@@ -160,7 +162,9 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2023/8/9 16:49
      */
-    Map<String, Dict> getDictVos(String type, Set<String> value);
+    default Map<String, Dict> getDictVos(String type, Set<String> value) {
+        return null;
+    }
 
     /**
      * 根据部门id批量获取部门信息
@@ -170,7 +174,9 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2023/8/9 16:49
      */
-    Map<Serializable, DepartmentInfo> getDepartmentByIds(Set<Serializable> missIds);
+    default Map<Serializable, DepartmentInfo> getDepartmentByIds(Set<Serializable> missIds) {
+        return null;
+    }
 
     /**
      * 根据区域code批量获取区域信息
@@ -180,5 +186,7 @@ public interface ApplicationExtend {
      * @author carlos
      * @date 2023/8/9 16:49
      */
-    Map<String, RegionInfo> getRegionByCodes(Set<String> missCodes);
+    default Map<String, RegionInfo> getRegionByCodes(Set<String> missCodes) {
+        return null;
+    }
 }

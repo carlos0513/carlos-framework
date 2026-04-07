@@ -222,25 +222,11 @@
       <distributionManagement>
         <repository>
           <id>carlos-releases</id>
-          <url>http://zcarlos.com:8081/nexus/repository/maven-releases/</url>
+          <url>http://100.110.168.82:8081/nexus/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
           <id>carlos-snapshots</id>
-          <url>http://zcarlos.com:8081/nexus/repository/maven-snapshots/</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-
-    <profile>
-      <id>carlos-private</id>
-      <distributionManagement>
-        <repository>
-          <id>carlos-releases</id>
-          <url>http://192.168.3.30:8081/nexus/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-          <id>carlos-snapshots</id>
-          <url>http://192.168.3.30:8081/nexus/repository/maven-snapshots/</url>
+          <url>http://100.110.168.82:8081/nexus/repository/maven-snapshots/</url>
         </snapshotRepository>
       </distributionManagement>
     </profile>
