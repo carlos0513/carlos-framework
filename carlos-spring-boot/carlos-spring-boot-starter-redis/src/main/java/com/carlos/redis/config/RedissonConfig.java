@@ -3,6 +3,8 @@ package com.carlos.redis.config;
 import com.carlos.redis.caffeine.CaffeineConfig;
 import com.carlos.redis.lock.RedisLockAspect;
 import com.carlos.redis.lock.RedisLockProperties;
+import com.carlos.redis.ratelimit.RateLimitAspect;
+import com.carlos.redis.ratelimit.RateLimitProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
@@ -23,8 +25,8 @@ import org.springframework.context.annotation.Import;
 @Slf4j
 @Configuration
 @ConditionalOnClass(RedissonClient.class)
-@EnableConfigurationProperties(RedisLockProperties.class)
-@Import({RedisLockAspect.class, CaffeineConfig.class})
+@EnableConfigurationProperties({RedisLockProperties.class, RateLimitProperties.class})
+@Import({RedisLockAspect.class, RateLimitAspect.class, CaffeineConfig.class})
 public class RedissonConfig {
 
     /**
