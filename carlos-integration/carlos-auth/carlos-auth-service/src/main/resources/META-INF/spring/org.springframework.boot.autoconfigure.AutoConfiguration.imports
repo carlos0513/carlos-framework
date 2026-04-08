@@ -5,10 +5,10 @@
 com.carlos.auth.config.OAuth2Properties
 
 # OAuth2 服务层配置
-com.carlos.auth.config.OAuth2ServiceConfig
+com.carlos.auth.oauth2.config.OAuth2ServiceConfig
 
 # OAuth2 授权服务器配置（仅在 carlos.oauth2.authorization-server.enabled=true 时生效）
-com.carlos.auth.config.OAuth2AuthorizationServerConfig
+com.carlos.auth.oauth2.config.OAuth2AuthorizationServerConfig
 
 # 第三方登录配置（仅在 carlos.oauth2.third-party.enabled=true 时生效）
 com.carlos.auth.config.ThirdPartyLoginConfig

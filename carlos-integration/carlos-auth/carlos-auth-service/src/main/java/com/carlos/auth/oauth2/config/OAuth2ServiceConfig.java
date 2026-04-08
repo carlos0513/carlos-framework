@@ -1,9 +1,9 @@
-package com.carlos.auth.config;
+package com.carlos.auth.oauth2.config;
 
 import com.carlos.auth.provider.DefaultUserProvider;
 import com.carlos.auth.provider.UserProvider;
-import com.carlos.auth.service.DefaultExtendUserDetailsService;
-import com.carlos.auth.service.ExtendUserDetailsService;
+import com.carlos.auth.security.service.DefaultExtendUserDetailsService;
+import com.carlos.auth.security.service.ExtendUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

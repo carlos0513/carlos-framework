@@ -1,4 +1,4 @@
-package com.carlos.auth.service;
+package com.carlos.auth.security.service;
 
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;

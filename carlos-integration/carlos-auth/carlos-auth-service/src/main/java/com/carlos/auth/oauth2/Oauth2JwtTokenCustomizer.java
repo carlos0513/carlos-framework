@@ -1,6 +1,6 @@
-package com.carlos.auth.config;
+package com.carlos.auth.oauth2;
 
-import com.carlos.auth.service.ExtendUserDetailsService;
+import com.carlos.auth.security.service.ExtendUserDetailsService;
 import com.carlos.core.auth.LoginUserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

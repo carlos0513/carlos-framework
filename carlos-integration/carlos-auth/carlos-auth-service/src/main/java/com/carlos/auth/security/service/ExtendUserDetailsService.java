@@ -1,4 +1,4 @@
-package com.carlos.auth.service;
+package com.carlos.auth.security.service;
 
 import com.carlos.core.auth.LoginUserInfo;
 import org.springframework.security.core.GrantedAuthority;

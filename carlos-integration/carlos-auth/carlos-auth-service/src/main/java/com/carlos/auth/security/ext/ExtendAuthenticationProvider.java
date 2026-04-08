@@ -4,7 +4,7 @@ import com.carlos.auth.oauth2.OAuth2ErrorCodesExpand;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.SecurityUser;
-import com.carlos.auth.service.ExtendUserDetailsService;
+import com.carlos.auth.security.service.ExtendUserDetailsService;
 import com.carlos.core.auth.LoginUserInfo;
 import lombok.Getter;
 import lombok.Setter;

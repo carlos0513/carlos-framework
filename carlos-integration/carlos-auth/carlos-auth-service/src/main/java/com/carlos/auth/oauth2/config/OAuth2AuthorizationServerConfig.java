@@ -1,10 +1,15 @@
-package com.carlos.auth.config;
+package com.carlos.auth.oauth2.config;
 
+import com.carlos.auth.config.OAuth2Properties;
+import com.carlos.auth.oauth2.Oauth2JwtTokenCustomizer;
+import com.carlos.auth.oauth2.client.OAuth2ClientProperties;
+import com.carlos.auth.oauth2.handler.SsoLogoutSuccessHandler;
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationConsentService;
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationService;
+import com.carlos.auth.oauth2.server.AuthorizationServerProperties;
 import com.carlos.auth.security.encoder.Sm4PasswordEncoder;
 import com.carlos.auth.security.manager.KeyPairManager;
-import com.carlos.auth.service.ExtendUserDetailsService;
+import com.carlos.auth.security.service.ExtendUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -210,7 +215,15 @@ public class OAuth2AuthorizationServerConfig {
             // 禁用 CSRF（OAuth2 使用 Token 机制，不需要 CSRF 保护）
             .csrf(AbstractHttpConfigurer::disable)
             // 启用表单登录
-            .formLogin(Customizer.withDefaults());
+            .formLogin(Customizer.withDefaults())
+            // 配置登出
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(new SsoLogoutSuccessHandler())
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+            );
 
         return http.build();
     }
@@ -245,9 +258,9 @@ public class OAuth2AuthorizationServerConfig {
         List<RegisteredClient> clients = new ArrayList<>();
 
         // 从配置文件加载客户端
-        List<OAuth2Properties.ClientProperties> clientConfigs = oauth2Properties.getClients();
+        List<OAuth2ClientProperties> clientConfigs = oauth2Properties.getClients();
         if (clientConfigs != null && !clientConfigs.isEmpty()) {
-            for (OAuth2Properties.ClientProperties config : clientConfigs) {
+            for (OAuth2ClientProperties config : clientConfigs) {
                 clients.add(buildRegisteredClient(config, passwordEncoder));
                 log.info("Registered OAuth2 client: {}", config.getClientId());
             }
@@ -271,7 +284,7 @@ public class OAuth2AuthorizationServerConfig {
      * @return RegisteredClient 注册客户端
      */
     private RegisteredClient buildRegisteredClient(
-        OAuth2Properties.ClientProperties config,
+        OAuth2ClientProperties config,
         PasswordEncoder passwordEncoder) {
 
         RegisteredClient.Builder builder = RegisteredClient.withId(UUID.randomUUID().toString())
@@ -515,7 +528,7 @@ public class OAuth2AuthorizationServerConfig {
     @Bean
     @ConditionalOnMissingBean
     public AuthorizationServerSettings authorizationServerSettings() {
-        OAuth2Properties.AuthorizationServerProperties config =
+        AuthorizationServerProperties config =
             oauth2Properties.getAuthorizationServer();
 
         return AuthorizationServerSettings.builder()

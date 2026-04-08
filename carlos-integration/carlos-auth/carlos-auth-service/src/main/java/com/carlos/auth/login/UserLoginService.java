@@ -9,49 +9,75 @@ import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.manager.IpBlockManager;
 import com.carlos.auth.security.manager.LoginAttemptManager;
-import com.carlos.auth.security.token.JwtTokenProvider;
 import com.carlos.auth.util.IpLocationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
+import org.springframework.security.oauth2.core.OAuth2Token;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.token.DefaultOAuth2TokenContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.net.InetAddress;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 用户登录服务
  *
- * <p>处理用户登录逻辑，包括用户名密码验证、JWT 令牌颁发、登录审计等。</p>
+ * <p>处理用户登录逻辑，包括用户名密码验证、OAuth2 令牌颁发、登录审计等。</p>
  *
- * <p><strong>与 {@link com.carlos.auth.security.service.CaptchaService} 的区别：</strong></p>
+ * <p><strong>与标准 OAuth2 流程的关系：</strong></p>
+ * <p>此类提供的自定义登录接口（/login）是供内部应用直接获取令牌使用的便捷接口。
+ * 它内部使用了与标准 OAuth2 /oauth2/token 端点相同的 Token 生成机制，包括：</p>
  * <ul>
- *   <li>此类：处理完整的用户登录流程，包括身份验证、Token 生成、登录审计</li>
- *   <li>CaptchaService：仅处理验证码的生成、存储和校验，不涉及用户身份验证</li>
+ *   <li>{@link OAuth2TokenGenerator} - 标准 Token 生成器</li>
+ *   <li>{@link OAuth2AuthorizationService} - 授权信息存储（支持 Token 撤销）</li>
+ *   <li>{@link RegisteredClientRepository} - 客户端配置</li>
  * </ul>
+ *
+ * <p>对于第三方应用集成，建议直接使用标准 OAuth2 端点：</p>
+ * <pre>
+ * POST /oauth2/token
+ * Content-Type: application/x-www-form-urlencoded
+ *
+ * grant_type=password&username=user&password=pass&client_id=client&scope=read
+ * </pre>
  *
  * @author Carlos
  * @date 2026-02-26
- * @see com.carlos.auth.security.service.CaptchaService
+ * @see org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpoint
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserLoginService {
 
-
     /**
      * 用户服务
      */
-    private final UserProvider userService;
+    private final UserProvider userProvider;
 
     /**
      * 认证管理器
@@ -79,14 +105,42 @@ public class UserLoginService {
     private final IpLocationUtil ipLocationUtil;
 
     /**
-     * JWT 令牌提供者
+     * OAuth2 Token 生成器
      */
-    private final JwtTokenProvider jwtTokenProvider;
+    private final OAuth2TokenGenerator<?> tokenGenerator;
+
+    /**
+     * 授权信息服务
+     */
+    private final OAuth2AuthorizationService authorizationService;
+
+    /**
+     * 客户端仓库
+     */
+    private final RegisteredClientRepository registeredClientRepository;
 
     /**
      * 审计日志 Feign 接口
      */
     private final ApiAuditLogMain apiAuditLogMain;
+
+    /**
+     * 默认客户端ID
+     */
+    @Value("${carlos.oauth2.login.default-client-id:carlos-client}")
+    private String defaultClientId;
+
+    /**
+     * 访问令牌有效期（秒）
+     */
+    @Value("${carlos.oauth2.login.access-token-ttl:7200}")
+    private long accessTokenTtl;
+
+    /**
+     * 刷新令牌有效期（秒）
+     */
+    @Value("${carlos.oauth2.login.refresh-token-ttl:604800}")
+    private long refreshTokenTtl;
 
     /**
      * 用户登录
@@ -109,10 +163,7 @@ public class UserLoginService {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
             // 获取用户信息
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-            // 从数据库获取完整用户信息
-            UserInfo user = userService.loadUserByIdentifier(loginRequest.getUsername());
+            UserInfo user = userProvider.loadUserByIdentifier(loginRequest.getUsername());
 
             if (user == null) {
                 log.error("User not found after authentication: {}", loginRequest.getUsername());
@@ -121,19 +172,15 @@ public class UserLoginService {
 
             // 检查是否需要MFA验证
             boolean shouldTriggerMfa = true;
-
-            // 如果未启用MFA且检测到新设备/异地登录，建议启用MFA
             boolean shouldRecommendMfa = shouldTriggerMfa && !Boolean.TRUE.equals(user.getMfaEnabled());
-
-            // 如果已启用MFA且需要触发，返回MFA验证请求
             boolean mfaRequired = shouldTriggerMfa && Boolean.TRUE.equals(user.getMfaEnabled());
 
-            // 构建登录响应
+            // 构建登录响应（使用标准 OAuth2 Token 生成）
             LoginResponse response = buildLoginResponse(user, authentication);
             response.setMfaRequired(mfaRequired);
             response.setMfaRecommended(shouldRecommendMfa);
 
-            // 异步记录登录成功审计日志到统一审计服务
+            // 异步记录登录成功审计日志
             recordLoginAudit(user, "LOGIN", "SUCCESS", null);
 
             // 记录登录成功
@@ -162,7 +209,7 @@ public class UserLoginService {
      * @param userDetails 用户详情
      * @return 登录响应（accessToken为空，用户信息完整）
      */
-    public LoginResponse loginWithUserDetails(UserDetails userDetails) {
+    public LoginResponse loginWithUserDetails(org.springframework.security.core.userdetails.UserDetails userDetails) {
         log.info("Building login response for user: {}", userDetails.getUsername());
 
         // 注意：此处不生成真实JWT令牌
@@ -172,18 +219,94 @@ public class UserLoginService {
         return LoginResponse.builder()
             .accessToken("") // 空令牌，需通过/oauth2/token获取
             .tokenType("Bearer")
-            .expiresIn(7200L)
+            .expiresIn(accessTokenTtl)
             .build();
     }
 
     /**
      * 构建登录响应
      *
+     * <p>使用标准 OAuth2 Token 生成机制生成访问令牌和刷新令牌。</p>
+     *
      * @param user 用户信息
      * @param authentication 认证信息
      * @return 登录响应
      */
     private LoginResponse buildLoginResponse(UserInfo user, Authentication authentication) {
+        // 获取默认客户端
+        RegisteredClient registeredClient = registeredClientRepository.findByClientId(defaultClientId);
+        if (registeredClient == null) {
+            log.error("Default client not found: {}", defaultClientId);
+            throw new BadCredentialsException("客户端配置错误");
+        }
+
+        // 构建 Token 上下文
+        Set<String> authorizedScopes = registeredClient.getScopes();
+        if (CollectionUtils.isEmpty(authorizedScopes)) {
+            authorizedScopes = new HashSet<>();
+            authorizedScopes.add(OidcScopes.OPENID);
+        }
+
+        // @formatter:off
+        DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
+            .registeredClient(registeredClient)
+            .principal(authentication)
+            .authorizedScopes(authorizedScopes)
+            .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+            .authorizationGrant(authentication);
+        // @formatter:on
+
+        // 构建授权信息
+        OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization
+            .withRegisteredClient(registeredClient)
+            .principalName(authentication.getName())
+            .authorizationGrantType(AuthorizationGrantType.PASSWORD);
+
+        // 生成访问令牌
+        OAuth2TokenContext tokenContext = tokenContextBuilder
+            .tokenType(OAuth2TokenType.ACCESS_TOKEN)
+            .build();
+        OAuth2Token generatedAccessToken = tokenGenerator.generate(tokenContext);
+
+        if (generatedAccessToken == null) {
+            log.error("Failed to generate access token for user: {}", user.getUsername());
+            throw new BadCredentialsException("令牌生成失败");
+        }
+
+        OAuth2AccessToken accessToken = new OAuth2AccessToken(
+            OAuth2AccessToken.TokenType.BEARER,
+            generatedAccessToken.getTokenValue(),
+            generatedAccessToken.getIssuedAt(),
+            generatedAccessToken.getExpiresAt(),
+            tokenContext.getAuthorizedScopes()
+        );
+
+        authorizationBuilder
+            .id(accessToken.getTokenValue())
+            .accessToken(accessToken);
+
+        // 生成刷新令牌
+        OAuth2RefreshToken refreshToken = null;
+        if (registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.REFRESH_TOKEN)) {
+            tokenContext = tokenContextBuilder
+                .tokenType(OAuth2TokenType.REFRESH_TOKEN)
+                .build();
+            OAuth2Token generatedRefreshToken = tokenGenerator.generate(tokenContext);
+
+            if (generatedRefreshToken instanceof OAuth2RefreshToken) {
+                refreshToken = (OAuth2RefreshToken) generatedRefreshToken;
+                authorizationBuilder.refreshToken(refreshToken);
+            }
+        }
+
+        // 保存授权信息（支持 Token 撤销）
+        OAuth2Authorization authorization = authorizationBuilder.build();
+        authorizationService.save(authorization);
+
+        log.info("Generated OAuth2 tokens for user: {}, accessToken expires at: {}",
+            user.getUsername(), accessToken.getExpiresAt());
+
+        // 构建用户信息
         LoginResponse.UserInfo userInfo = LoginResponse.UserInfo.builder()
             .id(user.getUserId())
             .username(user.getUsername())
@@ -191,14 +314,17 @@ public class UserLoginService {
             .phone(user.getPhone())
             .build();
 
-        // 使用 JwtTokenProvider 生成 JWT 令牌
-        JwtTokenProvider.TokenResponse tokenResponse = jwtTokenProvider.generateTokens(authentication, user);
+        // 计算有效期（秒）
+        long expiresIn = 0;
+        if (accessToken.getIssuedAt() != null && accessToken.getExpiresAt() != null) {
+            expiresIn = Duration.between(accessToken.getIssuedAt(), accessToken.getExpiresAt()).getSeconds();
+        }
 
         return LoginResponse.builder()
-            .accessToken(tokenResponse.getAccessToken())
-            .refreshToken(tokenResponse.getRefreshToken())
-            .tokenType(tokenResponse.getTokenType())
-            .expiresIn(tokenResponse.getExpiresIn())
+            .accessToken(accessToken.getTokenValue())
+            .refreshToken(refreshToken != null ? refreshToken.getTokenValue() : null)
+            .tokenType(accessToken.getTokenType().getValue())
+            .expiresIn(expiresIn)
             .userInfo(userInfo)
             .build();
     }
@@ -266,7 +392,7 @@ public class UserLoginService {
     /**
      * 用户登出
      *
-     * <p>记录登出审计日志，将令牌加入黑名单（可选）</p>
+     * <p>记录登出审计日志，将令牌加入黑名单（撤销授权）</p>
      *
      * @param accessToken 访问令牌
      * @param user 当前用户
@@ -275,13 +401,18 @@ public class UserLoginService {
         log.info("User logout: {}", user.getUsername());
 
         try {
-            // 异步记录登出审计日志到统一审计服务
-            recordLoginAudit(user, "LOGOUT", "SUCCESS", null);
+            // 撤销授权（使 Token 失效）
+            if (accessToken != null && !accessToken.isBlank()) {
+                OAuth2Authorization authorization = authorizationService.findByToken(
+                    accessToken, OAuth2TokenType.ACCESS_TOKEN);
+                if (authorization != null) {
+                    authorizationService.remove(authorization);
+                    log.debug("Revoked OAuth2 authorization for user: {}", user.getUsername());
+                }
+            }
 
-            // TODO: 将令牌添加到Redis黑名单（可选）
-            // String jti = extractJtiFromToken(accessToken);
-            // redisTemplate.opsForValue().set("auth:token:blacklist:" + jti, "revoked",
-            //         Duration.ofSeconds(getTokenExpiry(accessToken)));
+            // 异步记录登出审计日志
+            recordLoginAudit(user, "LOGOUT", "SUCCESS", null);
 
             log.info("User logged out successfully: {}", user.getUsername());
 
