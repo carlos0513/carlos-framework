@@ -223,31 +223,31 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
     private OAuth2AuthenticationException oAuth2AuthenticationException(Authentication authentication,
                                                                         AuthenticationException authenticationException) {
         if (authenticationException instanceof UsernameNotFoundException) {
-            return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USERNAME_NOT_FOUND, "用户名不存在", ""));
+            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USERNAME_NOT_FOUND.toOAuth2Error());
         }
         if (authenticationException instanceof BadCredentialsException) {
-            return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.BAD_CREDENTIALS, "用户名或密码错误", ""));
+            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.BAD_CREDENTIALS.toOAuth2Error());
         }
         if (authenticationException instanceof LockedException) {
-            return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USER_LOCKED, "用户已锁定", ""));
+            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_LOCKED.toOAuth2Error());
         }
         if (authenticationException instanceof DisabledException) {
-            return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USER_DISABLE, "用户已禁用", ""));
+            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_DISABLE.toOAuth2Error());
         }
         if (authenticationException instanceof AccountExpiredException) {
-            return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USER_EXPIRED, "用户已过期", ""));
+            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_EXPIRED.toOAuth2Error());
         }
         if (authenticationException instanceof CredentialsExpiredException) {
-            return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.CREDENTIALS_EXPIRED, "用户密钥已过期", ""));
+            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.CREDENTIALS_EXPIRED.toOAuth2Error());
         }
         if (authenticationException instanceof VerificationCodeException) {
-            return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.VERIFICATION_CODE_ERROR, "验证码错误", ""));
+            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.VERIFICATION_CODE_ERROR.toOAuth2Error());
         }
         if (authenticationException instanceof UserNotFoundException) {
-            return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USER_NOT_FOUND, "用户不存在", ""));
+            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_NOT_FOUND.toOAuth2Error());
         }
 
-        return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.UN_KNOW_LOGIN_ERROR);
+        return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.UN_KNOW_LOGIN_ERROR.toOAuth2Error());
     }
 
     private OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(

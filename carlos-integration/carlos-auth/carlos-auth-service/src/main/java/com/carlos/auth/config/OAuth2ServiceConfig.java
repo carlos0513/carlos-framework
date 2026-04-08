@@ -61,9 +61,10 @@ public class OAuth2ServiceConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public ExtendUserDetailsService extendUserDetailsService(PasswordEncoder passwordEncoder) {
+    public ExtendUserDetailsService extendUserDetailsService(PasswordEncoder passwordEncoder,
+                                                             UserProvider userProvider) {
         log.info("Configuring default ExtendUserDetailsService (for development only)");
-        return new DefaultExtendUserDetailsService(passwordEncoder);
+        return new DefaultExtendUserDetailsService(passwordEncoder, userProvider);
     }
 
     /**

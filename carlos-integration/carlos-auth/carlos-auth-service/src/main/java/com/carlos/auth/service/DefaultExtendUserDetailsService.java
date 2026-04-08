@@ -1,38 +1,39 @@
 package com.carlos.auth.service;
 
+import com.carlos.auth.provider.UserInfo;
+import com.carlos.auth.provider.UserProvider;
 import com.carlos.core.auth.LoginUserInfo;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collections;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * 默认扩展用户详情服务实现
  *
- * <p><strong>警告：此类仅用于开发和测试！</strong></p>
- *
- * <p>该实现仅在内存中创建一个测试用户，不连接任何数据库或外部存储。
- * 生产环境必须实现 {@link ExtendUserDetailsService} 接口提供自定义实现。</p>
+ * <p>本实现基于内存存储，仅用于开发和测试环境。生产环境必须提供自定义实现。</p>
  *
  * <h3>默认测试用户：</h3>
  * <table border="1">
- *   <tr><th>属性</th><th>值</th></tr>
- *   <tr><td>用户名</td><td>admin</td></tr>
- *   <tr><td>密码</td><td>admin123</td></tr>
- *   <tr><td>用户ID</td><td>1</td></tr>
- *   <tr><td>角色</td><td>ADMIN, USER</td></tr>
- *   <tr><td>状态</td><td>启用</td></tr>
+ *   <tr><th>用户名</th><th>密码</th><th>角色</th><th>状态</th></tr>
+ *   <tr><td>admin</td><td>admin123</td><td>ADMIN, USER</td><td>启用</td></tr>
+ *   <tr><td>user</td><td>user123</td><td>USER</td><td>启用</td></tr>
+ *   <tr><td>test</td><td>test123</td><td>USER</td><td>启用</td></tr>
  * </table>
  *
- * <h3>生产环境配置示例：</h3>
+ * <h3>与 UserProvider 的关系：</h3>
+ * <p>本实现内部使用 {@link com.carlos.auth.provider.DefaultUserProvider} 作为数据源，
+ * 确保用户数据的一致性。</p>
+ *
+ * <h3>生产环境迁移指南：</h3>
  * <pre>{@code
  * @Service
- * @Primary  // 确保优先使用自定义实现
+ * @Primary
  * public class MyUserDetailsService implements ExtendUserDetailsService {
  *
  *     @Autowired
@@ -40,18 +41,28 @@ import java.util.Set;
  *
  *     @Override
  *     public UserDetails loadUserByUsername(String username) {
- *         // 从数据库加载用户
  *         User user = userRepository.findByUsername(username)
  *             .orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
  *
- *         // 转换为 UserDetails
- *         return convertToUserDetails(user);
+ *         return User.builder()
+ *             .username(user.getUsername())
+ *             .password(user.getPassword())
+ *             .roles(user.getRoles().toArray(new String[0]))
+ *             .build();
  *     }
  *
  *     @Override
  *     public LoginUserInfo loadLoginUserInfo(String username) {
- *         // 从数据库加载用户业务信息
- *         return userRepository.findLoginUserInfoByUsername(username);
+ *         User user = userRepository.findByUsername(username)
+ *             .orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+ *
+ *         LoginUserInfo info = new LoginUserInfo();
+ *         info.setId(user.getId());
+ *         info.setAccount(user.getUsername());
+ *         info.setPassword(user.getPassword());
+ *         info.setEnable(user.isEnabled());
+ *         info.setRoleIds(new HashSet<>(user.getRoleIds()));
+ *         return info;
  *     }
  * }
  * }</pre>
@@ -60,14 +71,10 @@ import java.util.Set;
  * @version 3.0.0
  * @since 2026-02-22
  * @see ExtendUserDetailsService
+ * @see UserProvider
  */
 @Slf4j
 public class DefaultExtendUserDetailsService implements ExtendUserDetailsService {
-
-    /**
-     * 内存中的测试用户存储
-     */
-    private final Set<TestUser> testUsers = new HashSet<>();
 
     /**
      * 密码编码器
@@ -75,131 +82,106 @@ public class DefaultExtendUserDetailsService implements ExtendUserDetailsService
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 构造函数 - 初始化测试用户
+     * 用户提供者（作为数据源）
+     */
+    private final UserProvider userProvider;
+
+    /**
+     * 构造函数
      *
      * @param passwordEncoder 密码编码器
+     * @param userProvider 用户提供者
      */
-    public DefaultExtendUserDetailsService(PasswordEncoder passwordEncoder) {
+    public DefaultExtendUserDetailsService(PasswordEncoder passwordEncoder, UserProvider userProvider) {
         this.passwordEncoder = passwordEncoder;
-        initTestUsers();
+        this.userProvider = userProvider;
 
         log.warn("=================================================================");
         log.warn(" Using DefaultExtendUserDetailsService - FOR DEVELOPMENT ONLY!   ");
         log.warn("=================================================================");
-        log.warn("Default test user created:");
-        log.warn("  Username: admin");
-        log.warn("  Password: admin123");
+        log.warn("Default test users:");
+        log.warn("  admin / admin123  (roles: ADMIN, USER)");
+        log.warn("  user  / user123   (roles: USER)");
+        log.warn("  test  / test123   (roles: USER)");
         log.warn("");
         log.warn("Please implement ExtendUserDetailsService for production use!");
         log.warn("=================================================================");
     }
 
     /**
-     * 初始化测试用户
-     */
-    private void initTestUsers() {
-        // 管理员用户
-        TestUser admin = new TestUser();
-        admin.setId(1L);
-        admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("admin123"));
-        admin.setEnabled(true);
-        admin.setAccountNonExpired(true);
-        admin.setAccountNonLocked(true);
-        admin.setCredentialsNonExpired(true);
-        admin.setRoleIds(new HashSet<>(Collections.singletonList(1L)));
-        testUsers.add(admin);
-
-        // 普通用户
-        TestUser user = new TestUser();
-        user.setId(2L);
-        user.setUsername("user");
-        user.setPassword(passwordEncoder.encode("user123"));
-        user.setEnabled(true);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
-        user.setRoleIds(new HashSet<>(Collections.singletonList(2L)));
-        testUsers.add(user);
-    }
-
-    /**
-     * 根据用户名加载用户信息
+     * 根据用户名加载用户详情
      *
-     * @param username 用户名
+     * <p>支持通过用户名、邮箱或手机号查询。</p>
+     *
+     * @param username 用户名/邮箱/手机号
      * @return UserDetails 用户详情
      * @throws UsernameNotFoundException 用户不存在时抛出
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        TestUser user = findUser(username);
-        if (user == null) {
+        // 使用 UserProvider 获取用户信息
+        UserInfo userInfo = userProvider.loadUserByIdentifier(username);
+
+        if (userInfo == null) {
+            log.warn("User not found: {}", username);
             throw new UsernameNotFoundException("用户不存在: " + username);
         }
 
+        // 转换为 Spring Security 的 UserDetails
         return User.builder()
-            .username(user.getUsername())
-            .password(user.getPassword())
-            .roles(user.getRoleIds().stream()
-                .map(String::valueOf)
-                .toArray(String[]::new))
-            .accountExpired(!user.isAccountNonExpired())
-            .accountLocked(!user.isAccountNonLocked())
-            .credentialsExpired(!user.isCredentialsNonExpired())
-            .disabled(!user.isEnabled())
+            .username(userInfo.getUsername())
+            .password(userInfo.getPassword())
+            .roles(userInfo.getRoleCodes() != null
+                ? userInfo.getRoleCodes().toArray(new String[0])
+                : new String[0])
+            .accountLocked(userInfo.isAccountLocked())
+            .disabled(!userInfo.isAccountEnabled())
             .build();
     }
 
     /**
      * 加载用户业务信息
      *
-     * @param username 用户名
+     * <p>用于 JWT Token 增强，将用户信息添加到 Token 中。</p>
+     *
+     * @param username 用户名/邮箱/手机号
      * @return LoginUserInfo 登录用户信息
      */
     @Override
     public LoginUserInfo loadLoginUserInfo(String username) {
-        TestUser user = findUser(username);
-        if (user == null) {
+        UserInfo userInfo = userProvider.loadUserByIdentifier(username);
+
+        if (userInfo == null) {
+            log.debug("No user info found for: {}", username);
             return null;
         }
 
+        // 转换为 LoginUserInfo
         LoginUserInfo info = new LoginUserInfo();
-        info.setId(user.getId());
-        info.setAccount(user.getUsername());
-        info.setPassword(user.getPassword());
-        info.setEnable(user.isEnabled());
-        info.setRoleIds(new HashSet<>(user.getRoleIds()));
-        info.setClientId(null); // 单租户场景
-        info.setDepartmentId(null);
+        info.setId(userInfo.getUserId());
+        info.setAccount(userInfo.getUsername());
+        info.setPassword(userInfo.getPassword());
+        info.setEnable(userInfo.isAccountEnabled());
+        info.setClientId(userInfo.getTenantId()); // 多租户场景使用 tenantId 作为 clientId
+        info.setDepartmentId(userInfo.getDeptId());
+
+        // 转换角色ID
+        if (userInfo.getRoleCodes() != null) {
+            Set<Serializable> roleIds = new HashSet<>();
+            for (String roleCode : userInfo.getRoleCodes()) {
+                // 简单映射：ADMIN -> 1, USER -> 2，其他根据角色名哈希
+                if ("ADMIN".equals(roleCode)) {
+                    roleIds.add(1L);
+                } else if ("USER".equals(roleCode)) {
+                    roleIds.add(2L);
+                } else {
+                    roleIds.add((long) roleCode.hashCode());
+                }
+            }
+            info.setRoleIds(roleIds);
+        }
 
         return info;
     }
 
-    /**
-     * 查找用户
-     *
-     * @param username 用户名
-     * @return TestUser 测试用户，不存在返回 null
-     */
-    private TestUser findUser(String username) {
-        return testUsers.stream()
-            .filter(u -> u.getUsername().equals(username))
-            .findFirst()
-            .orElse(null);
-    }
-
-    /**
-     * 测试用户内部类
-     */
-    @Data
-    private static class TestUser {
-        private Long id;
-        private String username;
-        private String password;
-        private boolean enabled;
-        private boolean accountNonExpired;
-        private boolean accountNonLocked;
-        private boolean credentialsNonExpired;
-        private Set<Long> roleIds;
-    }
 }

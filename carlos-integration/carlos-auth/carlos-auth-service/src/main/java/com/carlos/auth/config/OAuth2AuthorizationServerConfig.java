@@ -2,6 +2,7 @@ package com.carlos.auth.config;
 
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationConsentService;
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationService;
+import com.carlos.auth.security.encoder.Sm4PasswordEncoder;
 import com.carlos.auth.security.manager.KeyPairManager;
 import com.carlos.auth.service.ExtendUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -556,19 +557,10 @@ public class OAuth2AuthorizationServerConfig {
     @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder(OAuth2Properties oauth2Properties) {
         String encoderType = oauth2Properties.getSecurity().getPasswordEncoder();
-
         if ("sm4".equalsIgnoreCase(encoderType)) {
-            // TODO: Carlos 2026-04-07 需重新组织加密
-            // String sm4Key = oauth2Properties.getSecurity().getSm4Key();
-            // if (StringUtils.hasText(sm4Key)) {
-            //     log.info("Using SM4 password encoder with configured key");
-            //     return new SM4PasswordEncoder(sm4Key);
-            // } else {
-            //     log.warn("SM4 key not configured, falling back to BCrypt");
-            //     log.warn("Please configure: carlos.oauth2.security.sm4-key");
-            // }
+            log.info("Using SM4 password encoder with configured key");
+            return new Sm4PasswordEncoder();
         }
-
         log.info("Using BCrypt password encoder");
         return new BCryptPasswordEncoder();
     }
