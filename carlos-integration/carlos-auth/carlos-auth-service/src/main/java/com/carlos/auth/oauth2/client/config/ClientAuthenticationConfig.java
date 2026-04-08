@@ -1,6 +1,7 @@
-package com.carlos.auth.oauth2.client;
+package com.carlos.auth.oauth2.client.config;
 
 import com.carlos.auth.app.service.AppClientService;
+import com.carlos.auth.oauth2.client.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

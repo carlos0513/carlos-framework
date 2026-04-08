@@ -1,7 +1,7 @@
 package com.carlos.auth.config;
 
-import com.carlos.auth.oauth2.client.ClientAuthProperties;
 import com.carlos.auth.oauth2.client.OAuth2ClientProperties;
+import com.carlos.auth.oauth2.client.config.ClientAuthProperties;
 import com.carlos.auth.oauth2.server.AuthorizationServerProperties;
 import com.carlos.auth.oauth2.server.JwtProperties;
 import com.carlos.auth.security.SecurityProperties;
@@ -21,7 +21,7 @@ import java.util.List;
  *   <li>授权服务器配置 → {@link com.carlos.auth.oauth2.server.AuthorizationServerProperties}</li>
  *   <li>JWT 配置 → {@link com.carlos.auth.oauth2.server.JwtProperties}</li>
  *   <li>客户端配置 → {@link com.carlos.auth.oauth2.client.OAuth2ClientProperties}</li>
- *   <li>客户端认证配置 → {@link com.carlos.auth.oauth2.client.ClientAuthProperties}</li>
+ *   <li>客户端认证配置 → {@link ClientAuthProperties}</li>
  *   <li>安全配置 → {@link com.carlos.auth.security.SecurityProperties}</li>
  * </ul>
  *

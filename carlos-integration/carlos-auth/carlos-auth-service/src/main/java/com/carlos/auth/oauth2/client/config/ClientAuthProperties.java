@@ -1,4 +1,4 @@
-package com.carlos.auth.oauth2.client;
+package com.carlos.auth.oauth2.client.config;
 
 import lombok.Data;
 

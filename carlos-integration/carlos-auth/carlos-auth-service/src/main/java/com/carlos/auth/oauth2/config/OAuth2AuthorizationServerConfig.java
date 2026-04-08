@@ -8,6 +8,8 @@ import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationConsentService;
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationService;
 import com.carlos.auth.oauth2.server.AuthorizationServerProperties;
 import com.carlos.auth.security.encoder.Sm4PasswordEncoder;
+import com.carlos.auth.security.handle.CustomAuthenticationFailureHandler;
+import com.carlos.auth.security.handle.CustomAuthenticationSuccessHandler;
 import com.carlos.auth.security.manager.KeyPairManager;
 import com.carlos.auth.security.service.ExtendUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -146,16 +148,17 @@ public class OAuth2AuthorizationServerConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        // 应用授权服务器默认配置
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        // 应用授权服务器默认配置（使用 OAuth2AuthorizationServerConfigurer）
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
+            new OAuth2AuthorizationServerConfigurer();
 
-        // 获取授权服务器配置器
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-            // 启用 OIDC 支持（OpenID Connect 1.0）
-            .oidc(Customizer.withDefaults());
-
-        // 配置异常处理和登录入口
         http
+            .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+            .with(authorizationServerConfigurer, (configurer) -> {
+                configurer
+                    // 启用 OIDC 支持（OpenID Connect 1.0）
+                    .oidc(Customizer.withDefaults());
+            })
             // 未认证时重定向到登录页面
             .exceptionHandling(exceptions ->
                 exceptions.authenticationEntryPoint(
@@ -193,7 +196,10 @@ public class OAuth2AuthorizationServerConfig {
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(
+        HttpSecurity http,
+        CustomAuthenticationSuccessHandler authenticationSuccessHandler,
+        CustomAuthenticationFailureHandler authenticationFailureHandler) throws Exception {
         http
             // 配置请求授权
             .authorizeHttpRequests(authorize -> authorize
@@ -214,8 +220,13 @@ public class OAuth2AuthorizationServerConfig {
             )
             // 禁用 CSRF（OAuth2 使用 Token 机制，不需要 CSRF 保护）
             .csrf(AbstractHttpConfigurer::disable)
-            // 启用表单登录
-            .formLogin(Customizer.withDefaults())
+            // 启用表单登录，使用自定义成功/失败处理器
+            .formLogin(form -> form
+                .loginPage("/login")
+                .successHandler(authenticationSuccessHandler)
+                .failureHandler(authenticationFailureHandler)
+                .permitAll()
+            )
             // 配置登出
             .logout(logout -> logout
                 .logoutUrl("/logout")
@@ -668,5 +679,45 @@ public class OAuth2AuthorizationServerConfig {
     public OAuth2AuthorizationConsentService authorizationConsentService() {
         log.info("Using Customize OAuth2 Authorization Consent Service (Redis-based)");
         return new RedisOAuth2AuthorizationConsentService();
+    }
+
+    // ==================== 表单登录处理器 ====================
+
+    /**
+     * 表单登录成功处理器
+     *
+     * <p>处理表单登录（/login）成功后的响应，包括：</p>
+     * <ul>
+     *   <li>记录登录成功日志</li>
+     *   <li>封装 OAuth2 Token 信息</li>
+     *   <li>返回统一的 JSON 响应格式</li>
+     * </ul>
+     *
+     * @return CustomAuthenticationSuccessHandler 实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        log.info("Configuring CustomAuthenticationSuccessHandler");
+        return new CustomAuthenticationSuccessHandler();
+    }
+
+    /**
+     * 表单登录失败处理器
+     *
+     * <p>处理表单登录（/login）失败后的响应，包括：</p>
+     * <ul>
+     *   <li>记录登录失败日志</li>
+     *   <li>解析 OAuth2 错误信息</li>
+     *   <li>返回标准化的错误响应</li>
+     * </ul>
+     *
+     * @return CustomAuthenticationFailureHandler 实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public CustomAuthenticationFailureHandler customAuthenticationFailureHandler() {
+        log.info("Configuring CustomAuthenticationFailureHandler");
+        return new CustomAuthenticationFailureHandler();
     }
 }
