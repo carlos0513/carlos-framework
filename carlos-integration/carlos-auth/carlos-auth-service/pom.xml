@@ -70,6 +70,12 @@
       <artifactId>carlos-auth-api</artifactId>
     </dependency>
 
+    <!-- 统一审计服务 API -->
+    <dependency>
+      <groupId>com.carlos.audit</groupId>
+      <artifactId>carlos-audit-api</artifactId>
+    </dependency>
+
     <!-- ==================== Spring Security OAuth2 ==================== -->
 
     <!--
@@ -112,12 +118,6 @@
     </dependency>
 
     <!-- ==================== 其他依赖 ==================== -->
-
-    <!-- Feign 客户端（用于服务间调用） -->
-    <dependency>
-      <groupId>io.github.openfeign</groupId>
-      <artifactId>feign-core</artifactId>
-    </dependency>
 
     <!-- FastExcel - Excel 导入导出 -->
     <dependency>

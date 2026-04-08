@@ -1,8 +1,8 @@
 package com.carlos.auth.captcha;
 
-import com.carlos.auth.service.RateLimitService;
 import com.carlos.auth.util.SensitiveDataUtil;
 import com.carlos.core.response.Result;
+import com.carlos.redis.ratelimit.RateLimitUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -34,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CaptchaController {
 
     private final CaptchaService captchaService;
-    private final RateLimitService rateLimitService;
 
     /**
      * 发送短信验证码
@@ -48,8 +49,9 @@ public class CaptchaController {
         String phone = request.getPhone();
         log.info("SMS captcha send request for phone: {}", SensitiveDataUtil.maskPhone(phone));
 
-        // 检查发送限制（RateLimitService已在UserAuthController中调用，此处为双重保险）
-        if (!rateLimitService.trySendCaptcha("sms", phone)) {
+        // 检查发送限制（3次/分钟）
+        String rateLimitKey = "auth:rate:captcha:sms:" + phone;
+        if (!RateLimitUtil.tryAcquire(rateLimitKey, 3, 1, TimeUnit.MINUTES)) {
             log.warn("SMS captcha send rate limit exceeded for phone: {}", SensitiveDataUtil.maskPhone(phone));
             return Result.error("发送过于频繁，请稍后再试");
         }
@@ -93,8 +95,9 @@ public class CaptchaController {
         String email = request.getEmail();
         log.info("Email captcha send request for: {}", SensitiveDataUtil.maskEmail(email));
 
-        // 检查发送限制
-        if (!rateLimitService.trySendCaptcha("email", email)) {
+        // 检查发送限制（3次/分钟）
+        String rateLimitKey = "auth:rate:captcha:email:" + email;
+        if (!RateLimitUtil.tryAcquire(rateLimitKey, 3, 1, TimeUnit.MINUTES)) {
             log.warn("Email captcha send rate limit exceeded for: {}", SensitiveDataUtil.maskEmail(email));
             return Result.error("发送过于频繁，请稍后再试");
         }

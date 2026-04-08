@@ -1,4 +1,4 @@
-package com.carlos.auth.oauth2.customize;
+package com.carlos.auth.oauth2.repository;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -15,4 +15,3 @@ public abstract class AuthorizationGrantTypeMixin {
         return new AuthorizationGrantType(value);
     }
 }
- 

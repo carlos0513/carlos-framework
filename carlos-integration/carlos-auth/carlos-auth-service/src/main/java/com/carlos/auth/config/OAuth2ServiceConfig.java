@@ -1,5 +1,7 @@
 package com.carlos.auth.config;
 
+import com.carlos.auth.provider.DefaultUserProvider;
+import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.service.DefaultExtendUserDetailsService;
 import com.carlos.auth.service.ExtendUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
@@ -62,5 +64,34 @@ public class OAuth2ServiceConfig {
     public ExtendUserDetailsService extendUserDetailsService(PasswordEncoder passwordEncoder) {
         log.info("Configuring default ExtendUserDetailsService (for development only)");
         return new DefaultExtendUserDetailsService(passwordEncoder);
+    }
+
+    /**
+     * 用户信息提供者
+     *
+     * <p>用于与外部用户系统集成，提供用户基本信息查询。</p>
+     *
+     * <h3>默认实现：</h3>
+     * <p>使用 {@link DefaultUserProvider}，基于内存存储，仅包含测试用户。</p>
+     *
+     * <h3>自定义实现：</h3>
+     * <pre>{@code
+     * @Service
+     * @Primary
+     * public class MyUserProvider implements UserProvider {
+     *     // 自定义实现，从数据库加载用户...
+     * }
+     * }</pre>
+     *
+     * <p><strong>注意：</strong>生产环境必须提供自定义实现，从实际用户系统加载数据。</p>
+     *
+     * @param passwordEncoder 密码编码器
+     * @return UserProvider 用户信息提供者
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public UserProvider userProvider(PasswordEncoder passwordEncoder) {
+        log.info("Configuring default UserProvider (for development only)");
+        return new DefaultUserProvider(passwordEncoder);
     }
 }

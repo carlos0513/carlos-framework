@@ -1,4 +1,4 @@
-package com.carlos.auth.oauth2.customize;
+package com.carlos.auth.oauth2.repository;
 
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonParser;

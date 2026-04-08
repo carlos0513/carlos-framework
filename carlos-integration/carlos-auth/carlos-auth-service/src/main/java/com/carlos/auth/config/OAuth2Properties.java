@@ -107,7 +107,7 @@ public class OAuth2Properties {
      * <p>应用启动时会自动注册这些客户端到内存中。
      * 适用于客户端数量较少且固定的场景。</p>
      *
-     * <p><strong>注意：</strong>如果需要动态管理客户端，请实现 
+     * <p><strong>注意：</strong>如果需要动态管理客户端，请实现
      * {@link org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository}
      * 接口并注册为 Bean。</p>
      *
@@ -660,21 +660,6 @@ public class OAuth2Properties {
          */
         @NestedConfigurationProperty
         private LoginLimitProperties loginLimit = new LoginLimitProperties();
-
-        /**
-         * Token 存储方式
-         *
-         * <p>支持：memory、redis、jdbc</p>
-         * <p><strong>默认值：</strong>memory</p>
-         *
-         * <h3>存储方式选择：</h3>
-         * <ul>
-         *   <li><strong>memory</strong> - 仅用于开发和测试，重启后 Token 失效</li>
-         *   <li><strong>redis</strong> - 推荐用于生产，支持分布式和 Token 过期</li>
-         *   <li><strong>jdbc</strong> - 使用数据库存储，适合需要持久化的场景</li>
-         * </ul>
-         */
-        private String tokenStorage = "memory";
 
         /**
          * 登录限制配置

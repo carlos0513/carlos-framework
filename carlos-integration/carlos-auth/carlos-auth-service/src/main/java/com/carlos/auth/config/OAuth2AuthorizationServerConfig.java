@@ -1,8 +1,7 @@
 package com.carlos.auth.config;
 
-import com.carlos.auth.config.repository.JdbcOAuth2AuthorizationService;
-import com.carlos.auth.config.repository.RedisOAuth2AuthorizationConsentService;
-import com.carlos.auth.config.repository.RedisOAuth2AuthorizationService;
+import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationConsentService;
+import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationService;
 import com.carlos.auth.security.manager.KeyPairManager;
 import com.carlos.auth.service.ExtendUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -12,7 +11,6 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -631,43 +629,16 @@ public class OAuth2AuthorizationServerConfig {
      *
      * <p>通过配置 {@code carlos.auth.security.token-storage} 选择存储方式。</p>
      *
-     * @param redisService Redis 授权服务（如果启用 Redis 存储）
-     * @param jdbcService JDBC 授权服务（如果启用 JDBC 存储）
      * @return OAuth2AuthorizationService 授权服务
      */
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2AuthorizationService authorizationService(
-            @Autowired(required = false) RedisOAuth2AuthorizationService redisService,
-            @Autowired(required = false) JdbcOAuth2AuthorizationService jdbcService) {
-
-        String storageType = oauth2Properties.getSecurity().getTokenStorage();
-
-        if ("redis".equalsIgnoreCase(storageType)) {
-            if (redisService != null) {
-                log.info("==========================================================================");
-                log.info(" Using Redis OAuth2 Authorization Service (production ready)");
-                log.info("==========================================================================");
-                return redisService;
-            } else {
-                log.warn("Redis OAuth2 Authorization Service not available, falling back to in-memory storage");
-                log.warn("Please ensure Redis is configured and RedisTemplate bean is present");
-            }
-        } else if ("jdbc".equalsIgnoreCase(storageType)) {
-            if (jdbcService != null) {
-                log.info("==========================================================================");
-                log.info(" Using JDBC OAuth2 Authorization Service (production ready)");
-                log.info("==========================================================================");
-                return jdbcService;
-            } else {
-                log.warn("JDBC OAuth2 Authorization Service not available, falling back to in-memory storage");
-                log.warn("Please ensure DataSource bean is present and database is configured");
-            }
-        }
-
-        log.info("Using In-Memory OAuth2 Authorization Service (for development only)");
-        log.warn("WARNING: Authorization data will be lost on application restart!");
-        return new org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService();
+    public OAuth2AuthorizationService authorizationService() {
+        // 使用统一的 CustomizeOAuth2AuthorizationService（基于 Redis）
+        log.info("==========================================================================");
+        log.info(" Using Customize OAuth2 Authorization Service (Redis-based, production ready)");
+        log.info("==========================================================================");
+        return new RedisOAuth2AuthorizationService();
     }
 
     /**
@@ -685,21 +656,12 @@ public class OAuth2AuthorizationServerConfig {
      *   <li><strong>memory</strong> - 基于内存存储（当 token-storage=memory 时使用）</li>
      * </ul>
      *
-     * @param redisConsentService Redis 授权许可服务（如果启用 Redis 存储）
      * @return OAuth2AuthorizationConsentService 授权确认服务
      */
     @Bean
     @ConditionalOnMissingBean
-    public OAuth2AuthorizationConsentService authorizationConsentService(@Autowired(required = false) RedisOAuth2AuthorizationConsentService redisConsentService) {
-
-        String storageType = oauth2Properties.getSecurity().getTokenStorage();
-
-        if ("redis".equalsIgnoreCase(storageType) && redisConsentService != null) {
-            log.info("Using Redis OAuth2 Authorization Consent Service");
-            return redisConsentService;
-        }
-
-        log.info("Using In-Memory OAuth2 Authorization Consent Service");
-        return new org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService();
+    public OAuth2AuthorizationConsentService authorizationConsentService() {
+        log.info("Using Customize OAuth2 Authorization Consent Service (Redis-based)");
+        return new RedisOAuth2AuthorizationConsentService();
     }
 }

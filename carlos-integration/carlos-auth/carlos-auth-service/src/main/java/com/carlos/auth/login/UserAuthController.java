@@ -6,9 +6,9 @@ import com.carlos.auth.login.dto.LoginResponse;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.manager.IpBlockManager;
-import com.carlos.auth.service.RateLimitService;
 import com.carlos.auth.util.IpLocationUtil;
 import com.carlos.core.response.Result;
+import com.carlos.redis.ratelimit.RateLimitUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +21,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 用户认证控制器
@@ -55,11 +57,6 @@ public class UserAuthController {
     private final IpBlockManager ipBlockManager;
 
     /**
-     * 速率限制服务
-     */
-    private final RateLimitService rateLimitService;
-
-    /**
      * IP定位工具
      */
     private final IpLocationUtil ipLocationUtil;
@@ -87,14 +84,14 @@ public class UserAuthController {
         String clientIp = ipLocationUtil.getClientIp(httpRequest);
 
         try {
-            // 检查IP速率限制
-            if (!rateLimitService.tryIpAccess(clientIp)) {
+            // 检查IP速率限制（50次/分钟）
+            if (!RateLimitUtil.tryAcquire("auth:rate:ip:" + clientIp, 50, 1, TimeUnit.MINUTES)) {
                 log.warn("IP rate limit exceeded: {}", clientIp);
                 return Result.error("请求过于频繁，请稍后再试");
             }
 
-            // 检查用户速率限制
-            if (!rateLimitService.tryLogin(loginRequest.getUsername())) {
+            // 检查用户速率限制（5次/分钟）
+            if (!RateLimitUtil.tryAcquire("auth:rate:login:" + loginRequest.getUsername(), 5, 1, TimeUnit.MINUTES)) {
                 log.warn("Login rate limit exceeded for user: {}", loginRequest.getUsername());
                 return Result.error("请求过于频繁，请稍后再试");
             }

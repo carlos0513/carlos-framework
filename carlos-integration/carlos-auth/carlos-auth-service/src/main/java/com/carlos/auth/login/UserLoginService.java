@@ -1,7 +1,8 @@
 package com.carlos.auth.login;
 
-import cn.hutool.core.util.StrUtil;
-import com.carlos.auth.audit.LoginAuditEvent;
+import com.carlos.audit.api.ApiAuditLogMain;
+import com.carlos.audit.api.pojo.enums.*;
+import com.carlos.audit.api.pojo.param.ApiAuditLogMainParam;
 import com.carlos.auth.login.dto.LoginRequest;
 import com.carlos.auth.login.dto.LoginResponse;
 import com.carlos.auth.provider.UserInfo;
@@ -9,10 +10,11 @@ import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.manager.IpBlockManager;
 import com.carlos.auth.security.manager.LoginAttemptManager;
 import com.carlos.auth.security.token.JwtTokenProvider;
+import com.carlos.auth.util.IpLocationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.net.InetAddress;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 用户登录服务
@@ -68,19 +74,19 @@ public class UserLoginService {
     private final HttpServletRequest request;
 
     /**
-     * 设备白名单服务
+     * IP定位工具
      */
-    // private final DeviceWhitelistService deviceWhitelistService;
-
-    /**
-     * 事件发布器
-     */
-    private final ApplicationEventPublisher eventPublisher;
+    private final IpLocationUtil ipLocationUtil;
 
     /**
      * JWT 令牌提供者
      */
     private final JwtTokenProvider jwtTokenProvider;
+
+    /**
+     * 审计日志 Feign 接口
+     */
+    private final ApiAuditLogMain apiAuditLogMain;
 
     /**
      * 用户登录
@@ -115,7 +121,6 @@ public class UserLoginService {
 
             // 检查是否需要MFA验证
             boolean shouldTriggerMfa = true;
-            // boolean shouldTriggerMfa = deviceWhitelistService.shouldTriggerMfa(user.getId(), request);
 
             // 如果未启用MFA且检测到新设备/异地登录，建议启用MFA
             boolean shouldRecommendMfa = shouldTriggerMfa && !Boolean.TRUE.equals(user.getMfaEnabled());
@@ -128,17 +133,11 @@ public class UserLoginService {
             response.setMfaRequired(mfaRequired);
             response.setMfaRecommended(shouldRecommendMfa);
 
-            // 发布登录成功审计事件（异步）
-            eventPublisher.publishEvent(LoginAuditEvent.loginSuccess(
-                this, user, request, null));
+            // 异步记录登录成功审计日志到统一审计服务
+            recordLoginAudit(user, "LOGIN", "SUCCESS", null);
 
             // 记录登录成功
             recordLoginSuccess(loginRequest.getUsername());
-
-            // 如果是可信设备，添加到白名单
-            // if (!mfaRequired && !shouldRecommendMfa) {
-            //     deviceWhitelistService.addTrustedDevice(user.getId(), request);
-            // }
 
             return response;
 
@@ -276,16 +275,13 @@ public class UserLoginService {
         log.info("User logout: {}", user.getUsername());
 
         try {
-            // 发布登出审计事件
-            eventPublisher.publishEvent(LoginAuditEvent.logout(
-                this, user, request, extractSessionId(accessToken)));
+            // 异步记录登出审计日志到统一审计服务
+            recordLoginAudit(user, "LOGOUT", "SUCCESS", null);
 
             // TODO: 将令牌添加到Redis黑名单（可选）
             // String jti = extractJtiFromToken(accessToken);
             // redisTemplate.opsForValue().set("auth:token:blacklist:" + jti, "revoked",
             //         Duration.ofSeconds(getTokenExpiry(accessToken)));
-
-            // TODO: 清除Redis中的授权信息（可选）
 
             log.info("User logged out successfully: {}", user.getUsername());
 
@@ -295,13 +291,102 @@ public class UserLoginService {
     }
 
     /**
-     * 从令牌中提取会话ID（简化实现）
+     * 异步记录登录审计日志
+     *
+     * @param user 用户信息
+     * @param eventType 事件类型：LOGIN、LOGOUT
+     * @param status 状态：SUCCESS、FAILURE
+     * @param errorMessage 错误消息
      */
-    private String extractSessionId(String accessToken) {
-        if (StrUtil.isBlank(accessToken) || accessToken.length() < 20) {
-            return null;
+    @Async
+    public void recordLoginAudit(UserInfo user, String eventType, String status, String errorMessage) {
+        try {
+            ApiAuditLogMainParam param = buildAuditLogParam(user, eventType, status, errorMessage);
+            apiAuditLogMain.saveAuditLog(param);
+            log.debug("Login audit log sent: user={}, type={}, status={}", user.getUsername(), eventType, status);
+        } catch (Exception e) {
+            log.error("Failed to send login audit log", e);
         }
-        // 实际应从JWT的jti声明中提取
-        return accessToken.substring(0, 20);
+    }
+
+    /**
+     * 构建审计日志参数
+     */
+    private ApiAuditLogMainParam buildAuditLogParam(UserInfo user, String eventType,
+                                                    String status, String errorMessage) {
+        ApiAuditLogMainParam param = new ApiAuditLogMainParam();
+
+        // 时间信息
+        LocalDateTime now = LocalDateTime.now();
+        param.setServerTime(now);
+        param.setEventTime(now);
+        param.setEventDate(LocalDate.now());
+
+        // 日志分类和类型
+        param.setCategory(AuditLogCategoryEnum.SECURITY);
+        param.setLogType("USER_" + eventType);
+        param.setOperation("用户" + getEventDesc(eventType));
+
+        // 主体信息
+        param.setPrincipalId(String.valueOf(user.getUserId()));
+        param.setPrincipalName(user.getUsername());
+        param.setPrincipalType(AuditLogPrincipalTypeEnum.USER);
+
+        // 状态信息
+        param.setState("SUCCESS".equals(status) ? AuditLogStateEnum.SUCCESS : AuditLogStateEnum.FAIL);
+        param.setResultMessage(errorMessage);
+
+        // 认证信息
+        param.setAuthType(AuditLogAuthTypeEnum.PASSWORD);
+        param.setAuthProvider(AuditLogAuthProviderEnum.LOCAL);
+
+        // IP和位置信息
+        String clientIp = ipLocationUtil.getClientIp(request);
+        param.setClientIp(clientIp);
+        param.setUserAgent(request.getHeader("User-Agent"));
+
+        // 获取地理位置
+        try {
+            String location = ipLocationUtil.getLocation(clientIp);
+            if (location != null && !location.isEmpty()) {
+                String[] parts = location.split(" ");
+                if (parts.length >= 1) {
+                    param.setLocationCountry(parts[0]);
+                }
+                if (parts.length >= 2) {
+                    param.setLocationProvince(parts[1]);
+                }
+                if (parts.length >= 3) {
+                    param.setLocationCity(parts[2]);
+                }
+            }
+        } catch (Exception e) {
+            log.debug("Failed to get location for IP: {}", clientIp);
+        }
+
+        // 服务器信息
+        try {
+            param.setServerIp(InetAddress.getLocalHost().getHostAddress());
+        } catch (Exception e) {
+            log.debug("Failed to get server IP");
+        }
+
+        // Schema版本
+        param.setLogSchemaVersion(1);
+
+        return param;
+    }
+
+    /**
+     * 获取事件描述
+     */
+    private String getEventDesc(String eventType) {
+        return switch (eventType) {
+            case "LOGIN" -> "登录";
+            case "LOGOUT" -> "登出";
+            case "REFRESH" -> "刷新令牌";
+            case "LOCKED" -> "账号锁定";
+            default -> eventType;
+        };
     }
 }
