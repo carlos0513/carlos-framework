@@ -14,10 +14,7 @@ import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -35,10 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Aspect
-@Component
 @Order(-50) // 在事务注解之前，分布式锁之后执行
-@ConditionalOnClass(RedissonClient.class)
-@ConditionalOnProperty(prefix = "carlos.redis.rate-limit", name = "enabled", havingValue = "true", matchIfMissing = true)
 @AllArgsConstructor
 public class RateLimitAspect {
 

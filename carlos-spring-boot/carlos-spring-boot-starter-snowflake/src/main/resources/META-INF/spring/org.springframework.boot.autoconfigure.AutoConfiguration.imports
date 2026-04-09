@@ -1,4 +1,3 @@
 com.carlos.snowflake.cache.SnowflakeLocalCacheAutoConfiguration
 com.carlos.snowflake.cache.SnowflakeRedisCacheAutoConfiguration
 com.carlos.snowflake.SnowflakeConfig
-com.carlos.snowflake.SnowflakeUtil

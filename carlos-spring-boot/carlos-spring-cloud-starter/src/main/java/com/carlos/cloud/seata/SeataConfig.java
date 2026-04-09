@@ -1,10 +1,14 @@
 package com.carlos.cloud.seata;
 
+import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -51,6 +55,31 @@ public class SeataConfig {
     @PostConstruct
     public void init() {
         log.info("Seata 分布式事务已启用");
+    }
+
+    /**
+     * Seata Feign 拦截器 - 传递 XID
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(RootContext.class)
+    @ConditionalOnProperty(prefix = "seata", name = "enabled", havingValue = "true", matchIfMissing = false)
+    public SeataFeignInterceptor seataFeignInterceptor() {
+        log.info("初始化 Seata Feign 拦截器");
+        return new SeataFeignInterceptor();
+    }
+
+    /**
+     * Seata 上下文过滤器 - 接收并绑定 XID
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(RootContext.class)
+    @ConditionalOnWebApplication
+    @ConditionalOnProperty(prefix = "seata", name = "enabled", havingValue = "true", matchIfMissing = false)
+    public SeataContextFilter seataContextFilter() {
+        log.info("初始化 Seata 上下文过滤器");
+        return new SeataContextFilter();
     }
 
     /**

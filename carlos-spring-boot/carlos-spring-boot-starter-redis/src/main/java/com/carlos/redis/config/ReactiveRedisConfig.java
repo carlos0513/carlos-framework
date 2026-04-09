@@ -1,6 +1,7 @@
 package com.carlos.redis.config;
 
 import com.carlos.redis.serialize.ConfigurableRedisSerializer;
+import com.carlos.redis.util.ReactiveRedisUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -137,6 +138,23 @@ public class ReactiveRedisConfig {
     public ReactiveZSetOperations<String, Object> reactiveZSetOperations(
         ReactiveRedisTemplate<String, Object> reactiveRedisTemplate) {
         return reactiveRedisTemplate.opsForZSet();
+    }
+
+    // endregion
+
+    // region----------------------  ReactiveRedisUtil 初始化  ------------------------
+
+    @Bean
+    public ReactiveRedisUtil reactiveRedisUtilInitializer(
+        ReactiveRedisTemplate<String, Object> reactiveRedisTemplate,
+        ReactiveValueOperations<String, Object> reactiveValueOperations,
+        ReactiveHashOperations<String, String, Object> reactiveHashOperations,
+        ReactiveListOperations<String, Object> reactiveListOperations,
+        ReactiveSetOperations<String, Object> reactiveSetOperations,
+        ReactiveZSetOperations<String, Object> reactiveZSetOperations) {
+        ReactiveRedisUtil.init(reactiveRedisTemplate, reactiveValueOperations, reactiveHashOperations,
+            reactiveListOperations, reactiveSetOperations, reactiveZSetOperations, lettuceConnectionFactory);
+        return new ReactiveRedisUtil();
     }
 
     // endregion

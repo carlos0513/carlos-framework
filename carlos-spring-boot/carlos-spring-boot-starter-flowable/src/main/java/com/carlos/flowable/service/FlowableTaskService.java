@@ -11,7 +11,6 @@ import org.flowable.engine.TaskService;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
  * @date 2026-01-27
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class FlowableTaskService {
 

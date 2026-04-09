@@ -1,14 +1,11 @@
 package com.carlos.redis.util;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -37,7 +34,6 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @Slf4j
-@Component
 public class ReactiveRedisUtil {
 
     private static ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
@@ -48,7 +44,10 @@ public class ReactiveRedisUtil {
     private static ReactiveZSetOperations<String, Object> reactiveZSetOperations;
     private static ReactiveRedisConnectionFactory connectionFactory;
 
-    public ReactiveRedisUtil(
+    /**
+     * 初始化 ReactiveRedisUtil 静态字段
+     */
+    public static void init(
         ReactiveRedisTemplate<String, Object> reactiveRedisTemplate,
         ReactiveValueOperations<String, Object> reactiveValueOperations,
         ReactiveHashOperations<String, String, Object> reactiveHashOperations,
@@ -63,16 +62,7 @@ public class ReactiveRedisUtil {
         ReactiveRedisUtil.reactiveSetOperations = reactiveSetOperations;
         ReactiveRedisUtil.reactiveZSetOperations = reactiveZSetOperations;
         ReactiveRedisUtil.connectionFactory = connectionFactory;
-    }
-
-    @PostConstruct
-    public void init() {
         log.info("ReactiveRedisUtil initialized");
-    }
-
-    @PreDestroy
-    public void destroy() {
-        log.info("ReactiveRedisUtil destroyed");
     }
 
     // region----------------------  通用方法  ------------------------

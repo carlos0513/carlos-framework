@@ -8,14 +8,12 @@ import com.carlos.core.response.Result;
 import com.carlos.json.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.List;
@@ -29,8 +27,6 @@ import java.util.List;
  * @date 2026-03-27 23:04
  */
 @Slf4j
-@RestControllerAdvice
-@ConditionalOnProperty(prefix = "carlos.boot.response.wrap", name = "enable", havingValue = "true")
 @RequiredArgsConstructor
 public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
 

@@ -1,11 +1,6 @@
-com.carlos.cloud.feign.FallbackFactoryAutoRegistrar
 com.carlos.cloud.feign.FeignConfig
-com.carlos.cloud.feign.FeignGlobalExceptionHandler
 com.carlos.cloud.nacos.NacosConfig
-com.carlos.cloud.nacos.NacosServiceInstanceListener
 com.carlos.cloud.seata.SeataConfig
-com.carlos.cloud.seata.SeataContextFilter
 com.carlos.cloud.sentinel.SentinelConfig
 com.carlos.cloud.sentinel.SentinelFeignConfig
 com.carlos.cloud.loadbalance.LoadBalancerConfig
-com.carlos.cloud.health.ServiceHealthIndicator

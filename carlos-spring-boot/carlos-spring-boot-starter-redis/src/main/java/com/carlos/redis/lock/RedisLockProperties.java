@@ -18,7 +18,7 @@ public class RedisLockProperties {
     /**
      * 是否启用分布式锁，默认启用
      */
-    private Boolean enabled = true;
+    private Boolean enabled = false;
 
     /**
      * 分布式锁缓存前缀

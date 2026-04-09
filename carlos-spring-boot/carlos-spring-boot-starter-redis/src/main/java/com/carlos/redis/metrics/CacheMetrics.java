@@ -3,10 +3,7 @@ package com.carlos.redis.metrics;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -21,12 +18,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date 2026-03-14
  */
 @Slf4j
-@Component
 public class CacheMetrics {
 
     private static final String METRIC_PREFIX = "carlos.cache";
 
-    @Autowired(required = false)
     private MeterRegistry meterRegistry;
 
     // 命中/未命中计数器
@@ -46,8 +41,18 @@ public class CacheMetrics {
     private final AtomicLong localMisses = new AtomicLong(0);
     private final AtomicLong localErrors = new AtomicLong(0);
 
-    @PostConstruct
-    public void init() {
+    public CacheMetrics() {
+    }
+
+    public CacheMetrics(MeterRegistry meterRegistry) {
+        init(meterRegistry);
+    }
+
+    /**
+     * 初始化 CacheMetrics
+     */
+    public void init(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
         if (meterRegistry != null) {
             hitCounter = Counter.builder(METRIC_PREFIX + ".hits")
                 .description("Cache hit count")

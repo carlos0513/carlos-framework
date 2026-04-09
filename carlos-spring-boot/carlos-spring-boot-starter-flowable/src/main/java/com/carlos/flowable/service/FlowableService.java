@@ -2,7 +2,6 @@ package com.carlos.flowable.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 /**
  * Flowable工作流综合服务（统一入口）
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
  * @date 2026-01-27
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class FlowableService {
 

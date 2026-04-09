@@ -5,10 +5,7 @@ import com.carlos.mq.core.MqTemplate;
 import com.carlos.mq.core.SendCallback;
 import com.carlos.mq.core.SendResult;
 import com.carlos.mq.support.DelayLevel;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,16 +21,16 @@ import java.util.concurrent.TimeUnit;
  * @date 2026/3/14
  */
 @Slf4j
-@Component
 public class MqUtil {
 
     private static MqTemplate STATIC_TEMPLATE;
 
-    @Autowired
-    private MqTemplate mqTemplate;
-
-    @PostConstruct
-    public void init() {
+    /**
+     * 初始化 MqUtil，由 MqAutoConfiguration 调用
+     *
+     * @param mqTemplate MQ 模板
+     */
+    public static void init(MqTemplate mqTemplate) {
         STATIC_TEMPLATE = mqTemplate;
         log.info("MqUtil initialized");
     }

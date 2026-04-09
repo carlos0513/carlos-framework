@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -31,7 +30,6 @@ import java.io.IOException;
  * @date 2024/01/15
  */
 @Slf4j
-@Component
 @Order(-100) // 确保在 Spring Security 过滤器之前执行
 @ConditionalOnClass(RootContext.class)
 @ConditionalOnWebApplication

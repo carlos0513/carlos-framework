@@ -7,7 +7,6 @@ import com.carlos.integration.module.dingtalk.config.DingtalkProperties;
 import com.carlos.integration.module.dingtalk.exception.DockingDingtalkException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ import java.util.List;
  * @since 1.0.0
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class DingtalkRestClientService {
 

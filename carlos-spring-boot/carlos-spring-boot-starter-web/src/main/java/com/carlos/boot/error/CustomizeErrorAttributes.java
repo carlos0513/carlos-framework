@@ -3,7 +3,6 @@ package com.carlos.boot.error;
 import com.carlos.core.exception.GlobalException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Map;
@@ -16,7 +15,6 @@ import java.util.Map;
  * @author carlos
  * @date 2021/3/3 23:56
  */
-@Component
 public class CustomizeErrorAttributes extends DefaultErrorAttributes {
 
     @Override

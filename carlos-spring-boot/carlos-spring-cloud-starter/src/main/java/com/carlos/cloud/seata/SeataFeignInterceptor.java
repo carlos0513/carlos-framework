@@ -6,7 +6,6 @@ import io.seata.core.context.RootContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -33,7 +32,6 @@ import org.springframework.util.StringUtils;
  * @see RootContext
  */
 @Slf4j
-@Component
 @ConditionalOnClass(RootContext.class)
 @ConditionalOnProperty(prefix = "seata", name = "enabled", havingValue = "true", matchIfMissing = false)
 public class SeataFeignInterceptor implements RequestInterceptor {

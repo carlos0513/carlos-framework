@@ -1,5 +1,6 @@
 package com.carlos.flowable.config;
 
+import com.carlos.flowable.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.common.engine.impl.history.HistoryLevel;
 import org.flowable.engine.*;
@@ -194,5 +195,53 @@ public class FlowableAutoConfiguration {
 
         log.info("共加载 {} 个流程定义文件", resources.size());
         return resources.toArray(new Resource[0]);
+    }
+
+    /**
+     * 流程定义服务
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public FlowableProcessService flowableProcessService(RepositoryService repositoryService) {
+        return new FlowableProcessService(repositoryService);
+    }
+
+    /**
+     * 流程实例服务
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public FlowableRuntimeService flowableRuntimeService(RuntimeService runtimeService, IdentityService identityService) {
+        return new FlowableRuntimeService(runtimeService, identityService);
+    }
+
+    /**
+     * 任务服务
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public FlowableTaskService flowableTaskService(TaskService taskService, RuntimeService runtimeService) {
+        return new FlowableTaskService(taskService, runtimeService);
+    }
+
+    /**
+     * 历史记录服务
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public FlowableHistoryService flowableHistoryService(HistoryService historyService) {
+        return new FlowableHistoryService(historyService);
+    }
+
+    /**
+     * Flowable综合服务（统一入口）
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public FlowableService flowableService(FlowableProcessService processService,
+                                           FlowableRuntimeService runtimeService,
+                                           FlowableTaskService taskService,
+                                           FlowableHistoryService historyService) {
+        return new FlowableService(processService, runtimeService, taskService, historyService);
     }
 }

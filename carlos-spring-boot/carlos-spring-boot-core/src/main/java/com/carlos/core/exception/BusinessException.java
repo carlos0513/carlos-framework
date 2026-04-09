@@ -10,7 +10,7 @@ import com.carlos.core.response.ErrorCode;
  * @author carlos
  * @since 1.0.0
  */
-public final class BusinessException extends GlobalException {
+public class BusinessException extends GlobalException {
 
     private static final long serialVersionUID = 1L;
 

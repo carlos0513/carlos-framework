@@ -2,8 +2,6 @@ package com.carlos.redis.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -15,14 +13,16 @@ import java.util.function.Function;
  * @date 2026-02-01
  */
 @Slf4j
-@Component
 public class CaffeineUtil {
 
     private static Cache<String, Object> cache;
 
-    @Autowired
-    public CaffeineUtil(Cache<String, Object> caffeineCache) {
+    /**
+     * 初始化 CaffeineUtil 静态字段
+     */
+    public static void init(Cache<String, Object> caffeineCache) {
         CaffeineUtil.cache = caffeineCache;
+        log.info("CaffeineUtil initialized");
     }
 
     /**

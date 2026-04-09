@@ -8,10 +8,8 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 import java.util.Set;
@@ -31,8 +29,6 @@ import java.util.stream.Collectors;
  * @date 2024/01/15
  */
 @Slf4j
-@Configuration
-@ConditionalOnProperty(prefix = "carlos.cloud.nacos.subscription", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class NacosServiceInstanceListener implements ApplicationListener<HeartbeatEvent> {
 
     @Autowired

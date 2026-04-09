@@ -1,13 +1,10 @@
 package com.carlos.redis.ratelimit;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -43,25 +40,17 @@ import java.util.function.Supplier;
  * @date 2026-04-08
  */
 @Slf4j
-@Component
 public class RateLimitUtil {
 
     private static RedissonClient staticRedissonClient;
     private static RateLimitProperties staticProperties;
 
-    private final RedissonClient redissonClient;
-    private final RateLimitProperties properties;
-
-    @Autowired
-    public RateLimitUtil(RedissonClient redissonClient, RateLimitProperties properties) {
-        this.redissonClient = redissonClient;
-        this.properties = properties;
-    }
-
-    @PostConstruct
-    public void init() {
-        staticRedissonClient = this.redissonClient;
-        staticProperties = this.properties;
+    /**
+     * 初始化 RateLimitUtil 静态字段
+     */
+    public static void init(RedissonClient redissonClient, RateLimitProperties properties) {
+        staticRedissonClient = redissonClient;
+        staticProperties = properties;
         log.info("[RateLimitUtil] Initialized with prefix: {}", properties.getPrefix());
     }
 

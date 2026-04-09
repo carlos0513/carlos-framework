@@ -1,6 +1,1 @@
 com.carlos.flowable.config.FlowableAutoConfiguration
-com.carlos.flowable.service.FlowableProcessService
-com.carlos.flowable.service.FlowableRuntimeService
-com.carlos.flowable.service.FlowableTaskService
-com.carlos.flowable.service.FlowableHistoryService
-com.carlos.flowable.service.FlowableService

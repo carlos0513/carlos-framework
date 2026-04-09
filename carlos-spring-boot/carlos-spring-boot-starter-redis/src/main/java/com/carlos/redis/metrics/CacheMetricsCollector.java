@@ -1,11 +1,8 @@
 package com.carlos.redis.metrics;
 
 import com.carlos.redis.caffeine.CaffeineUtil;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 /**
  * 缓存指标收集器
@@ -17,14 +14,12 @@ import org.springframework.stereotype.Component;
  * @date 2026-03-14
  */
 @Slf4j
-@Component
-@RequiredArgsConstructor
 public class CacheMetricsCollector {
 
     private final CacheMetrics cacheMetrics;
 
-    @PostConstruct
-    public void init() {
+    public CacheMetricsCollector(CacheMetrics cacheMetrics) {
+        this.cacheMetrics = cacheMetrics;
         log.info("CacheMetricsCollector initialized");
     }
 

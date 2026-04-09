@@ -15,7 +15,6 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
-import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -60,7 +59,6 @@ import java.util.Set;
  * @date 2026-03-24
  */
 @Slf4j
-@Service
 @ConditionalOnClass(FallbackFactory.class)
 @ConditionalOnProperty(prefix = "carlos.feign.fallback", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class FallbackFactoryAutoRegistrar implements BeanDefinitionRegistryPostProcessor, EnvironmentAware {

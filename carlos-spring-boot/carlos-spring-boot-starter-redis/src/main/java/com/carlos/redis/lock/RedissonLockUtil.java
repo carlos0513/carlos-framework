@@ -1,12 +1,9 @@
 package com.carlos.redis.lock;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -20,20 +17,16 @@ import java.util.function.Supplier;
  * @date 2022/4/21 17:44
  */
 @Slf4j
-@Component
 public class RedissonLockUtil {
 
     private static RedissonClient staticRedissonClient;
-    private final RedissonClient redissonClient;
 
-    @Autowired
-    public RedissonLockUtil(RedissonClient redissonClient) {
-        this.redissonClient = redissonClient;
-    }
-
-    @PostConstruct
-    public void init() {
-        staticRedissonClient = this.redissonClient;
+    /**
+     * 初始化 RedissonLockUtil 静态字段
+     */
+    public static void init(RedissonClient redissonClient) {
+        staticRedissonClient = redissonClient;
+        log.info("RedissonLockUtil initialized");
     }
 
     // ========================= 基础锁操作 =========================

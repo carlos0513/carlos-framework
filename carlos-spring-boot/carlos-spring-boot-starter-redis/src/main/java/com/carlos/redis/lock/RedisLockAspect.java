@@ -13,10 +13,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
@@ -31,10 +28,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Aspect
-@Component
 @Order(-100) // 确保在事务注解之前执行
-@ConditionalOnClass(RedissonClient.class)
-@ConditionalOnProperty(prefix = "carlos.redis.lock", name = "enabled", havingValue = "true", matchIfMissing = true)
 @AllArgsConstructor
 public class RedisLockAspect {
 

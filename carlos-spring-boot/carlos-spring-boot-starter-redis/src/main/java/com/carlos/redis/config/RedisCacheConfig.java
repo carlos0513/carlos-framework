@@ -1,12 +1,17 @@
 package com.carlos.redis.config;
 
+import com.carlos.redis.metrics.CacheMetrics;
+import com.carlos.redis.metrics.CacheMetricsCollector;
 import com.carlos.redis.serialize.ConfigurableRedisSerializer;
 import com.carlos.redis.serialize.RedisSerializerStrategy;
 import com.carlos.redis.serialize.SerializerFactory;
 import com.carlos.redis.serialize.SerializerType;
 import com.carlos.redis.util.CacheKeyGenerator;
+import com.carlos.redis.util.RedisUtil;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
@@ -43,7 +48,7 @@ import java.time.Duration;
 @AllArgsConstructor
 @AutoConfigureBefore({RedisLettuceConnectionConfiguration.class, RedisAutoConfiguration.class})
 @EnableConfigurationProperties(CacheProperties.class)
-public class RedisCacheConfig extends CachingConfigurerSupport {
+public class RedisCacheConfig extends CachingConfigurerSupport implements DisposableBean {
 
     private final LettuceConnectionFactory factory;
     private final CacheProperties cacheProperties;
@@ -219,6 +224,34 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
     @Bean
     public ZSetOperations<String, Object> zSetOperations(RedisTemplate<String, Object> redisTemplate) {
         return redisTemplate.opsForZSet();
+    }
+
+    // endregion
+
+    // region----------------------  工具类初始化  ------------------------
+
+    @Bean
+    public RedisUtil redisUtilInitializer(@Qualifier("redisTemplate") RedisTemplate<String, Object> redisTemplate,
+                                          @Qualifier("onlyMasterTemplate") RedisTemplate<String, Object> redisMasterTemplate) {
+        RedisUtil.init(redisTemplate, redisMasterTemplate);
+        return new RedisUtil();
+    }
+
+    @Bean
+    public CacheMetrics cacheMetrics(MeterRegistry meterRegistry) {
+        CacheMetrics cacheMetrics = new CacheMetrics();
+        cacheMetrics.init(meterRegistry);
+        return cacheMetrics;
+    }
+
+    @Bean
+    public CacheMetricsCollector cacheMetricsCollector(CacheMetrics cacheMetrics) {
+        return new CacheMetricsCollector(cacheMetrics);
+    }
+
+    @Override
+    public void destroy() {
+        RedisUtil.destroy();
     }
 
     // endregion

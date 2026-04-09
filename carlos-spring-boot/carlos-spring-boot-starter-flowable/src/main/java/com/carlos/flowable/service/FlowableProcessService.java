@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,7 +22,6 @@ import java.util.zip.ZipInputStream;
  * @date 2026-01-27
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class FlowableProcessService {
 

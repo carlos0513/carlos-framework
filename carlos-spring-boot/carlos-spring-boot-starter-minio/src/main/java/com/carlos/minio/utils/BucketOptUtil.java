@@ -9,7 +9,6 @@ import io.minio.messages.Upload;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
  * @date 2021/6/10 14:19
  */
 @Slf4j
-@Component
 public class BucketOptUtil {
 
     /**

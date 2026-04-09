@@ -6,7 +6,6 @@ import com.carlos.core.exception.ComponentException;
 import com.carlos.core.interfaces.ApplicationExtend;
 import com.carlos.core.response.CommonErrorCode;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
@@ -18,12 +17,16 @@ import java.io.Serializable;
  * @author carlos
  * @date 2021/12/28 9:50
  */
-@Component
 public final class ExtendInfoUtil {
 
     private static ApplicationExtend extend;
 
-    public ExtendInfoUtil(@Nullable final ApplicationExtend applicationExtend) {
+    /**
+     * 初始化静态字段
+     *
+     * @param applicationExtend 应用扩展接口
+     */
+    public static void init(@Nullable final ApplicationExtend applicationExtend) {
         ExtendInfoUtil.extend = applicationExtend;
     }
 

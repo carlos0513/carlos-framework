@@ -6,9 +6,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.core.*;
@@ -16,7 +14,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -41,7 +38,6 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings({"unchecked", "unused", "UnusedReturnValue"})
 @Slf4j
-@Component
 public class RedisUtil {
 
     /**
@@ -86,8 +82,11 @@ public class RedisUtil {
     private static ZSetOperations<String, Object> zSetOperations;
     private static ListOperations<String, Object> listOperations;
 
-    public RedisUtil(@Qualifier("redisTemplate") RedisTemplate<String, Object> redisTemplate,
-                     @Qualifier("onlyMasterTemplate") RedisTemplate<String, Object> redisMasterTemplate) {
+    /**
+     * 初始化 RedisUtil 静态字段
+     */
+    public static void init(RedisTemplate<String, Object> redisTemplate,
+                            RedisTemplate<String, Object> redisMasterTemplate) {
         RedisUtil.redisTemplate = redisTemplate;
         RedisUtil.redisMasterTemplate = redisMasterTemplate;
         RedisUtil.valueOperations = redisTemplate.opsForValue();
@@ -101,8 +100,7 @@ public class RedisUtil {
     /**
      * 优雅关闭线程池
      */
-    @PreDestroy
-    public void destroy() {
+    public static void destroy() {
         log.info("Shutting down RedisUtil executor...");
         EXECUTOR.shutdown();
         try {

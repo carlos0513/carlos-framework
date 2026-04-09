@@ -64,6 +64,9 @@ public class CaffeineConfig {
         Cache<String, Object> cache = builder.build();
         log.info("Caffeine local cache initialized successfully");
 
+        // 初始化 CaffeineUtil
+        CaffeineUtil.init(cache);
+
         return cache;
     }
 }

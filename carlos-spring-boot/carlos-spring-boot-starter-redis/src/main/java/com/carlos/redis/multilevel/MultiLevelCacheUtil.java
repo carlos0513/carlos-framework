@@ -3,7 +3,6 @@ package com.carlos.redis.multilevel;
 import com.carlos.redis.caffeine.CaffeineUtil;
 import com.carlos.redis.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -23,7 +22,6 @@ import java.util.function.Supplier;
  * @date 2026-02-01
  */
 @Slf4j
-@Component
 public class MultiLevelCacheUtil {
 
     /**

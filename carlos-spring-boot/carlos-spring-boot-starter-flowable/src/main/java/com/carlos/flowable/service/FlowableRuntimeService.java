@@ -11,7 +11,6 @@ import org.flowable.engine.IdentityService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.runtime.ProcessInstanceQuery;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
  * @date 2026-01-27
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class FlowableRuntimeService {
 

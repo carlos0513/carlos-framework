@@ -6,11 +6,10 @@ import brave.propagation.TraceContext;
 import com.carlos.apm.mdc.MdcUtil;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 /**
  * Feign 链路追踪拦截器
@@ -21,12 +20,11 @@ import org.springframework.stereotype.Component;
  * @date 2025-03-26
  */
 @Slf4j
-@Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@RequiredArgsConstructor
 public class TracingFeignInterceptor implements RequestInterceptor {
 
-    @Autowired(required = false)
-    private Tracer tracer;
+    private final Tracer tracer;
 
     @Override
     public void apply(RequestTemplate template) {

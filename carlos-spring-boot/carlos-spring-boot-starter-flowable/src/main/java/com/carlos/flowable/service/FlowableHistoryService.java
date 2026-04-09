@@ -12,7 +12,6 @@ import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
  * @date 2026-01-27
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class FlowableHistoryService {
 

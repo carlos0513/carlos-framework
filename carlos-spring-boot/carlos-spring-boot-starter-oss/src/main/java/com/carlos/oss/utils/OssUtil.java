@@ -4,9 +4,6 @@ import com.carlos.oss.config.OssProperties;
 import com.carlos.oss.core.OssTemplate;
 import com.carlos.oss.exception.OssException;
 import com.carlos.oss.model.OssFile;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -23,23 +20,22 @@ import java.util.List;
  * @author carlos
  * @date 2026-03-06
  */
-@Component
 public class OssUtil {
 
     private static OssTemplate ossTemplate;
 
     private static String defaultBucketName;
 
-    @Autowired
-    private OssTemplate templateBean;
-
-    @Autowired
-    private OssProperties ossProperties;
-
-    @PostConstruct
-    private void init() {
-        OssUtil.ossTemplate = templateBean;
-        OssUtil.defaultBucketName = ossProperties.getBucketName();
+    /**
+     * 初始化 OssUtil 的静态字段
+     * 由 OssAutoConfiguration 在应用启动时调用
+     *
+     * @param template     OssTemplate 实例
+     * @param properties   OssProperties 实例
+     */
+    public static void init(OssTemplate template, OssProperties properties) {
+        OssUtil.ossTemplate = template;
+        OssUtil.defaultBucketName = properties.getBucketName();
     }
 
     /**
