@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/captcha")
+@RequestMapping("/oauth2/captcha")
 @Tag(name = "验证码", description = "短信/邮箱验证码发送和验证")
 public class CaptchaController {
 

@@ -5,6 +5,8 @@ import com.carlos.boot.enums.EnumService;
 import com.carlos.boot.resource.ResourceService;
 import com.carlos.boot.util.ExtendInfoUtil;
 import com.carlos.core.interfaces.ApplicationExtend;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,16 +24,20 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration(proxyBeanMethods = false)
+@RequiredArgsConstructor
 @EnableSpringUtil
 @EnableConfigurationProperties(ApplicationProperties.class)
 public class ApplicationConfig {
 
+    private final ObjectProvider<ApplicationExtend> applicationExtendProvider;
+
     /**
      * 初始化 ExtendInfoUtil 静态字段
      */
-    @Bean
-    public void extendInfoUtilInit(ObjectProvider<ApplicationExtend> applicationExtendProvider) {
+    @PostConstruct
+    public void init() {
         ExtendInfoUtil.init(applicationExtendProvider.getIfAvailable());
+        log.debug("ExtendInfoUtil initialized");
     }
 
     /**

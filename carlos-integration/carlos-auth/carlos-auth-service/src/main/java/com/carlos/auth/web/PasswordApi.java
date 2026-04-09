@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @Tag(name = "PasswordAPI")
-@RequestMapping("pwd")
+@RequestMapping("/oauth2/password")
 @AllArgsConstructor
 @ConditionalOnBean(PasswordEncoder.class)
 public class PasswordApi {

@@ -1,14 +1,73 @@
 server:
-  port: 9511
+  port: 9520
 
 spring:
   profiles:
-    active: env,boot
+    active: ${PROFILE:local}
   application:
     name: carlos-auth
-  # 配置文件导入
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+      config:
+        enabled: true
+        file-extension: yml
+        refresh-enabled: true
   config:
-    import: classpath:application-auth.yml
+    import:
+      # 1. 公共配置（所有环境共享）
+      #      - optional:nacos:${spring.application.name}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      # 2. 环境专属配置（覆盖公共配置）
+      #      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      # 3. 额外共享配置（如 Redis、MySQL 配置）
+      - optional:nacos:common.yml?DEFAULT_GROUP&refreshEnabled=true
+      - optional:nacos:redis.yml?DEFAULT_GROUP&refreshEnabled=true
+      - optional:nacos:mysql.yml?DEFAULT_GROUP&refreshEnabled=true
+
+# 本地调试环境
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    nacos:
+      username: ${NACOS_USERNAME:@nacos.username@}
+      password: ${NACOS_PASSWORD:@nacos.password@}
+      discovery:
+        server-addr: ${NACOS_ADDR:@nacos.addr@}
+        namespace: ${NACOS_NAMESPACE:@nacos.namespace@}
+        group: ${NACOS_GROUP:@nacos.group@}
+      config:
+        server-addr: ${NACOS_ADDR:@nacos.addr@}
+        namespace: ${NACOS_NAMESPACE:@nacos.namespace@}
+        group: ${NACOS_GROUP:@nacos.group@}
+
+
+# 部署采用配置文件
+---
+spring:
+  config:
+    activate:
+      on-profile: deploy
+  cloud:
+    nacos:
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      discovery:
+        server-addr: ${NACOS_ADDR}
+        namespace: ${NACOS_NAMESPACE}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+      config:
+        server-addr: ${NACOS_ADDR}
+        namespace: ${NACOS_NAMESPACE}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+
+
+
+---
+spring:
   # spring配置
   datasource:
     druid:
@@ -45,20 +104,24 @@ carlos:
     enums:
       scan-package: com.carlos
       enabled: true
-    # 自定义项目信息
-    info:
-      project-name: 系统服务
-      groupId: com.carlos
-      #            boot-name: @boot.artifact.name@
-      author: carlos
-      description: 系统服务
-      sourceEncoding: utf-8
-      version: 1.0.0
-      domain: www.carlos.com
   cache:
     key-prefix: carlos:bbt:auth
     use-prefix: true
+  encrypt:
+    # SM4 国密对称加密配置
+    sm4:
+      enabled: true                      # 启用 SM4 加密
+      encrypt-mode: cbc                  # 加密模式：cbc 或 ecb
+      key: "asdfghjklmnbvcx"            # 密钥（16 字节，不足会自动 MD5 处理）
+      iv: "mnbvcxzpoiuytre1"            # 初始化向量（CBC 模式必需，16 字节）
+      store-type: base64                 # 存储格式：base64 或 hex
 
+    # SM2 国密非对称加密配置
+    sm2:
+      enabled: true                      # 启用 SM2 加密
+      public-key: "0403c7a7250306531238d49c2e0146e48217f2d65b28ed1d61565bd40472c7516bc78574de0a89f9067328558d656ecdc2504f49bb2bd843a9cfa9b404463ed453"
+      private-key: "3134665e1e009bab370738fd5ff1dabc7f390b683885c321f1523f4f725e8aa1"
+      store-type: base64                 # 存储格式：base64 或 hex
 ############################### application end ###############################
 
 

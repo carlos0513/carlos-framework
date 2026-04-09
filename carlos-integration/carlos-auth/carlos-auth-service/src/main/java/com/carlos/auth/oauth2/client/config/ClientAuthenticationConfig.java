@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 
 /**
  * OAuth2 客户端认证配置类
@@ -52,7 +51,8 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 @ConditionalOnProperty(
     prefix = "carlos.oauth2.authorization-server",
     name = "enabled",
-    havingValue = "true"
+    havingValue = "true",
+    matchIfMissing = true
 )
 public class ClientAuthenticationConfig {
 
@@ -111,31 +111,6 @@ public class ClientAuthenticationConfig {
     }
 
     /**
-     * 客户端凭证模式 Token 生成器
-     *
-     * <p>专门为 CLIENT_CREDENTIALS 授权类型生成 Access Token。
-     * 使用 UUID 作为 Token 值，支持 Token 增强。</p>
-     *
-     * @param clientOAuth2TokenCustomizer 客户端 Token 增强器
-     * @return CustomizeClientOAuth2AccessTokenGenerator 实例
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnProperty(
-        prefix = "carlos.oauth2.client",
-        name = "custom-token-generator",
-        havingValue = "true",
-        matchIfMissing = false
-    )
-    public CustomizeClientOAuth2AccessTokenGenerator clientOAuth2AccessTokenGenerator(
-        CustomizeClientOAuth2TokenCustomizer clientOAuth2TokenCustomizer) {
-        log.info("Configuring CustomizeClientOAuth2AccessTokenGenerator for CLIENT_CREDENTIALS");
-        CustomizeClientOAuth2AccessTokenGenerator generator = new CustomizeClientOAuth2AccessTokenGenerator();
-        generator.setAccessTokenCustomizer(clientOAuth2TokenCustomizer);
-        return generator;
-    }
-
-    /**
      * 数据库客户端仓库
      *
      * <p>从数据库加载 OAuth2 客户端配置，替代内存存储。
@@ -151,37 +126,14 @@ public class ClientAuthenticationConfig {
         prefix = "carlos.oauth2.client",
         name = "db-repository",
         havingValue = "true",
-        matchIfMissing = false
+        matchIfMissing = true
     )
     public RegisteredClientRepository registeredClientRepository(AppClientService appClientService) {
         log.info("Configuring CustomizeRegisteredClientRepository (database-based)");
         return new CustomizeRegisteredClientRepository(appClientService);
     }
 
-    /**
-     * 配置 Token 生成器组合
-     *
-     * <p>如果启用了自定义的客户端 Token 生成器，则将其添加到 DelegatingOAuth2TokenGenerator 中。</p>
-     *
-     * @param clientTokenGenerator 客户端 Token 生成器（可选）
-     * @return OAuth2TokenGenerator 实例
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public OAuth2TokenGenerator<?> tokenGenerator(
-        CustomizeClientOAuth2AccessTokenGenerator clientTokenGenerator) {
 
-        if (clientTokenGenerator != null) {
-            log.info("Configuring DelegatingOAuth2TokenGenerator with custom client token generator");
-            // 返回包含自定义生成器的委托生成器
-            return new org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator(
-                clientTokenGenerator,
-                new org.springframework.security.oauth2.server.authorization.token.JwtGenerator(null) // JWT 生成器需要另行配置
-            );
-        }
 
-        // 使用默认生成器
-        return null;
-    }
 
 }

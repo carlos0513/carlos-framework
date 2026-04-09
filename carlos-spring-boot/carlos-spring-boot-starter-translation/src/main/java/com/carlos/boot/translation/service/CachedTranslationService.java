@@ -1,5 +1,6 @@
 package com.carlos.boot.translation.service;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.carlos.boot.translation.cache.CacheKeys;
 import com.carlos.boot.translation.cache.TranslationCacheManager;
 import com.carlos.boot.translation.core.TranslationBatch;
@@ -11,7 +12,7 @@ import com.carlos.core.base.RegionInfo;
 import com.carlos.core.base.UserInfo;
 import com.carlos.core.enums.BaseEnum;
 import com.carlos.core.enums.EnumInfo;
-import com.carlos.core.interfaces.ApplicationExtend;
+import com.carlos.core.interfaces.ApplicationExtendBatch;
 import com.carlos.core.util.EnumUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class CachedTranslationService implements TranslationService {
 
-    private final ApplicationExtend applicationExtend;
 
     private final TranslationCacheManager cacheManager;
 
@@ -87,7 +87,7 @@ public class CachedTranslationService implements TranslationService {
         // 如果禁用缓存，直接查询数据库
         if (!context.isCacheEnabled()) {
             log.debug("Cache disabled, query users directly: {}", ids);
-            Map<Serializable, UserInfo> dbData = applicationExtend.getUserByIds(ids);
+            Map<Serializable, UserInfo> dbData = getApplicationExtend().getUserByIds(ids);
             result.putAll(dbData);
             return result;
         }
@@ -109,7 +109,7 @@ public class CachedTranslationService implements TranslationService {
         // 批量查询缺失数据
         if (CollectionUtils.isNotEmpty(missIds)) {
             log.debug("Batch query users: {}", missIds);
-            Map<Serializable, UserInfo> dbData = applicationExtend.getUserByIds(missIds);
+            Map<Serializable, UserInfo> dbData = getApplicationExtend().getUserByIds(missIds);
 
             // 回填结果并写入缓存（使用注解配置的缓存时间）
             long timeout = context.getCacheMinutes();
@@ -120,6 +120,10 @@ public class CachedTranslationService implements TranslationService {
         }
 
         return result;
+    }
+
+    private ApplicationExtendBatch getApplicationExtend() {
+        return SpringUtil.getBean(ApplicationExtendBatch.class);
     }
 
     /**
@@ -137,7 +141,7 @@ public class CachedTranslationService implements TranslationService {
             log.debug("Cache disabled, query dicts directly: {}", typeCodes);
             for (Map.Entry<String, Set<String>> entry : typeCodes.entrySet()) {
                 String type = entry.getKey();
-                Map<String, Dict> dbData = applicationExtend.getDictVos(type, entry.getValue());
+                Map<String, Dict> dbData = getApplicationExtend().getDictVos(type, entry.getValue());
                 dbData.forEach((code, dict) -> result.put(type + ":" + code, dict));
             }
             return result;
@@ -166,7 +170,7 @@ public class CachedTranslationService implements TranslationService {
             long timeout = context.getCacheMinutes();
             for (Map.Entry<String, Set<String>> entry : missMap.entrySet()) {
                 String type = entry.getKey();
-                Map<String, Dict> dbData = applicationExtend.getDictVos(type, entry.getValue());
+                Map<String, Dict> dbData = getApplicationExtend().getDictVos(type, entry.getValue());
 
                 dbData.forEach((code, dict) -> {
                     String compositeKey = type + ":" + code;
@@ -192,7 +196,7 @@ public class CachedTranslationService implements TranslationService {
         // 如果禁用缓存，直接查询数据库
         if (!context.isCacheEnabled()) {
             log.debug("Cache disabled, query departments directly: {}", ids);
-            Map<Serializable, DepartmentInfo> dbData = applicationExtend.getDepartmentByIds(ids);
+            Map<Serializable, DepartmentInfo> dbData = getApplicationExtend().getDepartmentByIds(ids);
             result.putAll(dbData);
             return result;
         }
@@ -214,7 +218,7 @@ public class CachedTranslationService implements TranslationService {
         // 批量查询
         if (CollectionUtils.isNotEmpty(missIds)) {
             log.debug("Batch query departments: {}", missIds);
-            Map<Serializable, DepartmentInfo> dbData = applicationExtend.getDepartmentByIds(missIds);
+            Map<Serializable, DepartmentInfo> dbData = getApplicationExtend().getDepartmentByIds(missIds);
 
             long timeout = context.getCacheMinutes();
             dbData.forEach((id, dept) -> {
@@ -239,7 +243,7 @@ public class CachedTranslationService implements TranslationService {
         // 如果禁用缓存，直接查询数据库
         if (!context.isCacheEnabled()) {
             log.debug("Cache disabled, query regions directly: {}", codes);
-            Map<String, RegionInfo> dbData = applicationExtend.getRegionByCodes(codes);
+            Map<String, RegionInfo> dbData = getApplicationExtend().getRegionByCodes(codes);
             result.putAll(dbData);
             return result;
         }
@@ -261,7 +265,7 @@ public class CachedTranslationService implements TranslationService {
         // 批量查询
         if (CollectionUtils.isNotEmpty(missCodes)) {
             log.debug("Batch query regions: {}", missCodes);
-            Map<String, RegionInfo> dbData = applicationExtend.getRegionByCodes(missCodes);
+            Map<String, RegionInfo> dbData = getApplicationExtend().getRegionByCodes(missCodes);
 
             long timeout = context.getCacheMinutes();
             dbData.forEach((code, region) -> {

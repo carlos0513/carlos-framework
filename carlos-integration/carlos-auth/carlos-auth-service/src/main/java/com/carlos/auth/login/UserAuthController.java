@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/oauth2/user")
 @Tag(name = "用户认证", description = "用户登录、登出等认证接口")
 public class UserAuthController {
 

@@ -10,9 +10,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * @author carlos
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class GovernAuthBootApplication {
+public class AuthBootApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(GovernAuthBootApplication.class, args);
+        SpringApplication.run(AuthBootApplication.class, args);
     }
 }

@@ -69,7 +69,7 @@
     <!-- ==================== Redis 支持 ==================== -->
     <dependency>
       <groupId>com.carlos</groupId>
-      <artifactId>carlos-spring-boot-starter-redis</artifactId>
+      <artifactId>carlos-spring-boot-starter-redis-reactive</artifactId>
     </dependency>
 
     <!-- ==================== 熔断降级（Resilience4j） ==================== -->
@@ -121,23 +121,22 @@
       <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
 
-    <!-- ==================== Actuator ==================== -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-
     <!-- ==================== 文档聚合（Knife4j） ==================== -->
     <dependency>
       <groupId>com.github.xiaoymin</groupId>
       <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <!-- ==================== Carlos 核心依赖 ==================== -->
     <dependency>
       <groupId>com.carlos</groupId>
       <artifactId>carlos-spring-boot-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>aspectjweaver</artifactId>
+          <groupId>org.aspectj</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

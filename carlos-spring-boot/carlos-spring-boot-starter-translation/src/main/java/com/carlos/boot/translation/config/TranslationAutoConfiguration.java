@@ -4,7 +4,6 @@ import com.carlos.boot.translation.aop.TranslationAspect;
 import com.carlos.boot.translation.cache.TranslationCacheManager;
 import com.carlos.boot.translation.service.CachedTranslationService;
 import com.carlos.boot.translation.service.TranslationService;
-import com.carlos.core.interfaces.ApplicationExtend;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,7 @@ public class TranslationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public TranslationCacheManager cacheManager(TranslationProperties properties) {
+    public TranslationCacheManager translationCacheManager(TranslationProperties properties) {
         return new TranslationCacheManager(properties);
     }
 
@@ -44,8 +43,8 @@ public class TranslationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public TranslationService translationService(ApplicationExtend applicationExtend, TranslationCacheManager cacheManager) {
-        return new CachedTranslationService(applicationExtend, cacheManager);
+    public TranslationService translationService(TranslationCacheManager cacheManager) {
+        return new CachedTranslationService(cacheManager);
     }
 
     /**

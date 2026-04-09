@@ -2,15 +2,22 @@ package com.carlos.auth.oauth2.config;
 
 import com.carlos.auth.config.OAuth2Properties;
 import com.carlos.auth.oauth2.Oauth2JwtTokenCustomizer;
+import com.carlos.auth.oauth2.client.CustomizeClientOAuth2AccessTokenGenerator;
+import com.carlos.auth.oauth2.client.CustomizeClientOAuth2TokenCustomizer;
 import com.carlos.auth.oauth2.client.OAuth2ClientProperties;
 import com.carlos.auth.oauth2.handler.SsoLogoutSuccessHandler;
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationConsentService;
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationService;
 import com.carlos.auth.oauth2.server.AuthorizationServerProperties;
+import com.carlos.auth.oauth2.user.CustomizeUserOAuth2AccessTokenGenerator;
+import com.carlos.auth.oauth2.user.CustomizeUserOAuth2TokenCustomizer;
+import com.carlos.auth.provider.DefaultUserProvider;
+import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.encoder.Sm4PasswordEncoder;
 import com.carlos.auth.security.handle.CustomAuthenticationFailureHandler;
 import com.carlos.auth.security.handle.CustomAuthenticationSuccessHandler;
 import com.carlos.auth.security.manager.KeyPairManager;
+import com.carlos.auth.security.service.DefaultExtendUserDetailsService;
 import com.carlos.auth.security.service.ExtendUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -26,7 +33,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -34,6 +43,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -48,8 +58,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
-import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
@@ -104,7 +113,8 @@ import java.util.UUID;
 @ConditionalOnProperty(
     prefix = "carlos.oauth2.authorization-server",
     name = "enabled",
-    havingValue = "true"
+    havingValue = "true",
+    matchIfMissing = true
 )
 public class OAuth2AuthorizationServerConfig {
 
@@ -719,5 +729,110 @@ public class OAuth2AuthorizationServerConfig {
     public CustomAuthenticationFailureHandler customAuthenticationFailureHandler() {
         log.info("Configuring CustomAuthenticationFailureHandler");
         return new CustomAuthenticationFailureHandler();
+    }
+
+    /**
+     * 认证管理器
+     *
+     * <p>用于执行用户认证的核心接口，被 {@link com.carlos.auth.login.UserLoginService} 等组件使用。</p>
+     *
+     * <h3>使用场景：</h3>
+     * <ul>
+     *   <li>自定义登录接口（如 /login）的用户名密码认证</li>
+     *   <li>短信验证码登录认证</li>
+     *   <li>其他扩展认证方式</li>
+     * </ul>
+     *
+     * @param authenticationConfiguration Spring Security 认证配置
+     * @return AuthenticationManager 认证管理器
+     * @throws Exception 配置异常
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        log.info("Configuring AuthenticationManager");
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    /**
+     * 用户详情服务
+     *
+     * <p>提供用户认证和业务信息加载功能。</p>
+     *
+     * <h3>默认实现：</h3>
+     * <p>使用 {@link DefaultExtendUserDetailsService}，仅包含测试用户。</p>
+     *
+     * <h3>自定义实现：</h3>
+     * <pre>{@code
+     * @Service
+     * @Primary
+     * public class MyUserDetailsService implements ExtendUserDetailsService {
+     *     // 自定义实现...
+     * }
+     * }</pre>
+     *
+     * @param passwordEncoder 密码编码器
+     * @return ExtendUserDetailsService 用户详情服务
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ExtendUserDetailsService extendUserDetailsService(PasswordEncoder passwordEncoder,
+                                                             UserProvider userProvider) {
+        log.info("Configuring default ExtendUserDetailsService (for development only)");
+        return new DefaultExtendUserDetailsService(passwordEncoder, userProvider);
+    }
+
+    /**
+     * 用户信息提供者
+     *
+     * <p>用于与外部用户系统集成，提供用户基本信息查询。</p>
+     *
+     * <h3>默认实现：</h3>
+     * <p>使用 {@link DefaultUserProvider}，基于内存存储，仅包含测试用户。</p>
+     *
+     * <h3>自定义实现：</h3>
+     * <pre>{@code
+     * @Service
+     * @Primary
+     * public class MyUserProvider implements UserProvider {
+     *     // 自定义实现，从数据库加载用户...
+     * }
+     * }</pre>
+     *
+     * <p><strong>注意：</strong>生产环境必须提供自定义实现，从实际用户系统加载数据。</p>
+     *
+     * @param passwordEncoder 密码编码器
+     * @return UserProvider 用户信息提供者
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public UserProvider userProvider(PasswordEncoder passwordEncoder) {
+        log.info("Configuring default UserProvider (for development only)");
+        return new DefaultUserProvider(passwordEncoder);
+    }
+
+    /**
+     * 配置 Token 生成器组合
+     *
+     * <p>组合多个 Token 生成器，支持客户端凭证模式和用户登录模式。</p>
+     *
+     * @return OAuth2TokenGenerator 实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public OAuth2TokenGenerator<? extends OAuth2Token> oAuth2TokenGenerator(ExtendUserDetailsService userDetailsService, UserProvider userProvider) {
+        CustomizeUserOAuth2AccessTokenGenerator userTokenGenerator = new CustomizeUserOAuth2AccessTokenGenerator();
+        // 用户令牌
+        userTokenGenerator.setAccessTokenCustomizer(new CustomizeUserOAuth2TokenCustomizer(userDetailsService, userProvider));
+        log.info("Configuring CustomizeUserOAuth2AccessTokenGenerator for user login");
+
+        // client 令牌
+        CustomizeClientOAuth2AccessTokenGenerator clientTokenGenerator = new CustomizeClientOAuth2AccessTokenGenerator();
+        clientTokenGenerator.setAccessTokenCustomizer(new CustomizeClientOAuth2TokenCustomizer());
+        log.info("Configuring CustomizeClientOAuth2AccessTokenGenerator for CLIENT_CREDENTIALS");
+        // 刷新令牌
+        OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
+        log.info("Configuring DelegatingOAuth2TokenGenerator with user token generator");
+        return new DelegatingOAuth2TokenGenerator(userTokenGenerator, clientTokenGenerator, refreshTokenGenerator);
     }
 }

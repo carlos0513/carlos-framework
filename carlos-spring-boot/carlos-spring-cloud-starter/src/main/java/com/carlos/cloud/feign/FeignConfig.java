@@ -47,14 +47,13 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(FeignProperties.class)
 public class FeignConfig {
 
-    private final FeignProperties feignProperties;
 
     /**
      * Feign 请求拦截器 - 传递请求头信息
      */
     @Bean
     @ConditionalOnMissingBean
-    public RequestInterceptor requestInterceptor() {
+    public RequestInterceptor requestInterceptor(FeignProperties feignProperties) {
         return new FeignRequestInterceptor(feignProperties);
     }
 
@@ -72,7 +71,7 @@ public class FeignConfig {
      */
     @Bean
     @ConditionalOnProperty(prefix = "carlos.feign.log", name = "enable", havingValue = "true", matchIfMissing = true)
-    public Logger.Level feignLoggerLevel() {
+    public Logger.Level feignLoggerLevel(FeignProperties feignProperties) {
         return feignProperties.getLog().getLevel();
     }
 
@@ -82,7 +81,7 @@ public class FeignConfig {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "carlos.feign.retry", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public Retryer feignRetryer() {
+    public Retryer feignRetryer(FeignProperties feignProperties) {
         FeignProperties.RetryProperties retry = feignProperties.getRetry();
         return new Retryer.Default(
             retry.getPeriod(),
@@ -98,7 +97,7 @@ public class FeignConfig {
     @ConditionalOnMissingBean
     @ConditionalOnClass(OkHttpClient.class)
     @ConditionalOnProperty(prefix = "carlos.feign.pool", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public ConnectionPool connectionPool() {
+    public ConnectionPool connectionPool(FeignProperties feignProperties) {
         FeignProperties.PoolProperties pool = feignProperties.getPool();
         return new ConnectionPool(
             pool.getMaxIdle(),
@@ -114,7 +113,7 @@ public class FeignConfig {
     @ConditionalOnMissingBean
     @ConditionalOnClass(OkHttpClient.class)
     @ConditionalOnProperty(prefix = "carlos.feign.pool", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public OkHttpClient okHttpClient(ConnectionPool connectionPool) {
+    public OkHttpClient okHttpClient(ConnectionPool connectionPool, FeignProperties feignProperties) {
         FeignProperties.PoolProperties pool = feignProperties.getPool();
         return new OkHttpClient.Builder()
             .connectTimeout(pool.getConnectTimeout(), TimeUnit.MILLISECONDS)

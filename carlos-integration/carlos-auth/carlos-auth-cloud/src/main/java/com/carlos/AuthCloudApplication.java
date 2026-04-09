@@ -9,9 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author carlos
  */
 @SpringBootApplication
-public class GovernAuthCloudApplication {
+public class AuthCloudApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(GovernAuthCloudApplication.class, args);
+        SpringApplication.run(AuthCloudApplication.class, args);
     }
 }

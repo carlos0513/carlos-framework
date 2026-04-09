@@ -3,7 +3,6 @@ package com.carlos.boot.application;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.Map;
 
@@ -22,9 +21,4 @@ public class ApplicationProperties {
      */
     private Map<String, String> resourceHandlers;
 
-    /**
-     * 项目信息
-     */
-    @NestedConfigurationProperty
-    private final ApplicationInfoProperties info = new ApplicationInfoProperties();
 }

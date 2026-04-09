@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @AllArgsConstructor
 @RestController
-@RequestMapping("api/oauth")
+@RequestMapping("/oauth2/token")
 @Tag(name = "OAuth2认证")
 public class TokenController {
 

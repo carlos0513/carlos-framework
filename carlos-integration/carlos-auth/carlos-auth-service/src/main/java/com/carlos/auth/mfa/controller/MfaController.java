@@ -38,12 +38,11 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mfa")
+@RequestMapping("/oauth2/mfa")
 @Tag(name = "多因素认证(MFA)", description = "MFA设置、验证、恢复码管理")
 public class MfaController {
 
     private final MfaService mfaService;
-    private final MfaConvert mfaConvert;
 
     /**
      * 获取MFA设置信息（密钥和QR码）
@@ -60,7 +59,7 @@ public class MfaController {
 
         try {
             MfaSetupDTO setupDTO = mfaService.generateMfaSetup(username);
-            MfaSetupVO response = mfaConvert.dtoToVo(setupDTO);
+            MfaSetupVO response = MfaConvert.INSTANCE.dtoToVo(setupDTO);
 
             return Result.success(response, "MFA设置信息生成成功");
         } catch (Exception e) {
@@ -137,7 +136,7 @@ public class MfaController {
 
         try {
             MfaSetupDTO setupDTO = mfaService.resetMfaSecret(username);
-            MfaSetupVO response = mfaConvert.dtoToVo(setupDTO);
+            MfaSetupVO response = MfaConvert.INSTANCE.dtoToVo(setupDTO);
 
             return Result.success(response, "MFA密钥重置成功");
         } catch (Exception e) {
@@ -160,7 +159,7 @@ public class MfaController {
 
         try {
             boolean enabled = mfaService.isMfaEnabled(username);
-            MfaStatusVO response = mfaConvert.buildStatusVO(enabled);
+            MfaStatusVO response = MfaConvert.INSTANCE.buildStatusVO(enabled);
 
             return Result.success(response);
         } catch (Exception e) {
