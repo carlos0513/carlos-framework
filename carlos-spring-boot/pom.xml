@@ -28,7 +28,6 @@
     <module>carlos-spring-boot-starter-integration</module>
     <module>carlos-spring-boot-starter-encrypt</module>
     <module>carlos-spring-boot-starter-flowable</module>
-    <module>carlos-spring-boot-starter-gateway</module>
     <module>carlos-spring-boot-starter-json</module>
     <module>carlos-spring-boot-starter-log</module>
     <module>carlos-spring-boot-starter-minio</module>
@@ -38,6 +37,7 @@
     <module>carlos-spring-boot-starter-openapi</module>
     <module>carlos-spring-boot-starter-oss</module>
     <module>carlos-spring-boot-starter-redis</module>
+    <module>carlos-spring-boot-starter-resource-server</module>
     <module>carlos-spring-boot-starter-sms</module>
     <module>carlos-spring-boot-starter-snowflake</module>
     <module>carlos-spring-boot-starter-translation</module>
