@@ -119,7 +119,7 @@
     <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
     <sms4j.version>3.3.4</sms4j.version>
     <dingtalk-sdk.version>2.0.0</dingtalk-sdk.version>
-    <aws-s3.version>2.20.26</aws-s3.version>
+    <aws-s3.version>2.42.30</aws-s3.version>
     <rocketmq-spring-boot.version>5.3.1</rocketmq-spring-boot.version>        <!-- SCA 2025.0.0.0 推荐版本 -->
     <nacos-client.version>3.0.3</nacos-client.version>              <!-- SCA 2025.0.0.0 推荐版本 -->
     <swagger-annotations.version>2.2.36</swagger-annotations.version>
