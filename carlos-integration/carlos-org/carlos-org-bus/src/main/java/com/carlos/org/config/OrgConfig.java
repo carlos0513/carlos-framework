@@ -1,6 +1,7 @@
 package com.carlos.org.config;
 
 import com.carlos.core.interfaces.ApplicationExtend;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ public class OrgConfig {
 
     @Bean
     @Primary
-//    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean
     public ApplicationExtend applicationExtend() {
         return new OrgApplicationExtendImpl();
     }
