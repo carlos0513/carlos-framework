@@ -22,7 +22,7 @@
     <resource.delimiter>@</resource.delimiter>
 
     <!-- Spring 版本（从dependencies继承） -->
-    <spring-boot.version>3.5.9</spring-boot.version>
+    <spring-boot.version>4.0.5</spring-boot.version>
 
     <!-- 插件版本 -->
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
