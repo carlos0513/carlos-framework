@@ -1,5 +1,6 @@
 package com.carlos.auth.mfa.service;
 
+import com.carlos.auth.api.enums.AuthErrorCode;
 import com.carlos.auth.mfa.pojo.dto.MfaSetupDTO;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
@@ -51,7 +52,7 @@ public class MfaService {
         // 查找用户
         UserInfo user = userProvider.loadUserByIdentifier(username);
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在: " + username);
+            throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception("用户不存在: %s", username);
         }
 
         // 生成密钥
@@ -89,13 +90,13 @@ public class MfaService {
 
         if (!isValid) {
             log.warn("MFA verification failed for user: {}", username);
-            return false;
+            throw AuthErrorCode.AUTH_MFA_CODE_ERROR.exception();
         }
 
         // 查找用户
         UserInfo user = userProvider.loadUserByIdentifier(username);
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在: " + username);
+            throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception("用户不存在: %s", username);
         }
 
         // 启用MFA并保存密钥
@@ -118,12 +119,12 @@ public class MfaService {
         // 查找用户
         UserInfo user = userProvider.loadUserByIdentifier(username);
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在: " + username);
+            throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception("用户不存在: %s", username);
         }
 
         // 检查是否启用了MFA
         // if (Boolean.FALSE.equals(user.getMfaEnabled()) || user.getMfaSecret() == null) {
-        //     throw new IllegalStateException("MFA未启用");
+        //     throw AuthErrorCode.AUTH_MFA_NOT_ENABLED.exception();
         // }
         //
         // // 验证TOTP验证码
@@ -151,7 +152,7 @@ public class MfaService {
         // 查找用户
         UserInfo user = userProvider.loadUserByIdentifier(username);
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在: " + username);
+            throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception("用户不存在: %s", username);
         }
 
         // 禁用MFA

@@ -1,5 +1,6 @@
 package com.carlos.auth.security.ext;
 
+import com.carlos.auth.api.enums.AuthErrorCode;
 import com.carlos.auth.oauth2.OAuth2ErrorCodesExpand;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
@@ -29,7 +30,8 @@ import java.util.stream.Collectors;
 /**
  * 扩展认证提供者
  *
- * <p>支持多种认证方式的统一认证处理器，包括密码、短信、邮箱、扫码、第三方登录等。</p>
+ * <p>支持多种认证方式的统一认证处理器，包括短信、邮箱、扫码、第三方登录等。</p>
+ * <p><strong>注意：</strong>密码认证已通过表单登录（/login）端点实现，不再通过扩展授权流程处理。</p>
  *
  * <h3>认证流程：</h3>
  * <ol>
@@ -42,7 +44,6 @@ import java.util.stream.Collectors;
  *
  * <h3>支持的认证方式：</h3>
  * <ul>
- *   <li>password - 密码认证（使用 PasswordEncoder 验证）</li>
  *   <li>sms_code - 短信验证码认证（需接入短信服务）</li>
  *   <li>email_code - 邮箱验证码认证（需接入邮件服务）</li>
  *   <li>qr_code - 扫码认证（需接入扫码服务）</li>
@@ -197,8 +198,6 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
         String grantType = token.getGrantType().getValue();
 
         switch (grantType) {
-            case "password":
-                return authenticateByPassword(token);
             case "sms_code":
                 return authenticateBySmsCode(token);
             case "email_code":
@@ -208,38 +207,9 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
             case "social":
                 return authenticateBySocial(token);
             default:
-                throw new BadCredentialsException("不支持的认证方式: " + grantType);
+                log.error("Unsupported authentication type: {}", grantType);
+                throw AuthErrorCode.AUTH_PARAM_GRANT_TYPE_INVALID.exception("不支持的认证方式: %s", grantType);
         }
-    }
-
-    /**
-     * 密码认证
-     *
-     * @param token 认证令牌
-     * @return 认证成功的令牌
-     */
-    protected ExtendAuthenticationToken authenticateByPassword(ExtendAuthenticationToken token) {
-        String username = (String) token.getPrincipal();
-        String password = (String) token.getCredentials();
-
-        // 加载用户信息
-        UserInfo userInfo = userProvider.loadUserByIdentifier(username);
-        if (userInfo == null) {
-            log.warn("User not found: {}", username);
-            throw new UsernameNotFoundException(OAuth2ErrorCodesExpand.USERNAME_NOT_FOUND.getErrorDescription());
-        }
-
-        // 验证密码
-        if (!passwordEncoder.matches(password, userInfo.getPassword())) {
-            log.warn("Invalid password for user: {}", username);
-            throw new BadCredentialsException(OAuth2ErrorCodesExpand.BAD_CREDENTIALS.getErrorDescription());
-        }
-
-        // 检查用户状态
-        checkUserStatus(userInfo);
-
-        // 构建认证成功令牌
-        return buildAuthenticatedToken(token, userInfo);
     }
 
     /**
@@ -271,7 +241,7 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
             // 短信登录时，如果用户不存在可以自动创建
             log.info("Creating new user for phone: {}", phone);
             // userInfo = createUserByPhone(phone);
-            throw new UsernameNotFoundException("用户不存在: " + phone);
+            throw AuthErrorCode.AUTH_USER_PHONE_NOT_FOUND.exception("手机号对应的用户不存在: %s", phone);
         }
 
         // 检查用户状态
@@ -328,7 +298,7 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
             UserInfo userInfo = qrCodeValidator.validateAndGetUser(qrToken);
             if (userInfo == null) {
                 log.warn("Invalid or expired QR token: {}", qrToken);
-                throw new BadCredentialsException("扫码令牌无效或已过期");
+                throw AuthErrorCode.AUTH_QR_CODE_INVALID.exception();
             }
 
             // 检查用户状态
@@ -337,7 +307,7 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
             return buildAuthenticatedToken(token, userInfo);
         } else {
             log.error("QR code validator not configured");
-            throw new BadCredentialsException("扫码认证服务未配置");
+            throw AuthErrorCode.AUTH_QR_CODE_SERVICE_NOT_CONFIGURED.exception();
         }
     }
 
@@ -351,7 +321,7 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
         String socialInfo = (String) token.getPrincipal();
         String[] parts = socialInfo.split(":", 2);
         if (parts.length != 2) {
-            throw new BadCredentialsException("第三方登录信息格式错误");
+            throw AuthErrorCode.AUTH_SOCIAL_LOGIN_INFO_INVALID.exception();
         }
         String socialType = parts[0];
         String socialCode = parts[1];
@@ -361,7 +331,7 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
             UserInfo userInfo = socialLoginValidator.validateAndGetUser(socialType, socialCode);
             if (userInfo == null) {
                 log.warn("Social login failed: type={}, code={}", socialType, socialCode);
-                throw new BadCredentialsException("第三方登录失败");
+                throw AuthErrorCode.AUTH_SOCIAL_LOGIN_FAILED.exception();
             }
 
             // 检查用户状态
@@ -370,7 +340,7 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
             return buildAuthenticatedToken(token, userInfo);
         } else {
             log.error("Social login validator not configured");
-            throw new BadCredentialsException("第三方登录服务未配置");
+            throw AuthErrorCode.AUTH_SOCIAL_LOGIN_SERVICE_NOT_CONFIGURED.exception();
         }
     }
 

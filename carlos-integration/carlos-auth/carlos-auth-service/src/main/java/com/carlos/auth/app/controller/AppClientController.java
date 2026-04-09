@@ -2,6 +2,7 @@ package com.carlos.auth.app.controller;
 
 import cn.hutool.core.util.StrUtil;
 import cn.idev.excel.FastExcel;
+import com.carlos.auth.api.enums.AuthErrorCode;
 import com.carlos.auth.app.convert.AppClientConvert;
 import com.carlos.auth.app.listener.AppClientExcelListener;
 import com.carlos.auth.app.manager.AppClientManager;
@@ -14,7 +15,6 @@ import com.carlos.auth.app.pojo.vo.AppClientListVO;
 import com.carlos.auth.app.pojo.vo.AppClientPageVO;
 import com.carlos.auth.app.pojo.vo.AppClientVO;
 import com.carlos.auth.app.service.AppClientService;
-import com.carlos.core.exception.BusinessException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamId;
 import com.carlos.core.param.ParamIdSet;
@@ -109,12 +109,12 @@ public class AppClientController {
         try {
             final String filename = file.getOriginalFilename();
             if (StrUtil.isBlank(filename)) {
-                throw new BusinessException("文件名不能为空");
+                throw AuthErrorCode.AUTH_PARAM_INVALID.exception("文件名不能为空");
             }
             ExcelUtil.checkExcel(filename);
             FastExcel.read(file.getInputStream(), AppClientExcel.class, listener).sheet().doRead();
         } catch (final IOException e) {
-            throw new BusinessException("文件读取失败");
+            throw AuthErrorCode.AUTH_CLIENT_IMPORT_FAILED.exception();
         }
     }
 

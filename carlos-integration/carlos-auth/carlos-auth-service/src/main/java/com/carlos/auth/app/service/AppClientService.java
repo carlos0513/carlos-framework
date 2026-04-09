@@ -7,11 +7,11 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.carlos.auth.api.enums.AuthErrorCode;
 import com.carlos.auth.app.manager.AppClientManager;
 import com.carlos.auth.app.pojo.dto.AppClientDTO;
 import com.carlos.auth.app.pojo.enums.ClientStateEnum;
 import com.carlos.auth.app.pojo.excel.AppClientExcel;
-import com.carlos.core.exception.BusinessException;
 import com.carlos.encrypt.EncryptUtil;
 import com.carlos.util.easyexcel.ExcelUtil;
 import com.google.common.collect.Lists;
@@ -48,7 +48,7 @@ public class AppClientService {
         // 检查名称是否重复
         AppClientDTO client = appClientManager.getByClientName(dto.getAppName());
         if (client != null) {
-            throw new BusinessException("应用名称已存在");
+            throw AuthErrorCode.AUTH_CLIENT_NAME_EXISTS.exception();
         }
 
         // 生成appKey和秘钥
@@ -65,12 +65,10 @@ public class AppClientService {
         }
         boolean success = appClientManager.add(dto);
         if (!success) {
-            // 保存失败的应对措施
-            throw new BusinessException("添加失败！");
+            throw AuthErrorCode.AUTH_CLIENT_ADD_FAILED.exception();
         }
         Serializable id = dto.getId();
         dto.setAppSecret(secret);
-        // 保存完成的后续业务
         log.info("Insert 'AppClient' data: id:{}", id);
         return dto;
     }
@@ -79,20 +77,21 @@ public class AppClientService {
         for (Serializable id : ids) {
             boolean success = appClientManager.delete(id);
             if (!success) {
-                // 删除失败的措施
+                log.warn("Failed to delete AppClient, id: {}", id);
                 continue;
             }
-            // 删除成功的后续业务
+            log.info("Delete 'AppClient' data: id:{}", id);
         }
     }
 
     public void updateAppClient(AppClientDTO dto) {
+        if (dto.getId() == null) {
+            throw AuthErrorCode.AUTH_PARAM_ID_MISSING.exception();
+        }
         boolean success = appClientManager.modify(dto);
         if (!success) {
-            // 修改失败操作
-            return;
+            throw AuthErrorCode.AUTH_CLIENT_UPDATE_FAILED.exception();
         }
-        // 修改成功的后续操作
         log.info("Update 'AppClient' data: id:{}", dto.getId());
     }
 
@@ -106,17 +105,20 @@ public class AppClientService {
      */
     public String resetSecret(Serializable id) {
         if (id == null) {
-            return null;
+            throw AuthErrorCode.AUTH_PARAM_ID_MISSING.exception();
         }
         AppClientDTO dto = appClientManager.getDtoById(id);
         if (dto == null) {
-            throw new BusinessException("未查询到对应的应用信息");
+            throw AuthErrorCode.AUTH_CLIENT_NOT_FOUND.exception();
         }
         String secret = RandomUtil.randomString(16);
-        dto = new AppClientDTO();
-        dto.setId(dto.getId());
-        dto.setAppSecret(EncryptUtil.encrypt(secret));
-        appClientManager.modify(dto);
+        AppClientDTO updateDto = new AppClientDTO();
+        updateDto.setId(dto.getId());
+        updateDto.setAppSecret(EncryptUtil.encrypt(secret));
+        boolean success = appClientManager.modify(updateDto);
+        if (!success) {
+            throw AuthErrorCode.AUTH_CLIENT_UPDATE_FAILED.exception("重置密钥失败");
+        }
         log.info("Reset client secret success, appKey:{}", dto.getAppKey());
         return secret;
     }
@@ -133,9 +135,12 @@ public class AppClientService {
      */
     public AppClientDTO findById(Serializable id, boolean deEncrypt) {
         if (ObjectUtil.isEmpty(id)) {
-            throw new BusinessException("client id can't be null");
+            throw AuthErrorCode.AUTH_PARAM_ID_MISSING.exception();
         }
         AppClientDTO dto = appClientManager.getDtoById(id);
+        if (dto == null) {
+            throw AuthErrorCode.AUTH_CLIENT_NOT_FOUND.exception();
+        }
         if (deEncrypt) {
             dto.setAppSecret(EncryptUtil.decrypt(dto.getAppSecret()));
         }
@@ -154,9 +159,12 @@ public class AppClientService {
      */
     public AppClientDTO findByAppkey(String appKey, boolean deEncrypt) {
         if (ObjectUtil.isEmpty(appKey)) {
-            throw new BusinessException("client id can't be null");
+            throw AuthErrorCode.AUTH_PARAM_CLIENT_ID_MISSING.exception();
         }
         AppClientDTO client = appClientManager.getByAppkey(appKey);
+        if (client == null) {
+            throw AuthErrorCode.AUTH_CLIENT_NOT_FOUND.exception();
+        }
         if (deEncrypt) {
             client.setAppSecret(EncryptUtil.decrypt(client.getAppSecret()));
         }
@@ -189,12 +197,10 @@ public class AppClientService {
      * @date 2025-03-27 13:42
      */
     public void export(HttpServletResponse response, boolean isTemplate) {
-        // 表格标题，就是模型的属性名
         String name = "应用导入模板-" + DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN);
 
         List<AppClientExcel> data = Lists.newArrayList();
         if (!isTemplate) {
-            // 获取数据
             List<AppClientDTO> list = appClientManager.listAll();
             for (AppClientDTO dto : list) {
                 AppClientExcel excel = new AppClientExcel();
@@ -214,7 +220,8 @@ public class AppClientService {
         try {
             ExcelUtil.download(response, name, AppClientExcel.class, data);
         } catch (Exception e) {
-            throw new BusinessException("应用信息导出失败");
+            log.error("导出应用客户端失败", e);
+            throw AuthErrorCode.AUTH_CLIENT_EXPORT_FAILED.exception();
         }
     }
 }

@@ -141,15 +141,13 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
                     .principal(usernamePasswordAuthentication)
                     // .providerContext(ProviderContextHolder.getProviderContext())
                     .authorizedScopes(authorizedScopes)
-                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                    // 不设置 authorizationGrantType，因为这是扩展授权流程
                     .authorizationGrant(authenticationToken);
             // @formatter:on
 
             OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization
-                    .withRegisteredClient(registeredClient).principalName(usernamePasswordAuthentication.getName())
-                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                    // .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes)
-                    ;
+                .withRegisteredClient(registeredClient).principalName(usernamePasswordAuthentication.getName());
+            // 不设置 authorizationGrantType
 
             // ----- Access token -----
             OAuth2TokenContext tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.ACCESS_TOKEN).build();

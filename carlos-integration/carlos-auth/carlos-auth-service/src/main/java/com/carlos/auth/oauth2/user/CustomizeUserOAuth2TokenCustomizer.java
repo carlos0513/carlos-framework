@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * 用户模式 Token 自定义增强器
  *
- * <p>针对 PASSWORD、AUTHORIZATION_CODE 等涉及用户身份的授权类型的 Token 进行增强，
+ * <p>针对表单登录、AUTHORIZATION_CODE 等涉及用户身份的认证方式的 Token 进行增强，
  * 添加用户相关信息。</p>
  *
  * <h3>添加的声明：</h3>
@@ -82,7 +82,7 @@ public class CustomizeUserOAuth2TokenCustomizer implements OAuth2TokenCustomizer
     /**
      * 自定义 Token 声明
      *
-     * <p>处理涉及用户身份的授权类型（PASSWORD、AUTHORIZATION_CODE、REFRESH_TOKEN）。</p>
+     * <p>处理涉及用户身份的授权类型（AUTHORIZATION_CODE、REFRESH_TOKEN、表单登录等）。</p>
      *
      * @param context Token 声明上下文
      */

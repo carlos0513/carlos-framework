@@ -2,6 +2,7 @@ package com.carlos.auth.security.ext;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
+import com.carlos.auth.oauth2.grant.CustomGrantTypes;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -24,10 +25,10 @@ import java.util.Set;
  * 扩展认证转换器
  *
  * <p>支持多种认证方式的请求转换，将 HTTP 请求转换为统一的 ExtendAuthenticationToken。</p>
+ * <p><strong>注意：</strong>密码认证已通过表单登录（/login）端点实现，不再通过扩展授权流程处理。</p>
  *
  * <h3>支持的认证方式：</h3>
  * <ul>
- *   <li>password - 密码认证</li>
  *   <li>sms_code - 短信验证码认证</li>
  *   <li>email_code - 邮箱验证码认证</li>
  *   <li>qr_code - 扫码认证</li>
@@ -38,9 +39,9 @@ import java.util.Set;
  * <table border="1">
  *   <tr><th>参数名</th><th>必填</th><th>说明</th></tr>
  *   <tr><td>grant_type</td><td>是</td><td>授权类型</td></tr>
- *   <tr><td>username</td><td>条件</td><td>用户名/手机号/邮箱（密码认证时必填）</td></tr>
- *   <tr><td>password</td><td>条件</td><td>密码/验证码（密码/验证码认证时必填）</td></tr>
- *   <tr><td>phone</td><td>条件</td><td>手机号（短信认证时必填）</td></tr>
+ *   <tr><td>username</td><td>条件</td><td>用户名（短信认证时）</td></tr>
+ *   <tr><td>password</td><td>条件</td><td>验证码（短信认证时）</td></tr>
+ *   <tr><td>phone</td><td>条件</td><td>手机号（短信认证时）</td></tr>
  *   <tr><td>sms_code</td><td>条件</td><td>短信验证码</td></tr>
  *   <tr><td>email</td><td>条件</td><td>邮箱（邮箱认证时必填）</td></tr>
  *   <tr><td>email_code</td><td>条件</td><td>邮箱验证码</td></tr>
@@ -69,14 +70,13 @@ import java.util.Set;
 public class ExtendAuthenticationConverter implements AuthenticationConverter {
 
     /**
-     * 支持的授权类型
+     * 支持的授权类型（不包含密码授权，密码登录请使用 /login 表单登录端点）
      */
     protected static final Set<String> SUPPORTED_GRANT_TYPES = new HashSet<>(Arrays.asList(
-        AuthorizationGrantType.PASSWORD.getValue(),
-        "sms_code",
-        "email_code",
-        "qr_code",
-        "social"
+        CustomGrantTypes.SMS_CODE.getValue(),
+        CustomGrantTypes.EMAIL_CODE.getValue(),
+        CustomGrantTypes.QR_CODE.getValue(),
+        CustomGrantTypes.SOCIAL.getValue()
     ));
 
     /**
@@ -177,9 +177,6 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
      */
     protected void validateParameters(Map<String, String> params, String grantType) {
         switch (grantType) {
-            case "password":
-                validatePasswordParams(params);
-                break;
             case "sms_code":
                 validateSmsParams(params);
                 break;
@@ -195,23 +192,6 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
             default:
                 // 其他类型由子类处理
                 break;
-        }
-    }
-
-    /**
-     * 验证密码认证参数
-     */
-    protected void validatePasswordParams(Map<String, String> params) {
-        String username = params.get(OAuth2ParameterNames.USERNAME);
-        String password = params.get(OAuth2ParameterNames.PASSWORD);
-
-        if (StrUtil.isBlank(username)) {
-            throw new OAuth2AuthenticationException(
-                new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, "用户名不能为空", ""));
-        }
-        if (StrUtil.isBlank(password)) {
-            throw new OAuth2AuthenticationException(
-                new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, "密码不能为空", ""));
         }
     }
 
@@ -294,8 +274,6 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
      */
     protected Object extractPrincipal(Map<String, String> params, String grantType) {
         switch (grantType) {
-            case "password":
-                return params.get(OAuth2ParameterNames.USERNAME);
             case "sms_code":
                 return params.get("phone");
             case "email_code":
@@ -320,8 +298,6 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
      */
     protected Object extractCredentials(Map<String, String> params, String grantType) {
         switch (grantType) {
-            case "password":
-                return params.get(OAuth2ParameterNames.PASSWORD);
             case "sms_code":
                 return params.get("sms_code");
             case "email_code":
@@ -330,7 +306,7 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
             case "social":
                 return null; // 这些方式不需要凭证
             default:
-                return params.get(OAuth2ParameterNames.PASSWORD);
+                return null;
         }
     }
 

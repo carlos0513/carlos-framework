@@ -14,10 +14,10 @@ import java.util.*;
  * 扩展认证令牌
  *
  * <p>用于支持多种认证方式的统一令牌，可以携带额外的认证参数。</p>
+ * <p><strong>注意：</strong>密码认证已通过表单登录（/login）端点实现，不再通过扩展授权流程处理。</p>
  *
  * <h3>支持的认证方式：</h3>
  * <ul>
- *   <li>密码认证（PASSWORD）</li>
  *   <li>短信验证码认证（SMS_CODE）</li>
  *   <li>邮箱验证码认证（EMAIL_CODE）</li>
  *   <li>扫码认证（QR_CODE）</li>

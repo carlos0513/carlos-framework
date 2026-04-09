@@ -3,6 +3,7 @@ package com.carlos.auth.login;
 import com.carlos.audit.api.ApiAuditLogMain;
 import com.carlos.audit.api.pojo.enums.*;
 import com.carlos.audit.api.pojo.param.ApiAuditLogMainParam;
+import com.carlos.auth.api.enums.AuthErrorCode;
 import com.carlos.auth.login.dto.LoginRequest;
 import com.carlos.auth.login.dto.LoginResponse;
 import com.carlos.auth.provider.UserInfo;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -167,7 +167,7 @@ public class UserLoginService {
 
             if (user == null) {
                 log.error("User not found after authentication: {}", loginRequest.getUsername());
-                throw new BadCredentialsException("用户不存在");
+                throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception();
             }
 
             // 检查是否需要MFA验证
@@ -237,7 +237,7 @@ public class UserLoginService {
         RegisteredClient registeredClient = registeredClientRepository.findByClientId(defaultClientId);
         if (registeredClient == null) {
             log.error("Default client not found: {}", defaultClientId);
-            throw new BadCredentialsException("客户端配置错误");
+            throw AuthErrorCode.AUTH_CLIENT_NOT_FOUND.exception("默认客户端配置不存在: %s", defaultClientId);
         }
 
         // 构建 Token 上下文
@@ -252,15 +252,15 @@ public class UserLoginService {
             .registeredClient(registeredClient)
             .principal(authentication)
             .authorizedScopes(authorizedScopes)
-            .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+            // 不设置 authorizationGrantType，因为这是直接登录而非 OAuth2 授权流程
             .authorizationGrant(authentication);
         // @formatter:on
 
         // 构建授权信息
         OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization
             .withRegisteredClient(registeredClient)
-            .principalName(authentication.getName())
-            .authorizationGrantType(AuthorizationGrantType.PASSWORD);
+            .principalName(authentication.getName());
+        // 不设置 authorizationGrantType
 
         // 生成访问令牌
         OAuth2TokenContext tokenContext = tokenContextBuilder
@@ -270,7 +270,7 @@ public class UserLoginService {
 
         if (generatedAccessToken == null) {
             log.error("Failed to generate access token for user: {}", user.getUsername());
-            throw new BadCredentialsException("令牌生成失败");
+            throw AuthErrorCode.AUTH_TOKEN_GENERATE_FAILED.exception();
         }
 
         OAuth2AccessToken accessToken = new OAuth2AccessToken(
