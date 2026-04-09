@@ -2894,4 +2894,23 @@ public class RedisUtil {
 
     // endregion----------------------   通用方法完善 end   ------------------------
 
+    // region----------------------   Pub/Sub 发布订阅   ------------------------
+
+    /**
+     * 发布消息到指定频道
+     *
+     * @param channel 频道名称
+     * @param message 消息内容
+     */
+    public static void convertAndSend(String channel, Object message) {
+        try {
+            redisTemplate.convertAndSend(channel, message);
+            log.debug("Published message to channel: {}", channel);
+        } catch (Exception e) {
+            log.error("Failed to publish message to channel: {}", channel, e);
+        }
+    }
+
+    // endregion----------------------   Pub/Sub 发布订阅 end   ------------------------
+
 }

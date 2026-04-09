@@ -2,6 +2,7 @@ package com.carlos.auth.captcha;
 
 import com.carlos.auth.util.SensitiveDataUtil;
 import com.carlos.core.response.Result;
+import com.carlos.redis.ratelimit.RateLimitUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -48,11 +51,11 @@ public class CaptchaController {
 
         // TODO: 恢复速率限制检查
         // 检查发送限制（3次/分钟）
-        // String rateLimitKey = "auth:rate:captcha:sms:" + phone;
-        // if (!RateLimitUtil.tryAcquire(rateLimitKey, 3, 1, TimeUnit.MINUTES)) {
-        //     log.warn("SMS captcha send rate limit exceeded for phone: {}", SensitiveDataUtil.maskPhone(phone));
-        //     return Result.error("发送过于频繁，请稍后再试");
-        // }
+        String rateLimitKey = "auth:rate:captcha:sms:" + phone;
+        if (!RateLimitUtil.tryAcquire(rateLimitKey, 3, 1, TimeUnit.MINUTES)) {
+            log.warn("SMS captcha send rate limit exceeded for phone: {}", SensitiveDataUtil.maskPhone(phone));
+            return Result.error("发送过于频繁，请稍后再试");
+        }
 
         // 检查每日上限
         if (!captchaService.canSendCaptcha("sms", phone)) {
