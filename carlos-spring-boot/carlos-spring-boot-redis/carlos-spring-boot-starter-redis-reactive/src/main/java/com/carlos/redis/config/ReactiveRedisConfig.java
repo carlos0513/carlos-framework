@@ -35,7 +35,7 @@ import reactor.core.publisher.Flux;
 @Configuration
 @ConditionalOnClass({ReactiveRedisTemplate.class, Flux.class})
 @ConditionalOnProperty(name = "carlos.cache.reactive.enabled", havingValue = "true", matchIfMissing = true)
-@AutoConfigureBefore({RedisLettuceConnectionConfiguration.class, RedisAutoConfiguration.class})
+@AutoConfigureBefore(RedisAutoConfiguration.class)
 @AllArgsConstructor
 public class ReactiveRedisConfig {
 

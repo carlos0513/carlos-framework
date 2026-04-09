@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-spring-boot</artifactId>
+    <artifactId>carlos-spring-boot-redis</artifactId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -13,22 +13,16 @@
 
   <artifactId>carlos-spring-boot-starter-redis</artifactId>
 
-  <description>Redis缓存模块，集成Redisson分布式锁和Caffeine本地缓存，支持多级缓存和多种序列化方式</description>
+  <description>Redis缓存模块（同步实现），集成Redisson分布式锁和Caffeine本地缓存，支持多级缓存</description>
 
   <dependencies>
-    <!-- carlos-spring-boot-core -->
+    <!-- Redis Core -->
     <dependency>
       <groupId>com.carlos</groupId>
-      <artifactId>carlos-spring-boot-core</artifactId>
+      <artifactId>carlos-spring-boot-starter-redis-core</artifactId>
     </dependency>
 
-    <!-- carlos-spring-boot-starter-json -->
-    <dependency>
-      <groupId>com.carlos</groupId>
-      <artifactId>carlos-spring-boot-starter-json</artifactId>
-    </dependency>
-
-    <!-- Spring Boot Redis -->
+    <!-- Spring Boot Redis Starter -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -46,30 +40,10 @@
       <artifactId>redisson-spring-boot-starter</artifactId>
     </dependency>
 
-    <!-- Caffeine本地缓存 -->
-    <dependency>
-      <groupId>com.github.ben-manes.caffeine</groupId>
-      <artifactId>caffeine</artifactId>
-    </dependency>
-
     <!-- Spring Cache -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-cache</artifactId>
-    </dependency>
-
-    <!-- Fastjson -->
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>fastjson</artifactId>
-    </dependency>
-
-    <!-- Kryo 高性能二进制序列化（可选） -->
-    <dependency>
-      <groupId>com.esotericsoftware</groupId>
-      <artifactId>kryo</artifactId>
-      <version>5.6.2</version>
-      <optional>true</optional>
     </dependency>
 
     <!-- Micrometer 监控指标（可选） -->
@@ -79,13 +53,7 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- Spring WebFlux（可选，为 Gateway 等响应式应用提供支持） -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-webflux</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
+    <!-- Servlet API（用于RateLimit等功能） -->
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>

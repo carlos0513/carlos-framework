@@ -36,7 +36,7 @@
     <module>carlos-spring-boot-starter-mybatis</module>
     <module>carlos-spring-boot-starter-openapi</module>
     <module>carlos-spring-boot-starter-oss</module>
-    <module>carlos-spring-boot-starter-redis</module>
+    <module>carlos-spring-boot-redis</module>
     <module>carlos-spring-boot-starter-security</module>
     <module>carlos-spring-boot-starter-sms</module>
     <module>carlos-spring-boot-starter-snowflake</module>

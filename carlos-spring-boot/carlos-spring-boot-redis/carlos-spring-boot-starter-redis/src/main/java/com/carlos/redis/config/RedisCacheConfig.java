@@ -3,9 +3,6 @@ package com.carlos.redis.config;
 import com.carlos.redis.metrics.CacheMetrics;
 import com.carlos.redis.metrics.CacheMetricsCollector;
 import com.carlos.redis.serialize.ConfigurableRedisSerializer;
-import com.carlos.redis.serialize.RedisSerializerStrategy;
-import com.carlos.redis.serialize.SerializerFactory;
-import com.carlos.redis.serialize.SerializerType;
 import com.carlos.redis.util.CacheKeyGenerator;
 import com.carlos.redis.util.RedisUtil;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -18,7 +15,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -48,32 +45,16 @@ import java.time.Duration;
 @AllArgsConstructor
 @AutoConfigureBefore({RedisLettuceConnectionConfiguration.class, RedisAutoConfiguration.class})
 @EnableConfigurationProperties(CacheProperties.class)
-public class RedisCacheConfig extends CachingConfigurerSupport implements DisposableBean {
+public class RedisCacheConfig implements CachingConfigurer, DisposableBean {
 
     private final LettuceConnectionFactory factory;
     private final CacheProperties cacheProperties;
-
-    /**
-     * 创建序列化策略
-     */
-    @Bean
-    public RedisSerializerStrategy redisSerializerStrategy() {
-        SerializerType type = cacheProperties.getSerializer();
-        log.info("Initializing Redis serializer: {} ({})", type.getCode(), type.getDescription());
-        return SerializerFactory.getSerializer(type);
-    }
-
-    /**
-     * 创建 Redis 序列化器
-     */
-    @Bean
-    public ConfigurableRedisSerializer configurableRedisSerializer(RedisSerializerStrategy strategy) {
-        return new ConfigurableRedisSerializer(strategy);
-    }
+    private final ConfigurableRedisSerializer configurableRedisSerializer;
+    private final PrefixKeySerializer keySerializer;
 
     @Bean
     @Primary
-    public RedisTemplate<String, Object> redisTemplate(ConfigurableRedisSerializer valueSerializer) {
+    public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
@@ -83,36 +64,27 @@ public class RedisCacheConfig extends CachingConfigurerSupport implements Dispos
         template.setHashKeySerializer(keySerializer);
 
         // value 序列化使用配置的序列化器
-        template.setValueSerializer(valueSerializer);
-        template.setHashValueSerializer(valueSerializer);
+        template.setValueSerializer(configurableRedisSerializer);
+        template.setHashValueSerializer(configurableRedisSerializer);
 
         template.afterPropertiesSet();
-        log.info("RedisTemplate initialized with {} serializer", valueSerializer.getSerializerType());
+        log.info("RedisTemplate initialized with {} serializer", configurableRedisSerializer.getSerializerType());
         return template;
     }
 
     @Bean("onlyMasterTemplate")
     public RedisTemplate<String, Object> onlyMasterTemplate(
-        @Qualifier("masterOnlyFactory") LettuceConnectionFactory factory,
-        ConfigurableRedisSerializer valueSerializer) {
+        @Qualifier("masterOnlyFactory") LettuceConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
         StringRedisSerializer keySerializer = new StringRedisSerializer();
         template.setKeySerializer(keySerializer);
         template.setHashKeySerializer(keySerializer);
-        template.setValueSerializer(valueSerializer);
-        template.setHashValueSerializer(valueSerializer);
+        template.setValueSerializer(configurableRedisSerializer);
+        template.setHashValueSerializer(configurableRedisSerializer);
         template.afterPropertiesSet();
         return template;
-    }
-
-    /**
-     * 键序列化器（支持前缀）
-     */
-    @Bean
-    public PrefixKeySerializer keySerializer() {
-        return new PrefixKeySerializer(cacheProperties);
     }
 
     /**
@@ -136,13 +108,11 @@ public class RedisCacheConfig extends CachingConfigurerSupport implements Dispos
     @Bean
     @Override
     public CacheManager cacheManager() {
-        ConfigurableRedisSerializer valueSerializer = configurableRedisSerializer(redisSerializerStrategy());
-
         // 生成一个默认配置，通过 config 对象即可对缓存进行自定义配置
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
             // 配置注解缓存键值序列化方式
-            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
-            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer))
+            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(configurableRedisSerializer))
             // 缓存不失效
             .entryTtl(Duration.ofSeconds(-1));
 
