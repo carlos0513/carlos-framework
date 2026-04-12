@@ -12,9 +12,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2026年2月28日 下午4:24:06
  */
 @SpringBootApplication
-public class CarlosAuditBootApplication {
+public class AuditBootApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CarlosAuditBootApplication.class, args);
+        SpringApplication.run(AuditBootApplication.class, args);
     }
 }

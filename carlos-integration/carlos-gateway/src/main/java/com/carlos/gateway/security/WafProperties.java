@@ -59,4 +59,9 @@ public class WafProperties {
      * 允许的 Origin（用于 CSRF 检查）
      */
     private String allowedOrigin = "http://localhost";
+
+    /**
+     * 最大请求体检查大小（字节，默认 1MB）
+     */
+    private int maxBodySize = 1024 * 1024;
 }

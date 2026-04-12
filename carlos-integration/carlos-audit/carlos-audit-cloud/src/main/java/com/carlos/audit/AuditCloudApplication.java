@@ -15,9 +15,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class CarlosAuditCloudApplication {
+public class AuditCloudApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(CarlosAuditCloudApplication.class, args);
+        SpringApplication.run(AuditCloudApplication.class, args);
     }
 }

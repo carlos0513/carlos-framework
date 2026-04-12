@@ -6,6 +6,7 @@ import com.carlos.core.auth.UserContext;
 import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.core.util.PathMatchUtil;
 import com.carlos.gateway.oauth2.validator.TokenValidator;
+import com.carlos.gateway.whitelist.WhitelistContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -21,12 +22,21 @@ import java.util.Optional;
 
 /**
  * <p>
- * OAuth2 认证过滤器
+ * OAuth2 认证过滤器 - 优化版
  * 统一处理 JWT 和 Opaque Token 认证
+ * </p>
+ * <p>
+ * 优化点：
+ * <ul>
+ *   <li>优先使用统一白名单检查结果（UnifiedWhitelistFilter）</li>
+ *   <li>避免重复进行路径匹配</li>
+ *   <li>降级兼容：统一白名单未启用时，使用本地白名单</li>
+ * </ul>
  * </p>
  *
  * @author carlos
  * @date 2026/3/16
+ * @updated 2026-04-10 优化：使用统一白名单
  */
 @Slf4j
 public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
@@ -51,9 +61,11 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         URI uri = request.getURI();
         String path = uri.getPath();
 
-        // 白名单路径直接放行
-        if (PathMatchUtil.antMatchAny(properties.getWhitelist(), path)) {
-            log.debug("Path {} is in whitelist, skipping authentication", path);
+        // 白名单路径直接放行（优先使用统一白名单检查结果）
+        if (isWhitelisted(exchange, path)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Path {} is in whitelist, skipping authentication", path);
+            }
             return chain.filter(exchange);
         }
 
@@ -72,7 +84,9 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         // 验证 Token 并构建用户上下文
         return tokenValidator.validate(token)
             .flatMap(userContext -> {
-                log.debug("Token validated successfully for user: {}", userContext.getAccount());
+                if (log.isDebugEnabled()) {
+                    log.debug("Token validated successfully for user: {}", userContext.getAccount());
+                }
                 // 将用户信息注入请求头
                 ServerHttpRequest mutatedRequest = injectUserContext(request, userContext);
                 ServerWebExchange mutatedExchange = exchange.mutate()
@@ -89,6 +103,25 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
                 // 认证失败，继续执行（后续的鉴权过滤器会处理）
                 return chain.filter(exchange);
             });
+    }
+
+    /**
+     * 检查路径是否在白名单中（优化版）
+     * <p>
+     * 优先使用统一白名单检查结果，如果统一白名单未启用，则使用本地白名单
+     *
+     * @param exchange ServerWebExchange
+     * @param path     请求路径
+     * @return true 如果在白名单中
+     */
+    private boolean isWhitelisted(ServerWebExchange exchange, String path) {
+        // 1. 优先使用统一白名单检查结果
+        if (WhitelistContext.isAuthWhitelisted(exchange)) {
+            return true;
+        }
+
+        // 2. 降级兼容：统一白名单未启用或结果不存在，使用本地白名单
+        return PathMatchUtil.antMatchAny(properties.getWhitelist(), path);
     }
 
     /**
