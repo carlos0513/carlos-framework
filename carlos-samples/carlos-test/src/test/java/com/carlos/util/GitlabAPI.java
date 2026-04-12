@@ -208,7 +208,7 @@ public class GitlabAPI {
                 "carlos-szt-report",
                 "carlos-szt-analysis",
                 "carlos-szt-magic",
-                "carlos-govern-flowable"
+            "carlos--flowable"
         );
 
         // for (String set : sets) {
@@ -259,7 +259,7 @@ public class GitlabAPI {
                 // "carlos-szt-report",
                 // "carlos-szt-analysis",
                 // // "carlos-szt-magic",
-                // "carlos-govern-flowable",
+            // "carlos--flowable",
                 // "carlos-szt-scenarios-population"
         );
 
@@ -344,7 +344,7 @@ public class GitlabAPI {
             System.out.println(cloneUrl);
 
         }
-        // RuntimeUtil.exec(null, new File("D:\\ide_project\\carlos\\carlos-govern-event"), urls.toArray(new String[]{}));
+        // RuntimeUtil.exec(null, new File("D:\\ide_project\\carlos\\carlos--event"), urls.toArray(new String[]{}));
 
     }
 
@@ -376,7 +376,7 @@ public class GitlabAPI {
                 "carlos-szt-report",
                 "carlos-szt-analysis",
                 "carlos-szt-magic",
-                "carlos-govern-flowable"
+            "carlos--flowable"
         );
 
         for (String set : sets) {

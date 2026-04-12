@@ -1,22 +1,22 @@
 package com.carlos.gateway.filter;
 
+import com.carlos.core.util.PathMatchUtil;
 import com.carlos.gateway.config.GatewayProperties;
+import com.carlos.gateway.config.GlobalFilterOrder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
 /**
  * <p>
- * 网关接口路径统一前缀处理器
+ * 网关接口路径统一前缀处理器（GlobalFilter 实现）
  * <br>
  * 功能说明：
  * <ul>
@@ -31,20 +31,40 @@ import java.util.Set;
  *   转发到 carlos-org 服务：/org/users
  * </pre>
  * </p>
+ * <p>
+ * 执行顺序说明：
+ * <ul>
+ *   <li>在链路追踪过滤器之后执行（确保日志能记录原始路径）</li>
+ *   <li>在认证授权过滤器之前执行（先校验路径格式）</li>
+ *   <li>在负载均衡过滤器之前执行（路径重写后路由）</li>
+ * </ul>
+ * </p>
  *
  * @author Carlos
  * @date 2025-01-10 11:19
+ * @see GlobalFilterOrder
  */
 @Slf4j
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 100) // 确保在 Spring Cloud Gateway 路由之前执行
-public class PathPrefixFilter implements WebFilter {
+public class PathPrefixFilter implements GlobalFilter, Ordered {
 
     private final GatewayProperties gatewayProperties;
 
+    /**
+     * 过滤器执行顺序
+     * <p>
+     * 设置为 ORDER_FIRST (1000)，确保：
+     * 1. 在链路追踪之后（TRACING_FILTER_ORDER = HIGHEST_PRECEDENCE + 50）
+     * 2. 在认证授权之前（通常为 ORDER_SECOND 2000 或更高）
+     * 3. 在负载均衡之前（RouteToRequestUrlFilter = 10000）
+     */
+    @Override
+    public int getOrder() {
+        return GlobalFilterOrder.ORDER_FIRST;
+    }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 如果前缀校验未启用，直接放行
         if (!gatewayProperties.isPrefixEnabled()) {
             return chain.filter(exchange);
@@ -86,8 +106,6 @@ public class PathPrefixFilter implements WebFilter {
         return chain.filter(exchange.mutate().request(newRequest).build());
     }
 
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
-
     /**
      * 检查路径是否在白名单中
      *
@@ -100,7 +118,7 @@ public class PathPrefixFilter implements WebFilter {
             return false;
         }
         for (String pattern : whitelist) {
-            if (pathMatcher.match(pattern, path)) {
+            if (PathMatchUtil.antMatch(pattern, path)) {
                 return true;
             }
         }

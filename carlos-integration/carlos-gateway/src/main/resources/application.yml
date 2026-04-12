@@ -76,8 +76,71 @@ spring:
 spring:
   cloud:
     gateway:
-      # 启用网关
-      enabled: true
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+            # 路由配置
+            # 注意：PathPrefixFilter 已处理前缀，路由配置匹配截掉前缀后的路径
+          routes:
+            -
+              id: carlos-auth
+              uri: lb://carlos-auth
+              predicates:
+                - Path=/auth/**,/oauth2/**
+              filters:
+                - SelectStripPrefix=1
+      #              filters:
+      #                # Carlos 扩展限流器：支持更多 KeyResolver 策略和统一错误响应
+      #                -
+      #                  name: CarlosRateLimiter
+      #                  args:
+      #                    replenishRate: 100
+      #                    burstCapacity: 200
+      #                    keyResolver: IP
+      #                -
+      #                  name: Resilience4jCircuitBreaker
+      #                  args:
+      #                    name: user-service
+      #                    fallbackUri: forward:/fallback/user
+      #            -
+      #              id: carlos-org
+      #              uri: lb://carlos-org
+      #              predicates:
+      #                - Path=/org/**
+      #              filters:
+      #                # Carlos 扩展限流器：支持更多 KeyResolver 策略和统一错误响应
+      #                -
+      #                  name: CarlosRateLimiter
+      #                  args:
+      #                    replenishRate: 100
+      #                    burstCapacity: 200
+      #                    keyResolver: IP
+      #                -
+      #                  name: Resilience4jCircuitBreaker
+      #                  args:
+      #                    name: user-service
+      #                    fallbackUri: forward:/fallback/user
+      #
+      #            -
+      #              id: carlos-system
+      #              uri: lb://carlos-system
+      #              predicates:
+      #                - Path=/sys/**
+      #              filters:
+      #                -
+      #                  name: CarlosRateLimiter
+      #                  args:
+      #                    replenishRate: 200
+      #                    burstCapacity: 400
+      #            # Knife4j 文档聚合路由（白名单路径，无需前缀）
+      #            -
+      #              id: knife4j-gateway
+      #              uri: http://localhost:${server.port}
+      #              predicates:
+      #                - Path=/doc.html,/webjars/**,/swagger-resources/**,/v3/api-docs/**
       # 全局跨域配置
       globalcors:
         cors-configurations:
@@ -92,78 +155,8 @@ spring:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
-      # 路由配置
-      # 注意：PathPrefixFilter 已处理前缀，路由配置匹配截掉前缀后的路径
-      routes:
-        -
-          id: carlos-auth
-          uri: lb://carlos-auth
-          predicates:
-            - Path=/auth/**,/oauth2/**
-          filters:
-            # Carlos 扩展限流器：支持更多 KeyResolver 策略和统一错误响应
-            -
-              name: CarlosRateLimiter
-              args:
-                replenishRate: 100
-                burstCapacity: 200
-                keyResolver: IP
-            -
-              name: Resilience4jCircuitBreaker
-              args:
-                name: user-service
-                fallbackUri: forward:/fallback/user
 
-        -
-          id: carlos-org
-          uri: lb://carlos-org
-          predicates:
-            - Path=/org/**
-          filters:
-            # Carlos 扩展限流器：支持更多 KeyResolver 策略和统一错误响应
-            -
-              name: CarlosRateLimiter
-              args:
-                replenishRate: 100
-                burstCapacity: 200
-                keyResolver: IP
-            -
-              name: Resilience4jCircuitBreaker
-              args:
-                name: user-service
-                fallbackUri: forward:/fallback/user
 
-        -
-          id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/order-service/**
-          filters:
-            -
-              name: CarlosRateLimiter
-              args:
-                replenishRate: 50
-                burstCapacity: 100
-                keyResolver: USER
-
-        -
-          id: carlos-system
-          uri: lb://carlos-system
-          predicates:
-            - Path=/sys/**
-          filters:
-            -
-              name: CarlosRateLimiter
-              args:
-                replenishRate: 200
-                burstCapacity: 400
-
-        # Knife4j 文档聚合路由（白名单路径，无需前缀）
-        -
-          id: knife4j-gateway
-          uri: http://localhost:${server.port}
-          predicates:
-            - Path=/doc.html,/webjars/**,/swagger-resources/**,/v3/api-docs/**
 
 # ==========================================
 # Carlos 网关配置
@@ -173,7 +166,7 @@ carlos:
   gateway:
     # API 统一前缀配置
     # 所有请求必须以此前缀开头（白名单路径除外）
-    prefix: /api/v1
+    #    prefix: /api/v1
     # 是否启用前缀校验
     prefix-enabled: true
     # 白名单路径（支持 Ant 风格通配符）
@@ -233,7 +226,7 @@ carlos:
 
     # ==================== WAF 配置 ====================
     waf:
-      enabled: true
+      enabled: false
       sql-injection-protection: true
       xss-protection: true
       path-traversal-protection: true
@@ -362,6 +355,7 @@ knife4j:
     discover:
       enabled: true
       version: openapi3
+      excluded-services: carlos-gateway  # 排除网关自身
 
 # ==========================================
 # 日志配置
@@ -373,6 +367,8 @@ logging:
     com.carlos: debug
     org.springframework.security: debug
     org.springframework.cloud.gateway: DEBUG
+    com.github.xiaoymin.knife4j: debug
+    com.github.xingfudeshi.knife4j: debug
   file:
     path: log/carlos/auth
 

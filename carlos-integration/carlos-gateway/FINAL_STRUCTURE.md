@@ -51,7 +51,7 @@ carlos-gateway/
 │       │   ├── transform/                      # 转换模块
 │       │   │   ├── RequestTransformFilter.java
 │       │   │   └── TransformProperties.java
-│       │   ├── GovernGatewayApplication.java   # 启动类
+│       │   ├── GatewayApplication.java   # 启动类
 │       │   └── backup/                         # 备份目录（旧代码）
 │       └── resources/
 │           ├── application-modern.yml          # 现代配置示例

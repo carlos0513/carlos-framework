@@ -159,6 +159,26 @@ public interface HttpHeadersConstant {
      */
     String X_USER_ROLES = "X-User-Roles";
 
+    /**
+     * 角色信息请求头（逗号分隔的角色ID列表）
+     */
+    String X_ROLES = "X-Roles";
+
+    /**
+     * 权限信息请求头（逗号分隔的权限标识列表）
+     */
+    String X_PERMISSIONS = "X-Permissions";
+
+    /**
+     * 部门 ID 请求头
+     */
+    String X_DEPT_ID = "X-Dept-Id";
+
+    /**
+     * 用户手机号请求头
+     */
+    String X_PHONE = "X-Phone";
+
     // ==================== 灰度发布 / 路由 ====================
 
     /**

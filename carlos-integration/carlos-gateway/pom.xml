@@ -72,6 +72,13 @@
       <artifactId>carlos-spring-boot-starter-redis-reactive</artifactId>
     </dependency>
 
+    <!-- ==================== 本地缓存（Caffeine） ==================== -->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <version>${caffeine.version}</version>
+    </dependency>
+
     <!-- ==================== 熔断降级（Resilience4j） ==================== -->
     <dependency>
       <groupId>io.github.resilience4j</groupId>
@@ -123,9 +130,11 @@
 
     <!-- ==================== 文档聚合（Knife4j） ==================== -->
     <dependency>
-      <groupId>com.github.xiaoymin</groupId>
+      <groupId>com.github.xingfudeshi</groupId>
       <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
+      <version>4.6.0</version>
     </dependency>
+
 
     <!-- ==================== Carlos 核心依赖 ==================== -->
     <dependency>

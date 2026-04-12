@@ -1,6 +1,7 @@
 package com.carlos.core.util;
 
 import org.springframework.http.server.PathContainer;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -33,6 +34,9 @@ public final class PathMatchUtil {
 
     /** 默认解析器 */
     private static final PathPatternParser DEFAULT_PARSER = new PathPatternParser();
+
+    /** AntPathMatcher 实例（用于传统 Ant 风格匹配） */
+    private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
     /** 单例实例（延迟加载） */
     private static volatile PathMatchUtil instance;
@@ -214,6 +218,118 @@ public final class PathMatchUtil {
      */
     public static boolean notMatch(String pattern, String path) {
         return !match(pattern, path);
+    }
+
+    // ==================== AntPathMatcher 兼容方法 ====================
+
+    /**
+     * 使用 AntPathMatcher 判断路径是否匹配模式
+     * 适用于文件路径匹配、传统 Spring 路径匹配等场景
+     *
+     * @param pattern Ant风格模式，如 /api/**
+     * @param path 待匹配路径，如 /api/user/list
+     * @return 是否匹配
+     */
+    public static boolean antMatch(String pattern, String path) {
+        if (!StringUtils.hasText(pattern) || !StringUtils.hasText(path)) {
+            return false;
+        }
+        return ANT_PATH_MATCHER.match(pattern, path);
+    }
+
+    /**
+     * 使用 AntPathMatcher 判断路径是否匹配任意一个模式
+     *
+     * @param patterns 模式列表
+     * @param path 待匹配路径
+     * @return 是否匹配任意一个模式
+     */
+    public static boolean antMatchAny(String[] patterns, String path) {
+        if (patterns == null || patterns.length == 0) {
+            return false;
+        }
+        for (String pattern : patterns) {
+            if (ANT_PATH_MATCHER.match(pattern, path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 使用 AntPathMatcher 判断路径是否匹配任意一个模式
+     *
+     * @param patterns 模式集合
+     * @param path 待匹配路径
+     * @return 是否匹配任意一个模式
+     */
+    public static boolean antMatchAny(Collection<String> patterns, String path) {
+        if (patterns == null || patterns.isEmpty()) {
+            return false;
+        }
+        for (String pattern : patterns) {
+            if (ANT_PATH_MATCHER.match(pattern, path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 使用 AntPathMatcher 提取路径变量
+     *
+     * @param pattern 模式，如 /user/{id}/detail
+     * @param path 实际路径，如 /user/123/detail
+     * @return 路径变量Map，不匹配返回空Map
+     */
+    public static Map<String, String> antExtractUriVariables(String pattern, String path) {
+        if (!StringUtils.hasText(pattern) || !StringUtils.hasText(path)) {
+            return Collections.emptyMap();
+        }
+        if (!ANT_PATH_MATCHER.match(pattern, path)) {
+            return Collections.emptyMap();
+        }
+        return ANT_PATH_MATCHER.extractUriTemplateVariables(pattern, path);
+    }
+
+    /**
+     * 使用 AntPathMatcher 判断模式是否是路径的前缀
+     *
+     * @param pattern 模式
+     * @param path 待检查路径
+     * @return 是否是前缀
+     */
+    public static boolean antMatchStart(String pattern, String path) {
+        if (!StringUtils.hasText(pattern) || !StringUtils.hasText(path)) {
+            return false;
+        }
+        return ANT_PATH_MATCHER.matchStart(pattern, path);
+    }
+
+    /**
+     * 使用 AntPathMatcher 组合模式与路径
+     *
+     * @param pattern 模式，如 /api/**
+     * @param path 相对路径，如 /user/list
+     * @return 组合后的路径，如 /api/user/list
+     */
+    public static String antCombine(String pattern, String path) {
+        if (!StringUtils.hasText(pattern)) {
+            return path;
+        }
+        if (!StringUtils.hasText(path)) {
+            return pattern;
+        }
+        return ANT_PATH_MATCHER.combine(pattern, path);
+    }
+
+    /**
+     * 获取 AntPathMatcher 实例（用于高级自定义）
+     *
+     * @return AntPathMatcher 实例
+     */
+    public static AntPathMatcher getAntPathMatcher() {
+        return ANT_PATH_MATCHER;
     }
 
     // ==================== 前缀匹配 ====================

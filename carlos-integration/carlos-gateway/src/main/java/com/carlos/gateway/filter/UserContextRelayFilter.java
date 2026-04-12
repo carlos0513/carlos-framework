@@ -1,6 +1,7 @@
 package com.carlos.gateway.filter;
 
 import com.carlos.core.auth.UserContext;
+import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.gateway.oauth2.OAuth2GatewayProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -33,22 +34,11 @@ import java.util.stream.Collectors;
  * @version 3.0.0
  * @since 2026-04-08
  * @see com.carlos.core.auth.UserContext
+ * @see com.carlos.core.constant.HttpHeadersConstant
  */
 @Slf4j
 @Component
 public class UserContextRelayFilter implements GlobalFilter, Ordered {
-
-    /**
-     * Header常量定义
-     */
-    public static final String HEADER_USER_ID = "X-User-Id";
-    public static final String HEADER_USERNAME = "X-Username";
-    public static final String HEADER_ROLES = "X-Roles";
-    public static final String HEADER_PERMISSIONS = "X-Permissions";
-    public static final String HEADER_TENANT_ID = "X-Tenant-Id";
-    public static final String HEADER_DEPT_ID = "X-Dept-Id";
-    public static final String HEADER_PHONE = "X-Phone";
-    public static final String HEADER_REQUEST_ID = "X-Request-Id";
 
     private final OAuth2GatewayProperties properties;
 
@@ -95,13 +85,13 @@ public class UserContextRelayFilter implements GlobalFilter, Ordered {
 
         // 基础用户信息
         if (userContext.getUserId() != null) {
-            requestBuilder.header(HEADER_USER_ID, userContext.getUserId());
+            requestBuilder.header(HttpHeadersConstant.X_USER_ID, userContext.getUserId());
         }
         if (userContext.getAccount() != null) {
-            requestBuilder.header(HEADER_USERNAME, userContext.getAccount());
+            requestBuilder.header(HttpHeadersConstant.X_USER_NAME, userContext.getAccount());
         }
         if (userContext.getPhone() != null) {
-            requestBuilder.header(HEADER_PHONE, userContext.getPhone());
+            requestBuilder.header(HttpHeadersConstant.X_PHONE, userContext.getPhone());
         }
 
         // 角色信息（逗号分隔）
@@ -109,25 +99,25 @@ public class UserContextRelayFilter implements GlobalFilter, Ordered {
             String roles = userContext.getRoleIds().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(","));
-            requestBuilder.header(HEADER_ROLES, roles);
+            requestBuilder.header(HttpHeadersConstant.X_ROLES, roles);
         }
 
         // 权限信息（逗号分隔）
         if (userContext.getPermissions() != null && !userContext.getPermissions().isEmpty()) {
             String permissions = String.join(",", userContext.getPermissions());
-            requestBuilder.header(HEADER_PERMISSIONS, permissions);
+            requestBuilder.header(HttpHeadersConstant.X_PERMISSIONS, permissions);
         }
 
         // 租户和部门信息（多租户场景）
         if (userContext.getTenantId() != null) {
-            requestBuilder.header(HEADER_TENANT_ID, String.valueOf(userContext.getTenantId()));
+            requestBuilder.header(HttpHeadersConstant.X_TENANT_ID, String.valueOf(userContext.getTenantId()));
         }
         if (userContext.getDepartmentId() != null) {
-            requestBuilder.header(HEADER_DEPT_ID, String.valueOf(userContext.getDepartmentId()));
+            requestBuilder.header(HttpHeadersConstant.X_DEPT_ID, String.valueOf(userContext.getDepartmentId()));
         }
 
         // 请求ID（链路追踪）
-        requestBuilder.header(HEADER_REQUEST_ID,
+        requestBuilder.header(HttpHeadersConstant.X_REQUEST_ID,
             originalRequest.getId() != null ? originalRequest.getId().toString() : java.util.UUID.randomUUID().toString());
 
         return requestBuilder.build();

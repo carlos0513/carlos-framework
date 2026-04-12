@@ -4,6 +4,7 @@ import com.carlos.core.auth.AuthConstant;
 import com.carlos.core.auth.UserContext;
 import com.carlos.core.exception.BusinessException;
 import com.carlos.core.response.CommonErrorCode;
+import com.carlos.core.util.PathMatchUtil;
 import com.carlos.gateway.oauth2.provider.PermissionProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -39,13 +40,17 @@ public class OAuth2AuthorizationFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        ServerHttpRequest request = exchange.getRequest();
+        String path = request.getURI().getPath();
+        if (PathMatchUtil.antMatchAny(properties.getWhitelist(), path)) {
+            return chain.filter(exchange);
+        }
+
         // 未启用授权或 OAuth2，直接放行
         if (!properties.isEnabled() || !properties.isAuthorizationEnabled()) {
             return chain.filter(exchange);
         }
 
-        ServerHttpRequest request = exchange.getRequest();
-        String path = request.getURI().getPath();
         HttpMethod method = request.getMethod();
 
         // 获取用户上下文

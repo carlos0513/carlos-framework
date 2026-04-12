@@ -31,4 +31,15 @@ public class FilterAutoConfiguration {
         log.info("Initializing Path Prefix Filter with prefix: {}", gatewayProperties.getPrefix());
         return new PathPrefixFilter(gatewayProperties);
     }
+
+    /**
+     * 选择性路径前缀剥离过滤器工厂
+     * 用于处理 Swagger/Knife4j 文档路径的前缀剥离
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public SelectStripPrefixGatewayFilterFactory selectStripPrefixGatewayFilterFactory() {
+        log.info("Initializing Select Strip Prefix Gateway Filter Factory");
+        return new SelectStripPrefixGatewayFilterFactory();
+    }
 }

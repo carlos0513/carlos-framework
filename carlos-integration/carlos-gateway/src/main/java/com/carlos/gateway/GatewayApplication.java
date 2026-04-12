@@ -1,4 +1,4 @@
-package com.carlos;
+package com.carlos.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,9 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author carlos
  */
 @SpringBootApplication
-public class GovernSystemCloudApplication {
+public class GatewayApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(GovernSystemCloudApplication.class, args);
+        SpringApplication.run(GatewayApplication.class, args);
     }
 }

@@ -52,7 +52,7 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         String path = uri.getPath();
 
         // 白名单路径直接放行
-        if (PathMatchUtil.matchAny(properties.getWhitelist(), path)) {
+        if (PathMatchUtil.antMatchAny(properties.getWhitelist(), path)) {
             log.debug("Path {} is in whitelist, skipping authentication", path);
             return chain.filter(exchange);
         }

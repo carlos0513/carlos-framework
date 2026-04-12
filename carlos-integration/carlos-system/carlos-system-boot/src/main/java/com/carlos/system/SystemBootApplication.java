@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GovernSystemBootApplication {
+public class SystemBootApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GovernSystemBootApplication.class, args);
+        SpringApplication.run(SystemBootApplication.class, args);
     }
 }
