@@ -115,7 +115,7 @@ public class UnifiedWhitelistFilter implements GlobalFilter, Ordered {
             matchCache.put(cacheKey, matched);
         } else {
             // 缓存满了，清空后重新放入（简单策略）
-            matchCache.clear();
+            clearCache();
             matchCache.put(cacheKey, matched);
         }
 

@@ -17,7 +17,6 @@ import com.carlos.gateway.whitelist.UnifiedWhitelistProperties;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -156,7 +155,7 @@ public class FilterAutoConfiguration {
      * 基于 Micrometer 实现 Prometheus 指标暴露
      */
     @Bean
-    @ConditionalOnClass(MeterRegistry.class)
+    @ConditionalOnBean(MeterRegistry.class)
     @ConditionalOnMissingBean
     public MetricsFilter metricsFilter(MeterRegistry meterRegistry) {
         log.info("Initializing Metrics Filter (Optimized with Counter Cache)");

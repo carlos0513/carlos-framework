@@ -238,7 +238,7 @@ carlos:
 
     # ==================== 防重放配置 ====================
     replay:
-      enabled: true
+      enabled: false
       strict-mode: false
       secret-key: ${REPLAY_SECRET_KEY:your-secret-key-here}
       whitelist:
@@ -352,10 +352,16 @@ knife4j:
     tags-sorter: order
     operations-sorter: order
     strategy: discover
-    discover:
-      enabled: true
-      version: openapi3
-      excluded-services: carlos-gateway  # 排除网关自身
+
+    routes:
+      -
+        name: 认证服务
+        url: /auth/v3/api-docs
+        service-name: carlos-auth
+        context-path: ""    # 关键：空字符串，不额外添加前缀
+        order: 1
+
+
 
 # ==========================================
 # 日志配置
@@ -370,7 +376,7 @@ logging:
     com.github.xiaoymin.knife4j: debug
     com.github.xingfudeshi.knife4j: debug
   file:
-    path: log/carlos/auth
+    path: log/carlos/gateway
 
 
 # ==================== Micrometer Tracing 配置 ====================

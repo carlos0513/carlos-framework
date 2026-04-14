@@ -70,16 +70,16 @@ public class UnifiedWhitelistProperties implements InitializingBean {
         "/info",
         "/metrics",
         "/prometheus",
-        "/favicon.ico",
+        "/**/favicon.ico",
         "/robots.txt",
-        "/swagger-ui.html",
-        "/swagger-ui/**",
-        "/swagger-resources/**",
-        "/v3/api-docs/**",
-        "/v3/api-docs",
-        "/doc.html",
-        "/webjars/**",
-        "/error"
+        "/**/swagger-ui.html",
+        "/**/swagger-ui/**",
+        "/**/swagger-resources/**",
+        "/**/v3/api-docs/**",
+        "/**/v3/api-docs",
+        "/**/doc.html",
+        "/**/webjars/**",
+        "/**/error"
     );
 
     /**
@@ -90,10 +90,8 @@ public class UnifiedWhitelistProperties implements InitializingBean {
         "/**/oauth2/token",
         "/**/oauth2/introspect",
         "/**/oauth2/revoke",
-        "/**/auth/login",
+        "/**/auth/user/login",
         "/**/auth/login/**",
-        "/**/auth/logout",
-        "/**/auth/logout/**",
         "/**/public/**",
         "/**/api/public/**"
     );
