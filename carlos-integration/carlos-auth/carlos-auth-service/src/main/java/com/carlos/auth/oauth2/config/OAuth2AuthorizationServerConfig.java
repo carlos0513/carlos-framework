@@ -17,6 +17,9 @@ import com.carlos.auth.oauth2.user.CustomizeUserOAuth2TokenCustomizer;
 import com.carlos.auth.provider.DefaultUserProvider;
 import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.encoder.Sm4PasswordEncoder;
+import com.carlos.auth.security.ext.ExtendAuthenticationConverter;
+import com.carlos.auth.security.ext.ExtendAuthenticationProvider;
+import com.carlos.auth.security.ext.ExtendAuthenticationToken;
 import com.carlos.auth.security.handle.CustomAuthenticationFailureHandler;
 import com.carlos.auth.security.handle.CustomAuthenticationSuccessHandler;
 import com.carlos.auth.security.manager.KeyPairManager;
@@ -159,7 +162,10 @@ public class OAuth2AuthorizationServerConfig {
      */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain authorizationServerSecurityFilterChain(
+        HttpSecurity http,
+        ExtendAuthenticationConverter extendAuthenticationConverter,
+        ExtendAuthenticationProvider extendAuthenticationProvider) throws Exception {
         // 应用授权服务器默认配置（使用 OAuth2AuthorizationServerConfigurer）
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
             new OAuth2AuthorizationServerConfigurer();
@@ -169,7 +175,13 @@ public class OAuth2AuthorizationServerConfig {
             .with(authorizationServerConfigurer, (configurer) -> {
                 configurer
                     // 启用 OIDC 支持（OpenID Connect 1.0）
-                    .oidc(Customizer.withDefaults());
+                    .oidc(Customizer.withDefaults())
+                    // 注册自定义授权类型到标准 token 端点
+                    .tokenEndpoint(tokenEndpoint ->
+                        tokenEndpoint
+                            .accessTokenRequestConverter(extendAuthenticationConverter)
+                            .authenticationProvider(extendAuthenticationProvider)
+                    );
             })
             // 未认证时返回 401 JSON（当前无登录页面，避免 302 重定向）
             .exceptionHandling(exceptions ->
@@ -276,8 +288,10 @@ public class OAuth2AuthorizationServerConfig {
             }
             return new InMemoryRegisteredClientRepository(clients);
         }
-        // 打印日志 当配置文件未配置客户端时，使用自定已的数据库客户端管理模块提供客户端
-        return new CustomizeRegisteredClientRepository(SpringUtil.getBean(AppClientService.class));
+
+        log.info("Using CompositeRegisteredClientRepository ");
+        return new CustomizeRegisteredClientRepository(
+            SpringUtil.getBean(AppClientService.class));
     }
 
     /**
@@ -775,5 +789,41 @@ public class OAuth2AuthorizationServerConfig {
         OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
         log.info("Configuring DelegatingOAuth2TokenGenerator with user token generator");
         return new DelegatingOAuth2TokenGenerator(userTokenGenerator, clientTokenGenerator, refreshTokenGenerator);
+    }
+
+    // ==================== 自定义认证扩展 ====================
+
+    /**
+     * 扩展认证转换器
+     *
+     * <p>将 HTTP 请求中的自定义授权类型（password、sms_code 等）
+     * 转换为 {@link ExtendAuthenticationToken}。</p>
+     *
+     * @return ExtendAuthenticationConverter 实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ExtendAuthenticationConverter extendAuthenticationConverter() {
+        log.info("Configuring ExtendAuthenticationConverter");
+        return new ExtendAuthenticationConverter();
+    }
+
+    /**
+     * 扩展认证提供者
+     *
+     * <p>基于 {@link com.carlos.auth.idp.IdentityProvider} 架构，
+     * 将认证逻辑委托给对应身份源适配器。</p>
+     *
+     * @param providerRegistry   身份源注册中心
+     * @param userDetailsService 用户详情服务
+     * @return ExtendAuthenticationProvider 实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ExtendAuthenticationProvider extendAuthenticationProvider(
+        com.carlos.auth.idp.IdentityProviderRegistry providerRegistry,
+        ExtendUserDetailsService userDetailsService) {
+        log.info("Configuring ExtendAuthenticationProvider");
+        return new ExtendAuthenticationProvider(providerRegistry, userDetailsService);
     }
 }

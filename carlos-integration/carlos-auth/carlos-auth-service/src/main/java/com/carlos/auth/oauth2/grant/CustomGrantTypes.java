@@ -27,6 +27,11 @@ public final class CustomGrantTypes {
     }
 
     /**
+     * 密码授权类型（内部使用，供统一身份源架构兼容）
+     */
+    public static final AuthorizationGrantType PASSWORD = new AuthorizationGrantType("password");
+
+    /**
      * 短信验证码授权类型
      */
     public static final AuthorizationGrantType SMS_CODE = new AuthorizationGrantType("sms_code");
@@ -57,7 +62,8 @@ public final class CustomGrantTypes {
             return false;
         }
         String value = grantType.getValue();
-        return SMS_CODE.getValue().equals(value)
+        return PASSWORD.getValue().equals(value)
+            || SMS_CODE.getValue().equals(value)
             || EMAIL_CODE.getValue().equals(value)
             || QR_CODE.getValue().equals(value)
             || SOCIAL.getValue().equals(value);
@@ -73,7 +79,8 @@ public final class CustomGrantTypes {
         if (grantTypeValue == null) {
             return false;
         }
-        return SMS_CODE.getValue().equals(grantTypeValue)
+        return PASSWORD.getValue().equals(grantTypeValue)
+            || SMS_CODE.getValue().equals(grantTypeValue)
             || EMAIL_CODE.getValue().equals(grantTypeValue)
             || QR_CODE.getValue().equals(grantTypeValue)
             || SOCIAL.getValue().equals(grantTypeValue);

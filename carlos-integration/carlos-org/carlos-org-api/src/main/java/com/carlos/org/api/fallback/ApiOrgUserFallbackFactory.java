@@ -1,6 +1,8 @@
 package com.carlos.org.api.fallback;
 
+import com.carlos.core.response.Result;
 import com.carlos.org.api.ApiOrgUser;
+import com.carlos.org.api.pojo.ao.OrgUserAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 
@@ -22,6 +24,11 @@ public class ApiOrgUserFallbackFactory implements FallbackFactory<ApiOrgUser> {
         log.error("系统用户服务调用失败: message:{}", message);
         return new ApiOrgUser() {
 
+            @Override
+            public Result<OrgUserAO> getUserByIdentifier(String identifier) {
+                log.error("系统用户服务调用失败: message:{}", message);
+                return Result.error("系统用户服务调用失败");
+            }
         };
     }
 

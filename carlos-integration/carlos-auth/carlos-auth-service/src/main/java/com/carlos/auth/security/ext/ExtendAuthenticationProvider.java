@@ -1,93 +1,55 @@
 package com.carlos.auth.security.ext;
 
-import com.carlos.auth.api.enums.AuthErrorCode;
+import com.carlos.auth.idp.IdentityProvider;
+import com.carlos.auth.idp.IdentityProviderRegistry;
+import com.carlos.auth.idp.IdentityProviderRequest;
+import com.carlos.auth.idp.UserIdentity;
 import com.carlos.auth.oauth2.OAuth2ErrorCodesExpand;
 import com.carlos.auth.provider.UserInfo;
-import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.SecurityUser;
 import com.carlos.auth.security.service.ExtendUserDetailsService;
 import com.carlos.core.auth.LoginUserInfo;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
  * 扩展认证提供者
  *
- * <p>支持多种认证方式的统一认证处理器，包括短信、邮箱、扫码、第三方登录等。</p>
- * <p><strong>注意：</strong>密码认证已通过表单登录（/login）端点实现，不再通过扩展授权流程处理。</p>
- *
- * <h3>认证流程：</h3>
- * <ol>
- *   <li>验证授权类型支持</li>
- *   <li>根据认证方式提取用户信息</li>
- *   <li>验证用户凭证</li>
- *   <li>检查用户状态（锁定、禁用等）</li>
- *   <li>构建认证成功的令牌</li>
- * </ol>
- *
- * <h3>支持的认证方式：</h3>
- * <ul>
- *   <li>sms_code - 短信验证码认证（需接入短信服务）</li>
- *   <li>email_code - 邮箱验证码认证（需接入邮件服务）</li>
- *   <li>qr_code - 扫码认证（需接入扫码服务）</li>
- *   <li>social - 第三方登录（需接入第三方平台）</li>
- * </ul>
- *
- * <h3>扩展方式：</h3>
- * <p>如需支持新的认证方式，可继承此类并重写以下方法：</p>
- * <ul>
- *   <li>{@link #supports(Authentication)} - 判断是否支持该认证类型</li>
- *   <li>{@link #authenticateInternal(ExtendAuthenticationToken)} - 实现认证逻辑</li>
- * </ul>
+ * <p>支持多种认证方式的统一认证处理器。基于 {@link IdentityProvider} 架构，
+ * 将具体认证逻辑委托给对应身份源适配器。</p>
  *
  * @author Carlos
  * @version 3.0.0
  * @since 2026-04-08
  * @see ExtendAuthenticationToken
  * @see ExtendAuthenticationConverter
- * @see UserProvider
- * @see ExtendUserDetailsService
+ * @see IdentityProviderRegistry
  */
 @Slf4j
 public class ExtendAuthenticationProvider implements AuthenticationProvider, ApplicationEventPublisherAware {
 
     /**
-     * 用户信息服务
+     * 身份源注册中心
      */
-    @Getter
-    @Setter
-    private UserProvider userProvider;
+    private final IdentityProviderRegistry providerRegistry;
 
     /**
      * 用户详情服务
      */
-    @Getter
-    @Setter
-    private ExtendUserDetailsService userDetailsService;
-
-    /**
-     * 密码编码器
-     */
-    @Getter
-    @Setter
-    private PasswordEncoder passwordEncoder;
+    private final ExtendUserDetailsService userDetailsService;
 
     /**
      * 事件发布器
@@ -95,49 +57,17 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
     private ApplicationEventPublisher eventPublisher;
 
     /**
-     * 短信验证码验证器（可选）
-     */
-    @Getter
-    @Setter
-    private SmsCodeValidator smsCodeValidator;
-
-    /**
-     * 邮箱验证码验证器（可选）
-     */
-    @Getter
-    @Setter
-    private EmailCodeValidator emailCodeValidator;
-
-    /**
-     * 扫码验证器（可选）
-     */
-    @Getter
-    @Setter
-    private QrCodeValidator qrCodeValidator;
-
-    /**
-     * 第三方登录验证器（可选）
-     */
-    @Getter
-    @Setter
-    private SocialLoginValidator socialLoginValidator;
-
-    /**
      * 构造方法
      *
-     * @param userProvider 用户信息服务
+     * @param providerRegistry   身份源注册中心
      * @param userDetailsService 用户详情服务
-     * @param passwordEncoder 密码编码器
      */
-    public ExtendAuthenticationProvider(UserProvider userProvider,
-                                        ExtendUserDetailsService userDetailsService,
-                                        PasswordEncoder passwordEncoder) {
-        Assert.notNull(userProvider, "userProvider cannot be null");
+    public ExtendAuthenticationProvider(IdentityProviderRegistry providerRegistry,
+                                        ExtendUserDetailsService userDetailsService) {
+        Assert.notNull(providerRegistry, "providerRegistry cannot be null");
         Assert.notNull(userDetailsService, "userDetailsService cannot be null");
-        Assert.notNull(passwordEncoder, "passwordEncoder cannot be null");
-        this.userProvider = userProvider;
+        this.providerRegistry = providerRegistry;
         this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -160,10 +90,8 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
         log.debug("Authenticating with grant_type: {}, principal: {}", grantType, token.getPrincipal());
 
         try {
-            // 执行具体认证
             ExtendAuthenticationToken authenticatedToken = authenticateInternal(token);
 
-            // 发布认证成功事件
             if (eventPublisher != null) {
                 // eventPublisher.publishEvent(new AuthenticationSuccessEvent(authenticatedToken));
             }
@@ -175,7 +103,6 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
             log.warn("Authentication failed: {}, grant_type: {}, reason: {}",
                 token.getPrincipal(), grantType, e.getMessage());
 
-            // 发布认证失败事件
             if (eventPublisher != null) {
                 // eventPublisher.publishEvent(new AuthenticationFailureEvent(token, e));
             }
@@ -186,7 +113,7 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
     /**
      * 内部认证逻辑
      *
-     * <p>子类可重写此方法添加新的认证方式支持。</p>
+     * <p>统一路由到 {@link IdentityProvider} 进行认证。</p>
      *
      * @param token 认证令牌
      * @return 认证成功的令牌
@@ -197,151 +124,46 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
 
         String grantType = token.getGrantType().getValue();
 
-        switch (grantType) {
-            case "sms_code":
-                return authenticateBySmsCode(token);
-            case "email_code":
-                return authenticateByEmailCode(token);
-            case "qr_code":
-                return authenticateByQrCode(token);
-            case "social":
-                return authenticateBySocial(token);
-            default:
-                log.error("Unsupported authentication type: {}", grantType);
-                throw AuthErrorCode.AUTH_PARAM_GRANT_TYPE_INVALID.exception("不支持的认证方式: %s", grantType);
-        }
-    }
+        // 1. 查找对应身份源提供者
+        IdentityProvider provider = providerRegistry.findByGrantType(grantType);
 
-    /**
-     * 短信验证码认证
-     *
-     * @param token 认证令牌
-     * @return 认证成功的令牌
-     */
-    protected ExtendAuthenticationToken authenticateBySmsCode(ExtendAuthenticationToken token) {
-        String phone = (String) token.getPrincipal();
-        String smsCode = (String) token.getCredentials();
+        // 2. 构建认证请求
+        IdentityProviderRequest request = IdentityProviderRequest.builder()
+            .principal(token.getPrincipal())
+            .credentials(token.getCredentials())
+            .clientId(token.getClient() != null ? token.getClient().getName() : null)
+            .additionalParameters(token.getAdditionalParameters())
+            .build();
 
-        // 验证短信验证码
-        if (smsCodeValidator != null) {
-            boolean valid = smsCodeValidator.validate(phone, smsCode);
-            if (!valid) {
-                log.warn("Invalid SMS code for phone: {}", phone);
-                throw new BadCredentialsException(OAuth2ErrorCodesExpand.VERIFICATION_CODE_ERROR.getErrorDescription());
-            }
-        } else {
-            log.warn("SMS code validator not configured, skipping validation for phone: {}", phone);
-            // 如果没有配置验证器，可以选择抛出异常或跳过验证
-            // throw new BadCredentialsException("短信验证码服务未配置");
-        }
+        // 3. 执行身份源认证
+        UserIdentity userIdentity = provider.authenticate(request);
 
-        // 加载或创建用户
-        UserInfo userInfo = userProvider.loadUserByIdentifier(phone);
-        if (userInfo == null) {
-            // 短信登录时，如果用户不存在可以自动创建
-            log.info("Creating new user for phone: {}", phone);
-            // userInfo = createUserByPhone(phone);
-            throw AuthErrorCode.AUTH_USER_PHONE_NOT_FOUND.exception("手机号对应的用户不存在: %s", phone);
-        }
-
-        // 检查用户状态
+        // 4. 转换为内部 UserInfo 并检查状态
+        UserInfo userInfo = convertToUserInfo(userIdentity);
         checkUserStatus(userInfo);
 
+        // 5. 构建认证令牌
         return buildAuthenticatedToken(token, userInfo);
     }
 
     /**
-     * 邮箱验证码认证
+     * 将统一用户身份转换为内部 UserInfo
      *
-     * @param token 认证令牌
-     * @return 认证成功的令牌
+     * @param identity 统一用户身份
+     * @return 内部 UserInfo
      */
-    protected ExtendAuthenticationToken authenticateByEmailCode(ExtendAuthenticationToken token) {
-        String email = (String) token.getPrincipal();
-        String emailCode = (String) token.getCredentials();
-
-        // 验证邮箱验证码
-        if (emailCodeValidator != null) {
-            boolean valid = emailCodeValidator.validate(email, emailCode);
-            if (!valid) {
-                log.warn("Invalid email code for: {}", email);
-                throw new BadCredentialsException(OAuth2ErrorCodesExpand.VERIFICATION_CODE_ERROR.getErrorDescription());
-            }
-        } else {
-            log.warn("Email code validator not configured, skipping validation for: {}", email);
-        }
-
-        // 加载用户信息
-        UserInfo userInfo = userProvider.loadUserByIdentifier(email);
-        if (userInfo == null) {
-            log.warn("User not found by email: {}", email);
-            throw new UsernameNotFoundException(OAuth2ErrorCodesExpand.USERNAME_NOT_FOUND.getErrorDescription());
-        }
-
-        // 检查用户状态
-        checkUserStatus(userInfo);
-
-        return buildAuthenticatedToken(token, userInfo);
-    }
-
-    /**
-     * 扫码认证
-     *
-     * @param token 认证令牌
-     * @return 认证成功的令牌
-     */
-    protected ExtendAuthenticationToken authenticateByQrCode(ExtendAuthenticationToken token) {
-        String qrToken = (String) token.getPrincipal();
-
-        // 验证扫码令牌
-        if (qrCodeValidator != null) {
-            UserInfo userInfo = qrCodeValidator.validateAndGetUser(qrToken);
-            if (userInfo == null) {
-                log.warn("Invalid or expired QR token: {}", qrToken);
-                throw AuthErrorCode.AUTH_QR_CODE_INVALID.exception();
-            }
-
-            // 检查用户状态
-            checkUserStatus(userInfo);
-
-            return buildAuthenticatedToken(token, userInfo);
-        } else {
-            log.error("QR code validator not configured");
-            throw AuthErrorCode.AUTH_QR_CODE_SERVICE_NOT_CONFIGURED.exception();
-        }
-    }
-
-    /**
-     * 第三方登录认证
-     *
-     * @param token 认证令牌
-     * @return 认证成功的令牌
-     */
-    protected ExtendAuthenticationToken authenticateBySocial(ExtendAuthenticationToken token) {
-        String socialInfo = (String) token.getPrincipal();
-        String[] parts = socialInfo.split(":", 2);
-        if (parts.length != 2) {
-            throw AuthErrorCode.AUTH_SOCIAL_LOGIN_INFO_INVALID.exception();
-        }
-        String socialType = parts[0];
-        String socialCode = parts[1];
-
-        // 验证第三方授权码
-        if (socialLoginValidator != null) {
-            UserInfo userInfo = socialLoginValidator.validateAndGetUser(socialType, socialCode);
-            if (userInfo == null) {
-                log.warn("Social login failed: type={}, code={}", socialType, socialCode);
-                throw AuthErrorCode.AUTH_SOCIAL_LOGIN_FAILED.exception();
-            }
-
-            // 检查用户状态
-            checkUserStatus(userInfo);
-
-            return buildAuthenticatedToken(token, userInfo);
-        } else {
-            log.error("Social login validator not configured");
-            throw AuthErrorCode.AUTH_SOCIAL_LOGIN_SERVICE_NOT_CONFIGURED.exception();
-        }
+    protected UserInfo convertToUserInfo(UserIdentity identity) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(identity.getProviderUserId() != null
+            ? Long.valueOf(identity.getProviderUserId()) : null);
+        userInfo.setUsername(identity.getUsername());
+        userInfo.setEmail(identity.getEmail());
+        userInfo.setPhone(identity.getPhone());
+        userInfo.setRoleCodes(identity.getRoleCodes() != null
+            ? new ArrayList<>(identity.getRoleCodes()) : null);
+        userInfo.setStatus("ENABLE"); // 默认启用，具体状态可由 IdentityProvider 扩展
+        userInfo.setMfaEnabled(false);
+        return userInfo;
     }
 
     /**
@@ -370,26 +192,22 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
      */
     protected ExtendAuthenticationToken buildAuthenticatedToken(ExtendAuthenticationToken originalToken,
                                                                 UserInfo userInfo) {
-        // 加载用户详情
         UserDetails userDetails = userDetailsService.loadUserByUsername(userInfo.getUsername());
 
-        // 转换权限
         Collection<SimpleGrantedAuthority> authorities = userInfo.getRoleCodes() != null
             ? userInfo.getRoleCodes().stream()
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList())
             : null;
 
-        // 创建 SecurityUser
         LoginUserInfo loginUserInfo = userDetailsService.loadLoginUserInfo(userInfo.getUsername());
         SecurityUser securityUser = loginUserInfo != null
             ? new SecurityUser(loginUserInfo)
             : null;
 
-        // 构建已认证令牌
         ExtendAuthenticationToken authenticatedToken = new ExtendAuthenticationToken(
             userInfo.getUsername(),
-            null, // 认证成功后清除凭证
+            null,
             originalToken.getGrantType(),
             originalToken.getClient(),
             originalToken.getScopes(),
@@ -398,9 +216,7 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
             securityUser
         );
 
-        // 复制认证方式
         authenticatedToken.setAuthMethod(originalToken.getAuthMethod());
-
         return authenticatedToken;
     }
 
@@ -414,66 +230,4 @@ public class ExtendAuthenticationProvider implements AuthenticationProvider, App
     public boolean supports(Class<?> authentication) {
         return ExtendAuthenticationToken.class.isAssignableFrom(authentication);
     }
-
-    // ==================== 验证器接口 ====================
-
-    /**
-     * 短信验证码验证器接口
-     */
-    @FunctionalInterface
-    public interface SmsCodeValidator {
-        /**
-         * 验证短信验证码
-         *
-         * @param phone 手机号
-         * @param code 验证码
-         * @return true-验证通过
-         */
-        boolean validate(String phone, String code);
-    }
-
-    /**
-     * 邮箱验证码验证器接口
-     */
-    @FunctionalInterface
-    public interface EmailCodeValidator {
-        /**
-         * 验证邮箱验证码
-         *
-         * @param email 邮箱
-         * @param code 验证码
-         * @return true-验证通过
-         */
-        boolean validate(String email, String code);
-    }
-
-    /**
-     * 扫码验证器接口
-     */
-    @FunctionalInterface
-    public interface QrCodeValidator {
-        /**
-         * 验证扫码令牌并返回用户信息
-         *
-         * @param qrToken 扫码令牌
-         * @return 用户信息，验证失败返回 null
-         */
-        UserInfo validateAndGetUser(String qrToken);
-    }
-
-    /**
-     * 第三方登录验证器接口
-     */
-    @FunctionalInterface
-    public interface SocialLoginValidator {
-        /**
-         * 验证第三方授权码并返回用户信息
-         *
-         * @param socialType 第三方类型（wechat, weibo, github等）
-         * @param authCode 授权码
-         * @return 用户信息，验证失败返回 null
-         */
-        UserInfo validateAndGetUser(String socialType, String authCode);
-    }
-
 }

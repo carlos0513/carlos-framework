@@ -35,6 +35,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.net.InetAddress;
 import java.time.Duration;
@@ -175,8 +176,13 @@ public class UserLoginService {
             boolean shouldRecommendMfa = shouldTriggerMfa && !Boolean.TRUE.equals(user.getMfaEnabled());
             boolean mfaRequired = shouldTriggerMfa && Boolean.TRUE.equals(user.getMfaEnabled());
 
+            // 优先使用请求中的 clientId，否则使用默认客户端
+            String clientId = StringUtils.hasText(loginRequest.getClientId())
+                ? loginRequest.getClientId()
+                : defaultClientId;
+
             // 构建登录响应（使用标准 OAuth2 Token 生成）
-            LoginResponse response = buildLoginResponse(user, authentication);
+            LoginResponse response = buildLoginResponse(user, authentication, clientId);
             response.setMfaRequired(mfaRequired);
             response.setMfaRecommended(shouldRecommendMfa);
 
@@ -232,12 +238,15 @@ public class UserLoginService {
      * @param authentication 认证信息
      * @return 登录响应
      */
-    private LoginResponse buildLoginResponse(UserInfo user, Authentication authentication) {
-        // 获取默认客户端
-        RegisteredClient registeredClient = registeredClientRepository.findByClientId(defaultClientId);
+    private LoginResponse buildLoginResponse(UserInfo user, Authentication authentication, String clientId) {
+        // 如果未指定客户端，使用默认客户端
+        String resolvedClientId = StringUtils.hasText(clientId) ? clientId : defaultClientId;
+
+        // 获取客户端
+        RegisteredClient registeredClient = registeredClientRepository.findByClientId(resolvedClientId);
         if (registeredClient == null) {
-            log.error("Default client not found: {}", defaultClientId);
-            throw AuthErrorCode.AUTH_CLIENT_NOT_FOUND.exception("默认客户端配置不存在: %s", defaultClientId);
+            log.error("Client not found: {}", resolvedClientId);
+            throw AuthErrorCode.AUTH_CLIENT_NOT_FOUND.exception("客户端配置不存在: %s", resolvedClientId);
         }
 
         // 构建 Token 上下文

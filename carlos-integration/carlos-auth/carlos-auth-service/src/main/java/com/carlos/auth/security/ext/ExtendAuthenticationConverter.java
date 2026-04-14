@@ -70,9 +70,10 @@ import java.util.Set;
 public class ExtendAuthenticationConverter implements AuthenticationConverter {
 
     /**
-     * 支持的授权类型（不包含密码授权，密码登录请使用 /login 表单登录端点）
+     * 支持的授权类型（已统一纳入标准 OAuth2 token 端点）
      */
     protected static final Set<String> SUPPORTED_GRANT_TYPES = new HashSet<>(Arrays.asList(
+        CustomGrantTypes.PASSWORD.getValue(),
         CustomGrantTypes.SMS_CODE.getValue(),
         CustomGrantTypes.EMAIL_CODE.getValue(),
         CustomGrantTypes.QR_CODE.getValue(),
@@ -177,6 +178,9 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
      */
     protected void validateParameters(Map<String, String> params, String grantType) {
         switch (grantType) {
+            case "password":
+                validatePasswordParams(params);
+                break;
             case "sms_code":
                 validateSmsParams(params);
                 break;
@@ -192,6 +196,23 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
             default:
                 // 其他类型由子类处理
                 break;
+        }
+    }
+
+    /**
+     * 验证密码认证参数
+     */
+    protected void validatePasswordParams(Map<String, String> params) {
+        String username = params.get(OAuth2ParameterNames.USERNAME);
+        String password = params.get(OAuth2ParameterNames.PASSWORD);
+
+        if (!StringUtils.hasText(username)) {
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, "用户名不能为空", ""));
+        }
+        if (!StringUtils.hasText(password)) {
+            throw new OAuth2AuthenticationException(
+                new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, "密码不能为空", ""));
         }
     }
 
@@ -274,6 +295,8 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
      */
     protected Object extractPrincipal(Map<String, String> params, String grantType) {
         switch (grantType) {
+            case "password":
+                return params.get(OAuth2ParameterNames.USERNAME);
             case "sms_code":
                 return params.get("phone");
             case "email_code":
@@ -298,6 +321,8 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
      */
     protected Object extractCredentials(Map<String, String> params, String grantType) {
         switch (grantType) {
+            case "password":
+                return params.get(OAuth2ParameterNames.PASSWORD);
             case "sms_code":
                 return params.get("sms_code");
             case "email_code":
