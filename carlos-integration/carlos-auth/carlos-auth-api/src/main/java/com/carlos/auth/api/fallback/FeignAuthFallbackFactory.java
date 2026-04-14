@@ -1,13 +1,13 @@
-package com.carlos.auth.fallback;
+package com.carlos.auth.api.fallback;
 
-import com.carlos.auth.FeignAuth;
-import com.carlos.auth.pojo.PasswordMatchDTO;
-import com.carlos.core.auth.Oauth2TokenDTO;
+import com.carlos.auth.api.ApiAuth;
+import com.carlos.auth.api.pojo.PasswordMatchDTO;
 import com.carlos.core.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.util.MultiValueMap;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,18 +17,21 @@ import java.util.Map;
  * @date 2022/11/16 11:13
  */
 @Slf4j
-public class FeignAuthFallbackFactory implements FallbackFactory<FeignAuth> {
+public class FeignAuthFallbackFactory implements FallbackFactory<ApiAuth> {
 
     @Override
-    public FeignAuth create(final Throwable throwable) {
+    public ApiAuth create(final Throwable throwable) {
         final String message = throwable.getMessage();
         log.error("认证服务调用失败: message:{}", message);
-        return new FeignAuth() {
+        return new ApiAuth() {
 
             @Override
-            public Result<Oauth2TokenDTO> getAccessToken(
-                final Map<String, String> param, final MultiValueMap<String, String> headers) {
-                return Result.error(message);
+            public Map<String, Object> getAccessToken(
+                final MultiValueMap<String, String> param, final String authorization) {
+                Map<String, Object> map = new HashMap<>(4);
+                map.put("error", "service_unavailable");
+                map.put("error_description", message != null ? message : "认证服务调用失败");
+                return map;
             }
 
             @Override

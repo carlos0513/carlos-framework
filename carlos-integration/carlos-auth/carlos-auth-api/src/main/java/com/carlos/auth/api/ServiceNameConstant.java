@@ -1,4 +1,4 @@
-package com.carlos.auth;
+package com.carlos.auth.api;
 
 /**
  * 服务名称常量
@@ -11,5 +11,5 @@ public interface ServiceNameConstant {
     /**
      * 认证中心
      */
-    String AUTH = "carlos-auth";
+    String SERVICE_NAME = "carlos-auth";
 }

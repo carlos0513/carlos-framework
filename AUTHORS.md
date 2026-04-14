@@ -8,14 +8,13 @@
 
 ## Active Maintainers
 
-- Add your name here when you become a maintainer
+- [Carlos](https://github.com/carlos) - Project Creator
 
 ## Contributors
 
 This project exists thanks to all the people who contribute:
 
 - [Carlos](https://github.com/carlos) - Project Creator
-- Add your name here when you contribute
 
 ## How to Contribute
 

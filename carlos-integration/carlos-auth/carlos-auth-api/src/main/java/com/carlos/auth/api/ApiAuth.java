@@ -1,10 +1,10 @@
-package com.carlos.auth;
+package com.carlos.auth.api;
 
-import com.carlos.auth.fallback.FeignAuthFallbackFactory;
-import com.carlos.auth.pojo.PasswordMatchDTO;
-import com.carlos.core.auth.Oauth2TokenDTO;
+import com.carlos.auth.api.fallback.FeignAuthFallbackFactory;
+import com.carlos.auth.api.pojo.PasswordMatchDTO;
 import com.carlos.core.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,23 +17,24 @@ import java.util.Map;
  * @date 2021/11/11 13:51
  */
 @FeignClient(
-    value = ServiceNameConstant.AUTH,
+    value = ServiceNameConstant.SERVICE_NAME,
     contextId = "auth",
     fallbackFactory = FeignAuthFallbackFactory.class)
-public interface FeignAuth {
+public interface ApiAuth {
 
     /**
-     * 获取认证token
+     * 获取认证token（代理OAuth2标准端点）
      *
-     * @param param 认证信息
-     * @return com.carlos.core.auth.Oauth2TokenDTO
+     * @param param 认证信息（form-urlencoded）
+     * @param authorization Basic Auth 客户端认证头（可选）
+     * @return 认证中心返回的原始Token Map
      * @author carlos
      * @date 2021/12/27 16:08
      */
-    @PostMapping(value = "/oauth2/token")
-    Result<Oauth2TokenDTO> getAccessToken(
-        @RequestParam("param") Map<String, String> param,
-        @RequestHeader(value = "headers", required = false) MultiValueMap<String, String> headers);
+    @PostMapping(value = "/oauth2/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    Map<String, Object> getAccessToken(
+        @RequestBody MultiValueMap<String, String> param,
+        @RequestHeader(value = "Authorization", required = false) String authorization);
 
     /**
      * 获取加密后的密码
@@ -43,7 +44,7 @@ public interface FeignAuth {
      * @author carlos
      * @date 2021/12/27 16:07
      */
-    @GetMapping(value = "/pwd/encode")
+    @GetMapping(value = "/auth/password/encode")
     Result<String> encodePassword(@RequestParam("password") String password);
 
     /**
@@ -54,7 +55,7 @@ public interface FeignAuth {
      * @author carlos
      * @date 2022/4/25 15:30
      */
-    @PostMapping(value = "pwd/match")
+    @PostMapping(value = "/auth/password/match")
     Result<Boolean> match(@RequestBody PasswordMatchDTO param);
 
     /**

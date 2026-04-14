@@ -1,8 +1,7 @@
-package com.carlos.auth.app.api;
+package com.carlos.auth.api;
 
-import com.carlos.auth.ServiceNameConstant;
-import com.carlos.auth.app.api.fallback.ApiAppClientFallbackFactory;
-import com.carlos.auth.app.api.pojo.ao.AppClientAO;
+import com.carlos.auth.api.fallback.ApiAppClientFallbackFactory;
+import com.carlos.auth.api.pojo.ao.AppClientAO;
 import com.carlos.core.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,7 @@ import java.io.Serializable;
  * @date 2025-3-12 14:00:14
  */
 @FeignClient(
-    value = ServiceNameConstant.AUTH, path = "api/oauth2/app/client",
+    value = ServiceNameConstant.SERVICE_NAME, path = "api/oauth2/app/client",
     contextId = "auth-app",
     fallbackFactory = ApiAppClientFallbackFactory.class)
 public interface ApiAppClient {
@@ -29,7 +28,7 @@ public interface ApiAppClient {
      * 获取应用信
      *
      * @param id 应用id
-     * @return com.carlos.core.response.Result<com.carlos.auth.app.api.pojo.ao.AppClientAO>
+     * @return com.carlos.core.response.Result<com.carlos.auth.api.pojo.ao.AppClientAO>
      * @author Carlos
      * @date 2025-04-15 14:58
      */
@@ -40,7 +39,7 @@ public interface ApiAppClient {
      * 获取应用信息
      *
      * @param appKey appKey
-     * @return com.carlos.core.response.Result<com.carlos.auth.app.api.pojo.ao.AppClientAO>
+     * @return com.carlos.core.response.Result<com.carlos.auth.api.pojo.ao.AppClientAO>
      * @author Carlos
      * @date 2025-04-15 14:58
      */

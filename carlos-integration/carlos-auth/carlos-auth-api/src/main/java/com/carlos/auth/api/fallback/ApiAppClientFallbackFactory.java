@@ -1,7 +1,7 @@
-package com.carlos.auth.app.api.fallback;
+package com.carlos.auth.api.fallback;
 
-import com.carlos.auth.app.api.ApiAppClient;
-import com.carlos.auth.app.api.pojo.ao.AppClientAO;
+import com.carlos.auth.api.ApiAppClient;
+import com.carlos.auth.api.pojo.ao.AppClientAO;
 import com.carlos.core.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;

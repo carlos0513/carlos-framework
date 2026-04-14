@@ -1,8 +1,8 @@
 package com.carlos.auth.app.apiimpl;
 
 
-import com.carlos.auth.app.api.ApiAppClient;
-import com.carlos.auth.app.api.pojo.ao.AppClientAO;
+import com.carlos.auth.api.ApiAppClient;
+import com.carlos.auth.api.pojo.ao.AppClientAO;
 import com.carlos.auth.app.convert.AppClientConvert;
 import com.carlos.auth.app.pojo.dto.AppClientDTO;
 import com.carlos.auth.app.service.AppClientService;
@@ -36,7 +36,7 @@ public class ApiAppClientImpl implements ApiAppClient {
      * 获取应用信
      *
      * @param id 应用id
-     * @return com.carlos.core.response.Result<com.carlos.auth.app.api.pojo.ao.AppClientAO>
+     * @return com.carlos.core.response.Result<com.carlos.auth.api.pojo.ao.AppClientAO>
      * @author Carlos
      * @date 2025-04-15 14:58
      */
@@ -51,7 +51,7 @@ public class ApiAppClientImpl implements ApiAppClient {
      * 获取应用信息
      *
      * @param appKey appKey
-     * @return com.carlos.core.response.Result<com.carlos.auth.app.api.pojo.ao.AppClientAO>
+     * @return com.carlos.core.response.Result<com.carlos.auth.api.pojo.ao.AppClientAO>
      * @author Carlos
      * @date 2025-04-15 14:58
      */

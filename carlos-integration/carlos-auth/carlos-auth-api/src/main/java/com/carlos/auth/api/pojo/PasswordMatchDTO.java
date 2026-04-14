@@ -1,4 +1,4 @@
-package com.carlos.auth.pojo;
+package com.carlos.auth.api.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

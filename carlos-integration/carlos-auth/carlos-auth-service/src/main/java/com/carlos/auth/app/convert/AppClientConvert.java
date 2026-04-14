@@ -1,6 +1,6 @@
 package com.carlos.auth.app.convert;
 
-import com.carlos.auth.app.api.pojo.ao.AppClientAO;
+import com.carlos.auth.api.pojo.ao.AppClientAO;
 import com.carlos.auth.app.pojo.dto.AppClientDTO;
 import com.carlos.auth.app.pojo.entity.AppClient;
 import com.carlos.auth.app.pojo.param.AppClientCreateParam;

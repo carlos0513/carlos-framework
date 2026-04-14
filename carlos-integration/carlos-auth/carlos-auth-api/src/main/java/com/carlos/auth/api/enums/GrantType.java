@@ -1,4 +1,4 @@
-package com.carlos.auth.enums;
+package com.carlos.auth.api.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
