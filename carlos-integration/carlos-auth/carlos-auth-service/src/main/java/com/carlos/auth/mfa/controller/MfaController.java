@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/oauth2/mfa")
+@RequestMapping("/auth/mfa")
 @Tag(name = "多因素认证(MFA)", description = "MFA设置、验证、恢复码管理")
 public class MfaController {
 

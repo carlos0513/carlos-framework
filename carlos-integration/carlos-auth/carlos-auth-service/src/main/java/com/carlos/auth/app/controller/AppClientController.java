@@ -41,7 +41,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("oauth2/app/client")
+@RequestMapping("auth/app/client")
 @Tag(name = "应用客户端信息")
 public class AppClientController {
 
