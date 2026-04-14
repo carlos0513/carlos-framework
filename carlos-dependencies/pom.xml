@@ -37,10 +37,6 @@
 
     <!-- 安全相关 -->
     <spring-security-oauth2-jose.version>6.2.7</spring-security-oauth2-jose.version>
-    <!-- Spring Security 版本由 Spring Boot 3.5.9 统一管理，不指定显式版本 -->
-    <spring-boot-starter-security.version>3.2.12</spring-boot-starter-security.version>
-    <spring-cloud-oauth2.version>2.2.5.RELEASE</spring-cloud-oauth2.version>
-    <!-- 注意：旧版本定义已移除，避免版本冲突 -->
 
     <!-- 数据层 -->
     <mybatis-plus.version>3.5.15</mybatis-plus.version>          <!-- 已支持 SB3 -->
@@ -221,17 +217,6 @@
         <groupId>com.squareup.okhttp3</groupId>
         <artifactId>okhttp</artifactId>
         <version>${okhttp.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        <version>${spring-boot-starter-security.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-security</artifactId>
-        <version>${spring-boot-starter-security.version}</version>
       </dependency>
 
       <!-- mapstruct 转换器 -->
@@ -580,23 +565,6 @@
       <dependency>
         <groupId>com.carlos</groupId>
         <artifactId>carlos-spring-boot-starter-openapi</artifactId>
-        <version>${revision}</version>
-      </dependency>
-      <!-- OAuth2组件 -->
-      <dependency>
-        <groupId>com.carlos</groupId>
-        <artifactId>carlos-auth-service</artifactId>
-        <version>${revision}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.carlos</groupId>
-        <artifactId>carlos-auth-api</artifactId>
-        <version>${revision}</version>
-      </dependency>
-      <!-- 统一审计服务 API -->
-      <dependency>
-        <groupId>com.carlos.audit</groupId>
-        <artifactId>carlos-audit-api</artifactId>
         <version>${revision}</version>
       </dependency>
       <!-- 消息队列组件 -->

@@ -76,6 +76,13 @@
       <artifactId>carlos-audit-api</artifactId>
     </dependency>
 
+    <!-- 组织机构用户服务 API（用于身份源用户校验） -->
+    <dependency>
+      <groupId>com.carlos.org</groupId>
+      <artifactId>carlos-org-api</artifactId>
+    </dependency>
+
+
     <!-- ==================== Spring Security OAuth2 ==================== -->
 
     <!--
