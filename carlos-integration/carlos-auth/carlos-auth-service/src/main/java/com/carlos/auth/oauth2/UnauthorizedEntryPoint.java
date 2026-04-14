@@ -1,9 +1,8 @@
-package com.carlos.security.config;
+package com.carlos.auth.oauth2;
 
 import cn.hutool.json.JSONUtil;
 import com.carlos.core.response.CommonErrorCode;
 import com.carlos.core.response.Result;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +30,10 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+                         AuthenticationException authException) throws IOException {
 
         log.debug("Unauthorized request: {} {}", request.getMethod(), request.getRequestURI());
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());

@@ -1,11 +1,14 @@
 package com.carlos.auth.oauth2.config;
 
+import cn.hutool.extra.spring.SpringUtil;
+import com.carlos.auth.app.service.AppClientService;
 import com.carlos.auth.config.OAuth2Properties;
 import com.carlos.auth.oauth2.Oauth2JwtTokenCustomizer;
+import com.carlos.auth.oauth2.UnauthorizedEntryPoint;
 import com.carlos.auth.oauth2.client.CustomizeClientOAuth2AccessTokenGenerator;
 import com.carlos.auth.oauth2.client.CustomizeClientOAuth2TokenCustomizer;
+import com.carlos.auth.oauth2.client.CustomizeRegisteredClientRepository;
 import com.carlos.auth.oauth2.client.OAuth2ClientProperties;
-import com.carlos.auth.oauth2.handler.SsoLogoutSuccessHandler;
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationConsentService;
 import com.carlos.auth.oauth2.repository.RedisOAuth2AuthorizationService;
 import com.carlos.auth.oauth2.server.AuthorizationServerProperties;
@@ -60,7 +63,6 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -169,11 +171,9 @@ public class OAuth2AuthorizationServerConfig {
                     // 启用 OIDC 支持（OpenID Connect 1.0）
                     .oidc(Customizer.withDefaults());
             })
-            // 未认证时重定向到登录页面
+            // 未认证时返回 401 JSON（当前无登录页面，避免 302 重定向）
             .exceptionHandling(exceptions ->
-                exceptions.authenticationEntryPoint(
-                    new LoginUrlAuthenticationEntryPoint("/login")
-                )
+                exceptions.authenticationEntryPoint(new UnauthorizedEntryPoint())
             )
             // 启用 JWT 资源服务器支持（用于验证自己的 Token）
             .oauth2ResourceServer(resourceServer ->
@@ -206,44 +206,33 @@ public class OAuth2AuthorizationServerConfig {
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain defaultSecurityFilterChain(
-        HttpSecurity http,
-        CustomAuthenticationSuccessHandler authenticationSuccessHandler,
-        CustomAuthenticationFailureHandler authenticationFailureHandler) throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
             // 配置请求授权
             .authorizeHttpRequests(authorize -> authorize
                 // 放行的路径
                 .requestMatchers(
-                    "/login",           // 登录页面
-                    "/error",           // 错误页面
-                    "/oauth2/**",       // OAuth2 端点（由授权服务器过滤器处理）
-                    "/actuator/**",     // 健康检查
-                    "/assets/**",       // 静态资源
-                    "/webjars/**",      // WebJars 资源
-                    "/swagger-ui/**",   // Swagger UI
-                    "/doc.html",        // Knife4j 文档
-                    "/v3/api-docs/**"   // OpenAPI 文档
+                    "/login",                    // 登录页面
+                    "/error",                    // 错误页面
+                    "/oauth2/**",                // OAuth2 端点（由授权服务器过滤器处理）
+                    "/actuator/**",              // 健康检查
+                    "/assets/**",                // 静态资源
+                    "/webjars/**",               // WebJars 资源
+                    "/swagger-ui/**",            // Swagger UI
+                    "/doc.html",                 // Knife4j 文档
+                    "/v3/api-docs/**",           // OpenAPI 文档
+                    "/auth/user/login",          // 用户登录接口
+                    "/auth/captcha/**",          // 验证码接口
+                    "/auth/password/**"          // 密码工具接口
                 ).permitAll()
                 // 其他请求需要认证
                 .anyRequest().authenticated()
             )
             // 禁用 CSRF（OAuth2 使用 Token 机制，不需要 CSRF 保护）
             .csrf(AbstractHttpConfigurer::disable)
-            // 启用表单登录，使用自定义成功/失败处理器
-            .formLogin(form -> form
-                .loginPage("/login")
-                .successHandler(authenticationSuccessHandler)
-                .failureHandler(authenticationFailureHandler)
-                .permitAll()
-            )
-            // 配置登出
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessHandler(new SsoLogoutSuccessHandler())
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
+            // 未认证时返回 401 JSON（当前无登录页面，避免 302 重定向）
+            .exceptionHandling(exceptions ->
+                exceptions.authenticationEntryPoint(new UnauthorizedEntryPoint())
             );
 
         return http.build();
@@ -285,14 +274,10 @@ public class OAuth2AuthorizationServerConfig {
                 clients.add(buildRegisteredClient(config, passwordEncoder));
                 log.info("Registered OAuth2 client: {}", config.getClientId());
             }
-        } else {
-            // 创建默认客户端
-            clients.add(buildDefaultClient(passwordEncoder));
-            log.warn("No OAuth2 clients configured, using default client (client-id: carlos-client)");
-            log.warn("Please configure clients in application.yml for production use");
+            return new InMemoryRegisteredClientRepository(clients);
         }
-
-        return new InMemoryRegisteredClientRepository(clients);
+        // 打印日志 当配置文件未配置客户端时，使用自定已的数据库客户端管理模块提供客户端
+        return new CustomizeRegisteredClientRepository(SpringUtil.getBean(AppClientService.class));
     }
 
     /**
@@ -382,50 +367,6 @@ public class OAuth2AuthorizationServerConfig {
         builder.tokenSettings(tokenSettingsBuilder.build());
 
         return builder.build();
-    }
-
-    /**
-     * 构建默认客户端
-     *
-     * <p>当未配置任何客户端时使用的默认配置。</p>
-     *
-     * @param passwordEncoder 密码编码器
-     * @return RegisteredClient 默认注册客户端
-     */
-    private RegisteredClient buildDefaultClient(PasswordEncoder passwordEncoder) {
-        return RegisteredClient.withId(UUID.randomUUID().toString())
-            .clientId("carlos-client")
-            .clientSecret(passwordEncoder.encode("carlos-secret"))
-            .clientName("Carlos Default Client")
-            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-            .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-            .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-            .redirectUri("http://localhost:8080/login/oauth2/code/carlos")
-            .redirectUri("http://localhost:8080/authorized")
-            .redirectUri("http://127.0.0.1:8080/login/oauth2/code/carlos")
-            .scope(OidcScopes.OPENID)
-            .scope(OidcScopes.PROFILE)
-            .scope("read")
-            .scope("write")
-            .scope("all")
-            .clientSettings(ClientSettings.builder()
-                .requireAuthorizationConsent(false)
-                .requireProofKey(false)
-                .build())
-            .tokenSettings(TokenSettings.builder()
-                .accessTokenTimeToLive(
-                    oauth2Properties.getAuthorizationServer().getAccessTokenTimeToLive()
-                )
-                .refreshTokenTimeToLive(
-                    oauth2Properties.getAuthorizationServer().getRefreshTokenTimeToLive()
-                )
-                .reuseRefreshTokens(
-                    oauth2Properties.getAuthorizationServer().isReuseRefreshTokens()
-                )
-                .build())
-            .build();
     }
 
     /**
