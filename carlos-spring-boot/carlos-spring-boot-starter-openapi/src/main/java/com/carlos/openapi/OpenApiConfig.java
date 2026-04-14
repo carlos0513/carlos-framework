@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.AllArgsConstructor;
 import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -13,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -58,6 +60,8 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
         OpenAPI openAPI = new OpenAPI()
+            // 修复：添加默认 Server 配置，使用相对路径，避免中文被用作 host
+            .servers(Collections.singletonList(new Server().url("/").description("当前服务")))
             .info(new Info()
                 .title(properties.getTitle())
                 .version(properties.getVersion())
