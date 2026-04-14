@@ -23,6 +23,10 @@
 
     <description>license模块</description>
 
+  <properties>
+    <truelicense.version>1.33</truelicense.version>
+  </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -40,6 +44,11 @@
                 <artifactId>carlos-spring-boot-starter-license-verify</artifactId>
                 <version>${revision}</version>
             </dependency>
+          <dependency>
+            <groupId>de.schlichtherle.truelicense</groupId>
+            <artifactId>truelicense-core</artifactId>
+            <version>${truelicense.version}</version>
+          </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

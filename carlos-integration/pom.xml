@@ -17,18 +17,6 @@
         Carlos 第三方集成模块 - 包含许可证、工具等独立功能
     </description>
 
-  <properties>
-    <!-- 业务线特有的第三方依赖版本 -->
-    <truelicense.version>1.33</truelicense.version>
-    <gitlab4j-api.version>5.4.0</gitlab4j-api.version>
-    <freemarker.version>2.3.31</freemarker.version>
-
-    <resilience4j.version>2.1.0</resilience4j.version>
-    <knife4j-gateway-spring-boot-starter.version>4.6.0</knife4j-gateway-spring-boot-starter.version>
-    <clickhouse-jdbc.version>0.9.6</clickhouse-jdbc.version>
-
-  </properties>
-
   <modules>
         <module>carlos-license</module>
         <module>carlos-tools</module>
@@ -123,44 +111,6 @@
               <artifactId>carlos-message-bus</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-          <!-- 业务线特有的第三方依赖版本管理 -->
-          <dependency>
-            <groupId>de.schlichtherle.truelicense</groupId>
-            <artifactId>truelicense-core</artifactId>
-            <version>${truelicense.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.gitlab4j</groupId>
-            <artifactId>gitlab4j-api</artifactId>
-            <version>${gitlab4j-api.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>${freemarker.version}</version>
-          </dependency>
-
-          <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-spring-boot3</artifactId>
-            <version>${resilience4j.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-reactor</artifactId>
-            <version>${resilience4j.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.github.xingfudeshi</groupId>
-            <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
-            <version>${knife4j-gateway-spring-boot-starter.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.clickhouse</groupId>
-            <artifactId>clickhouse-jdbc-all</artifactId>
-            <version>${clickhouse-jdbc.version}</version>
-          </dependency>
         </dependencies>
     </dependencyManagement>
 
