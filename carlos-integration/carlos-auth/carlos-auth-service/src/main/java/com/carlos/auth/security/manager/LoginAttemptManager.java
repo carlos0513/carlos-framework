@@ -1,12 +1,11 @@
 package com.carlos.auth.security.manager;
 
+import com.carlos.redis.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -39,10 +38,6 @@ public class LoginAttemptManager {
      */
     private static final Duration DEFAULT_LOCK_DURATION = Duration.ofMinutes(15);
 
-    /**
-     * RedisTemplate
-     */
-    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 记录登录失败
@@ -58,11 +53,11 @@ public class LoginAttemptManager {
         String lockKey = LOGIN_ATTEMPT_KEY_PREFIX + username;
 
         // 获取当前失败次数
-        Long attempts = redisTemplate.opsForValue().increment(countKey);
+        Long attempts = RedisUtil.incrementValue(countKey, 1L);
 
         if (attempts == 1) {
             // 第一次失败，设置过期时间（24小时）
-            redisTemplate.expire(countKey, Duration.ofHours(24));
+            RedisUtil.setExpire(countKey, Duration.ofHours(24));
             log.debug("First login failure for user: {}", username);
         }
 
@@ -90,11 +85,11 @@ public class LoginAttemptManager {
         String lockKey = LOGIN_ATTEMPT_KEY_PREFIX + username;
 
         // 删除失败次数记录
-        redisTemplate.delete(countKey);
+        RedisUtil.delete(countKey);
 
         // 解除锁定（如果之前被锁定）
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(lockKey))) {
-            redisTemplate.delete(lockKey);
+        if (Boolean.TRUE.equals(RedisUtil.hasKey(lockKey))) {
+            RedisUtil.delete(lockKey);
             log.info("Account unlocked after successful login: {}", username);
         }
 
@@ -113,10 +108,10 @@ public class LoginAttemptManager {
         }
 
         String lockKey = LOGIN_ATTEMPT_KEY_PREFIX + username;
-        Boolean isLocked = redisTemplate.hasKey(lockKey);
+        Boolean isLocked = RedisUtil.hasKey(lockKey);
 
         if (Boolean.TRUE.equals(isLocked)) {
-            Long ttl = redisTemplate.getExpire(lockKey, TimeUnit.SECONDS);
+            Long ttl = RedisUtil.getExpire(lockKey);
             log.warn("Account is locked: {}, TTL={} seconds", username, ttl);
             return true;
         }
@@ -135,7 +130,7 @@ public class LoginAttemptManager {
         }
 
         String lockKey = LOGIN_ATTEMPT_KEY_PREFIX + username;
-        redisTemplate.opsForValue().set(lockKey, "LOCKED", DEFAULT_LOCK_DURATION);
+        RedisUtil.setValue(lockKey, "LOCKED", DEFAULT_LOCK_DURATION);
 
         log.info("Account locked: {}, duration={} minutes", username, DEFAULT_LOCK_DURATION.toMinutes());
     }
@@ -152,11 +147,11 @@ public class LoginAttemptManager {
         }
 
         String lockKey = LOGIN_ATTEMPT_KEY_PREFIX + username;
-        if (!Boolean.TRUE.equals(redisTemplate.hasKey(lockKey))) {
+        if (!Boolean.TRUE.equals(RedisUtil.hasKey(lockKey))) {
             return 0;
         }
 
-        Long ttl = redisTemplate.getExpire(lockKey, TimeUnit.SECONDS);
+        Long ttl = RedisUtil.getExpire(lockKey);
         return ttl != null && ttl > 0 ? ttl : 0;
     }
 
@@ -170,20 +165,12 @@ public class LoginAttemptManager {
         if (username == null || username.isBlank()) {
             return 0;
         }
-
         String countKey = LOGIN_ATTEMPT_COUNT_KEY_PREFIX + username;
-        Object value = redisTemplate.opsForValue().get(countKey);
-
+        Integer value = RedisUtil.getValue(countKey);
         if (value == null) {
             return 0;
         }
-
-        try {
-            return Integer.parseInt(value.toString());
-        } catch (NumberFormatException e) {
-            log.error("Failed to parse login attempts for user: {}", username, e);
-            return 0;
-        }
+        return value;
     }
 
     /**
@@ -199,8 +186,8 @@ public class LoginAttemptManager {
         String countKey = LOGIN_ATTEMPT_COUNT_KEY_PREFIX + username;
         String lockKey = LOGIN_ATTEMPT_KEY_PREFIX + username;
 
-        redisTemplate.delete(countKey);
-        redisTemplate.delete(lockKey);
+        RedisUtil.delete(countKey);
+        RedisUtil.delete(lockKey);
 
         log.info("Login attempts reset for user: {}", username);
     }
