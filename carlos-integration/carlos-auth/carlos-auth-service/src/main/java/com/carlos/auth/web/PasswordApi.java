@@ -1,6 +1,6 @@
 package com.carlos.auth.web;
 
-import com.carlos.auth.pojo.PasswordMatchDTO;
+import com.carlos.auth.api.pojo.PasswordMatchDTO;
 import com.carlos.core.response.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

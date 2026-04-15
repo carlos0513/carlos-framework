@@ -52,6 +52,10 @@
       <artifactId>carlos-org-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.carlos.auth</groupId>
+      <artifactId>carlos-auth-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>cn.idev.excel</groupId>
       <artifactId>fastexcel</artifactId>
     </dependency>

@@ -7,6 +7,8 @@ import com.carlos.org.api.ApiOrgUser;
 import com.carlos.org.api.pojo.ao.OrgUserAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -15,7 +17,7 @@ import java.util.Set;
 /**
  * 本地身份源提供者
  *
- * <p>支持用户名密码登录认证，通过 Feign 调用 carlos-org 模块进行用户校验。</p>
+ * <p>支持用户名密码登录认证。从 carlos-org 获取用户信息，密码校验统一在 auth 模块完成。</p>
  *
  * @author Carlos
  * @version 3.0.0
@@ -26,6 +28,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class LocalIdentityProvider implements IdentityProvider {
 
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public String getProviderId() {
@@ -47,21 +50,42 @@ public class LocalIdentityProvider implements IdentityProvider {
         String username = (String) request.getPrincipal();
         String password = (String) request.getCredentials();
 
-
         ApiOrgUser userApi = SpringUtil.getBean(ApiOrgUser.class);
-        Result<OrgUserAO> userByIdentifier = userApi.getUserByIdentifier(username);
+        Result<OrgUserAO> userResult = userApi.getUserByIdentifier(username);
 
+        if (!userResult.isSuccess() || userResult.getData() == null) {
+            throw new BadCredentialsException("用户名或密码错误");
+        }
 
-        // 2. 查询用户信息（优先用手机号查）
-        OrgUserAO orgUser = userByIdentifier.getData();
+        OrgUserAO orgUser = userResult.getData();
+        String encodedPwd = orgUser.getPwd();
 
-        // 1. 校验密码
+        // 密码校验统一由 auth 模块处理
+        boolean matched;
+        if (encodedPwd == null) {
+            matched = false;
+        } else if (isPlainTextPassword(encodedPwd)) {
+            // 兼容过渡期明文密码（建议后续统一由 auth 加密后存储）
+            log.warn("User [{}] password is stored in plaintext, please migrate to encoded password", username);
+            matched = password.equals(encodedPwd);
+        } else {
+            matched = passwordEncoder.matches(password, encodedPwd);
+        }
 
+        if (!matched) {
+            throw new BadCredentialsException("用户名或密码错误");
+        }
 
-        // 3. 构建统一用户身份
         return convertToUserIdentity(orgUser);
     }
 
+    /**
+     * 简单判断密码是否为明文（未使用标准加密前缀）
+     */
+    private boolean isPlainTextPassword(String pwd) {
+        // BCrypt 以 $2 开头，SM4/其他加密通常也会有特定前缀
+        return !pwd.startsWith("$") && pwd.length() < 64;
+    }
 
     private UserIdentity convertToUserIdentity(OrgUserAO user) {
         return UserIdentity.builder()
