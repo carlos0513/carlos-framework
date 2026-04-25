@@ -16,7 +16,15 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import com.carlos.core.response.CommonErrorCode;
+import com.carlos.gateway.exception.ErrorResponse;
+import cn.hutool.json.JSONUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -66,7 +74,7 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         String token = extractToken(request);
         if (StrUtil.isBlank(token)) {
             log.warn("No token found for path: {}", path);
-            return chain.filter(exchange);
+            return writeUnauthorizedResponse(exchange, CommonErrorCode.UNAUTHORIZED, "未提供认证凭证");
         }
 
         // 验证 Token 并构建用户上下文
@@ -86,8 +94,8 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
             })
             .onErrorResume(e -> {
                 log.error("Authentication failed for path: {}", path, e);
-                // 认证失败，继续执行（后续的鉴权过滤器会处理）
-                return chain.filter(exchange);
+                // 认证失败，返回 401，禁止穿透到下游服务
+                return writeUnauthorizedResponse(exchange, CommonErrorCode.AUTH_TOKEN_INVALID, "登录凭证无效或已过期");
             });
     }
 
@@ -133,6 +141,26 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         Optional.ofNullable(context.getDepartmentIds()).ifPresent(v -> builder.header(AuthConstant.DEPT_IDS, StrUtil.join(",", v)));
 
         return builder.build();
+    }
+
+    /**
+     * 写入 401 未授权响应
+     */
+    private Mono<Void> writeUnauthorizedResponse(ServerWebExchange exchange, CommonErrorCode errorCode, String message) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .status(HttpStatus.UNAUTHORIZED.value())
+            .code(errorCode.getCode())
+            .msg(message)
+            .path(exchange.getRequest().getURI().getPath())
+            .method(exchange.getRequest().getMethod() != null ? exchange.getRequest().getMethod().name() : "UNKNOWN")
+            .build();
+
+        byte[] bytes = JSONUtil.toJsonStr(errorResponse).getBytes(StandardCharsets.UTF_8);
+        return response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)));
     }
 
     @Override
