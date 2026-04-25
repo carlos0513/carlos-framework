@@ -24,6 +24,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import com.carlos.core.exception.DaoException;
 
 /**
  * 公共 Service 实现类
@@ -111,7 +112,7 @@ public abstract class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID ex
             final Class<T> clazz = ClassUtil.loadClass(className, false);
             field = clazz.getDeclaredField(property);
         } catch (final NoSuchFieldException e) {
-            throw new RuntimeException("Field not found: " + property, e);
+            throw new DaoException("Field not found: " + property, e);
         }
 
         // 从 field 取出字段名，优先使用 @Field 注解的值

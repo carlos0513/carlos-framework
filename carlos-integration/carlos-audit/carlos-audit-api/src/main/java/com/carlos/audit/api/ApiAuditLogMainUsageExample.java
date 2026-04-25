@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import com.carlos.core.exception.BusinessException;
 
 /**
  * <p>
@@ -105,7 +106,7 @@ public class ApiAuditLogMainUsageExample {
         } else {
             log.error("重要审计日志同步保存失败: {}", result.getMsg());
             // 重要日志保存失败，可能需要回滚业务操作或告警
-            throw new RuntimeException("审计日志保存失败，操作已回滚");
+            throw new BusinessException("审计日志保存失败，操作已回滚");
         }
     }
 

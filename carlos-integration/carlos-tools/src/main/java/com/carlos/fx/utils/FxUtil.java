@@ -68,7 +68,7 @@ public class FxUtil {
         // 获取 FXML 文件的 URL
         URL resource = FxUtil.class.getResource(fxmlPath);
         if (resource == null) {
-            throw new IOException("FXML file not found: " + fxmlPath);
+            throw new IllegalStateException("FXML file not found: " + fxmlPath);
         }
 
         // 创建 FXMLLoader 并加载 FXML 文件
@@ -109,7 +109,7 @@ public class FxUtil {
         // 获取 FXML 文件的 URL
         URL resource = FxUtil.class.getResource(fxmlPath);
         if (resource == null) {
-            throw new RuntimeException("FXML file not found: " + fxmlPath);
+            throw new IllegalStateException("FXML file not found: " + fxmlPath);
         }
 
         // 创建并返回 FXMLLoader

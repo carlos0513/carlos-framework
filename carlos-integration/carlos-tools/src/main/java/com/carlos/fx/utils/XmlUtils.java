@@ -40,14 +40,14 @@ public class XmlUtils {
         File file = new File(CodegeConstant.TEMP_DIR + File.separator + TYPE_CONVERT_XML);
         if (!file.exists()) {
             log.error("can't find file:{}", file.getPath());
-            throw new RuntimeException("类型配置文件不存在！");
+            throw new IllegalStateException("类型配置文件不存在！");
         }
         Document document;
         try {
             document = XmlUtil.readXML(file);
         } catch (UtilException e) {
             log.error("convert文件读取失败", e);
-            throw new ReadXmlException();
+            throw new IllegalStateException();
         }
         Element rootElement = XmlUtil.getRootElement(document);
         List<Element> typeElements = XmlUtil.getElements(rootElement, "type");
@@ -72,7 +72,7 @@ public class XmlUtils {
             document = XmlUtil.readXML(templateFile);
         } catch (Exception e) {
             log.error("模板描述文件读取失败， path=" + templateFile.getPath(), e);
-            throw new ReadXmlException();
+            throw new IllegalStateException();
         }
         Element rootElement = XmlUtil.getRootElement(document);
         Map<String, Object> stringObjectMap = XmlUtil.xmlToMap(rootElement);

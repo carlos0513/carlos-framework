@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import com.carlos.core.exception.BusinessException;
 
 /**
  * Redis 分布式锁工具类（增强版）
@@ -334,7 +335,7 @@ public class RedissonLockUtil {
      */
     public static <T> T executeWithLock(String name, LockType lockType, Supplier<T> supplier) {
         if (!lock(name, lockType)) {
-            throw new RuntimeException("获取分布式锁失败: " + name);
+            throw new BusinessException("获取分布式锁失败: " + name);
         }
         try {
             return supplier.get();

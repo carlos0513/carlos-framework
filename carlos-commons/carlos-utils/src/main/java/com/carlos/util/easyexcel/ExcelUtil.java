@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
+import com.carlos.core.exception.RestException;
 
 /**
  * excel相关工具
@@ -55,7 +56,7 @@ public class ExcelUtil {
                 .sheet("sheet1")
                 .doWrite(data);
         } catch (final Exception e) {
-            throw new RuntimeException("数据导出失败", e);
+            throw new IllegalStateException("数据导出失败", e);
         }
     }
 
@@ -86,14 +87,14 @@ public class ExcelUtil {
                 .sheet("sheet1")
                 .doWrite(data);
         } catch (final Exception e) {
-            throw new RuntimeException("数据导出失败", e);
+            throw new IllegalStateException("数据导出失败", e);
         }
     }
 
     public static void checkExcel(final String name) {
         final String extName = FileNameUtil.extName(name);
         if (!CharSequenceUtil.equalsAny(extName, "xls", "xlsx")) {
-            throw new RuntimeException("不支持的excel文件类型");
+            throw new IllegalStateException("不支持的excel文件类型");
         }
 
     }

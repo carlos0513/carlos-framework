@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import com.carlos.core.exception.BusinessException;
 
 /**
  * <p>
@@ -124,7 +125,7 @@ public class OssController {
             return Result.success(ossFile);
         } catch (Exception e) {
             log.error("Failed to upload file", e);
-            throw new RuntimeException("Failed to upload file: " + e.getMessage());
+            throw new BusinessException("Failed to upload file: " + e.getMessage());
         }
     }
 

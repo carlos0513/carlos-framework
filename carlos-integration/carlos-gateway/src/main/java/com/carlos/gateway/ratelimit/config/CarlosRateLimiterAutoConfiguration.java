@@ -29,6 +29,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 import java.util.List;
+import com.carlos.core.exception.GlobalException;
 
 /**
  * <p>
@@ -173,7 +174,7 @@ public class CarlosRateLimiterAutoConfiguration {
             try {
                 return scriptSource.getScriptAsString();
             } catch (Exception e) {
-                throw new RuntimeException("Failed to load Lua script", e);
+                throw new GlobalException("Failed to load Lua script", e);
             }
         }
     }

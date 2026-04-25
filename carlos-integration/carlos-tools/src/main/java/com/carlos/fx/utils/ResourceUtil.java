@@ -33,7 +33,7 @@ public class ResourceUtil {
         // 获取JAR包资源路径（示例：jar:file:/path/to.jar!/templates ）
         URL resourceUrl = ResourceUtil.class.getClassLoader().getResource(resourceName);
         if (resourceUrl == null) {
-            throw new FileNotFoundException("目录不存在: " + resourceName);
+            throw new IllegalStateException("目录不存在: " + resourceName);
         }
 
         // 解析本地目录路径或者jar目录路径
@@ -41,7 +41,7 @@ public class ResourceUtil {
             // 本地目录
             File localDir = new File(URLDecoder.decode(resourceUrl.getPath(), StandardCharsets.UTF_8));
             if (!localDir.exists() || !localDir.isDirectory()) {
-                throw new FileNotFoundException("目录不存在: " + resourceName);
+                throw new IllegalStateException("目录不存在: " + resourceName);
             }
             // 复制文件到临时目录
             File tempDir = new File(localTempDir);
@@ -49,7 +49,7 @@ public class ResourceUtil {
                 try {
                     Files.copy(source, tempDir.toPath().resolve(localDir.toPath().relativize(source)));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new IllegalStateException(e);
                 }
             });
             return;

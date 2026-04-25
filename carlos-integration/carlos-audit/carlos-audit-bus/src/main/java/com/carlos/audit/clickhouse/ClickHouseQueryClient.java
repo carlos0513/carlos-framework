@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import com.carlos.core.exception.DaoException;
 
 /**
  * ClickHouse 查询客户端
@@ -79,7 +80,7 @@ public class ClickHouseQueryClient {
 
         } catch (Exception e) {
             log.error("ClickHouse 查询失败: {}", sql, e);
-            throw new RuntimeException("ClickHouse 查询失败: " + e.getMessage(), e);
+            throw new DaoException("ClickHouse 查询失败: " + e.getMessage(), e);
         }
 
         return results;
@@ -120,7 +121,7 @@ public class ClickHouseQueryClient {
 
         } catch (Exception e) {
             log.error("ClickHouse 计数查询失败: {}", sql, e);
-            throw new RuntimeException("ClickHouse 计数查询失败: " + e.getMessage(), e);
+            throw new DaoException("ClickHouse 计数查询失败: " + e.getMessage(), e);
         }
 
         return 0L;
@@ -177,7 +178,7 @@ public class ClickHouseQueryClient {
 
         } catch (Exception e) {
             log.error("ClickHouse 执行失败: {}", sql, e);
-            throw new RuntimeException("ClickHouse 执行失败: " + e.getMessage(), e);
+            throw new DaoException("ClickHouse 执行失败: " + e.getMessage(), e);
         }
     }
 

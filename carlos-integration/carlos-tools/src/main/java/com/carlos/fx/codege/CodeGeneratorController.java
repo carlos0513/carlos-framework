@@ -207,7 +207,7 @@ public class CodeGeneratorController extends BaseController {
 
         templatesBaseInfo = TemplateUtil.getTemplatesBaseInfo(templateRootPath);
         if (CollUtil.isEmpty(templatesBaseInfo)) {
-            throw new RuntimeException("模板为空");
+            throw new IllegalStateException("模板为空");
         }
         List<ViewItemVO> collect = templatesBaseInfo.stream().map(templateBaseInfo -> new ViewItemVO(templateBaseInfo.getName(), templateBaseInfo.getName())).collect(Collectors.toList());
         templateCombo.setItems(FXCollections.observableArrayList(collect));

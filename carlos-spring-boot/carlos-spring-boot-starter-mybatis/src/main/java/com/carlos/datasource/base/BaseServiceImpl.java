@@ -6,6 +6,7 @@ import jakarta.annotation.Resource;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import com.carlos.core.exception.DaoException;
 
 /**
  * <p>
@@ -44,9 +45,9 @@ public abstract class BaseServiceImpl<M extends BaseMapper<T>, T>
                 Object id = idField.get(entity);
                 return (Serializable) id;
             }
-            throw new RuntimeException("实体 " + entity.getClass().getName() + " 没有 id 字段");
+            throw new DaoException("实体 " + entity.getClass().getName() + " 没有 id 字段");
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("无法访问实体 id 字段", e);
+            throw new DaoException("无法访问实体 id 字段", e);
         }
     }
 

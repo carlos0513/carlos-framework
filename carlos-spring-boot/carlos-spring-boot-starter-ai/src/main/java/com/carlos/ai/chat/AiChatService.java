@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import com.carlos.core.exception.BusinessException;
 
 /**
  * AI 聊天服务
@@ -220,7 +221,7 @@ public class AiChatService {
             return model.generate(message);
         } catch (Exception e) {
             log.error("AI 对话失败", e);
-            throw new RuntimeException("AI 对话失败: " + e.getMessage(), e);
+            throw new BusinessException("AI 对话失败: " + e.getMessage(), e);
         }
     }
 
@@ -238,7 +239,7 @@ public class AiChatService {
             return response.content().text();
         } catch (Exception e) {
             log.error("AI 对话失败", e);
-            throw new RuntimeException("AI 对话失败: " + e.getMessage(), e);
+            throw new BusinessException("AI 对话失败: " + e.getMessage(), e);
         }
     }
 

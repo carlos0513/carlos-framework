@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import com.carlos.core.exception.BusinessException;
 
 /**
  * 变更日志生成工具
@@ -78,7 +79,7 @@ public class ChangelogGenerator {
             return filePath.toString();
         } catch (IOException e) {
             log.error("[ChangelogGenerator] 生成变更日志失败", e);
-            throw new RuntimeException("生成变更日志失败", e);
+            throw new BusinessException("生成变更日志失败", e);
         }
     }
 
@@ -110,7 +111,7 @@ public class ChangelogGenerator {
             return filePath.toString();
         } catch (IOException e) {
             log.error("[ChangelogGenerator] 生成 SQL 变更日志失败", e);
-            throw new RuntimeException("生成 SQL 变更日志失败", e);
+            throw new BusinessException("生成 SQL 变更日志失败", e);
         }
     }
 
@@ -134,7 +135,7 @@ public class ChangelogGenerator {
             return filePath.toString();
         } catch (IOException e) {
             log.error("[ChangelogGenerator] 生成主变更日志失败", e);
-            throw new RuntimeException("生成主变更日志失败", e);
+            throw new BusinessException("生成主变更日志失败", e);
         }
     }
 }

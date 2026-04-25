@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import com.carlos.core.exception.BusinessException;
 
 /**
  * <p>
@@ -76,7 +77,7 @@ public class QrCodeGenerator {
         try {
             encodedUri = URLEncoder.encode(otpAuthUri, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new BusinessException(e);
         }
 
         // 返回可生成二维码图片的URL

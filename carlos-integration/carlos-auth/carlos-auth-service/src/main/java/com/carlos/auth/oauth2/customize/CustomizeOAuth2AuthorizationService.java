@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import com.carlos.core.exception.BusinessException;
 
 
 /**
@@ -48,7 +49,7 @@ public class CustomizeOAuth2AuthorizationService implements OAuth2AuthorizationS
         try {
             json = mapper.writeValueAsString(authorization);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new BusinessException(e);
         }
 
 
@@ -129,7 +130,7 @@ public class CustomizeOAuth2AuthorizationService implements OAuth2AuthorizationS
         try {
             return objectMapper.readValue(jsonToken, OAuth2Authorization.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new BusinessException(e);
         }
     }
 

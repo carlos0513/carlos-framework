@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import com.carlos.core.exception.DaoException;
 
 /**
  * <p>
@@ -104,11 +105,11 @@ public abstract class BatchServiceImpl<M extends BaseMapper<T>, T> extends Servi
                     log.debug("第 {}/{} 批插入成功，本批条数: {}", i + 1, partitions.size(), partition.size());
                 } else {
                     log.error("第 {}/{} 批插入失败", i + 1, partitions.size());
-                    throw new RuntimeException("批量插入失败");
+                    throw new DaoException("批量插入失败");
                 }
             } catch (Exception e) {
                 log.error("第 {}/{} 批插入异常", i + 1, partitions.size(), e);
-                throw new RuntimeException("批量插入异常", e);
+                throw new DaoException("批量插入异常", e);
             }
         }
 
@@ -147,7 +148,7 @@ public abstract class BatchServiceImpl<M extends BaseMapper<T>, T> extends Servi
                 log.debug("第 {}/{} 批更新成功", i + 1, partitions.size());
             } catch (Exception e) {
                 log.error("第 {}/{} 批更新异常", i + 1, partitions.size(), e);
-                throw new RuntimeException("批量更新异常", e);
+                throw new DaoException("批量更新异常", e);
             }
         }
 
@@ -171,7 +172,7 @@ public abstract class BatchServiceImpl<M extends BaseMapper<T>, T> extends Servi
             return true;
         } catch (Exception e) {
             log.error("批量更新异常", e);
-            throw new RuntimeException("批量更新异常", e);
+            throw new DaoException("批量更新异常", e);
         }
     }
 
@@ -263,7 +264,7 @@ public abstract class BatchServiceImpl<M extends BaseMapper<T>, T> extends Servi
                 log.debug("第 {}/{} 批处理完成，本批条数: {}", i + 1, partitions.size(), partition.size());
             } catch (Exception e) {
                 log.error("第 {}/{} 批处理异常", i + 1, partitions.size(), e);
-                throw new RuntimeException("分批处理异常", e);
+                throw new DaoException("分批处理异常", e);
             }
         }
 

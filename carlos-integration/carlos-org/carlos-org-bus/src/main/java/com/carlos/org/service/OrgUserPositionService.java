@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import com.carlos.core.exception.BusinessException;
 
 /**
  * <p>
@@ -44,7 +45,7 @@ public class OrgUserPositionService {
             .eq(OrgUserPosition::getDeleted, false));
 
         if (exist != null) {
-            throw new RuntimeException("用户已分配该岗位，不能重复分配");
+            throw new BusinessException("用户已分配该岗位，不能重复分配");
         }
 
         // 如果设置为主岗位，需要将其他岗位设为非主岗位
@@ -67,7 +68,7 @@ public class OrgUserPositionService {
 
         boolean success = userPositionManager.save(userPosition);
         if (!success) {
-            throw new RuntimeException("分配岗位失败");
+            throw new BusinessException("分配岗位失败");
         }
 
         log.info("用户分配岗位成功：userId={}, positionId={}", param.getUserId(), param.getPositionId());
@@ -88,7 +89,7 @@ public class OrgUserPositionService {
             .set(OrgUserPosition::getDimissionDate, LocalDate.now()));
 
         if (!success) {
-            throw new RuntimeException("卸任岗位失败");
+            throw new BusinessException("卸任岗位失败");
         }
 
         log.info("用户卸任岗位成功：userId={}, positionId={}", userId, positionId);

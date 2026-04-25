@@ -212,7 +212,7 @@ public class GitlabService {
         // 判断名称是否重复
         for (GitLabServerInfo info : servers) {
             if (info.getServerName().equals(serverInfo.getServerName())) {
-                throw new RuntimeException("服务名称重复");
+                throw new IllegalStateException("服务名称重复");
             }
         }
         servers.add(serverInfo);
@@ -234,7 +234,7 @@ public class GitlabService {
             List<Project> projects = groupApi.getProjects(groupName);
             return projects;
         } catch (GitLabApiException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
 
 

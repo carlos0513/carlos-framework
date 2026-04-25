@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
+import com.carlos.core.exception.BusinessException;
 
 /**
  * SM4 国密密码编码器
@@ -111,7 +112,7 @@ public class SM4PasswordEncoder implements PasswordEncoder {
 
         } catch (Exception e) {
             log.error("Failed to encode password with SM4", e);
-            throw new RuntimeException("Password encoding failed", e);
+            throw new BusinessException("Password encoding failed", e);
         }
     }
 
