@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>com.carlos</groupId>
-    <artifactId>carlos-parent</artifactId>
+    <artifactId>carlos-integration</artifactId>
     <version>${revision}</version>
-    <relativePath>../../carlos-parent/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <packaging>pom</packaging>
   <groupId>com.carlos.system</groupId>

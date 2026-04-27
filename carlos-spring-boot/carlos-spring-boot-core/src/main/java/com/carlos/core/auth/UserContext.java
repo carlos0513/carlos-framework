@@ -71,5 +71,30 @@ public class UserContext implements Serializable {
      */
     private Set<Serializable> departmentIds;
 
+    /**
+     * 权限列表（如：user:read, user:write, order:delete）
+     */
+    private Set<String> permissions;
+
+    /**
+     * 获取用户ID（字符串形式）
+     */
+    public String getUserId() {
+        return userId != null ? userId.toString() : null;
+    }
+
+    /**
+     * 获取租户ID（Long形式）
+     */
+    public Long getTenantId() {
+        return tenantId != null ? Long.valueOf(tenantId.toString()) : null;
+    }
+
+    /**
+     * 获取部门ID（Long形式）
+     */
+    public Long getDepartmentId() {
+        return departmentId != null ? Long.valueOf(departmentId.toString()) : null;
+    }
 
 }

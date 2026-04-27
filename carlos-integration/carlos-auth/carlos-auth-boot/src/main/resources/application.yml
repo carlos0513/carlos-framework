@@ -39,9 +39,6 @@ spring:
           druid.stat.slowSqlMillis: 5000
 ############################## application start ##############################
 carlos:
-  encrypt:
-    key: VV8s9qgRo17OHX2r
-    iv: rXU3JJjP3eog5oLS
   boot:
     cors:
       enable: true
@@ -60,10 +57,9 @@ carlos:
       domain: www.carlos.com
   cache:
     key-prefix: carlos:bbt:auth
-    user-prefix: true
+    use-prefix: true
 
 ############################### application end ###############################
-
 
 
 ##############################  日志配置 start  ###########################
@@ -74,7 +70,7 @@ logging:
     com.carlos: debug
     org.springframework.security: debug
   file:
-    path: log/govern/auth
+    path: log/carlos/auth
 ##############################  日志配置 end   ###########################
 
 
@@ -101,20 +97,6 @@ mybatis-plus: # 启动时是否检查MyBatis XML文件是否存在
 
 
 #################################### 接口文档 Swagger start #################################
-swagger:
-  enable: true
-  # 扫描的包，多个包使用逗号隔开
-  base-package: com.carlos
-  description: 认证服务
-  title: 认证服务
-  version: 2.0.0
-  terms-of-service-url: https://www.carlos.com
-  contact:
-    email: 13032820513@163.com
-    name: carlos
-    url: www.carlos.com
-    group-name: 认证服务
-
 knife4j: # 是否开启Knife4j增强模式 默认 false
   enable: true
   # 是否是生产环境

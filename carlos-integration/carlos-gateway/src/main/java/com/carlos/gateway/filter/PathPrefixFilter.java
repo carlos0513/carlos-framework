@@ -1,22 +1,23 @@
 package com.carlos.gateway.filter;
 
+import com.carlos.core.util.PathMatchUtil;
 import com.carlos.gateway.config.GatewayProperties;
+import com.carlos.gateway.config.GlobalFilterOrder;
+import com.carlos.gateway.whitelist.WhitelistContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
 /**
  * <p>
- * 网关接口路径统一前缀处理器
+ * 网关接口路径统一前缀处理器（GlobalFilter 实现）- 优化版
  * <br>
  * 功能说明：
  * <ul>
@@ -25,26 +26,54 @@ import java.util.Set;
  *   <li>白名单中的路径（如 Swagger 资源）不受此前缀限制</li>
  * </ul>
  * <br>
+ * 优化点：
+ * <ul>
+ *   <li>优先使用统一白名单检查结果（UnifiedWhitelistFilter）</li>
+ *   <li>避免重复进行路径匹配</li>
+ *   <li>降级兼容：统一白名单未启用时，使用本地白名单</li>
+ * </ul>
+ * <br>
  * 示例：
  * <pre>
  *   外部请求：/api/v1/org/users
  *   转发到 carlos-org 服务：/org/users
  * </pre>
  * </p>
+ * <p>
+ * 执行顺序说明：
+ * <ul>
+ *   <li>在统一白名单过滤器之后执行（UnifiedWhitelistFilter = HIGHEST_PRECEDENCE + 100）</li>
+ *   <li>在认证授权过滤器之前执行（先校验路径格式）</li>
+ *   <li>在负载均衡过滤器之前执行（路径重写后路由）</li>
+ * </ul>
+ * </p>
  *
  * @author Carlos
  * @date 2025-01-10 11:19
+ * @updated 2026-04-10 优化：使用统一白名单
+ * @see GlobalFilterOrder
  */
 @Slf4j
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 100) // 确保在 Spring Cloud Gateway 路由之前执行
-public class PathPrefixFilter implements WebFilter {
+public class PathPrefixFilter implements GlobalFilter, Ordered {
 
     private final GatewayProperties gatewayProperties;
 
+    /**
+     * 过滤器执行顺序
+     * <p>
+     * 设置为 ORDER_FIRST (1000)，确保：
+     * 1. 在统一白名单过滤器之后（HIGHEST_PRECEDENCE + 100）
+     * 2. 在认证授权过滤器之前（通常为 ORDER_SECOND 2000 或更高）
+     * 3. 在负载均衡之前（RouteToRequestUrlFilter = 10000）
+     */
+    @Override
+    public int getOrder() {
+        return GlobalFilterOrder.ORDER_FIRST;
+    }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 如果前缀校验未启用，直接放行
         if (!gatewayProperties.isPrefixEnabled()) {
             return chain.filter(exchange);
@@ -54,9 +83,11 @@ public class PathPrefixFilter implements WebFilter {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getRawPath();
 
-        // 1. 检查路径是否在白名单中
-        if (isWhitelisted(path)) {
-            log.debug("Path [{}] is whitelisted, skipping prefix check", path);
+        // 1. 检查路径是否在白名单中（优先使用统一白名单检查结果）
+        if (isWhitelisted(exchange, path)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Path [{}] is whitelisted, skipping prefix check", path);
+            }
             return chain.filter(exchange);
         }
 
@@ -77,7 +108,9 @@ public class PathPrefixFilter implements WebFilter {
             newPath = "/" + newPath;
         }
 
-        log.debug("Path rewritten: {} -> {}", path, newPath);
+        if (log.isDebugEnabled()) {
+            log.debug("Path rewritten: {} -> {}", path, newPath);
+        }
 
         ServerHttpRequest newRequest = request.mutate()
             .path(newPath)
@@ -86,24 +119,28 @@ public class PathPrefixFilter implements WebFilter {
         return chain.filter(exchange.mutate().request(newRequest).build());
     }
 
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
-
     /**
-     * 检查路径是否在白名单中
+     * 检查路径是否在白名单中（优化版）
+     * <p>
+     * 优先使用统一白名单检查结果，如果统一白名单未启用，则使用本地白名单
      *
-     * @param path 请求路径
+     * @param exchange ServerWebExchange
+     * @param path     请求路径
      * @return true 如果在白名单中
      */
-    private boolean isWhitelisted(String path) {
+    private boolean isWhitelisted(ServerWebExchange exchange, String path) {
+        // 1. 优先使用统一白名单检查结果
+        if (WhitelistContext.isPrefixStripWhitelisted(exchange)) {
+            return true;
+        }
+
+        // 2. 降级兼容：统一白名单未启用或结果不存在，使用本地白名单
         Set<String> whitelist = gatewayProperties.getWhitelist();
         if (whitelist == null || whitelist.isEmpty()) {
             return false;
         }
-        for (String pattern : whitelist) {
-            if (pathMatcher.match(pattern, path)) {
-                return true;
-            }
-        }
-        return false;
+
+        // 使用 PathMatchUtil 进行 Ant 风格匹配
+        return PathMatchUtil.antMatchAny(whitelist, path);
     }
 }

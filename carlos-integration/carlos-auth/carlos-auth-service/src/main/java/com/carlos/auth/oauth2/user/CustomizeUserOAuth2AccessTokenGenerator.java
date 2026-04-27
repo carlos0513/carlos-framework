@@ -1,8 +1,8 @@
 package com.carlos.auth.oauth2.user;
 
 import cn.hutool.core.util.IdUtil;
+import com.carlos.auth.oauth2.grant.CustomGrantTypes;
 import org.springframework.lang.Nullable;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClaimAccessor;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -37,10 +37,14 @@ public class CustomizeUserOAuth2AccessTokenGenerator implements OAuth2TokenGener
     @Nullable
     @Override
     public OAuth2AccessToken generate(OAuth2TokenContext context) {
-        AuthorizationGrantType grantType = context.getAuthorizationGrantType();
-        if (!AuthorizationGrantType.PASSWORD.equals(grantType)) {
-            return null;
+        // 处理直接登录请求（authorizationGrantType 为 null）
+        // 或者处理自定义的授权类型
+        if (context.getAuthorizationGrantType() != null) {
+            if (!CustomGrantTypes.isCustomGrantType(context.getAuthorizationGrantType())) {
+                return null;
+            }
         }
+        // 如果 authorizationGrantType 为 null，也继续处理（直接登录场景）
 
 
         if (!OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {

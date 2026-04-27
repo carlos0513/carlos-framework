@@ -4,6 +4,7 @@ import brave.Tracer;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.tracing.propagation.Propagator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,6 +35,7 @@ public class ObservabilityAutoConfiguration {
      * 整合 Request ID 和 Trace ID 处理
      */
     @Bean
+    @ConditionalOnBean({Tracer.class, Propagator.class})
     @ConditionalOnProperty(name = "carlos.gateway.tracing.enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean
     public RequestTracingFilter requestTracingFilter(
@@ -61,6 +63,7 @@ public class ObservabilityAutoConfiguration {
      * 基于 Micrometer 实现 Prometheus 指标暴露
      */
     @Bean
+    @ConditionalOnBean(MeterRegistry.class)
     @ConditionalOnProperty(name = "carlos.gateway.metrics.enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean
     public MetricsFilter metricsFilter(MeterRegistry meterRegistry) {

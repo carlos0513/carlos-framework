@@ -5,11 +5,11 @@ import cn.idev.excel.context.AnalysisContext;
 import cn.idev.excel.event.AnalysisEventListener;
 import cn.idev.excel.exception.ExcelDataConvertException;
 import cn.idev.excel.metadata.data.CellData;
+import com.carlos.auth.api.enums.AuthErrorCode;
 import com.carlos.auth.app.pojo.dto.AppClientDTO;
 import com.carlos.auth.app.pojo.excel.AppClientExcel;
 import com.carlos.auth.app.service.AppClientService;
 import com.carlos.boot.util.ResponseUtil;
-import com.carlos.core.exception.BusinessException;
 import com.carlos.util.easyexcel.ExcelUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -84,7 +84,7 @@ public class AppClientExcelListener extends AnalysisEventListener<AppClientExcel
         try {
             ExcelUtil.download(response, name, AppClientExcel.class, errorList);
         } catch (Exception e) {
-            throw new BusinessException("应用信息导出失败");
+            throw AuthErrorCode.AUTH_CLIENT_EXPORT_FAILED.exception();
         }
     }
 
@@ -102,7 +102,8 @@ public class AppClientExcelListener extends AnalysisEventListener<AppClientExcel
             final CellData<?> cellData = excelDataConvertException.getCellData();
             log.error("第{}行，第{}列解析异常，数据为:{}", excelDataConvertException.getRowIndex(),
                 excelDataConvertException.getColumnIndex(), excelDataConvertException.getCellData());
-            throw new BusinessException("第" + rowIndex + "行，第" + columnIndex + "列解析异常，数据为:" + cellData + "");
+            throw AuthErrorCode.AUTH_CLIENT_IMPORT_FAILED.exception(
+                "第%d行，第%d列解析异常，数据为:%s", rowIndex, columnIndex, cellData);
         }
     }
 

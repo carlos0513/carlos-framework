@@ -16,16 +16,17 @@ spring:
 spring:
   cache:
     type: redis
-  redis:
-    database: ${REDIS_DB}
-    host: ${REDIS_IP}
-    port: ${REDIS_PORT}
-    password: ${REDIS_PWD}
-    lettuce:
-      pool:
-        max-active: 50
-        max-idle: 100
-        max-wait: 30s
-        min-idle: 0
-      shutdown-timeout: 100ms
+  data:
+    redis:
+      database: ${REDIS_DB}
+      host: ${REDIS_IP}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PWD}
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 100
+          max-wait: 30s
+          min-idle: 0
+        shutdown-timeout: 100ms
 ##############################  redis缓存配置 end   ###########################

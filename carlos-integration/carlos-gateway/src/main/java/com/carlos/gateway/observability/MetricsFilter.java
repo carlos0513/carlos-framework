@@ -2,6 +2,7 @@ package com.carlos.gateway.observability;
 
 import com.carlos.gateway.constant.GatewayHeaderConstants;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
@@ -15,118 +16,211 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 /**
  * <p>
- * 指标收集过滤器
+ * 指标收集过滤器 - 性能优化版
  * 基于 Micrometer 实现 Prometheus 指标暴露
+ * </p>
+ * <p>
+ * 优化点：
+ * 1. Counter/Timer 实例缓存（避免每次请求都注册新的指标）
+ * 2. 路径模式提取（降低标签基数，如 /api/users/123 → /api/users/{id}）
+ * 3. 活跃请求数使用 AtomicInteger + 单次 Gauge 注册
+ * 4. 延迟日志参数计算
  * </p>
  *
  * @author carlos
  * @date 2026/3/16
+ * @updated 2026/4/10 性能优化：指标缓存 + 路径模式提取
  */
 @Slf4j
 public class MetricsFilter implements GlobalFilter, Ordered {
 
     private final MeterRegistry meterRegistry;
 
-    // 指标名称
+    // 指标名称常量
     private static final String REQUEST_COUNTER = GatewayHeaderConstants.METRIC_REQUEST_COUNTER;
     private static final String REQUEST_LATENCY = GatewayHeaderConstants.METRIC_REQUEST_LATENCY;
     private static final String ACTIVE_REQUESTS = GatewayHeaderConstants.METRIC_ACTIVE_REQUESTS;
+    private static final String METRIC_SUCCESS = GatewayHeaderConstants.METRIC_SUCCESS;
+    private static final String METRIC_CLIENT_ERROR = GatewayHeaderConstants.METRIC_CLIENT_ERROR;
+    private static final String METRIC_SERVER_ERROR = GatewayHeaderConstants.METRIC_SERVER_ERROR;
+    private static final String METRIC_RATE_LIMITED = GatewayHeaderConstants.METRIC_RATE_LIMITED;
+    private static final String METRIC_BLOCKED = GatewayHeaderConstants.METRIC_BLOCKED;
+
+    // 指标实例缓存
+    private final ConcurrentHashMap<String, Counter> counterCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Timer> timerCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Counter> statusCounterCache = new ConcurrentHashMap<>();
+
+    // 活跃请求计数器（原子操作）
+    private final AtomicInteger activeRequests = new AtomicInteger(0);
+
+    // 路径模式提取正则
+    private static final Pattern UUID_PATTERN = Pattern.compile(
+        "/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("/\\d+");
 
     public MetricsFilter(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
+
+        // 预先注册活跃请求数 Gauge（只注册一次）
+        Gauge.builder(ACTIVE_REQUESTS, activeRequests, AtomicInteger::get)
+            .description("Number of active gateway requests")
+            .register(meterRegistry);
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         Instant start = Instant.now();
+
+        // 获取路由 ID
         String routeId = Optional.ofNullable(exchange.getAttribute(
                 org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_PREDICATE_ROUTE_ATTR))
             .map(Object::toString)
             .orElse("unknown");
 
+        // 获取路径模式（降低基数）
+        String path = exchange.getRequest().getURI().getPath();
+        String pathPattern = extractPathPattern(path);
+        String method = exchange.getRequest().getMethod().name();
+
         // 活跃请求数增加
-        meterRegistry.gauge(ACTIVE_REQUESTS, 1);
+        activeRequests.incrementAndGet();
 
         return chain.filter(exchange)
             .doFinally(signalType -> {
                 long durationMs = Duration.between(start, Instant.now()).toMillis();
-                recordMetrics(exchange, routeId, durationMs);
+                activeRequests.decrementAndGet();
+                recordMetrics(exchange, routeId, pathPattern, method, durationMs);
             });
     }
 
     /**
-     * 记录指标
+     * 提取路径模式（降低标签基数）
+     * 例如：/api/users/12345 → /api/users/{id}
+     *       /api/orders/550e8400-e29b-41d4-a716-446655440000 → /api/orders/{id}
      */
-    private void recordMetrics(ServerWebExchange exchange, String routeId, long durationMs) {
-        String path = exchange.getRequest().getURI().getPath();
-        String method = exchange.getRequest().getMethod().name();
+    private String extractPathPattern(String path) {
+        if (path == null || path.isEmpty()) {
+            return "/";
+        }
+
+        // 替换 UUID
+        String pattern = UUID_PATTERN.matcher(path).replaceAll("/{id}");
+        // 替换数字 ID
+        pattern = NUMBER_PATTERN.matcher(pattern).replaceAll("/{id}");
+
+        return pattern;
+    }
+
+    /**
+     * 记录指标（优化版 - 使用缓存的 Counter 和 Timer）
+     */
+    private void recordMetrics(ServerWebExchange exchange, String routeId, String pathPattern,
+                               String method, long durationMs) {
         HttpStatusCode statusCode = exchange.getResponse().getStatusCode();
         String status = statusCode != null ? String.valueOf(statusCode.value()) : "unknown";
 
-        // 记录请求计数
-        Counter.builder(REQUEST_COUNTER)
-            .tag("route", routeId)
-            .tag("path", path)
-            .tag("method", method)
-            .tag("status", status)
-            .description("Total number of gateway requests")
-            .register(meterRegistry)
-            .increment();
+        // 构建缓存键
+        String counterKey = routeId + ":" + pathPattern + ":" + method + ":" + status;
+        String timerKey = routeId + ":" + method;
 
-        // 记录请求延迟
-        Timer.builder(REQUEST_LATENCY)
-            .tag("route", routeId)
-            .tag("path", path)
-            .tag("method", method)
-            .tag("status", status)
-            .description("Gateway request duration")
-            .register(meterRegistry)
-            .record(durationMs, TimeUnit.MILLISECONDS);
+        // 获取或创建 Counter（原子操作）
+        Counter counter = counterCache.computeIfAbsent(counterKey, k ->
+            Counter.builder(REQUEST_COUNTER)
+                .tag("route", routeId)
+                .tag("path_pattern", pathPattern)
+                .tag("method", method)
+                .tag("status", status)
+                .description("Total number of gateway requests")
+                .register(meterRegistry)
+        );
+        counter.increment();
 
-        // 根据状态码分类
+        // 获取或创建 Timer
+        Timer timer = timerCache.computeIfAbsent(timerKey, k ->
+            Timer.builder(REQUEST_LATENCY)
+                .tag("route", routeId)
+                .tag("method", method)
+                .description("Gateway request duration")
+                .register(meterRegistry)
+        );
+        timer.record(durationMs, TimeUnit.MILLISECONDS);
+
+        // 根据状态码分类（使用缓存）
         if (statusCode != null) {
-            if (statusCode.is2xxSuccessful()) {
-                Counter.builder(GatewayHeaderConstants.METRIC_SUCCESS)
+            recordStatusMetrics(routeId, status, statusCode);
+        }
+    }
+
+    /**
+     * 记录状态码分类指标
+     */
+    private void recordStatusMetrics(String routeId, String status, HttpStatusCode statusCode) {
+        String statusKey = routeId + ":" + status;
+
+        if (statusCode.is2xxSuccessful()) {
+            Counter successCounter = statusCounterCache.computeIfAbsent("success:" + routeId, k ->
+                Counter.builder(METRIC_SUCCESS)
                     .tag("route", routeId)
                     .register(meterRegistry)
-                    .increment();
-            } else if (statusCode.is4xxClientError()) {
-                Counter.builder(GatewayHeaderConstants.METRIC_CLIENT_ERROR)
+            );
+            successCounter.increment();
+        } else if (statusCode.is4xxClientError()) {
+            Counter clientErrorCounter = statusCounterCache.computeIfAbsent("client_error:" + statusKey, k ->
+                Counter.builder(METRIC_CLIENT_ERROR)
                     .tag("route", routeId)
                     .tag("status", status)
                     .register(meterRegistry)
-                    .increment();
-            } else if (statusCode.is5xxServerError()) {
-                Counter.builder(GatewayHeaderConstants.METRIC_SERVER_ERROR)
+            );
+            clientErrorCounter.increment();
+        } else if (statusCode.is5xxServerError()) {
+            Counter serverErrorCounter = statusCounterCache.computeIfAbsent("server_error:" + statusKey, k ->
+                Counter.builder(METRIC_SERVER_ERROR)
                     .tag("route", routeId)
                     .tag("status", status)
                     .register(meterRegistry)
-                    .increment();
-            }
+            );
+            serverErrorCounter.increment();
         }
 
-        // 记录特定错误
+        // 特定错误统计
         if (statusCode == HttpStatus.TOO_MANY_REQUESTS) {
-            Counter.builder(GatewayHeaderConstants.METRIC_RATE_LIMITED)
-                .tag("route", routeId)
-                .register(meterRegistry)
-                .increment();
+            Counter rateLimitedCounter = statusCounterCache.computeIfAbsent("rate_limited:" + routeId, k ->
+                Counter.builder(METRIC_RATE_LIMITED)
+                    .tag("route", routeId)
+                    .register(meterRegistry)
+            );
+            rateLimitedCounter.increment();
         }
 
         if (statusCode == HttpStatus.FORBIDDEN) {
-            Counter.builder(GatewayHeaderConstants.METRIC_BLOCKED)
-                .tag("route", routeId)
-                .register(meterRegistry)
-                .increment();
+            Counter blockedCounter = statusCounterCache.computeIfAbsent("blocked:" + routeId, k ->
+                Counter.builder(METRIC_BLOCKED)
+                    .tag("route", routeId)
+                    .register(meterRegistry)
+            );
+            blockedCounter.increment();
         }
+    }
 
-        // 活跃请求数减少
-        meterRegistry.gauge(ACTIVE_REQUESTS, 0);
+    /**
+     * 获取指标缓存统计（用于监控）
+     */
+    public Map<String, Integer> getCacheStats() {
+        return Map.of(
+            "counterCacheSize", counterCache.size(),
+            "timerCacheSize", timerCache.size(),
+            "statusCounterCacheSize", statusCounterCache.size()
+        );
     }
 
     @Override

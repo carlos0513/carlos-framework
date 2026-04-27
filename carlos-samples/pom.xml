@@ -42,12 +42,6 @@
     <!-- 工作流引擎样例 -->
     <module>carlos-sample-flowable</module>
 
-    <!-- 网关样例 -->
-    <module>carlos-sample-gateway</module>
-
-    <!-- JSON 序列化样例 -->
-    <module>carlos-sample-json</module>
-
     <!-- 日志增强样例 -->
     <module>carlos-sample-log</module>
 

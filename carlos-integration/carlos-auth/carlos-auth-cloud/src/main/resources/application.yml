@@ -1,0 +1,295 @@
+server:
+  port: 9520
+
+spring:
+  profiles:
+    active: ${PROFILE:local}
+  application:
+    name: carlos-auth
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+      config:
+        enabled: true
+        file-extension: yml
+        refresh-enabled: true
+  config:
+    import:
+      # 1. 公共配置（所有环境共享）
+      #      - optional:nacos:${spring.application.name}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      # 2. 环境专属配置（覆盖公共配置）
+      #      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      # 3. 额外共享配置（如 Redis、MySQL 配置）
+      - optional:nacos:common.yml?DEFAULT_GROUP&refreshEnabled=true
+      - optional:nacos:redis.yml?DEFAULT_GROUP&refreshEnabled=true
+      - optional:nacos:mysql.yml?DEFAULT_GROUP&refreshEnabled=true
+
+# 本地调试环境
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    nacos:
+      username: ${NACOS_USERNAME:@nacos.username@}
+      password: ${NACOS_PASSWORD:@nacos.password@}
+      discovery:
+        server-addr: ${NACOS_ADDR:@nacos.addr@}
+        namespace: ${NACOS_NAMESPACE:@nacos.namespace@}
+        group: ${NACOS_GROUP:@nacos.group@}
+      config:
+        server-addr: ${NACOS_ADDR:@nacos.addr@}
+        namespace: ${NACOS_NAMESPACE:@nacos.namespace@}
+        group: ${NACOS_GROUP:@nacos.group@}
+
+
+# 部署采用配置文件
+---
+spring:
+  config:
+    activate:
+      on-profile: deploy
+  cloud:
+    nacos:
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      discovery:
+        server-addr: ${NACOS_ADDR}
+        namespace: ${NACOS_NAMESPACE}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+      config:
+        server-addr: ${NACOS_ADDR}
+        namespace: ${NACOS_NAMESPACE}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+
+
+
+---
+spring:
+  # spring配置
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      primary: master
+      druid:
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        breakAfterAcquireFailure: true
+        ConnectionErrorRetryAttempts: 2
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: stat,slf4j
+        connection-properties:
+          druid.stat.mergeSql: true
+          druid.stat.slowSqlMillis: 5000
+############################## application start ##############################
+carlos:
+  boot:
+    cors:
+      enable: true
+    enums:
+      scan-package: com.carlos
+      enabled: true
+  cache:
+    key-prefix: carlos:bbt:auth
+    use-prefix: true
+  encrypt:
+    # SM4 国密对称加密配置
+    sm4:
+      enabled: true                      # 启用 SM4 加密
+      encrypt-mode: cbc                  # 加密模式：cbc 或 ecb
+      key: "asdfghjklmnbvcx"            # 密钥（16 字节，不足会自动 MD5 处理）
+      iv: "mnbvcxzpoiuytre1"            # 初始化向量（CBC 模式必需，16 字节）
+      store-type: base64                 # 存储格式：base64 或 hex
+
+    # SM2 国密非对称加密配置
+    sm2:
+      enabled: true                      # 启用 SM2 加密
+      public-key: "0403c7a7250306531238d49c2e0146e48217f2d65b28ed1d61565bd40472c7516bc78574de0a89f9067328558d656ecdc2504f49bb2bd843a9cfa9b404463ed453"
+      private-key: "3134665e1e009bab370738fd5ff1dabc7f390b683885c321f1523f4f725e8aa1"
+      store-type: base64                 # 存储格式：base64 或 hex
+############################### application end ###############################
+
+
+##############################  日志配置 start  ###########################
+logging:
+  config: classpath:config/logback.xml
+  level:
+    root: info
+    com.carlos: debug
+    org.springframework.security: debug
+  file:
+    path: log/carlos/auth
+##############################  日志配置 end   ###########################
+
+
+############################### mybatis-plus start #################################
+mybatis-plus: # 启动时是否检查MyBatis XML文件是否存在
+  check-config-location: true
+  # 支持统配符 * 或者 ; 分割
+  # MyBatis原生配置
+  configuration: # 字段名称下划线转驼峰命名
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    call-setters-on-nulls: true
+  global-config:
+    db-config: # 全局默认主键类型
+      id-type: assign_id
+      # 逻辑已删除值(默认为 1)
+      logic-delete-value: 1
+      # 逻辑未删除值(默认为 0)
+      logic-not-delete-value: 0
+  # mapper xml映射路径
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+################################ mybatis-plus end ##################################
+
+
+---
+# 启用 OpenAPI
+carlos:
+  openapi:
+    enable: true
+    # 基本信息
+    title: "Carlos 框架 API 文档"
+    description: "基于 Spring Boot 3 的微服务框架"
+    version: "3.0.0"
+
+    # 联系人信息
+    contact:
+      name: "技术支持"
+      email: "support@example.com"
+      url: "https://example.com"
+
+    # 许可证信息
+    license: "Apache 2.0"
+    license-url: "https://www.apache.org/licenses/LICENSE-2.0"
+
+# ==========================================
+# Knife4j 核心配置（必须）
+# ==========================================
+knife4j:
+  # 是否启用 Knife4j（生产环境建议关闭）
+  enable: true
+  # 生产环境安全配置
+  production: false  # true=生产环境，关闭文档
+  # 基础认证配置（访问文档页面的登录认证）
+  basic:
+    enable: false           # 是否启用基础认证
+    username: admin         # 登录用户名
+    password: 123456        # 登录密码
+  # ==========================================
+  # 个性化配置（界面定制）
+  # ==========================================
+  setting:
+    # 语言：ZH_CN（中文）、EN（英文）
+    language: ZH_CN
+
+    # ==========================================
+    # 界面功能开关
+    # ==========================================
+    # 是否显示文档管理功能
+    enable-document-manage: true
+    # 是否显示 Swagger Models
+    enable-swagger-models: true
+    swagger-model-name: Swagger Models
+    # 是否显示主机信息
+    enable-host: true
+    # 是否显示请求参数缓存
+    enable-request-cache: true
+    # 针对RequestMapping的接口请求类型,在不指定参数类型的情况下,如果不过滤,默认会显示7个类型的接口地址参数,如果开启此配置,默认展示一个Post类型的接口地址
+    enable-filter-multipart-apis: true
+    # 具体接口的过滤类型
+    enable-filter-multipart-api-method-type: POST
+    # 是否开启动态参数调试
+    enable-dynamic-parameter: true
+    # 是否显示 OpenAPI 规范
+    enable-open-api: true
+    # 是否显示搜索框
+    enable-search: true
+    # 是否显示 AfterScript 功能
+    enable-after-script: true
+    # 是否显示分组下拉框
+    enable-group: true
+    # 是否显示响应状态码
+    enable-response-code: true
+    # 是否在每个调试调试条后显示刷新变量按钮，但默认不会显示
+    enable-reload-cache-parameter: false
+    enable-debug: true
+    # 是否开启自定义主页内容
+    enable-home-custom: false
+    # 首页文档路径（自定义 markdown 文档）
+    home-custom-path: classpath:markdown/home.md
+    # 是否开启界面中对某接口的版本控制,如果开启，后端变化后Ui界面会存在小蓝点
+    enable-version: true
+    enable-footer: false
+    enable-footer-custom: false
+    # 自定义Footer内容
+    footer-custom-content: "自定义Footer内容"
+
+# ==========================================
+# SpringDoc OpenAPI 原生配置（底层依赖）
+# ==========================================
+springdoc:
+  # 是否启用 API Docs
+  api-docs:
+    enabled: true
+    # API Docs 访问路径
+    path: /v3/api-docs
+    # 是否启用属性解析器
+    resolve-schema-properties: true
+  # Swagger UI 配置（Knife4j 会覆盖部分配置）
+  swagger-ui:
+    enabled: true
+    # UI 访问路径（Knife4j 使用自己的 UI）
+    path: /swagger-ui.html
+    # 操作排序：alpha（字母）、method（HTTP方法）
+    operations-sorter: method
+    # 标签排序
+    tags-sorter: alpha
+    # 默认展开深度
+    doc-expansion: list
+    # 是否显示请求时长
+    display-request-duration: true
+  # 包扫描配置
+  packages-to-scan: com.carlos
+  # 路径匹配配置
+  paths-to-match: '/**'
+  # 路径排除配置
+  paths-to-exclude: /error, /actuator/**
+  # 缓存配置
+  cache:
+    disabled: false  # 生产环境建议启用缓存
+  # 模型配置
+  #  model-converters:
+  #    # 是否启用 Pageable 转换器
+  #    pageable-converter:
+  #      enabled: true
+  #    # 是否启用 Deprecating 转换器
+  #    deprecating-converter:
+  #      enabled: true
+  # 显示配置
+  show-actuator: false      # 是否显示 Actuator 端点
+  show-login-endpoint: false  # 是否显示登录端点
+  # 分组配置（与 Knife4j 分组配合使用）
+  group-configs:
+    # 分组1：默认分组
+    -
+      group: carlos-auth
+      display-name: 认证模块
+      packages-to-scan: com.carlos
+      paths-to-match: /oauth2/**
+#      paths-to-exclude: /api/audit/**

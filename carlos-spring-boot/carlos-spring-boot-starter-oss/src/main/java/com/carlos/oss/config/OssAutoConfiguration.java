@@ -3,6 +3,7 @@ package com.carlos.oss.config;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.oss.adapter.S3OssTemplate;
 import com.carlos.oss.core.OssTemplate;
+import com.carlos.oss.utils.OssUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -116,6 +117,9 @@ public class OssAutoConfiguration {
     @ConditionalOnMissingBean(OssTemplate.class)
     public OssTemplate ossTemplate(OssProperties properties, S3Client s3Client, S3Presigner s3Presigner) {
         log.info("Creating OSS template with S3 protocol");
-        return new S3OssTemplate(properties, s3Client, s3Presigner);
+        OssTemplate template = new S3OssTemplate(properties, s3Client, s3Presigner);
+        // 初始化 OssUtil 静态工具类
+        OssUtil.init(template, properties);
+        return template;
     }
 }

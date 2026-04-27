@@ -1,6 +1,7 @@
 package com.carlos.integration.module.dingtalk.config;
 
 import com.carlos.integration.module.dingtalk.api.DingtalkApiClient;
+import com.carlos.integration.module.dingtalk.service.DingtalkRestClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -79,5 +80,15 @@ public class DingtalkRestClientConfig {
     @Bean
     public DingtalkInitWorker dingtalkInitWorker(DingtalkAccessTokenManager tokenManager) {
         return new DingtalkInitWorker(tokenManager, properties.getAccessTokenRefreshCorn());
+    }
+
+    /**
+     * 钉钉服务（RestClient 实现）
+     */
+    @Bean
+    @ConditionalOnMissingBean(DingtalkRestClientService.class)
+    public DingtalkRestClientService dingtalkRestClientService(DingtalkApiClient apiClient,
+                                                               DingtalkAccessTokenManager tokenManager) {
+        return new DingtalkRestClientService(apiClient, tokenManager, properties);
     }
 }

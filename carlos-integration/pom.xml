@@ -17,7 +17,7 @@
         Carlos 第三方集成模块 - 包含许可证、工具等独立功能
     </description>
 
-    <modules>
+  <modules>
         <module>carlos-license</module>
         <module>carlos-tools</module>
         <!-- 治理中心模块 -->
@@ -113,4 +113,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 </project>

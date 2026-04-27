@@ -26,7 +26,7 @@ import java.io.Serializable;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/oauth2/app/client")
+@RequestMapping("api/auth/app/client")
 @Tag(name = "应用信息Feign接口")
 public class ApiAppClientImpl implements ApiAppClient {
 

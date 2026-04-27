@@ -41,7 +41,6 @@ public class TranslationAspect {
     public Object around(ProceedingJoinPoint point, Translated translated) throws Throwable {
         // 设置翻译上下文
         setupContext(translated);
-
         try {
             Object result = point.proceed();
 
@@ -54,13 +53,9 @@ public class TranslationAspect {
                 processResult(result);
             } finally {
                 if (log.isDebugEnabled()) {
-                    log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})",
-                        System.currentTimeMillis() - start,
-                        translated.cacheEnabled(),
-                        translated.cacheMinutes());
+                    log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})", System.currentTimeMillis() - start, translated.cacheEnabled(), translated.cacheMinutes());
                 }
             }
-
             return result;
         } finally {
             // 清除上下文
@@ -90,13 +85,11 @@ public class TranslationAspect {
         if (!needTranslate) {
             return point.proceed();
         }
-
         // 优先使用方法级别的注解配置，否则使用类级别的配置
         Translated translated = methodAnnotation != null ? methodAnnotation : classAnnotation;
 
         // 设置翻译上下文
         setupContext(translated);
-
         try {
             Object result = point.proceed();
 
@@ -113,10 +106,7 @@ public class TranslationAspect {
                     processResult(data);
                 } finally {
                     if (log.isDebugEnabled()) {
-                        log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})",
-                            System.currentTimeMillis() - start,
-                            translated.cacheEnabled(),
-                            translated.cacheMinutes());
+                        log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})", System.currentTimeMillis() - start, translated.cacheEnabled(), translated.cacheMinutes());
                     }
                 }
             }
@@ -152,8 +142,6 @@ public class TranslationAspect {
      * @return 数据
      */
     private Object unwrapResult(Object result) {
-
-
         // 解包 Result
         if (result instanceof Result) {
             return ((Result<?>) result).getData();

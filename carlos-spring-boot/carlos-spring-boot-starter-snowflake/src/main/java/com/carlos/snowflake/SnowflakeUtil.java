@@ -2,7 +2,6 @@ package com.carlos.snowflake;
 
 
 import cn.hutool.core.lang.Snowflake;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>
@@ -12,12 +11,19 @@ import org.springframework.stereotype.Component;
  * @author carlos
  * @date 2021/10/2 0:13
  */
-@Component
 public class SnowflakeUtil {
 
     private static Snowflake snowflake;
 
-    public SnowflakeUtil(Snowflake snowflake) {
+    /**
+     * 初始化雪花算法工具类
+     * <p>
+     * 由 {@link SnowflakeConfig} 在自动配置时调用
+     * </p>
+     *
+     * @param snowflake Snowflake 实例
+     */
+    public static void init(Snowflake snowflake) {
         SnowflakeUtil.snowflake = snowflake;
     }
 

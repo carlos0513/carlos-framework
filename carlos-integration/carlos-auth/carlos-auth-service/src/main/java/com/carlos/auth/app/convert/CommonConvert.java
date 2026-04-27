@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.carlos.auth.app.pojo.dto.Oauth2ClientSettings;
 import com.carlos.auth.app.pojo.dto.Oauth2TokenSettings;
-import com.carlos.json.jackson.JacksonUtil;
 import com.google.common.collect.Sets;
 import org.mapstruct.Named;
 
@@ -44,7 +43,7 @@ public class CommonConvert {
     @Named("str2map")
     public static Map<String, Object> str2map(String str) {
         if (StrUtil.isNotBlank(str)) {
-            return JacksonUtil.string2Obj(str, Map.class);
+            return JSONUtil.toBean(str, Map.class);
         }
         return null;
     }

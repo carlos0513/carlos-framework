@@ -4,9 +4,6 @@ import com.carlos.minio.config.IMinioAsyncClient;
 import com.carlos.minio.config.MinioProperties;
 import com.carlos.minio.exception.MinioException;
 import io.minio.MinioClient;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>
@@ -16,7 +13,6 @@ import org.springframework.stereotype.Component;
  * @author carlos
  * @date 2021/6/10 17:00
  */
-@Component
 public class MinioUtil {
 
     private static MinioClient client;
@@ -25,21 +21,13 @@ public class MinioUtil {
 
     private static MinioProperties properties;
 
-    @Autowired
-    private MinioClient clientBean;
-
-    @Autowired
-    private IMinioAsyncClient asyncClientBen;
-
-    @Autowired
-    private MinioProperties minioPropertiesBean;
-
-
-    @PostConstruct
-    private void init() {
+    /**
+     * 初始化静态字段（由 MinioConfig 调用）
+     */
+    public static void init(MinioClient clientBean, IMinioAsyncClient asyncClientBean, MinioProperties propertiesBean) {
         MinioUtil.client = clientBean;
-        MinioUtil.asyncClient = asyncClientBen;
-        MinioUtil.properties = minioPropertiesBean;
+        MinioUtil.asyncClient = asyncClientBean;
+        MinioUtil.properties = propertiesBean;
     }
 
     /**

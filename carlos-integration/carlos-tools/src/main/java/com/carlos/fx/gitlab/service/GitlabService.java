@@ -44,7 +44,7 @@ public class GitlabService {
         // GitLabApi gitlab = new GitLabApi("http://100.127.2.47:10001/", accessToken);
         // ProjectApi projectApi = gitlab.getProjectApi();
         // GroupApi groupApi = gitlab.getGroupApi();
-        // List<Project> projects = groupApi.getProjects("union-governace-center");
+        // List<Project> projects = groupApi.getProjects("union-ace-center");
         //
         // Set<String> urls = new HashSet<>();
         // for (Project project : projects) {

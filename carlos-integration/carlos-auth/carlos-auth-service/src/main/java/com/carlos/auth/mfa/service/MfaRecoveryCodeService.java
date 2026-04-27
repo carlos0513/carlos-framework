@@ -1,10 +1,8 @@
 package com.carlos.auth.mfa.service;
 
 import cn.hutool.core.util.RandomUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.carlos.auth.mfa.entity.MfaRecoveryCode;
-import com.carlos.auth.mfa.mapper.MfaRecoveryCodeMapper;
+import com.carlos.auth.mfa.manager.MfaManager;
+import com.carlos.auth.mfa.pojo.entity.MfaRecoveryCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,21 +13,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * <p>
  * MFA备用恢复码服务
- * </p>
  *
- * <p>管理MFA备用恢复码的生成、验证和使用</p>
+ * <p>管理MFA备用恢复码的生成、验证和使用。</p>
+ *
+ * <p><strong>分层职责：</strong></p>
+ * <ul>
+ *   <li>Service：专注业务逻辑，处理恢复码生成策略、验证流程</li>
+ *   <li>Manager：专注数据访问，处理恢复码的增删改查（通过 {@link MfaManager}）</li>
+ * </ul>
  *
  * @author Carlos
- * @date 2026-02-26
+ * @version 3.0.0
+ * @since 2026-02-26
+ * @see com.carlos.auth.mfa.manager.MfaManager
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MfaRecoveryCodeService {
 
-    private final MfaRecoveryCodeMapper recoveryCodeMapper;
+    private final MfaManager mfaManager;
 
     /**
      * 生成备用恢复码
@@ -60,24 +64,23 @@ public class MfaRecoveryCodeService {
             return;
         }
 
-        // 删除旧的恢复码
-        clearRecoveryCodes(userId);
+        // 清除旧的恢复码
+        mfaManager.clearRecoveryCodes(userId);
 
-        // 保存新的恢复码
+        // 构建实体列表
         List<MfaRecoveryCode> entities = recoveryCodes.stream()
             .map(code -> {
                 MfaRecoveryCode entity = new MfaRecoveryCode();
                 entity.setUserId(userId);
                 entity.setCode(code);
                 entity.setUsed(false);
+                entity.setCreateTime(LocalDateTime.now());
                 return entity;
             })
             .collect(Collectors.toList());
 
         // 批量保存
-        for (MfaRecoveryCode entity : entities) {
-            recoveryCodeMapper.insert(entity);
-        }
+        mfaManager.saveRecoveryCodes(entities);
 
         log.info("Saved {} recovery codes for user: {}", recoveryCodes.size(), userId);
     }
@@ -94,29 +97,15 @@ public class MfaRecoveryCodeService {
             return false;
         }
 
-        // 查找未使用的恢复码
-        LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-            .eq(MfaRecoveryCode::getUserId, userId)
-            .eq(MfaRecoveryCode::getCode, code.toUpperCase())
-            .eq(MfaRecoveryCode::getUsed, false);
+        boolean success = mfaManager.verifyAndUseRecoveryCode(userId, code.toUpperCase());
 
-        MfaRecoveryCode recoveryCode = recoveryCodeMapper.selectOne(queryWrapper);
-
-        if (recoveryCode == null) {
+        if (success) {
+            log.info("Recovery code used for user: {}", userId);
+        } else {
             log.warn("Invalid or already used recovery code for user: {}", userId);
-            return false;
         }
 
-        // 标记为已使用
-        LambdaUpdateWrapper<MfaRecoveryCode> updateWrapper = new LambdaUpdateWrapper<MfaRecoveryCode>()
-            .eq(MfaRecoveryCode::getId, recoveryCode.getId())
-            .set(MfaRecoveryCode::getUsed, true)
-            .set(MfaRecoveryCode::getUsedTime, LocalDateTime.now());
-
-        recoveryCodeMapper.update(null, updateWrapper);
-
-        log.info("Recovery code used for user: {}", userId);
-        return true;
+        return success;
     }
 
     /**
@@ -131,13 +120,9 @@ public class MfaRecoveryCodeService {
             return false;
         }
 
-        LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-            .eq(MfaRecoveryCode::getUserId, userId)
-            .eq(MfaRecoveryCode::getCode, code.toUpperCase())
-            .eq(MfaRecoveryCode::getUsed, false);
-
-        Long count = recoveryCodeMapper.selectCount(queryWrapper);
-        return count != null && count > 0;
+        List<MfaRecoveryCode> codes = mfaManager.getRecoveryCodesByUserId(userId);
+        return codes.stream()
+            .anyMatch(c -> c.getCode().equalsIgnoreCase(code) && !c.getUsed());
     }
 
     /**
@@ -151,13 +136,9 @@ public class MfaRecoveryCodeService {
             return new ArrayList<>();
         }
 
-        LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-            .eq(MfaRecoveryCode::getUserId, userId)
-            .eq(MfaRecoveryCode::getUsed, false);
-
-        List<MfaRecoveryCode> codes = recoveryCodeMapper.selectList(queryWrapper);
-
+        List<MfaRecoveryCode> codes = mfaManager.getRecoveryCodesByUserId(userId);
         return codes.stream()
+            .filter(c -> !c.getUsed())
             .map(MfaRecoveryCode::getCode)
             .collect(Collectors.toList());
     }
@@ -173,12 +154,8 @@ public class MfaRecoveryCodeService {
             return false;
         }
 
-        LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-            .eq(MfaRecoveryCode::getUserId, userId)
-            .eq(MfaRecoveryCode::getUsed, false);
-
-        Long count = recoveryCodeMapper.selectCount(queryWrapper);
-        return count != null && count > 0;
+        List<MfaRecoveryCode> codes = mfaManager.getRecoveryCodesByUserId(userId);
+        return codes.stream().anyMatch(c -> !c.getUsed());
     }
 
     /**
@@ -191,11 +168,7 @@ public class MfaRecoveryCodeService {
             return;
         }
 
-        LambdaQueryWrapper<MfaRecoveryCode> queryWrapper = new LambdaQueryWrapper<MfaRecoveryCode>()
-            .eq(MfaRecoveryCode::getUserId, userId);
-
-        recoveryCodeMapper.delete(queryWrapper);
-
+        mfaManager.clearRecoveryCodes(userId);
         log.info("Cleared all recovery codes for user: {}", userId);
     }
 }

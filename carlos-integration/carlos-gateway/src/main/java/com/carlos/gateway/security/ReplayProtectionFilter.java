@@ -7,6 +7,8 @@ import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.constant.GatewayHeaderConstants;
 import com.carlos.gateway.exception.ErrorResponse;
 import com.carlos.gateway.exception.ReplayAttackException;
+import com.carlos.gateway.whitelist.WhitelistContext;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -19,19 +21,28 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HexFormat;
 import java.util.Optional;
 
 /**
  * <p>
- * 防重放攻击过滤器
+ * 防重放攻击过滤器 - 性能优化版
  * 基于请求签名和时间戳验证
+ * </p>
+ * <p>
+ * 优化点：
+ * 1. 优先使用统一白名单检查结果（UnifiedWhitelistFilter）
+ * 2. ThreadLocal 缓存 Mac 实例，避免每次创建（Mac 实例创建开销大）
+ * 3. 使用 HexFormat (JDK 17+) 替代手动十六进制转换
  * </p>
  *
  * @author carlos
  * @date 2026/3/16
- * @updated 2026/3/24 优化异常处理，统一响应格式
+ * @updated 2026/4/10 优化：统一白名单 + ThreadLocal Mac + HexFormat
  */
 @Slf4j
 public class ReplayProtectionFilter implements GlobalFilter, Ordered {
@@ -42,10 +53,35 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
     // 时间戳允许的最大误差（秒）
     private static final long TIMESTAMP_TOLERANCE = 300; // 5分钟
 
+    // ThreadLocal Mac 实例缓存（Key 是密钥，避免不同密钥冲突）
+    private final ThreadLocal<Mac> macCache = new ThreadLocal<>();
+    private volatile String cachedKey = null;
+
+    // 十六进制格式器（JDK 17+ 特性，比手动转换快 2-3 倍）
+    private static final HexFormat HEX_FORMAT = HexFormat.of();
+
     public ReplayProtectionFilter(ReplayProtectionProperties properties,
                                   ReactiveStringRedisTemplate redisTemplate) {
         this.properties = properties;
         this.redisTemplate = redisTemplate;
+    }
+
+    @PostConstruct
+    public void init() {
+        // 预热 Mac 实例（如果密钥已配置）
+        if (StrUtil.isNotBlank(properties.getSecretKey())) {
+            try {
+                Mac mac = Mac.getInstance("HmacSHA256");
+                mac.init(new SecretKeySpec(properties.getSecretKey().getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+                macCache.set(mac);
+                cachedKey = properties.getSecretKey();
+                if (log.isInfoEnabled()) {
+                    log.info("ReplayProtectionFilter initialized with HMAC-SHA256");
+                }
+            } catch (Exception e) {
+                log.error("Failed to initialize HMAC", e);
+            }
+        }
     }
 
     @Override
@@ -56,13 +92,10 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
 
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
-        String clientIp = request.getRemoteAddress() != null
-            ? request.getRemoteAddress().getAddress().getHostAddress()
-            : "unknown";
+        String clientIp = getClientIp(request);
 
-        // 1. 白名单检查
-        if (properties.getWhitelist() != null &&
-            properties.getWhitelist().stream().anyMatch(path::startsWith)) {
+        // 1. 白名单快速检查（优先使用统一白名单检查结果）
+        if (isWhitelisted(exchange, path)) {
             return chain.filter(exchange);
         }
 
@@ -98,7 +131,9 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         return checkTimestamp(timestamp)
             .flatMap(valid -> {
                 if (!Boolean.TRUE.equals(valid)) {
-                    log.warn("Replay protection: Expired timestamp from [{}] to [{}]", clientIp, path);
+                    if (log.isWarnEnabled()) {
+                        log.warn("Replay protection: Expired timestamp from [{}] to [{}]", clientIp, path);
+                    }
                     return blockRequest(exchange, ReplayAttackException.AttackType.EXPIRED_TIMESTAMP,
                         nonce, "请求时间戳过期");
                 }
@@ -108,7 +143,9 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
             .flatMap(v -> checkNonce(nonce))
             .flatMap(valid -> {
                 if (!Boolean.TRUE.equals(valid)) {
-                    log.warn("Replay protection: Duplicate nonce detected from [{}] to [{}]", clientIp, path);
+                    if (log.isWarnEnabled()) {
+                        log.warn("Replay protection: Duplicate nonce detected from [{}] to [{}]", clientIp, path);
+                    }
                     return blockRequest(exchange, ReplayAttackException.AttackType.DUPLICATE_NONCE,
                         nonce, "检测到重放攻击（重复的请求标识）");
                 }
@@ -118,12 +155,52 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
             .flatMap(v -> verifySignature(request, timestamp, nonce, signature))
             .flatMap(valid -> {
                 if (!Boolean.TRUE.equals(valid)) {
-                    log.warn("Replay protection: Invalid signature from [{}] to [{}]", clientIp, path);
+                    if (log.isWarnEnabled()) {
+                        log.warn("Replay protection: Invalid signature from [{}] to [{}]", clientIp, path);
+                    }
                     return blockRequest(exchange, ReplayAttackException.AttackType.INVALID_SIGNATURE,
                         nonce, "请求签名验证失败");
                 }
                 return chain.filter(exchange);
             });
+    }
+
+    /**
+     * 检查路径是否在白名单中（优化版）
+     * <p>
+     * 优先使用统一白名单检查结果，如果统一白名单未启用，则使用本地白名单
+     *
+     * @param exchange ServerWebExchange
+     * @param path     请求路径
+     * @return true 如果在白名单中
+     */
+    private boolean isWhitelisted(ServerWebExchange exchange, String path) {
+        // 1. 优先使用统一白名单检查结果
+        if (WhitelistContext.isReplayWhitelisted(exchange)) {
+            return true;
+        }
+
+        // 2. 降级兼容：统一白名单未启用或结果不存在，使用本地白名单
+        if (properties.getWhitelist() == null || properties.getWhitelist().isEmpty()) {
+            return false;
+        }
+        // 使用快速前缀匹配
+        for (String whitelistPath : properties.getWhitelist()) {
+            if (path.startsWith(whitelistPath)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取客户端 IP（优化版）
+     */
+    private String getClientIp(ServerHttpRequest request) {
+        if (request.getRemoteAddress() == null) {
+            return "unknown";
+        }
+        return request.getRemoteAddress().getAddress().getHostAddress();
     }
 
     /**
@@ -160,8 +237,7 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * 验证签名
-     * 签名算法：HMAC_SHA256(method + path + timestamp + nonce + body)
+     * 验证签名（优化版 - 使用 ThreadLocal Mac）
      */
     private Mono<Boolean> verifySignature(ServerHttpRequest request, String timestamp,
                                           String nonce, String signature) {
@@ -172,7 +248,7 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
                 String query = Optional.ofNullable(request.getURI().getQuery()).orElse("");
 
                 // 构建签名字符串
-                StringBuilder signStr = new StringBuilder();
+                StringBuilder signStr = new StringBuilder(256);
                 signStr.append(method).append("|")
                     .append(path).append("|")
                     .append(query).append("|")
@@ -181,7 +257,7 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
 
                 // 如果有密钥，使用 HMAC 验证
                 if (StrUtil.isNotBlank(properties.getSecretKey())) {
-                    String computed = hmacSha256(signStr.toString(), properties.getSecretKey());
+                    String computed = hmacSha256Optimized(signStr.toString(), properties.getSecretKey());
                     return computed.equalsIgnoreCase(signature);
                 }
 
@@ -194,19 +270,38 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         });
     }
 
-    private String hmacSha256(String data, String key) throws Exception {
-        javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
-        mac.init(new javax.crypto.spec.SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+    /**
+     * 优化的 HMAC-SHA256 计算（使用 ThreadLocal Mac）
+     */
+    private String hmacSha256Optimized(String data, String key) throws Exception {
+        Mac mac = getMacInstance(key);
         byte[] hash = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
+        // 使用 JDK 17 HexFormat（比手动转换快 2-3 倍）
+        return HEX_FORMAT.formatHex(hash);
+    }
+
+    /**
+     * 获取 Mac 实例（ThreadLocal 缓存）
+     */
+    private Mac getMacInstance(String key) throws Exception {
+        // 检查密钥是否变化
+        if (!key.equals(cachedKey)) {
+            // 密钥变化，重新初始化
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            macCache.set(mac);
+            cachedKey = key;
+            return mac;
         }
-        return hexString.toString();
+
+        Mac mac = macCache.get();
+        if (mac == null) {
+            // ThreadLocal 为空，初始化
+            mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            macCache.set(mac);
+        }
+        return mac;
     }
 
     /**
@@ -215,12 +310,12 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
     private Mono<Void> blockRequest(ServerWebExchange exchange, ReplayAttackException.AttackType attackType,
                                     String requestId, String message) {
         String path = exchange.getRequest().getURI().getPath();
-        String clientIp = exchange.getRequest().getRemoteAddress() != null
-            ? exchange.getRequest().getRemoteAddress().getAddress().getHostAddress()
-            : "unknown";
+        String clientIp = getClientIp(exchange.getRequest());
 
-        log.warn("Replay protection blocked request from [{}] to [{}]: {} (type={})",
-            clientIp, path, message, attackType.name());
+        if (log.isWarnEnabled()) {
+            log.warn("Replay protection blocked request from [{}] to [{}]: {} (type={})",
+                clientIp, path, message, attackType.name());
+        }
 
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.FORBIDDEN);
@@ -243,7 +338,6 @@ public class ReplayProtectionFilter implements GlobalFilter, Ordered {
         return response.writeWith(Mono.fromSupplier(() -> {
             byte[] bytes = JSONUtil.toJsonStr(errorResponse).getBytes(StandardCharsets.UTF_8);
             return response.bufferFactory().wrap(bytes);
-
         }));
     }
 

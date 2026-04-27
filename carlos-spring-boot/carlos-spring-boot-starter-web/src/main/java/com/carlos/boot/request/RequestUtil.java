@@ -15,11 +15,10 @@ import com.carlos.core.auth.UserContext;
 import com.carlos.core.constant.CoreConstant;
 import com.carlos.core.response.CommonErrorCode;
 import com.carlos.core.response.Result;
-import com.carlos.json.jackson.JacksonUtil;
+import com.carlos.json.JsonUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -34,7 +33,6 @@ import java.util.*;
  * @date 2020/4/10 16:46
  */
 @Slf4j
-@Component
 public class RequestUtil {
 
     private static final ThreadLocal<RequestInfo> THREAD_LOCAL = new TransmittableThreadLocal<>();
@@ -150,7 +148,7 @@ public class RequestUtil {
             try {
                 String body = JakartaServletUtil.getBody(request);
                 if (JSONUtil.isTypeJSON(body)) {
-                    param = JacksonUtil.string2Obj(body, Object.class);
+                    param = JsonUtils.fromJson(body, Object.class);
                 }
             } catch (Exception e) {
                 param = null;
@@ -255,7 +253,7 @@ public class RequestUtil {
      */
     private static String objectToJson(Object obj) {
         try {
-            return JacksonUtil.toJson(obj, false, false);
+            return JsonUtils.toJson(obj);
         } catch (Exception e) {
             log.error("Exception for Object to Json", e);
             return null;

@@ -1,5 +1,6 @@
 package com.carlos.org.convert;
 
+import com.carlos.org.api.pojo.ao.OrgUserAO;
 import com.carlos.org.pojo.dto.OrgUserDTO;
 import com.carlos.org.pojo.dto.OrgUserDeptDTO;
 import com.carlos.org.pojo.dto.OrgUserPositionDTO;
@@ -138,4 +139,6 @@ public interface OrgUserConvert {
      * 用户岗位DTO列表转VO列表
      */
     List<OrgUserPositionVO> toPositionVOList(List<OrgUserPositionDTO> dtoList);
+
+    OrgUserAO toAO(OrgUserDTO user);
 }

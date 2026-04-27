@@ -1,8 +1,12 @@
 package com.carlos.org.config;
 
+import com.carlos.boot.request.RequestUtil;
+import com.carlos.core.auth.UserContext;
 import com.carlos.core.interfaces.ApplicationExtend;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -14,7 +18,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @AllArgsConstructor
+
 public class OrgApplicationExtendImpl implements ApplicationExtend {
 
-
+    @Override
+    public Serializable getUserId() {
+        UserContext userContext = RequestUtil.getRequestInfo().getUserContext();
+        return userContext.getUserId();
+    }
 }

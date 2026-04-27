@@ -8,7 +8,6 @@ import com.carlos.minio.exception.MinioException;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -27,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  * @date 2021/6/10 14:19
  */
 @Slf4j
-@Component
 public class ObjectOptUtil {
 
     // region----------------------  获取对象 start  ------------------------

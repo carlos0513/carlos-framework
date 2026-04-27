@@ -52,6 +52,9 @@ public class SnowflakeConfig {
         Long workerId = dto.getWorkerId();
         Snowflake snowflake = new Snowflake(workerId, dataCenterId, properties.isUseSystemClock());
 
+        // 初始化 SnowflakeUtil 静态工具类
+        SnowflakeUtil.init(snowflake);
+
         if (log.isInfoEnabled()) {
             log.info("Snowflake ID生成器已注册 - workerId:{}, dataCenterId:{}, 模式:{}",
                 workerId, dataCenterId,

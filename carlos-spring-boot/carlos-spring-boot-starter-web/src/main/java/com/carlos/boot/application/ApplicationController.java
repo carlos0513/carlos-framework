@@ -7,10 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author carlos
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/app")
 @Tag(name = "应用信息")
 public class ApplicationController {
@@ -36,7 +35,6 @@ public class ApplicationController {
 
     @GetMapping("/enums")
     @Operation(summary = "枚举字典")
-    @ResponseBody
     public Result<?> enumList() {
         if (enumService == null) {
             return Result.error("枚举功能未开启");
@@ -46,7 +44,6 @@ public class ApplicationController {
 
     @GetMapping("/enum")
     @Operation(summary = "枚举详情")
-    @ResponseBody
     public Result<?> enumInfo(String name) {
         if (enumService == null) {
             return Result.error("枚举功能未开启");
@@ -56,7 +53,6 @@ public class ApplicationController {
 
     @GetMapping("init/resource")
     @Operation(summary = "初始化资源")
-    @ResponseBody
     public Result<?> initResource() {
         return Result.success(resourceService.init());
     }

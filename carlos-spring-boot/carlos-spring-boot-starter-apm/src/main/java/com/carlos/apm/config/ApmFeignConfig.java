@@ -1,7 +1,9 @@
 package com.carlos.apm.config;
 
+import brave.Tracer;
 import com.carlos.apm.feign.TracingFeignInterceptor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -22,8 +24,8 @@ import org.springframework.context.annotation.Configuration;
 public class ApmFeignConfig {
 
     @Bean
-    public TracingFeignInterceptor tracingFeignInterceptor() {
+    public TracingFeignInterceptor tracingFeignInterceptor(ObjectProvider<Tracer> tracerProvider) {
         log.debug("[Carlos APM] Feign 链路追踪拦截器已注册");
-        return new TracingFeignInterceptor();
+        return new TracingFeignInterceptor(tracerProvider.getIfAvailable());
     }
 }

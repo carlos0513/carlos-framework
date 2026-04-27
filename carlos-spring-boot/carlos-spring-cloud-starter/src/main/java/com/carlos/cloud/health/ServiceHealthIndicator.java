@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -27,7 +26,6 @@ import java.util.List;
  * @date 2024/01/15
  */
 @Slf4j
-@Component
 @ConditionalOnClass(NacosServiceDiscovery.class)
 public class ServiceHealthIndicator implements HealthIndicator {
 

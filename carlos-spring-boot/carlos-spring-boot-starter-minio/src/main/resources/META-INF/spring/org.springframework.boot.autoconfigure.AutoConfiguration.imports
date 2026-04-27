@@ -1,5 +1,2 @@
 com.carlos.minio.config.MinioConfig
-com.carlos.minio.utils.BucketOptUtil
-com.carlos.minio.utils.ObjectOptUtil
-com.carlos.minio.utils.MinioUtil
 com.carlos.minio.web.MinioWebAutoConfig

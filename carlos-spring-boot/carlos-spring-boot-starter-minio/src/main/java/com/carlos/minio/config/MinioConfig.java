@@ -3,11 +3,14 @@ package com.carlos.minio.config;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.carlos.minio.utils.MinioUtil;
 import io.minio.MinioAsyncClient;
 import io.minio.MinioClient;
 import io.minio.http.HttpUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,6 +30,23 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MinioProperties.class)
 @ConditionalOnProperty(prefix = "carlos.minio", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MinioConfig {
+
+    @Autowired
+    private MinioClient minioClient;
+
+    @Autowired
+    private IMinioAsyncClient minioAsyncClient;
+
+    @Autowired
+    private MinioProperties minioProperties;
+
+    /**
+     * 初始化 MinioUtil 静态字段
+     */
+    @PostConstruct
+    public void init() {
+        MinioUtil.init(minioClient, minioAsyncClient, minioProperties);
+    }
 
     @Bean
     @ConditionalOnMissingBean

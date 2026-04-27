@@ -462,7 +462,6 @@ public class OrderService {
 - **carlos-spring-boot-core**：基础工具类
 - **carlos-spring-boot-starter-log**：日志记录，与追踪信息结合
 - **carlos-spring-cloud-starter**：微服务基础，分布式追踪依赖
-- **carlos-spring-boot-starter-gateway**：API 网关，网关层追踪支持
 
 ## 更新日志
 

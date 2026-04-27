@@ -1,6 +1,8 @@
 package com.carlos.cloud.nacos;
 
+import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
+import com.carlos.cloud.health.ServiceHealthIndicator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -94,5 +96,17 @@ public class NacosConfig {
         }
 
         log.info("Nacos 元数据初始化完成: {}", metadata);
+    }
+
+    /**
+     * 服务健康检查指示器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnClass(NacosServiceDiscovery.class)
+    @ConditionalOnProperty(prefix = "carlos.cloud.health", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public ServiceHealthIndicator serviceHealthIndicator() {
+        log.info("初始化服务健康检查指示器");
+        return new ServiceHealthIndicator();
     }
 }

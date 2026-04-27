@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/4/3 15:30
  */
 @Slf4j
-@Tag(name = "系统错误")
 @RestController
+@Tag(name = "系统错误")
 @RequestMapping("${server.error.path:${error.path:/error}}")
 public class GlobalErrorController implements ErrorController {
 

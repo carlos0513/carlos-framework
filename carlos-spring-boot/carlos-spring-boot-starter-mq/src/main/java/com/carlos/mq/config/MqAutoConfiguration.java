@@ -2,6 +2,7 @@ package com.carlos.mq.config;
 
 import com.carlos.mq.core.MqTemplate;
 import com.carlos.mq.support.MqType;
+import com.carlos.mq.util.MqUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class MqAutoConfiguration {
     @Autowired
     private Environment environment;
 
+    @Autowired(required = false)
+    private MqTemplate mqTemplate;
+
     @PostConstruct
     public void init() {
         MqType mqType = mqProperties.getType();
@@ -47,6 +51,11 @@ public class MqAutoConfiguration {
         if (mqType == MqType.AUTO) {
             MqType detectedType = com.carlos.mq.config.MqClientSelector.detectMqType();
             log.info("Auto-detected MQ type: {}", detectedType);
+        }
+
+        // 初始化 MqUtil 静态工具类
+        if (mqTemplate != null) {
+            MqUtil.init(mqTemplate);
         }
     }
 

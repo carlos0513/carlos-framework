@@ -29,16 +29,14 @@
     <spring-boot.version>3.5.9</spring-boot.version>
     <spring-cloud.version>2025.0.1</spring-cloud.version>
     <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
+    <langchain4j.version>1.12.2</langchain4j.version>
+
 
     <druid.version>1.2.27</druid.version>
     <yauaa.version>7.32.0</yauaa.version>
 
     <!-- 安全相关 -->
     <spring-security-oauth2-jose.version>6.2.7</spring-security-oauth2-jose.version>
-    <!-- Spring Security 版本由 Spring Boot 3.5.9 统一管理，不指定显式版本 -->
-    <spring-boot-starter-security.version>3.2.12</spring-boot-starter-security.version>
-    <spring-cloud-oauth2.version>2.2.5.RELEASE</spring-cloud-oauth2.version>
-    <!-- 注意：旧版本定义已移除，避免版本冲突 -->
 
     <!-- 数据层 -->
     <mybatis-plus.version>3.5.15</mybatis-plus.version>          <!-- 已支持 SB3 -->
@@ -49,7 +47,7 @@
     <!--<alibaba.seata.version>1.5.1</alibaba.seata.version>-->
 
     <!-- 工具 -->
-    <knife4j.version>4.6.0-SNAPSHOT</knife4j.version>
+    <knife4j.version>4.6.0</knife4j.version>
     <hutool.version>5.8.40</hutool.version>
     <fastexcel.version>1.3.0</fastexcel.version>
     <commons-collections4.version>4.4</commons-collections4.version>
@@ -123,6 +121,10 @@
     <swagger-annotations.version>2.2.36</swagger-annotations.version>
     <swagger-core-jakarta.version>2.2.36</swagger-core-jakarta.version>
     <jakarta-validation.version>3.1.1</jakarta-validation.version>
+
+    <freemarker.version>2.3.31</freemarker.version>
+    <resilience4j.version>2.1.0</resilience4j.version>
+    <clickhouse-jdbc.version>0.9.6</clickhouse-jdbc.version>
 
     <!-- SkyWalking -->
     <skywalking.version>9.5.0</skywalking.version>
@@ -199,6 +201,14 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!-- LangChain4j BOM 统一管理版本 -->
+      <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-bom</artifactId>
+        <version>${langchain4j.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
       <!-- Alibaba Seata 配置 -->
       <dependency>
@@ -211,17 +221,6 @@
         <groupId>com.squareup.okhttp3</groupId>
         <artifactId>okhttp</artifactId>
         <version>${okhttp.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        <version>${spring-boot-starter-security.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-security</artifactId>
-        <version>${spring-boot-starter-security.version}</version>
       </dependency>
 
       <!-- mapstruct 转换器 -->
@@ -316,7 +315,7 @@
         <version>${knife4j.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.github.xiaoymin</groupId>
+        <groupId>com.github.xingfudeshi</groupId>
         <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
         <version>${knife4j.version}</version>
       </dependency>
@@ -426,6 +425,12 @@
         <artifactId>carlos-spring-boot-starter-web</artifactId>
         <version>${revision}</version>
       </dependency>
+      <!-- Security模块 -->
+      <dependency>
+        <groupId>com.carlos</groupId>
+        <artifactId>carlos-spring-boot-starter-security</artifactId>
+        <version>${revision}</version>
+      </dependency>
       <!-- springcloud模块 -->
       <dependency>
         <groupId>com.carlos</groupId>
@@ -472,7 +477,17 @@
       <!-- 缓存服务 -->
       <dependency>
         <groupId>com.carlos</groupId>
+        <artifactId>carlos-spring-boot-starter-redis-core</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.carlos</groupId>
         <artifactId>carlos-spring-boot-starter-redis</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.carlos</groupId>
+        <artifactId>carlos-spring-boot-starter-redis-reactive</artifactId>
         <version>${revision}</version>
       </dependency>
       <!-- mongodb -->
@@ -493,10 +508,10 @@
         <artifactId>carlos-spring-boot-starter-sms</artifactId>
         <version>${revision}</version>
       </dependency>
-      <!-- 网关基础组件 -->
+      <!-- Security 权限校验组件 -->
       <dependency>
         <groupId>com.carlos</groupId>
-        <artifactId>carlos-spring-boot-starter-gateway</artifactId>
+        <artifactId>carlos-spring-boot-starter-security</artifactId>
         <version>${revision}</version>
       </dependency>
       <!-- 监控组件 -->
@@ -554,17 +569,6 @@
       <dependency>
         <groupId>com.carlos</groupId>
         <artifactId>carlos-spring-boot-starter-openapi</artifactId>
-        <version>${revision}</version>
-      </dependency>
-      <!-- OAuth2组件 -->
-      <dependency>
-        <groupId>com.carlos</groupId>
-        <artifactId>carlos-auth-service</artifactId>
-        <version>${revision}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.carlos</groupId>
-        <artifactId>carlos-auth-api</artifactId>
         <version>${revision}</version>
       </dependency>
       <!-- 消息队列组件 -->
@@ -761,6 +765,28 @@
         <groupId>jakarta.validation</groupId>
         <artifactId>jakarta.validation-api</artifactId>
         <version>${jakarta-validation.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-spring-boot3</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-reactor</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.clickhouse</groupId>
+        <artifactId>clickhouse-jdbc-all</artifactId>
+        <version>${clickhouse-jdbc.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -1105,19 +1131,19 @@
         <repository>
           <id>carlos-releases</id>
           <name>Nexus Release Repository</name>
-          <url>http://zcarlos.com:8081/nexus/repository/maven-releases/</url>
+          <url>http://100.110.168.82:8081/nexus/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
           <id>carlos-snapshots</id>
           <name>Nexus Snapshot Repository</name>
-          <url>http://zcarlos.com:8081/nexus/repository/maven-snapshots/</url>
+          <url>http://100.110.168.82:8081/nexus/repository/maven-snapshots/</url>
         </snapshotRepository>
       </distributionManagement>
 
       <repositories>
         <repository>
           <id>nexus</id>
-          <url>http://zcarlos.com:8081/nexus/repository/maven-public/</url>
+          <url>http://100.110.168.82:8081/nexus/repository/maven-public/</url>
           <releases>
             <enabled>true</enabled>
             <updatePolicy>always</updatePolicy>
@@ -1131,7 +1157,7 @@
       <pluginRepositories>
         <pluginRepository>
           <id>nexus</id>
-          <url>http://zcarlos.com:8081/nexus/repository/maven-public/</url>
+          <url>http://100.110.168.82:8081/nexus/repository/maven-public/</url>
           <releases>
             <enabled>true</enabled>
             <updatePolicy>always</updatePolicy>
@@ -1143,50 +1169,7 @@
         </pluginRepository>
       </pluginRepositories>
     </profile>
-    <profile>
-      <id>carlos-private</id>
-      <distributionManagement>
-        <repository>
-          <id>carlos-releases</id>
-          <name>Nexus Release Repository</name>
-          <url>http://192.168.3.30:8081/nexus/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-          <id>carlos-snapshots</id>
-          <name>Nexus Snapshot Repository</name>
-          <url>http://192.168.3.30:8081/nexus/repository/maven-snapshots/</url>
-        </snapshotRepository>
-      </distributionManagement>
 
-      <repositories>
-        <repository>
-          <id>nexus</id>
-          <url>http://192.168.3.30:8081/nexus/repository/maven-public/</url>
-          <releases>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-          </snapshots>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>nexus</id>
-          <url>http://192.168.3.30:8081/nexus/repository/maven-public/</url>
-          <releases>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-          </snapshots>
-        </pluginRepository>
-      </pluginRepositories>
-    </profile>
 
   </profiles>
 

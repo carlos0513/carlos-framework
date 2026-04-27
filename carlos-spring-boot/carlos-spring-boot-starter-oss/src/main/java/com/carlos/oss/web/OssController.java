@@ -8,7 +8,6 @@ import com.carlos.oss.model.OssFile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,11 +28,15 @@ import com.carlos.core.exception.BusinessException;
 @RestController
 @RequestMapping("/oss")
 @Tag(name = "OSS 对象存储接口")
-@RequiredArgsConstructor
 public class OssController {
 
     private final OssProperties properties;
     private final OssTemplate ossTemplate;
+
+    public OssController(OssProperties properties, OssTemplate ossTemplate) {
+        this.properties = properties;
+        this.ossTemplate = ossTemplate;
+    }
 
     /**
      * 获取 OSS 客户端初始化信息

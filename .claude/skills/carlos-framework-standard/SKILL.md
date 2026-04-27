@@ -479,6 +479,61 @@ public enum OrgUserStateEnum implements BaseEnum {
 - `@EnumValue` - 标记数据库存储字段
 - 实现 `BaseEnum` 接口
 
+### 模块错误码枚举
+
+业务模块应在 API 模块中定义专属错误码：
+
+#### 命名规范
+
+| 项目   | 规范                                      | 示例                                              |
+|------|-----------------------------------------|-------------------------------------------------|
+| 枚举类名 | `{模块名}ErrorCode`                        | `AuthErrorCode`、`OrgErrorCode`                  |
+| 包路径  | `{module}.api.enums` 或 `{module}.enums` | `com.carlos.auth.api.enums`                     |
+| 模块编码 | 按规范分配（见下方）                              | 01用户、02认证、05消息、09系统、11审计                        |
+| 实现接口 | `ErrorCode`                             | 实现 `getCode()`、`getMessage()`、`getHttpStatus()` |
+
+#### 模块错误码示例
+
+```java
+@Getter
+@RequiredArgsConstructor
+public enum AuthErrorCode implements ErrorCode {
+    
+    // 客户端错误 (1-02-xx)
+    AUTH_PARAM_CLIENT_ID_MISSING("10201", "客户端ID不能为空", 400),
+    
+    // 业务错误 (2-02-xx)
+    AUTH_CLIENT_NOT_FOUND("20201", "应用客户端不存在", 404),
+    AUTH_TOKEN_EXPIRED("20211", "访问令牌已过期", 401),
+    
+    // 第三方错误 (3-02-xx)
+    AUTH_IDP_ERROR("30201", "身份提供者服务异常", 500),
+    
+    // 系统错误 (5-02-xx)
+    AUTH_SYSTEM_ERROR("50201", "认证系统内部错误", 500);
+    
+    private final String code;
+    private final String message;
+    private final int httpStatus;
+    
+    // 必须实现 exception() 方法
+    @Override
+    public BusinessException exception() {
+        return new BusinessException(this);
+    }
+}
+```
+
+#### 现有模块错误码
+
+| 模块             | 枚举类名             | 包路径                        | 模块编码 |
+|----------------|------------------|----------------------------|------|
+| carlos-org     | OrgErrorCode     | com.carlos.org.api.enums   | 01   |
+| carlos-auth    | AuthErrorCode    | com.carlos.auth.api.enums  | 02   |
+| carlos-message | MessageErrorCode | com.carlos.message.enums   | 05   |
+| carlos-system  | SystemErrorCode  | com.carlos.system.enums    | 09   |
+| carlos-audit   | AuditErrorCode   | com.carlos.audit.api.enums | 11   |
+
 ### 使用方式
 
 ```java
@@ -486,6 +541,10 @@ public enum OrgUserStateEnum implements BaseEnum {
 public class OrgUser {
     private OrgUserStateEnum state;  // 自动映射数据库 Integer
 }
+
+// 抛出模块错误码异常
+throw AuthErrorCode.AUTH_TOKEN_EXPIRED.exception();
+throw OrgErrorCode.ORG_USER_NOT_FOUND.exception("该用户ID不存在");
 ```
 
 ## MapStruct 对象转换规范

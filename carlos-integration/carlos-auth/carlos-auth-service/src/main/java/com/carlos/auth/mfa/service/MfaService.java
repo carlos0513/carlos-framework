@@ -1,12 +1,10 @@
 package com.carlos.auth.mfa.service;
 
+import com.carlos.auth.api.enums.AuthErrorCode;
+import com.carlos.auth.mfa.pojo.dto.MfaSetupDTO;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
-import com.carlos.auth.security.TotpGenerator;
 import com.carlos.auth.util.QrCodeGenerator;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,14 +12,23 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * <p>
- * MFA服务
- * </p>
+ * MFA 业务服务
  *
- * <p>处理多因素认证相关逻辑，包括TOTP生成、验证、启用等</p>
+ * <p>处理多因素认证相关业务逻辑，包括 TOTP 生成、验证、启用/禁用等。</p>
+ *
+ * <p><strong>分层职责：</strong></p>
+ * <ul>
+ *   <li>Controller ({@link com.carlos.auth.mfa.controller.MfaController}): 接收请求，参数校验</li>
+ *   <li>Service (此类): 处理业务逻辑，业务流程串联</li>
+ *   <li>Manager ({@link com.carlos.auth.mfa.manager.MfaManager}): 数据查询封装，原子操作</li>
+ *   <li>Mapper: 数据访问，与数据库交互</li>
+ * </ul>
  *
  * @author Carlos
- * @date 2026-02-26
+ * @version 3.0.0
+ * @since 2026-02-26
+ * @see com.carlos.auth.mfa.controller.MfaController
+ * @see com.carlos.auth.mfa.manager.MfaManager
  */
 @Slf4j
 @Service
@@ -37,15 +44,15 @@ public class MfaService {
      * 生成MFA设置信息（密钥和QR码）
      *
      * @param username 用户名
-     * @return MFA设置信息
+     * @return MFA设置信息 DTO
      */
-    public MfaSetupInfo generateMfaSetup(String username) {
+    public MfaSetupDTO generateMfaSetup(String username) {
         log.info("Generating MFA setup for user: {}", username);
 
         // 查找用户
         UserInfo user = userProvider.loadUserByIdentifier(username);
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在: " + username);
+            throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception("用户不存在: %s", username);
         }
 
         // 生成密钥
@@ -59,7 +66,7 @@ public class MfaService {
         // 生成备用恢复码（将在验证后保存）
         List<String> recoveryCodes = recoveryCodeService.generateRecoveryCodes();
 
-        return MfaSetupInfo.builder()
+        return MfaSetupDTO.builder()
             .secret(secret)
             .qrCodeUrl(qrCodeUrl)
             .formattedSecret(qrCodeGenerator.formatSecretForDisplay(secret))
@@ -83,13 +90,13 @@ public class MfaService {
 
         if (!isValid) {
             log.warn("MFA verification failed for user: {}", username);
-            return false;
+            throw AuthErrorCode.AUTH_MFA_CODE_ERROR.exception();
         }
 
         // 查找用户
         UserInfo user = userProvider.loadUserByIdentifier(username);
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在: " + username);
+            throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception("用户不存在: %s", username);
         }
 
         // 启用MFA并保存密钥
@@ -112,12 +119,12 @@ public class MfaService {
         // 查找用户
         UserInfo user = userProvider.loadUserByIdentifier(username);
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在: " + username);
+            throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception("用户不存在: %s", username);
         }
 
         // 检查是否启用了MFA
         // if (Boolean.FALSE.equals(user.getMfaEnabled()) || user.getMfaSecret() == null) {
-        //     throw new IllegalStateException("MFA未启用");
+        //     throw AuthErrorCode.AUTH_MFA_NOT_ENABLED.exception();
         // }
         //
         // // 验证TOTP验证码
@@ -145,7 +152,7 @@ public class MfaService {
         // 查找用户
         UserInfo user = userProvider.loadUserByIdentifier(username);
         if (user == null) {
-            throw new IllegalArgumentException("用户不存在: " + username);
+            throw AuthErrorCode.AUTH_USER_NOT_FOUND.exception("用户不存在: %s", username);
         }
 
         // 禁用MFA
@@ -163,9 +170,9 @@ public class MfaService {
      * 重置MFA密钥
      *
      * @param username 用户名
-     * @return 新的MFA设置信息
+     * @return 新的MFA设置信息 DTO
      */
-    public MfaSetupInfo resetMfaSecret(String username) {
+    public MfaSetupDTO resetMfaSecret(String username) {
         log.info("Resetting MFA secret for user: {}", username);
 
         // 首先禁用MFA
@@ -198,33 +205,5 @@ public class MfaService {
      */
     public String generateTotpCode(String secret) {
         return totpGenerator.getTotpCode(secret);
-    }
-
-    /**
-     * MFA设置信息DTO
-     */
-    @Data
-    @Builder
-    @AllArgsConstructor
-    public static class MfaSetupInfo {
-        /**
-         * MFA密钥（Base32编码）
-         */
-        private String secret;
-
-        /**
-         * QR码URL（可生成二维码）
-         */
-        private String qrCodeUrl;
-
-        /**
-         * 格式化显示的密钥
-         */
-        private String formattedSecret;
-
-        /**
-         * 备用恢复码列表
-         */
-        private List<String> recoveryCodes;
     }
 }

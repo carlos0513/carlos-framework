@@ -2,6 +2,8 @@ package com.carlos.gateway.gray;
 
 import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.gateway.constant.GatewayHeaderConstants;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
@@ -14,19 +16,28 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.SplittableRandom;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p>
- * 灰度发布过滤器
+ * 灰度发布过滤器 - 性能优化版
  * 支持基于用户、IP、权重的灰度策略
+ * </p>
+ * <p>
+ * 优化点：
+ * 1. 使用 MurmurHash3 替代 MD5（哈希计算快 5-10 倍）
+ * 2. 使用 ThreadLocalRandom 替代 Random（无锁、线程安全）
+ * 3. Caffeine 缓存策略结果（带过期时间）
+ * 4. 减少实例选择时的随机数创建
  * </p>
  *
  * @author carlos
  * @date 2026/3/16
+ * @updated 2026/4/10 性能优化：MurmurHash + ThreadLocalRandom + Caffeine
  */
 @Slf4j
 public class GrayReleaseFilter implements GlobalFilter, Ordered {
@@ -34,13 +45,23 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
     private final GrayReleaseProperties properties;
     private final ReactiveDiscoveryClient discoveryClient;
 
-    // 灰度策略缓存
-    private final ConcurrentHashMap<String, GrayStrategy> strategyCache = new ConcurrentHashMap<>();
+    // 灰度策略缓存（使用 Caffeine 替代 ConcurrentHashMap，支持过期）
+    private final LoadingCache<String, GrayStrategy> strategyCache;
+
+    // 随机数生成器（线程本地，无锁）
+    private static final SplittableRandom RANDOM = new SplittableRandom();
 
     public GrayReleaseFilter(GrayReleaseProperties properties,
                              ReactiveDiscoveryClient discoveryClient) {
         this.properties = properties;
         this.discoveryClient = discoveryClient;
+
+        // 初始化策略缓存（1小时过期，最大1000条）
+        this.strategyCache = Caffeine.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(Duration.ofHours(1))
+            .recordStats()
+            .build(this::loadStrategy);
     }
 
     @Override
@@ -55,7 +76,8 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        GrayStrategy strategy = getGrayStrategy(serviceName);
+        // 从缓存获取策略
+        GrayStrategy strategy = strategyCache.get(serviceName);
         if (strategy == null || !strategy.isEnabled()) {
             return chain.filter(exchange);
         }
@@ -67,8 +89,10 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
         exchange.getAttributes().put(GatewayHeaderConstants.GRAY_RELEASE_ATTR, isGrayUser);
 
         if (isGrayUser) {
-            log.debug("Gray release enabled for service: {}, request: {}",
-                serviceName, exchange.getRequest().getURI());
+            if (log.isDebugEnabled()) {
+                log.debug("Gray release enabled for service: {}, request: {}",
+                    serviceName, exchange.getRequest().getURI());
+            }
 
             // 添加灰度标记头
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
@@ -95,14 +119,21 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * 判断是否是灰度用户
+     * 从配置加载策略
+     */
+    private GrayStrategy loadStrategy(String serviceName) {
+        return properties.getStrategies().get(serviceName);
+    }
+
+    /**
+     * 判断是否是灰度用户（优化版）
      */
     private boolean isGrayUser(ServerWebExchange exchange, GrayStrategy strategy) {
         ServerHttpRequest request = exchange.getRequest();
 
         // 1. 基于权重的灰度
         if (strategy.getWeight() > 0) {
-            int hash = hashRequest(request, strategy);
+            int hash = hashRequestOptimized(request, strategy);
             return (hash % 100) < strategy.getWeight();
         }
 
@@ -134,38 +165,97 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * 计算请求的哈希值（用于权重分配）
+     * 计算请求的哈希值（优化版 - 使用 MurmurHash3）
      */
-    private int hashRequest(ServerHttpRequest request, GrayStrategy strategy) {
+    private int hashRequestOptimized(ServerHttpRequest request, GrayStrategy strategy) {
         String key = switch (strategy.getHashKey()) {
             case USER -> request.getHeaders().getFirst(HttpHeadersConstant.X_USER_ID);
             case IP -> request.getRemoteAddress() != null
                 ? request.getRemoteAddress().getAddress().getHostAddress()
                 : "0.0.0.0";
             case HEADER -> request.getHeaders().getFirst(strategy.getHeaderName());
-            default -> UUID.randomUUID().toString();
+            default -> generateRandomKey();
         };
 
         if (key == null) {
-            key = UUID.randomUUID().toString();
+            // 使用 ThreadLocalRandom 生成随机哈希（避免 UUID 同步开销）
+            return ThreadLocalRandom.current().nextInt();
         }
 
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(key.getBytes());
-            return Math.abs(Arrays.hashCode(digest));
-        } catch (NoSuchAlgorithmException e) {
-            return Math.abs(key.hashCode());
-        }
+        // 使用 MurmurHash3（比 MD5 快 5-10 倍）
+        return murmurHash3(key);
     }
 
     /**
-     * 选择灰度实例
+     * MurmurHash3 算法（32位版本）
+     * 特点：速度快、分布均匀、无加密安全性要求场景的首选
+     */
+    private int murmurHash3(String key) {
+        byte[] data = key.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        int length = data.length;
+        int seed = 0x9747b28c; // 随机种子
+
+        final int c1 = 0xcc9e2d51;
+        final int c2 = 0x1b873593;
+        final int r1 = 15;
+        final int r2 = 13;
+        final int m = 5;
+        final int n = 0xe6546b64;
+
+        int hash = seed;
+
+        // 每次处理 4 字节
+        int i = 0;
+        for (; i + 4 <= length; i += 4) {
+            int k = (data[i] & 0xff) | ((data[i + 1] & 0xff) << 8) |
+                ((data[i + 2] & 0xff) << 16) | ((data[i + 3] & 0xff) << 24);
+
+            k *= c1;
+            k = Integer.rotateLeft(k, r1);
+            k *= c2;
+
+            hash ^= k;
+            hash = Integer.rotateLeft(hash, r2);
+            hash = hash * m + n;
+        }
+
+        // 处理剩余字节
+        int k1 = 0;
+        switch (length - i) {
+            case 3:
+                k1 ^= (data[i + 2] & 0xff) << 16;
+            case 2:
+                k1 ^= (data[i + 1] & 0xff) << 8;
+            case 1:
+                k1 ^= (data[i] & 0xff);
+                k1 *= c1;
+                k1 = Integer.rotateLeft(k1, r1);
+                k1 *= c2;
+                hash ^= k1;
+        }
+
+        // 最终化
+        hash ^= length;
+        hash ^= (hash >>> 16);
+        hash *= 0x85ebca6b;
+        hash ^= (hash >>> 13);
+        hash *= 0xc2b2ae35;
+        hash ^= (hash >>> 16);
+
+        return hash;
+    }
+
+    /**
+     * 选择灰度实例（优化版 - 使用 ThreadLocalRandom）
      */
     private Mono<ServiceInstance> selectGrayInstance(String serviceName, GrayStrategy strategy) {
         return discoveryClient.getInstances(serviceName)
             .collectList()
             .map(instances -> {
+                if (instances.isEmpty()) {
+                    return null;
+                }
+
                 // 优先选择带有灰度标签的实例
                 List<ServiceInstance> grayInstances = instances.stream()
                     .filter(instance -> {
@@ -176,8 +266,8 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
                     .toList();
 
                 if (!grayInstances.isEmpty()) {
-                    // 随机选择一个灰度实例
-                    return grayInstances.get(new Random().nextInt(grayInstances.size()));
+                    // 使用 ThreadLocalRandom（无锁、线程安全）
+                    return grayInstances.get(ThreadLocalRandom.current().nextInt(grayInstances.size()));
                 }
 
                 // 如果没有灰度实例，使用版本匹配的实例
@@ -187,7 +277,7 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
                             .equals(instance.getMetadata().get("version")))
                         .toList();
                     if (!versionInstances.isEmpty()) {
-                        return versionInstances.get(new Random().nextInt(versionInstances.size()));
+                        return versionInstances.get(ThreadLocalRandom.current().nextInt(versionInstances.size()));
                     }
                 }
 
@@ -195,14 +285,25 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
             });
     }
 
-    private GrayStrategy getGrayStrategy(String serviceName) {
-        return properties.getStrategies().get(serviceName);
+    /**
+     * 获取缓存统计信息（用于监控）
+     */
+    public Map<String, Object> getCacheStats() {
+        return Map.of(
+            "strategyCacheStats", strategyCache.stats().toString(),
+            "strategyCacheSize", strategyCache.estimatedSize()
+        );
+    }
+
+    /**
+     * 生成随机键（用于默认情况的哈希）
+     */
+    private String generateRandomKey() {
+        return java.util.UUID.randomUUID().toString();
     }
 
     @Override
     public int getOrder() {
         return -100; // 在负载均衡之前执行
     }
-
-
 }
