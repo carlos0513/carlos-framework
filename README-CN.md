@@ -9,7 +9,8 @@
 
 ## 项目概述
 
-**Carlos Framework** 是一个基于 Spring Boot 3.5.9 (JDK 17) 和 Spring Cloud Alibaba 的综合 Java 微服务框架。它提供了一个结构清晰的多模块 Maven 项目，包含 38 个模块，旨在加速企业级应用开发。
+**Carlos Framework** 是一个基于 Spring Boot 3.5.9 (JDK 21) 和 Spring Cloud Alibaba 的综合 Java 微服务框架。它提供了一个结构清晰的多模块
+Maven 项目，包含 38 个模块，旨在加速企业级应用开发。
 
 ### 核心特性
 
@@ -43,7 +44,7 @@
 
 ### 环境要求
 
-- JDK 17 或更高版本
+- JDK 21 或更高版本
 - Maven 3.8 或更高版本
 - MySQL / PostgreSQL / MongoDB（可选）
 - Redis（可选）

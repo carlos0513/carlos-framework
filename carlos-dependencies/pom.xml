@@ -18,7 +18,7 @@
 
   <properties>
     <revision>3.0.0-SNAPSHOT</revision>
-    <java.version>17</java.version>
+    <java.version>21</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <utf8>UTF-8</utf8>
@@ -74,7 +74,7 @@
 
     <!-- Database -->
     <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
-    <mysql-connector.version>8.0.33</mysql-connector.version>
+    <mysql-connector.version>8.4.0</mysql-connector.version>
     <dm-jdbc.version>8.1.3.62</dm-jdbc.version>
     <druid-spring-boot.version>1.2.27</druid-spring-boot.version>
     <mongodb-plus.version>2.1.9</mongodb-plus.version>
@@ -983,7 +983,7 @@
               <configuration>
                 <rules>
                   <requireJavaVersion>
-                    <version>[17,)</version>
+                    <version>[21,)</version>
                   </requireJavaVersion>
                   <requireMavenVersion>
                     <version>[3.8,)</version>

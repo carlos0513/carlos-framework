@@ -13,7 +13,8 @@
 
 ## 项目概述
 
-**Carlos Framework** 是基于 Spring Boot 3.5.9 (JDK 17) 和 Spring Cloud Alibaba 的 Java 微服务框架。项目采用多模块 Maven 构建结构，具有清晰的分层架构：
+**Carlos Framework** 是基于 Spring Boot 3.5.9 (JDK 21) 和 Spring Cloud Alibaba 的 Java 微服务框架。项目采用多模块 Maven
+构建结构，具有清晰的分层架构：
 
 - **carlos-dependencies**: 集中式依赖版本管理 (BOM)
 - **carlos-parent**: 统一父 POM，包含构建配置和插件管理
@@ -682,7 +683,7 @@ public void init() {
 - **多 Profile 支持**: 存在两个 Nexus 仓库 profile
     - `carlos-public`: 公共服务器 zcarlos.com:8081
     - `carlos-private`: 私有服务器 192.168.3.30:8081
-- **需要 JDK 17**: 这是 Spring Boot 3 项目，需要 JDK 17+
+- **需要 JDK 21**: 这是 Spring Boot 3 项目，需要 JDK 21+
 - **需要 Maven 3.8+**: 最低 Maven 版本为 3.8
 - **仅限内部使用**: 此框架仅限内部使用
 - **父版本**: 在子 POM 中使用 `${revision}`，不要使用硬编码版本

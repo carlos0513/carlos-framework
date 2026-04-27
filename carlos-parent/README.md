@@ -8,7 +8,7 @@
 
 ### 1. 统一构建配置
 
-- **编译配置**: Java 17，UTF-8 编码
+- **编译配置**: Java 21，UTF-8 编码
 - **资源过滤**: 自动处理 application*.yml/properties 文件中的 Maven 属性
 - **源码打包**: 自动生成 source jar
 - **版本管理**: 使用 `${revision}` 变量统一管理版本
@@ -258,7 +258,7 @@ Maven 不支持在发布的 POM 中使用 `${revision}` 变量，flatten-maven-p
 ## 技术栈
 
 - Maven 3.8+
-- JDK 17
+- JDK 21
 - Spring Boot 3.5.9
 - Spring Cloud 2025.0.1
 - Spring Cloud Alibaba 2025.0.0.0

@@ -425,7 +425,7 @@ public Result<Void> internalMethod() {
 
 ## 版本要求
 
-- JDK 17+
+- JDK 21+
 - Spring Boot 3.5.8+
 - Maven 3.8+
 

@@ -18,7 +18,7 @@
 ### 主要特点
 
 - **模块化设计**: 38 个模块按职责分层，清晰分离关注点
-- **Spring Boot 3.x**: 基于 JDK 17 和 Spring Boot 3.5.9
+- **Spring Boot 3.x**: 基于 JDK 21 和 Spring Boot 3.5.9
 - **微服务生态**: 集成 Spring Cloud Alibaba (Nacos、Sentinel、Seata)
 - **国密支持**: 采用 SM2/SM4 国密算法替代 RSA/AES
 - **自动配置**: 所有 Starter 模块支持 Spring Boot 自动配置机制
@@ -91,7 +91,7 @@ carlos-framework/                          # 根聚合器 (carlos-framework)
 
 | 组件                   | 版本         | 说明                      |
 |----------------------|------------|-------------------------|
-| JDK                  | 17         | 最低要求                    |
+| JDK                  | 21         | 最低要求                    |
 | Spring Boot          | 3.5.9      | 核心框架                    |
 | Spring Cloud         | 2025.0.1   | 微服务框架                   |
 | Spring Cloud Alibaba | 2025.0.0.0 | 阿里微服务生态                 |
@@ -681,4 +681,4 @@ mvn spring-boot:run
 
 **注意**: 本框架仅供内部使用，请勿开源或外传。
 
-**版本**: 3.0.0-SNAPSHOT | **Spring Boot**: 3.5.9 | **JDK**: 17+
+**版本**: 3.0.0-SNAPSHOT | **Spring Boot**: 3.5.9 | **JDK**: 21+

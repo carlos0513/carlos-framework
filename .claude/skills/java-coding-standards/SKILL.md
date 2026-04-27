@@ -12,7 +12,7 @@ Standards for readable, maintainable Java (17+) code in Spring Boot services.
 
 - Writing or reviewing Java code in Spring Boot projects
 - Enforcing naming, immutability, or exception handling conventions
-- Working with records, sealed classes, or pattern matching (Java 17+)
+- Working with records, sealed classes, or pattern matching (Java 21+)
 - Reviewing use of Optional, streams, or generics
 - Structuring packages and project layout
 

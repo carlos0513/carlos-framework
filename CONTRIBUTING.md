@@ -24,7 +24,7 @@ read [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for details.
 
 ### Prerequisites
 
-- JDK 17 or higher
+- JDK 21 or higher
 - Maven 3.8 or higher
 - Git
 

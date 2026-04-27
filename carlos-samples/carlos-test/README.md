@@ -162,7 +162,7 @@ ab -n 10000 -c 100 http://localhost:9812/api/user/list
 
 ## 版本要求
 
-- JDK 17+
+- JDK 21+
 - Spring Boot 3.x
 - MySQL 8.0+
 - Redis 6.0+
