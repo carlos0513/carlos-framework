@@ -284,17 +284,17 @@ public class CachedTranslationService implements TranslationService {
      * @return 枚举数据
      */
     private Map<String, EnumInfo> translateEnums(
-        Map<Class<? extends BaseEnum>, Set<Object>> enumValues) {
+        Map<Class<? extends BaseEnum<?>>, Set<Object>> enumValues) {
         Map<String, EnumInfo> result = new HashMap<>();
 
-        for (Map.Entry<Class<? extends BaseEnum>, Set<Object>> entry : enumValues.entrySet()) {
-            Class<? extends BaseEnum> enumClass = entry.getKey();
+        for (Map.Entry<Class<? extends BaseEnum<?>>, Set<Object>> entry : enumValues.entrySet()) {
+            Class<? extends BaseEnum<?>> enumClass = entry.getKey();
             Set<Object> codes = entry.getValue();
 
             for (Object code : codes) {
                 try {
                     // 使用 EnumUtil 根据 code 获取枚举实例
-                    BaseEnum enumItem = EnumUtil.getByCode(enumClass, code);
+                    BaseEnum<?> enumItem = EnumUtil.getByCode(enumClass, code);
                     if (enumItem != null) {
                         EnumInfo vo = enumItem.getEnumVo();
                         String key = enumClass.getName() + ":" + code;

@@ -38,7 +38,7 @@ public class TranslationBatch {
     /**
      * 枚举值集合 (enumClass -> codes)
      */
-    private final Map<Class<? extends BaseEnum>, Set<Object>> enumValues = new HashMap<>();
+    private final Map<Class<? extends BaseEnum<?>>, Set<Object>> enumValues = new HashMap<>();
 
     public void addUserId(Serializable id) {
         if (id != null) {
@@ -64,7 +64,7 @@ public class TranslationBatch {
         }
     }
 
-    public <T extends BaseEnum> void addEnumValue(Class<T> enumClass, Object code) {
+    public <T extends BaseEnum<?>> void addEnumValue(Class<T> enumClass, Object code) {
         if (enumClass != null && code != null) {
             enumValues.computeIfAbsent(enumClass, k -> new HashSet<>()).add(code);
         }
@@ -96,8 +96,8 @@ public class TranslationBatch {
         return Collections.unmodifiableSet(regionCodes);
     }
 
-    public Map<Class<? extends BaseEnum>, Set<Object>> getEnumValues() {
-        Map<Class<? extends BaseEnum>, Set<Object>> result = new HashMap<>();
+    public Map<Class<? extends BaseEnum<?>>, Set<Object>> getEnumValues() {
+        Map<Class<? extends BaseEnum<?>>, Set<Object>> result = new HashMap<>();
         enumValues.forEach((k, v) -> result.put(k, Collections.unmodifiableSet(v)));
         return Collections.unmodifiableMap(result);
     }

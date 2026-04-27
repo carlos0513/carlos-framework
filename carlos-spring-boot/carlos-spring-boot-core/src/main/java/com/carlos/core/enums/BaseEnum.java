@@ -10,13 +10,12 @@ package com.carlos.core.enums;
  * @author carlos
  * @date 2020/4/10 15:41
  */
-public interface BaseEnum {
+public interface BaseEnum<T> {
 
     /**
      * 获取枚举标识
      */
-    // TODO: carlos 2020/9/24 优化方案，支持code多种数据类型，泛型的配置
-    Integer getCode();
+    T getCode();
 
     /**
      * 获取枚举描述

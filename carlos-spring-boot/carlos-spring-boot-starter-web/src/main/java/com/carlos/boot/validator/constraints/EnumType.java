@@ -26,7 +26,7 @@ public @interface EnumType {
 
     String message() default "{请输入正确的类型值}";
 
-    Class<? extends BaseEnum> type();
+    Class<? extends BaseEnum<?>> type();
 
     Class<?>[] groups() default {};
 

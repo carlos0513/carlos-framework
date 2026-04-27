@@ -73,19 +73,19 @@ public class EnumService {
             // 使用反射 扫描工程的基本包路径
             final Reflections reflections = new Reflections(configurationBuilder);
             // BaseEnum的子类
-            final Set<Class<? extends BaseEnum>> baseEnums = reflections.getSubTypesOf(BaseEnum.class);
+            @SuppressWarnings("unchecked") final Set<Class<? extends BaseEnum<?>>> baseEnums = (Set<Class<? extends BaseEnum<?>>>) (Object) reflections.getSubTypesOf(BaseEnum.class);
             log.info("Scan 'BaseEnum' subClass, count= {}", baseEnums.size());
             if (CollectionUtil.isEmpty(baseEnums)) {
                 return;
             }
             // 循环获取BaseEnum枚举
             List<EnumInfo> list;
-            for (final Class<? extends BaseEnum> clazz : baseEnums) {
-                final BaseEnum[] constants = clazz.getEnumConstants();
+            for (final Class<? extends BaseEnum<?>> clazz : baseEnums) {
+                final BaseEnum<?>[] constants = clazz.getEnumConstants();
                 list = new ArrayList<>();
                 try {
                     EnumInfo e;
-                    for (final BaseEnum baseEnum : constants) {
+                    for (final BaseEnum<?> baseEnum : constants) {
                         e = new EnumInfo();
                         e.setCode(baseEnum.getCode());
                         e.setDesc(baseEnum.getDesc().intern());

@@ -2,6 +2,7 @@ package com.carlos.boot.validator;
 
 import com.carlos.boot.validator.constraints.EnumType;
 import com.carlos.core.enums.BaseEnum;
+import com.carlos.core.util.EnumUtil;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -13,9 +14,9 @@ import jakarta.validation.ConstraintValidatorContext;
  * @author carlos
  * @date 2020/4/15 16:37
  */
-public class EnumValidator implements ConstraintValidator<EnumType, Integer> {
+public class EnumValidator implements ConstraintValidator<EnumType, Object> {
 
-    private Class<? extends BaseEnum> enumEntity;
+    private Class<? extends BaseEnum<?>> enumEntity;
 
     @Override
     public void initialize(final EnumType parameters) {
@@ -23,12 +24,10 @@ public class EnumValidator implements ConstraintValidator<EnumType, Integer> {
     }
 
     @Override
-    public boolean isValid(final Integer value, final ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(final Object value, final ConstraintValidatorContext constraintValidatorContext) {
         if (value == null) {
             return true;
         }
-        // TODO:  2020/6/17  
-        // return EnumUtil.exists(enumEntity, value);
-        return false;
+        return EnumUtil.getByCode(enumEntity, value) != null;
     }
 }

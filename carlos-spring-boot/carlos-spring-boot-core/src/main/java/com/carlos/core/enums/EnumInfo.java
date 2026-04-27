@@ -24,7 +24,7 @@ public class EnumInfo implements Serializable {
     /**
      * 枚举code
      */
-    private Integer code;
+    private Object code;
 
     /**
      * 枚举描述

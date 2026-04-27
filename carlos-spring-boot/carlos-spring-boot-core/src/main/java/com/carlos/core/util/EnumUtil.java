@@ -20,12 +20,12 @@ public class EnumUtil {
     /**
      * 枚举缓存：key = 枚举类全名，value = 枚举数组
      */
-    private static final Map<String, BaseEnum[]> ENUM_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, BaseEnum<?>[]> ENUM_CACHE = new ConcurrentHashMap<>();
 
     /**
      * Code 映射缓存：key = 枚举类全名 + ":" + code，value = 枚举实例
      */
-    private static final Map<String, BaseEnum> CODE_MAPPING_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, BaseEnum<?>> CODE_MAPPING_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 根据 code 获取枚举实例
@@ -35,7 +35,7 @@ public class EnumUtil {
      * @return 匹配的枚举实例，未找到返回 null
      */
     @SuppressWarnings("unchecked")
-    public static <T extends BaseEnum> T getByCode(Class<T> enumClass, Object code) {
+    public static <T extends BaseEnum<?>> T getByCode(Class<T> enumClass, Object code) {
         if (enumClass == null || code == null) {
             return null;
         }
@@ -54,7 +54,7 @@ public class EnumUtil {
      * @param code      枚举 code
      * @return 匹配的枚举实例，未找到返回 null
      */
-    private static <T extends BaseEnum> T findEnumByCode(Class<T> enumClass, Object code) {
+    private static <T extends BaseEnum<?>> T findEnumByCode(Class<T> enumClass, Object code) {
         try {
             // 获取或加载枚举数组
             @SuppressWarnings("unchecked")
@@ -86,9 +86,9 @@ public class EnumUtil {
      * @param enumClass 枚举类型
      * @return 枚举数组
      */
-    private static <T extends BaseEnum> BaseEnum[] getEnums(Class<T> enumClass) {
+    private static <T extends BaseEnum<?>> BaseEnum<?>[] getEnums(Class<T> enumClass) {
         return ENUM_CACHE.computeIfAbsent(enumClass.getName(), key -> {
-            BaseEnum[] enums = enumClass.getEnumConstants();
+            BaseEnum<?>[] enums = enumClass.getEnumConstants();
             if (enums == null || enums.length == 0) {
                 log.warn("No enum constants found for class: {}", enumClass.getName());
                 return new BaseEnum[0];
@@ -134,7 +134,7 @@ public class EnumUtil {
      *
      * @param enumClass 枚举类型
      */
-    public static void clearCache(Class<? extends BaseEnum> enumClass) {
+    public static void clearCache(Class<? extends BaseEnum<?>> enumClass) {
         if (enumClass != null) {
             String prefix = enumClass.getName();
             ENUM_CACHE.remove(prefix);

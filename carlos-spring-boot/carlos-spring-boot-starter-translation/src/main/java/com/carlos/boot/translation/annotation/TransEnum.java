@@ -22,7 +22,7 @@ public @interface TransEnum {
     /**
      * 枚举类
      */
-    Class<? extends BaseEnum> enumClass();
+    Class<? extends BaseEnum<?>> enumClass();
 
     /**
      * 输出类型

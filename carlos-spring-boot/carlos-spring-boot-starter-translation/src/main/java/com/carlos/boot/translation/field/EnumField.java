@@ -38,7 +38,7 @@ public class EnumField extends TranslatableField {
         Object value = field.get(obj);
         if (value != null) {
             batch.addEnumValue(
-                (Class<? extends BaseEnum>) annotation.enumClass(),
+                (Class<? extends BaseEnum<?>>) annotation.enumClass(),
                 value);
         }
     }
