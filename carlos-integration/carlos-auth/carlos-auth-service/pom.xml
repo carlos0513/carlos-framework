@@ -97,25 +97,8 @@
       <artifactId>spring-security-oauth2-authorization-server</artifactId>
     </dependency>
 
-    <!-- Spring Security 核心 -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
-
-    <!-- JOSE - JWT 处理 -->
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-oauth2-jose</artifactId>
-    </dependency>
 
     <!-- ==================== Spring Boot Starter ==================== -->
-
-    <!-- 自动配置支持 -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-    </dependency>
 
     <!-- 配置处理器 - 用于生成配置元数据 -->
     <dependency>
