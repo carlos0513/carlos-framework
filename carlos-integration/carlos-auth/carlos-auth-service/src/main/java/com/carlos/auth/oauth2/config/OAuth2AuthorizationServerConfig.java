@@ -16,7 +16,7 @@ import com.carlos.auth.oauth2.user.CustomizeUserOAuth2AccessTokenGenerator;
 import com.carlos.auth.oauth2.user.CustomizeUserOAuth2TokenCustomizer;
 import com.carlos.auth.provider.DefaultUserProvider;
 import com.carlos.auth.provider.UserProvider;
-import com.carlos.auth.security.encoder.Sm4PasswordEncoder;
+import com.carlos.auth.security.SecurityProperties;
 import com.carlos.auth.security.ext.ExtendAuthenticationConverter;
 import com.carlos.auth.security.ext.ExtendAuthenticationProvider;
 import com.carlos.auth.security.ext.ExtendAuthenticationToken;
@@ -545,13 +545,16 @@ public class OAuth2AuthorizationServerConfig {
     @Bean
     @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder(OAuth2Properties oauth2Properties) {
-        String encoderType = oauth2Properties.getSecurity().getPasswordEncoder();
-        if ("sm4".equalsIgnoreCase(encoderType)) {
-            log.info("Using SM4 password encoder with configured key");
-            return new Sm4PasswordEncoder();
+        SecurityProperties.PasswordEncoderType encoderType = oauth2Properties.getSecurity().getPasswordEncoder();
+        switch (encoderType) {
+            case BCRYPT:
+                log.info("Using BCrypt password encoder");
+                return new BCryptPasswordEncoder();
+
+            default:
+                log.info("Using BCrypt password encoder");
+                return new BCryptPasswordEncoder();
         }
-        log.info("Using BCrypt password encoder");
-        return new BCryptPasswordEncoder();
     }
 
     /**

@@ -20,7 +20,7 @@ public class SecurityProperties {
     /**
      * 密码编码器类型
      */
-    private String passwordEncoder = "bcrypt";
+    private PasswordEncoderType passwordEncoder = PasswordEncoderType.BCRYPT;
 
     /**
      * 登录失败限制
@@ -48,6 +48,12 @@ public class SecurityProperties {
          * 锁定时间
          */
         private Duration lockDuration = Duration.ofMinutes(30);
+    }
+
+    public enum PasswordEncoderType {
+        BCRYPT,
+        MD5,
+        SM3
     }
 
 }
