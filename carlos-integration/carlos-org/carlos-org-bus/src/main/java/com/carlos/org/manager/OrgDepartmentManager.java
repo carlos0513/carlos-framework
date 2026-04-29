@@ -10,6 +10,7 @@ import com.carlos.org.pojo.param.OrgDepartmentPageParam;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -120,5 +121,54 @@ public interface OrgDepartmentManager extends BaseService<OrgDepartment> {
      * @date 2026年2月28日 下午1:25:36
      */
     Paging<OrgDepartmentUserDTO> getUsersByDeptId(Serializable deptId, OrgDepartmentPageParam param);
+
+    /**
+     * 初始化缓存
+     *
+     * @author Carlos
+     * @date 2026-04-29
+     */
+    void initCache();
+
+    /**
+     * 清空缓存
+     *
+     * @return 删除的key数量
+     * @author Carlos
+     * @date 2026-04-29
+     */
+    long clearCache();
+
+    /**
+     * 获取指定部门的祖先链（自顶向下）
+     *
+     * @param id    部门主键
+     * @param limit 限制层级，<=0 表示不限制
+     * @return 祖先 id 列表
+     * @author Carlos
+     * @date 2026-04-29
+     */
+    List<Long> getAncestorIdsFromCache(Long id, long limit);
+
+    /**
+     * 获取指定部门的全部子孙 id 集合
+     *
+     * @param id 部门主键
+     * @return 子孙 id 集合
+     * @author Carlos
+     * @date 2026-04-29
+     */
+    Set<Long> getDescIdsFromCache(Long id);
+
+    /**
+     * 从缓存中批量获取部门对象（按需指定字段）
+     *
+     * @param ids    部门 id 列表
+     * @param fields 指定字段，null 表示全部
+     * @return 部门 DTO 列表
+     * @author Carlos
+     * @date 2026-04-29
+     */
+    List<OrgDepartmentDTO> listDeptFromCache(List<Long> ids, List<String> fields);
 
 }
