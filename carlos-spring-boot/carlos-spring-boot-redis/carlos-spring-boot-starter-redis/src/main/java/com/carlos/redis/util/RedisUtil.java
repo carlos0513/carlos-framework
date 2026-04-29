@@ -56,23 +56,9 @@ public class RedisUtil {
     private static final int DEFAULT_DELETE_BATCH = 300;
 
     /**
-     * 并行操作线程池 - 使用有界队列防止 OOM
+     * 并行操作线程池 - 使用虚拟线程
      */
-    private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(
-        4, 16, 60L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(1000),
-        new ThreadFactory() {
-            private final AtomicLong counter = new AtomicLong(0);
-
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r, "redis-util-" + counter.incrementAndGet());
-                t.setDaemon(true);
-                return t;
-            }
-        },
-        new ThreadPoolExecutor.CallerRunsPolicy()
-    );
+    private static final ExecutorService EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
 
     private static RedisTemplate<String, Object> redisTemplate;
     private static RedisTemplate<String, Object> redisMasterTemplate;
@@ -1466,7 +1452,7 @@ public class RedisUtil {
     public static void flushAll() {
         try {
             redisMasterTemplate.execute((RedisCallback<Void>) conn -> {
-                conn.flushAll();
+                conn.serverCommands().flushAll();
                 return null;
             });
             log.info("Redis flushAll executed");
@@ -1481,7 +1467,7 @@ public class RedisUtil {
     public static void flushDb() {
         try {
             redisMasterTemplate.execute((RedisCallback<Void>) conn -> {
-                conn.flushDb();
+                conn.serverCommands().flushDb();
                 return null;
             });
             log.info("Redis flushDb executed");
@@ -1499,7 +1485,7 @@ public class RedisUtil {
         try {
             redisMasterTemplate.execute((RedisCallback<Void>) conn -> {
                 conn.select(dbIndex);
-                conn.flushDb();
+                conn.serverCommands().flushDb();
                 return null;
             });
             log.info("Redis flushDb executed for db {}", dbIndex);
@@ -1566,7 +1552,7 @@ public class RedisUtil {
         }
         try {
             return (String) redisTemplate.execute((RedisConnection c) ->
-                c.scriptLoad(script.getBytes(StandardCharsets.UTF_8)));
+                c.scriptingCommands().scriptLoad(script.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
             log.error("Redis loadScripts error", e);
             return null;
@@ -1588,11 +1574,11 @@ public class RedisUtil {
                 RedisClusterConnection cluster = (RedisClusterConnection) conn;
                 for (RedisClusterNode node : cluster.clusterGetNodes()) {
                     if (node.isMaster()) {
-                        return cluster.scriptExists(sha);
+                        return cluster.scriptingCommands().scriptExists(sha);
                     }
                 }
             } else {
-                return conn.scriptExists(sha);
+                return conn.scriptingCommands().scriptExists(sha);
             }
         } catch (Exception e) {
             log.error("Redis scriptExists error", e);
@@ -1625,7 +1611,7 @@ public class RedisUtil {
     public static <T> T evalSha(String sha, ReturnType returnType, int numKeys, byte[]... keysAndArgs) {
         try {
             return redisMasterTemplate.execute((RedisCallback<T>) conn ->
-                conn.evalSha(sha, returnType, numKeys, keysAndArgs));
+                conn.scriptingCommands().evalSha(sha, returnType, numKeys, keysAndArgs));
         } catch (Exception e) {
             log.error("Redis evalSha error, sha: {}", sha, e);
             return null;
@@ -2558,7 +2544,7 @@ public class RedisUtil {
      */
     public static Long bitCount(@NonNull String key) {
         try {
-            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.bitCount(rawKey(key)));
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.stringCommands().bitCount(rawKey(key)));
         } catch (Exception e) {
             log.error("Redis bitCount error, key: {}", key, e);
             return 0L;
@@ -2575,7 +2561,7 @@ public class RedisUtil {
      */
     public static Long bitCount(@NonNull String key, long start, long end) {
         try {
-            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.bitCount(rawKey(key), start, end));
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.stringCommands().bitCount(rawKey(key), start, end));
         } catch (Exception e) {
             log.error("Redis bitCount range error, key: {}", key, e);
             return 0L;
@@ -2593,7 +2579,7 @@ public class RedisUtil {
         try {
             return redisMasterTemplate.execute((RedisCallback<Long>) conn -> {
                 byte[][] rawKeys = Arrays.stream(keys).map(RedisUtil::rawKey).toArray(byte[][]::new);
-                return (long) conn.bitOp(RedisStringCommands.BitOperation.AND, rawKey(destKey), rawKeys);
+                return conn.stringCommands().bitOp(RedisStringCommands.BitOperation.AND, rawKey(destKey), rawKeys);
             });
         } catch (Exception e) {
             log.error("Redis bitOpAnd error, destKey: {}", destKey, e);
@@ -2612,7 +2598,7 @@ public class RedisUtil {
         try {
             return redisMasterTemplate.execute((RedisCallback<Long>) conn -> {
                 byte[][] rawKeys = Arrays.stream(keys).map(RedisUtil::rawKey).toArray(byte[][]::new);
-                return (long) conn.bitOp(RedisStringCommands.BitOperation.OR, rawKey(destKey), rawKeys);
+                return conn.stringCommands().bitOp(RedisStringCommands.BitOperation.OR, rawKey(destKey), rawKeys);
             });
         } catch (Exception e) {
             log.error("Redis bitOpOr error, destKey: {}", destKey, e);
@@ -2631,7 +2617,7 @@ public class RedisUtil {
         try {
             return redisMasterTemplate.execute((RedisCallback<Long>) conn -> {
                 byte[][] rawKeys = Arrays.stream(keys).map(RedisUtil::rawKey).toArray(byte[][]::new);
-                return (long) conn.bitOp(RedisStringCommands.BitOperation.XOR, rawKey(destKey), rawKeys);
+                return conn.stringCommands().bitOp(RedisStringCommands.BitOperation.XOR, rawKey(destKey), rawKeys);
             });
         } catch (Exception e) {
             log.error("Redis bitOpXor error, destKey: {}", destKey, e);
@@ -2649,7 +2635,7 @@ public class RedisUtil {
     public static Long bitOpNot(@NonNull String destKey, String key) {
         try {
             return redisMasterTemplate.execute((RedisCallback<Long>) conn ->
-                (long) conn.bitOp(RedisStringCommands.BitOperation.NOT, rawKey(destKey), rawKey(key)));
+                conn.stringCommands().bitOp(RedisStringCommands.BitOperation.NOT, rawKey(destKey), rawKey(key)));
         } catch (Exception e) {
             log.error("Redis bitOpNot error, destKey: {}", destKey, e);
             return 0L;
@@ -2665,7 +2651,7 @@ public class RedisUtil {
      */
     public static Long bitPos(@NonNull String key, boolean bit) {
         try {
-            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.bitPos(rawKey(key), bit));
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.stringCommands().bitPos(rawKey(key), bit));
         } catch (Exception e) {
             log.error("Redis bitPos error, key: {}", key, e);
             return -1L;
@@ -2683,7 +2669,7 @@ public class RedisUtil {
      */
     public static Long bitPos(@NonNull String key, boolean bit, long start, long end) {
         try {
-            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.bitPos(rawKey(key), bit, Range.closed(start, end)));
+            return redisMasterTemplate.execute((RedisCallback<Long>) conn -> conn.stringCommands().bitPos(rawKey(key), bit, Range.closed(start, end)));
         } catch (Exception e) {
             log.error("Redis bitPos range error, key: {}", key, e);
             return -1L;
@@ -2704,7 +2690,7 @@ public class RedisUtil {
     public static boolean addHyperLogLog(@NonNull String key, Object... elements) {
         try {
             Long added = redisTemplate.opsForHyperLogLog().add(key, elements);
-            return added != null && added > 0;
+            return added > 0;
         } catch (Exception e) {
             log.error("Redis addHyperLogLog error, key: {}", key, e);
             return false;

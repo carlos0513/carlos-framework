@@ -293,11 +293,10 @@ public class LicenseCreatorService {
         log.info("执行命令:{} ", StrUtil.join(StrUtil.SPACE, command));
 
         // 通过线程异步读取输出流（避免缓冲区满导致阻塞）
-        Thread outputThread = new Thread(() -> {
+        Thread.startVirtualThread(() -> {
             String result = RuntimeUtil.getResult(process);
             System.out.println("Output:  " + result);
         });
-        outputThread.start();
 
         // 向输入流写入确认指令（假设需要输入Y）
         try (OutputStreamWriter writer = new OutputStreamWriter(process.getOutputStream())) {

@@ -46,7 +46,7 @@ public class RateLimitAlertListener {
      * 监听限流超限事件
      */
     @EventListener
-    @Async
+    @Async("virtualTaskExecutor")
     public void onRateLimitExceeded(RateLimitExceededEvent event) {
         String key = event.getRouteId() + ":" + event.getKey();
         Instant now = event.getEventTime();

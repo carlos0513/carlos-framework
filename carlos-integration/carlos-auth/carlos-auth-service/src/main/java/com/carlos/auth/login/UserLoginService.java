@@ -425,7 +425,7 @@ public class UserLoginService {
      * @param status 状态：SUCCESS、FAILURE
      * @param errorMessage 错误消息
      */
-    @Async
+    @Async("virtualTaskExecutor")
     public void recordLoginAudit(UserInfo user, String eventType, String status, String errorMessage) {
         try {
             ApiAuditLogMainParam param = buildAuditLogParam(user, eventType, status, errorMessage);

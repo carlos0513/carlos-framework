@@ -5,10 +5,7 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjUtil;
 import org.springframework.lang.Nullable;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * <p>
@@ -54,5 +51,14 @@ public class ExecutorUtil {
 
     public static ThreadPoolExecutor defaultPool() {
         return POOL;
+    }
+
+    /**
+     * 创建虚拟线程执行器，适用于 I/O 密集型场景。
+     *
+     * @return 虚拟线程执行器
+     */
+    public static ExecutorService newVirtualThreadPerTaskExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 }

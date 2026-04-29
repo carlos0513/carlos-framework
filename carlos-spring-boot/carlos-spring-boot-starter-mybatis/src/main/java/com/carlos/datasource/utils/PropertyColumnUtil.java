@@ -73,11 +73,7 @@ public class PropertyColumnUtil {
      * 定时清理线程池
      */
     private static final ScheduledExecutorService CLEANUP_EXECUTOR =
-        Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "PropertyColumnUtil-Cleanup");
-            t.setDaemon(true);
-            return t;
-        });
+        Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
 
     static {
         // 每10分钟执行一次清理

@@ -54,11 +54,7 @@ public class ClickHouseBatchWriter {
         log.info("初始化 ClickHouse 批量写入器，batchSize={}, flushIntervalMs={}",
             auditProperties.getBatchWriter().getBatchSize(),
             auditProperties.getBatchWriter().getFlushInterval());
-        flushExecutor = Executors.newFixedThreadPool(2, r -> {
-            Thread t = new Thread(r, "clickhouse-flush");
-            t.setDaemon(true);
-            return t;
-        });
+        flushExecutor = Executors.newVirtualThreadPerTaskExecutor();
     }
 
     @PreDestroy

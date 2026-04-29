@@ -43,12 +43,12 @@ public class ApplicationRunnerWorker implements ApplicationRunner, Ordered {
     public void printApplicationInfo() {
         // Spring Boot Admin Server地址，请先在admin模块中启动 SpringBootPlusAdminApplication
         String startSuccess = """
-            
+
                 _____ __             __     _____
                / ___// /_____ ______/ /_   / ___/__  _______________  __________
-               \__ \/ __/ __ `/ ___/ __/   \__ \/ / / / ___/ ___/ _ \/ ___/ ___/
-              _____/ / /_/ /_/ /  / /     _____/ / /_/ /__/ /__/  __(__  |__  )      
-             /____/\__/\__,_/_/   \__/   /____/\__,_/\___/\___/\___/____/____/
+               \\__ \\/ __/ __ `/ ___/ __/   \\__ \\/ / / / ___/ ___/ _ \\/ ___/ ___/
+              _____/ / /_/ /_/ /  / /     _____/ / /_/ /__/ /__/  __(__  |__  )
+             /____/\\__/\\__,_/_/   \\__/   /____/\\__,_/\\___/\\___/\\___/____/____/
             """;
         log.info(startSuccess);
         String profileActive = BootUtil.getProfileActive();

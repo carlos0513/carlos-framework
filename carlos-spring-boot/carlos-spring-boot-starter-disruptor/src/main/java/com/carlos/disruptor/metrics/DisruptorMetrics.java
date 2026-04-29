@@ -97,11 +97,7 @@ public class DisruptorMetrics {
             });
 
             // 定期更新
-            java.util.concurrent.Executors.newSingleThreadScheduledExecutor(r -> {
-                Thread t = new Thread(r, "disruptor-metrics-" + instanceName);
-                t.setDaemon(true);
-                return t;
-            }).scheduleAtFixedRate(() -> {
+            java.util.concurrent.Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory()).scheduleAtFixedRate(() -> {
                 remainingGauge.set(remainingCapacityFn.get().longValue());
                 bufferSizeGauge.set(bufferSizeFn.get().longValue());
             }, 0, 5, java.util.concurrent.TimeUnit.SECONDS);

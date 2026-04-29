@@ -366,7 +366,7 @@ public class SecurityAlertService {
     /**
      * 异步记录安全告警审计日志
      */
-    @Async
+    @Async("virtualTaskExecutor")
     public void recordSecurityAlertAudit(Long userId, String username, String alertType,
                                          String severity, String title, String content,
                                          HttpServletRequest request) {

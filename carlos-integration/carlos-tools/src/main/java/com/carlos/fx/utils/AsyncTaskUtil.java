@@ -16,12 +16,7 @@ public class AsyncTaskUtil {
      * 使用 CachedThreadPool，根据需要创建新线程，空闲线程会被回收
      * 所有线程都是守护线程（daemon），不会阻止 JVM 退出
      */
-    private static final ExecutorService executor = Executors.newCachedThreadPool(r -> {
-        Thread thread = new Thread(r);
-        // 设置为守护线程，当所有非守护线程结束时，JVM 会自动退出
-        thread.setDaemon(true);
-        return thread;
-    });
+    private static final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     /**
      * 异步执行任务

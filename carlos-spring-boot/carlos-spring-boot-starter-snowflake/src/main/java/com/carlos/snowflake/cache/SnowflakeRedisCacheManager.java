@@ -5,7 +5,6 @@ import com.carlos.redis.util.RedisUtil;
 import com.carlos.snowflake.SnowflakeInfo;
 import com.carlos.snowflake.SnowflakeProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -46,13 +45,13 @@ public class SnowflakeRedisCacheManager implements SnowflakeCacheManager {
         if (save != null || save) {
             // 执行定期更新
             ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
-                new BasicThreadFactory.Builder().namingPattern("snowflake-redis-pool-%d").daemon(true).build());
+                Thread.ofVirtual().factory());
             executorService.scheduleAtFixedRate(this::resetExpire, refresh, refresh, TimeUnit.SECONDS);
             return true;
         }
         // 执行定期更新
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
-            new BasicThreadFactory.Builder().namingPattern("snowflake-redis-pool-%d").daemon(true).build());
+            Thread.ofVirtual().factory());
         executorService.scheduleAtFixedRate(this::resetExpire, refresh, refresh, TimeUnit.SECONDS);
         return false;
     }

@@ -43,7 +43,7 @@ public class RateLimitMetricsListener {
      * 监听限流超限事件
      */
     @EventListener
-    @Async
+    @Async("virtualTaskExecutor")
     public void onRateLimitExceeded(RateLimitExceededEvent event) {
         log.debug("Rate limit exceeded: routeId={}, key={}", event.getRouteId(), event.getKey());
 
@@ -62,7 +62,7 @@ public class RateLimitMetricsListener {
      * 监听限流指标事件
      */
     @EventListener
-    @Async
+    @Async("virtualTaskExecutor")
     public void onRateLimitMetrics(RateLimitMetricsEvent event) {
         // 记录限流检查结果
         Counter.builder("carlos.gateway.rate-limiter.requests")

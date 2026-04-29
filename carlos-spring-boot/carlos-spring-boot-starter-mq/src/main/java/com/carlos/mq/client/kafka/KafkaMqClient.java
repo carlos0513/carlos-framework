@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -146,7 +147,7 @@ public class KafkaMqClient implements MqClient {
 
     @Override
     public SendResult sendDelayed(MqMessage<?> message, long delayTime, TimeUnit timeUnit) {
-        CompletableFuture.delayedExecutor(delayTime, timeUnit).execute(() -> send(message));
+        CompletableFuture.delayedExecutor(delayTime, timeUnit, Executors.newVirtualThreadPerTaskExecutor()).execute(() -> send(message));
         message.markSent();
         return SendResult.success(message.getMessageId());
     }
