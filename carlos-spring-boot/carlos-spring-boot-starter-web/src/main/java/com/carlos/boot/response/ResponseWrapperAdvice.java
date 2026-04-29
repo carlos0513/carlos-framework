@@ -108,8 +108,9 @@ public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
             }
 
             // 打印响应信息
-            assert body instanceof Result<?>;
-            RequestUtil.printResponseInfo((Result<?>) body);
+            if (body instanceof Result<?> result) {
+                RequestUtil.printResponseInfo(result);
+            }
         }
 
         // 包装响应

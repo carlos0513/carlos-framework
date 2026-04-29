@@ -211,8 +211,8 @@ public class UserAuthController {
         }
 
         Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails) {
-            return Result.success((UserDetails) principal);
+        if (principal instanceof UserDetails userDetails) {
+            return Result.success(userDetails);
         }
         return Result.error("无法获取用户信息");
     }

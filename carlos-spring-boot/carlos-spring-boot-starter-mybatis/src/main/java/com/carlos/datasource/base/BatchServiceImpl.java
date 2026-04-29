@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.carlos.core.exception.DaoException;
 import com.carlos.datasource.config.MybatisProperties;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import com.carlos.core.exception.DaoException;
 
 /**
  * <p>
@@ -54,11 +54,11 @@ public abstract class BatchServiceImpl<M extends BaseMapper<T>, T> extends Servi
         if (id == null) {
             return true;
         }
-        if (id instanceof Number) {
-            return ((Number) id).longValue() == 0;
+        if (id instanceof Number num) {
+            return num.longValue() == 0;
         }
-        if (id instanceof String) {
-            return ((String) id).isEmpty();
+        if (id instanceof String str) {
+            return str.isEmpty();
         }
         return false;
     }

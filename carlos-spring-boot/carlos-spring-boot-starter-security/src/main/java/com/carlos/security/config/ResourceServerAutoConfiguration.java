@@ -158,10 +158,8 @@ public class ResourceServerAutoConfiguration {
         PermissionCacheSyncManager syncManager = new PermissionCacheSyncManager();
 
         // 如果权限提供者是 CachedPermissionProvider，添加到管理器
-        if (permissionProvider instanceof CachedPermissionProvider) {
-            syncManager.setCachedProviders(
-                Collections.singletonList((CachedPermissionProvider) permissionProvider)
-            );
+        if (permissionProvider instanceof CachedPermissionProvider cached) {
+            syncManager.setCachedProviders(Collections.singletonList(cached));
         }
 
         log.info("PermissionCacheSyncManager initialized");

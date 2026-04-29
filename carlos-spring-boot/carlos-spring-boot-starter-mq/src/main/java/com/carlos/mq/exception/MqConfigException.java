@@ -17,6 +17,6 @@ public class MqConfigException extends MqException {
     }
 
     public MqConfigException(String configKey, String expected, String actual) {
-        super(String.format("Invalid MQ configuration [%s]: expected [%s] but got [%s]", configKey, expected, actual));
+        super("Invalid MQ configuration [%s]: expected [%s] but got [%s]".formatted(configKey, expected, actual));
     }
 }

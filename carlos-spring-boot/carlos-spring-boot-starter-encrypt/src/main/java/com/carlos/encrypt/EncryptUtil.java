@@ -100,16 +100,11 @@ public class EncryptUtil {
         StoreType storeType = sm4Properties.getStoreType();
         String encrypt;
         try {
-            switch (storeType) {
-                case HEX:
-                    encrypt = sm4.encryptHex(str);
-                    break;
-                case BASE64:
-                    encrypt = sm4.encryptBase64(str);
-                    break;
-                default:
-                    encrypt = sm4.encryptHex(str);
-            }
+            encrypt = switch (storeType) {
+                case HEX -> sm4.encryptHex(str);
+                case BASE64 -> sm4.encryptBase64(str);
+                default -> sm4.encryptHex(str);
+            };
         } catch (Exception e) {
             throw new EncryptException(str + " encrypt failed", e);
         }
@@ -188,16 +183,11 @@ public class EncryptUtil {
         StoreType storeType = sm2Properties.getStoreType();
         String encrypt;
         try {
-            switch (storeType) {
-                case HEX:
-                    encrypt = sm2.encryptHex(str, KeyType.PublicKey);
-                    break;
-                case BASE64:
-                    encrypt = sm2.encryptBase64(str, KeyType.PublicKey);
-                    break;
-                default:
-                    encrypt = sm2.encryptHex(str, KeyType.PublicKey);
-            }
+            encrypt = switch (storeType) {
+                case HEX -> sm2.encryptHex(str, KeyType.PublicKey);
+                case BASE64 -> sm2.encryptBase64(str, KeyType.PublicKey);
+                default -> sm2.encryptHex(str, KeyType.PublicKey);
+            };
         } catch (Exception e) {
             throw new EncryptException(str + " encrypt failed", e);
         }
@@ -814,18 +804,13 @@ public class EncryptUtil {
      * @return 密钥字符串
      */
     public static String generateKey(AlgorithmType algorithmType) {
-        switch (algorithmType) {
-            case AES:
-                return generateAesKey();
-            case DES3:
-                return java.util.Base64.getEncoder().encodeToString(SecureUtil.generateKey("DESede").getEncoded());
-            case RSA:
-                return "请使用 generateRsaKeyPair() 方法生成 RSA 密钥对";
-            case SM2:
-                return "请使用 generateSm2KeyPair() 方法生成 SM2 密钥对";
-            default:
-                throw new EncryptException("该算法不支持密钥生成: " + algorithmType.getCode());
-        }
+        return switch (algorithmType) {
+            case AES -> generateAesKey();
+            case DES3 -> java.util.Base64.getEncoder().encodeToString(SecureUtil.generateKey("DESede").getEncoded());
+            case RSA -> "请使用 generateRsaKeyPair() 方法生成 RSA 密钥对";
+            case SM2 -> "请使用 generateSm2KeyPair() 方法生成 SM2 密钥对";
+            default -> throw new EncryptException("该算法不支持密钥生成: " + algorithmType.getCode());
+        };
     }
     // endregion ====================== 通用工具 结束 ======================
 }

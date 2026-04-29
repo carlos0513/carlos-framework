@@ -35,7 +35,7 @@ public class DeviceFingerprint {
         String acceptEncoding = request.getHeader("Accept-Encoding");
 
         // 组合设备特征字符串
-        String fingerprintData = String.format("%s|%s|%s|%s",
+        String fingerprintData = "%s|%s|%s|%s".formatted(
             userAgent != null ? userAgent : "",
             accept != null ? accept : "",
             acceptLanguage != null ? acceptLanguage : "",
@@ -62,7 +62,7 @@ public class DeviceFingerprint {
                                    String timezone,
                                    String platform) {
         String basicFingerprint = generate(request);
-        String enhancedData = String.format("%s|%s|%s|%s|%s",
+        String enhancedData = "%s|%s|%s|%s|%s".formatted(
             basicFingerprint,
             screenWidth != null ? screenWidth : "",
             screenHeight != null ? screenHeight : "",
@@ -141,7 +141,7 @@ public class DeviceFingerprint {
         String browser = getBrowserName(userAgent);
         String os = getOperatingSystem(userAgent);
 
-        return String.format("%s on %s", browser, os);
+        return "%s on %s".formatted(browser, os);
     }
 
     /**

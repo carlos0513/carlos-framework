@@ -125,7 +125,7 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
         try {
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = userAuthenticationToken;
 
-            log.debug("got usernamePasswordAuthenticationToken=" + usernamePasswordAuthenticationToken);
+            log.debug("got usernamePasswordAuthenticationToken={}", usernamePasswordAuthenticationToken);
 
             Authentication usernamePasswordAuthentication;
             if (usernamePasswordAuthenticationToken != null) {
@@ -161,11 +161,11 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
             OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER,
                     generatedAccessToken.getTokenValue(), generatedAccessToken.getIssuedAt(),
                     generatedAccessToken.getExpiresAt(), tokenContext.getAuthorizedScopes());
-            if (generatedAccessToken instanceof ClaimAccessor) {
+            if (generatedAccessToken instanceof ClaimAccessor claimAccessor) {
                 authorizationBuilder.id(accessToken.getTokenValue())
                         .token(accessToken,
                                 (metadata) -> metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME,
-                                        ((ClaimAccessor) generatedAccessToken).getClaims()))
+                                    claimAccessor.getClaims()))
                         // .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes)
                         .attribute(Principal.class.getName(), usernamePasswordAuthentication);
             } else {
@@ -185,12 +185,12 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
                 } else {
                     tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.REFRESH_TOKEN).build();
                     OAuth2Token generatedRefreshToken = this.tokenGenerator.generate(tokenContext);
-                    if (!(generatedRefreshToken instanceof OAuth2RefreshToken)) {
+                    if (!(generatedRefreshToken instanceof OAuth2RefreshToken rt)) {
                         OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR,
                                 "The token generator failed to generate the refresh token.", ERROR_URI);
                         throw new OAuth2AuthenticationException(error);
                     }
-                    refreshToken = (OAuth2RefreshToken) generatedRefreshToken;
+                    refreshToken = rt;
                 }
                 authorizationBuilder.refreshToken(refreshToken);
             }
@@ -220,32 +220,25 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
      */
     private OAuth2AuthenticationException oAuth2AuthenticationException(Authentication authentication,
                                                                         AuthenticationException authenticationException) {
-        if (authenticationException instanceof UsernameNotFoundException) {
-            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USERNAME_NOT_FOUND.toOAuth2Error());
-        }
-        if (authenticationException instanceof BadCredentialsException) {
-            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.BAD_CREDENTIALS.toOAuth2Error());
-        }
-        if (authenticationException instanceof LockedException) {
-            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_LOCKED.toOAuth2Error());
-        }
-        if (authenticationException instanceof DisabledException) {
-            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_DISABLE.toOAuth2Error());
-        }
-        if (authenticationException instanceof AccountExpiredException) {
-            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_EXPIRED.toOAuth2Error());
-        }
-        if (authenticationException instanceof CredentialsExpiredException) {
-            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.CREDENTIALS_EXPIRED.toOAuth2Error());
-        }
-        if (authenticationException instanceof VerificationCodeException) {
-            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.VERIFICATION_CODE_ERROR.toOAuth2Error());
-        }
-        if (authenticationException instanceof UserNotFoundException) {
-            return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_NOT_FOUND.toOAuth2Error());
-        }
-
-        return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.UN_KNOW_LOGIN_ERROR.toOAuth2Error());
+        return switch (authenticationException) {
+            case UsernameNotFoundException ex ->
+                new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USERNAME_NOT_FOUND.toOAuth2Error());
+            case BadCredentialsException ex ->
+                new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.BAD_CREDENTIALS.toOAuth2Error());
+            case LockedException ex ->
+                new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_LOCKED.toOAuth2Error());
+            case DisabledException ex ->
+                new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_DISABLE.toOAuth2Error());
+            case AccountExpiredException ex ->
+                new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_EXPIRED.toOAuth2Error());
+            case CredentialsExpiredException ex ->
+                new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.CREDENTIALS_EXPIRED.toOAuth2Error());
+            case VerificationCodeException ex ->
+                new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.VERIFICATION_CODE_ERROR.toOAuth2Error());
+            case UserNotFoundException ex ->
+                new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.USER_NOT_FOUND.toOAuth2Error());
+            default -> new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.UN_KNOW_LOGIN_ERROR.toOAuth2Error());
+        };
     }
 
     private OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(
@@ -253,8 +246,8 @@ public abstract class BaseAuthenticationProvider<T extends BaseAuthenticationTok
 
         OAuth2ClientAuthenticationToken clientPrincipal = null;
 
-        if (OAuth2ClientAuthenticationToken.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            clientPrincipal = (OAuth2ClientAuthenticationToken) authentication.getPrincipal();
+        if (authentication.getPrincipal() instanceof OAuth2ClientAuthenticationToken token) {
+            clientPrincipal = token;
         }
 
         if (clientPrincipal != null && clientPrincipal.isAuthenticated()) {

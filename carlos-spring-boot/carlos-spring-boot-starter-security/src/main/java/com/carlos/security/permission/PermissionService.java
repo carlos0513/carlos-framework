@@ -224,8 +224,8 @@ public class PermissionService {
      * <p>适用于 CachedPermissionProvider</p>
      */
     public void clearAllLocalCache() {
-        if (permissionProvider instanceof CachedPermissionProvider) {
-            ((CachedPermissionProvider) permissionProvider).clearAllLocalCache();
+        if (permissionProvider instanceof CachedPermissionProvider cached) {
+            cached.clearAllLocalCache();
             log.info("Cleared all local permission caches");
         }
     }
@@ -236,8 +236,8 @@ public class PermissionService {
      * @return 统计信息，如果不是缓存提供者返回 null
      */
     public Map<String, Object> getCacheStats() {
-        if (permissionProvider instanceof CachedPermissionProvider) {
-            return ((CachedPermissionProvider) permissionProvider).getStatsMap();
+        if (permissionProvider instanceof CachedPermissionProvider cached) {
+            return cached.getStatsMap();
         }
         return null;
     }

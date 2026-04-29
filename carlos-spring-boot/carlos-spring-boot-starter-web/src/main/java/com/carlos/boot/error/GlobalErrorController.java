@@ -34,17 +34,12 @@ public class GlobalErrorController implements ErrorController {
     public Result<?> handleError(final HttpServletRequest request, final HttpServletResponse response) {
         log.error("系统异常！");
         final int status = response.getStatus();
-        switch (status) {
-            case HttpServletResponse.SC_UNAUTHORIZED:
-                return Result.error(CommonErrorCode.UNAUTHORIZED);
-            case HttpServletResponse.SC_FORBIDDEN:
-                return Result.error(CommonErrorCode.UNAUTHORIZED);
-            case HttpServletResponse.SC_NOT_FOUND:
-                return Result.error(CommonErrorCode.NOT_FOUND);
-            default:
-                break;
-        }
-        return Result.error(CommonErrorCode.INTERNAL_ERROR);
+        return switch (status) {
+            case HttpServletResponse.SC_UNAUTHORIZED -> Result.error(CommonErrorCode.UNAUTHORIZED);
+            case HttpServletResponse.SC_FORBIDDEN -> Result.error(CommonErrorCode.UNAUTHORIZED);
+            case HttpServletResponse.SC_NOT_FOUND -> Result.error(CommonErrorCode.NOT_FOUND);
+            default -> Result.error(CommonErrorCode.INTERNAL_ERROR);
+        };
     }
 
     /**

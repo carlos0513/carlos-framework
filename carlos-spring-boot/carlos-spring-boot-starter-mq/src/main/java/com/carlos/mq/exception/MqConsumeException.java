@@ -34,7 +34,7 @@ public class MqConsumeException extends MqException {
     }
 
     public MqConsumeException(String messageId, String topic, String message, Throwable cause, boolean retryable) {
-        super(String.format("Failed to consume message [%s] from topic [%s]: %s", messageId, topic, message), cause);
+        super("Failed to consume message [%s] from topic [%s]: %s".formatted(messageId, topic, message), cause);
         this.messageId = messageId;
         this.topic = topic;
         this.retryable = retryable;

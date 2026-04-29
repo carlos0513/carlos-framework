@@ -52,9 +52,9 @@ public class DisruptorTemplate<T> {
     public void publishEvent(T data) {
         long startTime = System.currentTimeMillis();
         try {
-            if (data instanceof DisruptorEvent) {
+            if (data instanceof DisruptorEvent<?> rawEvent) {
                 @SuppressWarnings("unchecked")
-                DisruptorEvent<T> srcEvent = (DisruptorEvent<T>) data;
+                DisruptorEvent<T> srcEvent = (DisruptorEvent<T>) rawEvent;
                 ringBuffer.publishEvent((event, sequence) -> {
                     event.setEventId(srcEvent.getEventId());
                     event.setEventType(srcEvent.getEventType());

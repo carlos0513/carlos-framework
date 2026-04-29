@@ -122,18 +122,17 @@ public class CacheKeyGenerator {
         log.warn("Cache key length {} exceeds max {}, applying strategy: {}",
             key.length(), maxLength, overflowStrategy);
 
-        switch (overflowStrategy.toLowerCase()) {
-            case "md5":
+        return switch (overflowStrategy.toLowerCase()) {
+            case "md5" ->
                 // 使用 MD5 摘要（32 位）
-                return "MD5:" + DigestUtil.md5Hex(key);
-            case "sha1":
+                "MD5:" + DigestUtil.md5Hex(key);
+            case "sha1" ->
                 // 使用 SHA1 摘要（40 位）
-                return "SHA1:" + DigestUtil.sha1Hex(key);
-            case "truncate":
-            default:
+                "SHA1:" + DigestUtil.sha1Hex(key);
+            default ->
                 // 截断并添加后缀
-                return key.substring(0, maxLength - 3) + "...";
-        }
+                key.substring(0, maxLength - 3) + "...";
+        };
     }
 
     /**

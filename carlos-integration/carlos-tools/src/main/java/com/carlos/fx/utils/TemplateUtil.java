@@ -56,7 +56,7 @@ public class TemplateUtil {
         for (File templatePath : templates) {
             File templateDescFile = FileUtil.file(templatePath, CodegeConstant.TEMPLATE_DESCRIBE_FILE_NAME);
             if (!FileUtil.exist(templateDescFile)) {
-                log.error("目录[{}]不存在描述文件[" + CodegeConstant.TEMPLATE_DESCRIBE_FILE_NAME + "]", templatePath.getPath());
+                log.error("目录[{}]不存在描述文件[{}]", templatePath.getPath(), CodegeConstant.TEMPLATE_DESCRIBE_FILE_NAME);
                 continue;
             }
             TemplateBaseInfo templateBaseInfo = XmlUtils.readTemplateBaseInfo(templateDescFile, TemplateBaseInfo.class);

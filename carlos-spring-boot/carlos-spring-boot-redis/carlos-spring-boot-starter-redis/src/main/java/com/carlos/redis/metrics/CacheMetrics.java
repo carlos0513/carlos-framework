@@ -196,7 +196,7 @@ public class CacheMetrics {
      * 获取统计信息字符串
      */
     public String getStats() {
-        return String.format("CacheStats{hits=%d, misses=%d, errors=%d, hitRate=%.2f%%}",
+        return "CacheStats{hits=%d, misses=%d, errors=%d, hitRate=%.2f%%}".formatted(
             getTotalHits(), getTotalMisses(), getTotalErrors(), getHitRate() * 100);
     }
 }

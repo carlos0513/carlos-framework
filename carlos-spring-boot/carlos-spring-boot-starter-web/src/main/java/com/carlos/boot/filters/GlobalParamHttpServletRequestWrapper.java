@@ -63,10 +63,10 @@ public class GlobalParamHttpServletRequestWrapper extends HttpServletRequestWrap
 
     public void addParameter(String name, Object value) {
         if (value != null) {
-            if (value instanceof String[]) {
-                params.put(name, (String[]) value);
-            } else if (value instanceof String) {
-                params.put(name, new String[]{(String) value});
+            if (value instanceof String[] arr) {
+                params.put(name, arr);
+            } else if (value instanceof String str) {
+                params.put(name, new String[]{str});
             } else {
                 params.put(name, new String[]{String.valueOf(value)});
             }

@@ -134,8 +134,8 @@ public class RequestBuilder {
         RestClient.RequestHeadersSpec<?> spec = buildRequest();
 
         // 对于支持 body 的方法，设置请求体
-        if (body != null && spec instanceof RestClient.RequestBodySpec) {
-            ((RestClient.RequestBodySpec) spec).body(body);
+        if (body != null && spec instanceof RestClient.RequestBodySpec bodySpec) {
+            bodySpec.body(body);
         }
 
         return spec.retrieve()
@@ -156,8 +156,8 @@ public class RequestBuilder {
         RestClient.RequestHeadersSpec<?> spec = buildRequest();
 
         // 对于支持 body 的方法，设置请求体
-        if (body != null && spec instanceof RestClient.RequestBodySpec) {
-            ((RestClient.RequestBodySpec) spec).body(body);
+        if (body != null && spec instanceof RestClient.RequestBodySpec bodySpec) {
+            bodySpec.body(body);
         }
 
         return spec.retrieve()
@@ -178,8 +178,8 @@ public class RequestBuilder {
         RestClient.RequestHeadersSpec<?> spec = buildRequest();
 
         // 对于支持 body 的方法，设置请求体
-        if (body != null && spec instanceof RestClient.RequestBodySpec) {
-            ((RestClient.RequestBodySpec) spec).body(body);
+        if (body != null && spec instanceof RestClient.RequestBodySpec bodySpec) {
+            bodySpec.body(body);
         }
 
         spec.retrieve()

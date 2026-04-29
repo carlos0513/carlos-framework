@@ -61,7 +61,7 @@ public class CodeGeneratorService {
             File projectRoot = FileUtil.rename(new File(codeGenerateInfo.getOutputPath() + File.separator + CodegeConstant.TEMPLATE_MAIN),
                     codeGenerateInfo.getProjectName(), true);
             // 创建基础包 并且把模板文件放入包中(因为模板中不包含包名路径)
-            log.info("3.将模板文件移动至指定的包名路径：{}" + StrUtil.DOT + "{}", codeGenerateInfo.getPackageName(), codeGenerateInfo.getPackageName());
+            log.info("3.将模板文件移动至指定的包名路径：{}{}{}", codeGenerateInfo.getPackageName(), StrUtil.DOT, codeGenerateInfo.getPackageName());
             moveTemplate2PackagePath(projectRoot, codeGenerateInfo.getPackageName());
 
             //

@@ -24,7 +24,7 @@ public class MqSendException extends MqException {
     }
 
     public MqSendException(String messageId, String topic, String message, Throwable cause) {
-        super(String.format("Failed to send message [%s] to topic [%s]: %s", messageId, topic, message), cause);
+        super("Failed to send message [%s] to topic [%s]: %s".formatted(messageId, topic, message), cause);
         this.messageId = messageId;
         this.topic = topic;
     }

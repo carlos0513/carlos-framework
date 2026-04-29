@@ -36,8 +36,8 @@ public final class WhitelistContext {
      */
     public static Optional<WhitelistCheckResult> getCheckResult(ServerWebExchange exchange) {
         Object result = exchange.getAttribute(WHITELIST_CHECK_RESULT_KEY);
-        if (result instanceof WhitelistCheckResult) {
-            return Optional.of((WhitelistCheckResult) result);
+        if (result instanceof WhitelistCheckResult wcr) {
+            return Optional.of(wcr);
         }
         return Optional.empty();
     }

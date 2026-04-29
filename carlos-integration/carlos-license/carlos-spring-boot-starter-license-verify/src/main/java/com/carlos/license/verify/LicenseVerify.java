@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.prefs.Preferences;
 
@@ -83,7 +82,7 @@ public class LicenseVerify {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             installSuccess = true;
             log.info("------------------------------- 证书安装成功 -------------------------------");
-            log.info(MessageFormat.format("证书校验通过，证书有效期：{0} - {1}", format.format(licenseContent.getNotBefore()), format.format(licenseContent.getNotAfter())));
+            log.info("证书校验通过，证书有效期：%s - %s".formatted(format.format(licenseContent.getNotBefore()), format.format(licenseContent.getNotAfter())));
         } catch (Exception e) {
             installSuccess = false;
             log.error("------------------------------- 证书安装失败 -------------------------------");
@@ -127,7 +126,7 @@ public class LicenseVerify {
         try {
             LicenseContent licenseContent = licenseManager.verify();
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            log.info(MessageFormat.format("证书有效期：{0} - {1}", format.format(licenseContent.getNotBefore()), format.format(licenseContent.getNotAfter())));
+            log.info("证书有效期：%s - %s".formatted(format.format(licenseContent.getNotBefore()), format.format(licenseContent.getNotAfter())));
             return true;
         } catch (Exception e) {
             log.error("证书校验失败:{}", e.getMessage(), e);

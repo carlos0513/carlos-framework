@@ -20,13 +20,13 @@ public class MqTimeoutException extends MqException {
     }
 
     public MqTimeoutException(String operation, Duration timeout) {
-        super(String.format("MQ operation [%s] timeout after %d ms", operation, timeout.toMillis()));
+        super("MQ operation [%s] timeout after %d ms".formatted(operation, timeout.toMillis()));
         this.operation = operation;
         this.timeout = timeout;
     }
 
     public MqTimeoutException(String operation, Duration timeout, Throwable cause) {
-        super(String.format("MQ operation [%s] timeout after %d ms", operation, timeout.toMillis()), cause);
+        super("MQ operation [%s] timeout after %d ms".formatted(operation, timeout.toMillis()), cause);
         this.operation = operation;
         this.timeout = timeout;
     }

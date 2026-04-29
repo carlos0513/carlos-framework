@@ -65,12 +65,10 @@ public class CarlosPermissionEvaluator implements PermissionEvaluator {
 
         // 从认证信息获取 UserContext
         Object principal = authentication.getPrincipal();
-        if (!(principal instanceof UserContext)) {
+        if (!(principal instanceof UserContext userContext)) {
             log.debug("Permission denied: principal is not UserContext");
             return false;
         }
-
-        UserContext userContext = (UserContext) principal;
         String requiredPermission = targetDomainObject.toString() + ":" + permission.toString();
 
         // 检查权限

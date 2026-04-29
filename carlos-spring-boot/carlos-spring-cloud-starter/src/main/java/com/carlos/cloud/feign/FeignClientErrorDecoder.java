@@ -34,12 +34,12 @@ public class FeignClientErrorDecoder extends ErrorDecoder.Default {
         }
 
         // 如果是FeignException，则对其进行处理，并抛出BusinessException
-        if (!(exception instanceof FeignException)) {
+        if (!(exception instanceof FeignException feignException)) {
             return exception;
         }
         final String s;
         try {
-            final ByteBuffer responseBody = ((FeignException) exception).responseBody().get();
+            final ByteBuffer responseBody = feignException.responseBody().get();
             s = StandardCharsets.UTF_8.newDecoder().decode(responseBody.asReadOnlyBuffer()).toString();
             // s = Util.toString(response.body().asReader());
         } catch (final IOException e) {

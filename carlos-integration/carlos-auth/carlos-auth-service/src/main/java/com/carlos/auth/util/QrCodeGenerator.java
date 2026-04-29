@@ -1,12 +1,12 @@
 package com.carlos.auth.util;
 
+import com.carlos.core.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import com.carlos.core.exception.BusinessException;
 
 /**
  * <p>
@@ -45,8 +45,7 @@ public class QrCodeGenerator {
             String encodedIssuer = URLEncoder.encode(APP_NAME, StandardCharsets.UTF_8.name());
 
             // otpauth://totp/{issuer}:{username}?secret={secret}&issuer={issuer}
-            String uri = String.format(
-                "otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=6&period=30",
+            String uri = "otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=6&period=30".formatted(
                 APP_NAME,
                 encodedUsername,
                 encodedSecret,
@@ -81,10 +80,7 @@ public class QrCodeGenerator {
         }
 
         // 返回可生成二维码图片的URL
-        return String.format(
-            "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=%s",
-            encodedUri
-        );
+        return "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=%s".formatted(encodedUri);
     }
 
     /**

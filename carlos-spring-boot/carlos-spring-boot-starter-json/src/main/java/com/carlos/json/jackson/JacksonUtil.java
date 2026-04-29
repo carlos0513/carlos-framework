@@ -63,12 +63,12 @@ public class JacksonUtil {
             for (int i = 0; i < array.size(); i++) {
                 Object object = array.get(i);
                 if (object != null) {
-                    if (object instanceof String) {
-                        array.set(i, ((String) object).trim());
-                    } else if (object instanceof JSONObject) {
-                        jsonTrim((JSONObject) object);
-                    } else if (object instanceof JSONArray) {
-                        jsonTrimArray((JSONArray) object);
+                    switch (object) {
+                        case String s -> array.set(i, s.trim());
+                        case JSONObject jsonObject -> jsonTrim(jsonObject);
+                        case JSONArray jsonArray -> jsonTrimArray(jsonArray);
+                        default -> {
+                        }
                     }
                 }
             }
@@ -88,13 +88,14 @@ public class JacksonUtil {
         for (Map.Entry<String, Object> next : jsonObject.entrySet()) {
             Object value = next.getValue();
             if (value != null) {
-                if (value instanceof String) {
-                    // 清空值前后空格
-                    jsonObject.set(next.getKey(), ((String) value).trim());
-                } else if (value instanceof JSONObject) {
-                    jsonTrim((JSONObject) value);
-                } else if (value instanceof JSONArray) {
-                    jsonTrimArray((JSONArray) value);
+                switch (value) {
+                    case String s ->
+                        // 清空值前后空格
+                        jsonObject.set(next.getKey(), s.trim());
+                    case JSONObject jo -> jsonTrim(jo);
+                    case JSONArray ja -> jsonTrimArray(ja);
+                    default -> {
+                    }
                 }
             }
         }

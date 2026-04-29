@@ -47,14 +47,11 @@ public class GatewayErrorAttributes extends DefaultErrorAttributes {
         errorAttributes.put("path", request.path());
 
         // 根据异常类型提取属性
-        if (error instanceof GatewayException) {
-            populateGatewayExceptionAttributes(errorAttributes, (GatewayException) error);
-        } else if (error instanceof GlobalException) {
-            populateGlobalExceptionAttributes(errorAttributes, (GlobalException) error);
-        } else if (error instanceof ResponseStatusException) {
-            populateResponseStatusExceptionAttributes(errorAttributes, (ResponseStatusException) error);
-        } else {
-            populateDefaultAttributes(errorAttributes, error, options);
+        switch (error) {
+            case GatewayException ge -> populateGatewayExceptionAttributes(errorAttributes, ge);
+            case GlobalException ge -> populateGlobalExceptionAttributes(errorAttributes, ge);
+            case ResponseStatusException rse -> populateResponseStatusExceptionAttributes(errorAttributes, rse);
+            default -> populateDefaultAttributes(errorAttributes, error, options);
         }
 
         // 开发模式添加额外信息
@@ -81,35 +78,32 @@ public class GatewayErrorAttributes extends DefaultErrorAttributes {
         // 添加特定异常类型的额外信息
         Map<String, Object> extra = new HashMap<>();
 
-        if (ex instanceof RateLimitException) {
-            RateLimitException rateLimitEx = (RateLimitException) ex;
-            extra.put("limitDimension", rateLimitEx.getLimitDimension());
-            extra.put("retryAfter", rateLimitEx.getRetryAfter());
-        } else if (ex instanceof CircuitBreakerException) {
-            CircuitBreakerException cbEx = (CircuitBreakerException) ex;
-            extra.put("circuitBreakerName", cbEx.getCircuitBreakerName());
-            extra.put("circuitBreakerState", cbEx.getCircuitBreakerState());
-        } else if (ex instanceof AuthenticationException) {
-            AuthenticationException authEx = (AuthenticationException) ex;
-            extra.put("failureType", authEx.getFailureType().name());
-        } else if (ex instanceof WafBlockException) {
-            WafBlockException wafEx = (WafBlockException) ex;
-            extra.put("ruleType", wafEx.getRuleType());
-            extra.put("ruleName", wafEx.getRuleName());
-        } else if (ex instanceof ServiceNotFoundException) {
-            ServiceNotFoundException snfEx = (ServiceNotFoundException) ex;
-            extra.put("serviceName", snfEx.getServiceName());
-        } else if (ex instanceof RequestTimeoutException) {
-            RequestTimeoutException timeoutEx = (RequestTimeoutException) ex;
-            extra.put("timeoutMs", timeoutEx.getTimeoutMs());
-            extra.put("targetService", timeoutEx.getTargetService());
-        } else if (ex instanceof RequestValidationException) {
-            RequestValidationException validationEx = (RequestValidationException) ex;
-            extra.put("fieldErrors", validationEx.getFieldErrors());
-        } else if (ex instanceof ReplayAttackException) {
-            ReplayAttackException replayEx = (ReplayAttackException) ex;
-            extra.put("attackType", replayEx.getAttackType().name());
-            extra.put("nonce", replayEx.getRequestId());
+        switch (ex) {
+            case RateLimitException rateLimitEx -> {
+                extra.put("limitDimension", rateLimitEx.getLimitDimension());
+                extra.put("retryAfter", rateLimitEx.getRetryAfter());
+            }
+            case CircuitBreakerException cbEx -> {
+                extra.put("circuitBreakerName", cbEx.getCircuitBreakerName());
+                extra.put("circuitBreakerState", cbEx.getCircuitBreakerState());
+            }
+            case AuthenticationException authEx -> extra.put("failureType", authEx.getFailureType().name());
+            case WafBlockException wafEx -> {
+                extra.put("ruleType", wafEx.getRuleType());
+                extra.put("ruleName", wafEx.getRuleName());
+            }
+            case ServiceNotFoundException snfEx -> extra.put("serviceName", snfEx.getServiceName());
+            case RequestTimeoutException timeoutEx -> {
+                extra.put("timeoutMs", timeoutEx.getTimeoutMs());
+                extra.put("targetService", timeoutEx.getTargetService());
+            }
+            case RequestValidationException validationEx -> extra.put("fieldErrors", validationEx.getFieldErrors());
+            case ReplayAttackException replayEx -> {
+                extra.put("attackType", replayEx.getAttackType().name());
+                extra.put("nonce", replayEx.getRequestId());
+            }
+            default -> {
+            }
         }
 
         if (!extra.isEmpty()) {
@@ -155,55 +149,35 @@ public class GatewayErrorAttributes extends DefaultErrorAttributes {
         if (errorCode == null) {
             return 500;
         }
-        switch (errorCode) {
-            case "4001":
-                return 401;  // 非法访问
-            case "4003":
-                return 403;  // 没有权限
-            case "4004":
-                return 404;  // 资源不存在
-            case "5001":
-                return 400;  // 参数校验异常
-            case "5104":
-                return 401;  // 登录授权异常
-            case "5105":
-            case "5106":
-                return 403;  // 没有访问权限
-            case "5107":
-                return 401;  // Token 解析异常
-            case "5108":
-                return 405;  // 请求方式不合法
-            default:
-                return 500;
-        }
+        return switch (errorCode) {
+            case "4001" -> 401;  // 非法访问
+            case "4003" -> 403;  // 没有权限
+            case "4004" -> 404;  // 资源不存在
+            case "5001" -> 400;  // 参数校验异常
+            case "5104" -> 401;  // 登录授权异常
+            case "5105", "5106" -> 403;  // 没有访问权限
+            case "5107" -> 401;  // Token 解析异常
+            case "5108" -> 405;  // 请求方式不合法
+            default -> 500;
+        };
     }
 
     /**
      * HTTP 状态码映射为业务错误码
      */
     private int mapHttpStatusToCode(int status) {
-        switch (status) {
-            case 400:
-                return 5001;
-            case 401:
-                return 4001;
-            case 403:
-                return 4003;
-            case 404:
-                return 4004;
-            case 405:
-                return 5108;
-            case 429:
-                return 5429;
-            case 502:
-                return 5502;
-            case 503:
-                return 5503;
-            case 504:
-                return 5504;
-            default:
-                return 5000;
-        }
+        return switch (status) {
+            case 400 -> 5001;
+            case 401 -> 4001;
+            case 403 -> 4003;
+            case 404 -> 4004;
+            case 405 -> 5108;
+            case 429 -> 5429;
+            case 502 -> 5502;
+            case 503 -> 5503;
+            case 504 -> 5504;
+            default -> 5000;
+        };
     }
 
     public void setDevMode(boolean devMode) {

@@ -61,7 +61,7 @@ public class PostalClient {
     private PostalResponse requestRetry(String action, Map<String, Object> data) {
         http.safeSleep(retryInterval);
         retry++;
-        log.warn("短信第 {" + retry + "} 次重新发送");
+        log.warn("短信第 {} 次重新发送", retry);
         return request(action, data);
     }
 

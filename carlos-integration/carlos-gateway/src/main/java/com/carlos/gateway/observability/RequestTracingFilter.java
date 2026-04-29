@@ -241,7 +241,7 @@ public class RequestTracingFilter implements GlobalFilter, Ordered {
 
         // 2. 注入 B3 追踪头（供下游服务使用）
         TraceContext context = span.context();
-        builder.header(HttpHeadersConstant.B3, String.format("%s-%s-1",
+        builder.header(HttpHeadersConstant.B3, "%s-%s-1".formatted(
             context.traceIdString(),
             context.spanIdString()));
 

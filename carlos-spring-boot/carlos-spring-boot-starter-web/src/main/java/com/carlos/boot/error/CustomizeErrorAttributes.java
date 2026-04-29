@@ -21,8 +21,8 @@ public class CustomizeErrorAttributes extends DefaultErrorAttributes {
     public Map<String, Object> getErrorAttributes(final WebRequest webRequest, final ErrorAttributeOptions options) {
         final Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, options);
         final Throwable error = this.getError(webRequest);
-        if (error instanceof GlobalException) {
-            errorAttributes.put("code", ((GlobalException) error).getErrorCode());
+        if (error instanceof GlobalException globalEx) {
+            errorAttributes.put("code", globalEx.getErrorCode());
         }
         return errorAttributes;
     }

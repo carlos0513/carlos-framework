@@ -102,7 +102,7 @@ public class TotpGenerator {
             int code = binary % (int) Math.pow(10, CODE_DIGITS);
 
             // 补零到6位
-            return String.format("%06d", code);
+            return "%06d".formatted(code);
 
         } catch (Exception e) {
             log.error("Failed to generate TOTP code", e);

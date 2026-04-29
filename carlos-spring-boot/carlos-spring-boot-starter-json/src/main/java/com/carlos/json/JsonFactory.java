@@ -79,18 +79,16 @@ public class JsonFactory {
     private static JsonService createService(JsonEngineType engineType, JsonProperties properties) {
         log.info("创建 JSON 服务实例，引擎类型: {}", engineType);
 
-        switch (engineType) {
-            case FASTJSON2:
-                return new FastjsonJsonService(properties);
-            case GSON:
-                return new GsonJsonService(properties);
-            case JACKSON:
-            default:
+        return switch (engineType) {
+            case FASTJSON2 -> new FastjsonJsonService(properties);
+            case GSON -> new GsonJsonService(properties);
+            default -> {
                 if (globalObjectMapper != null) {
-                    return new JacksonJsonService(globalObjectMapper, properties);
+                    yield new JacksonJsonService(globalObjectMapper, properties);
                 }
-                return new JacksonJsonService(new ObjectMapper(), properties);
-        }
+                yield new JacksonJsonService(new ObjectMapper(), properties);
+            }
+        };
     }
 
     /**

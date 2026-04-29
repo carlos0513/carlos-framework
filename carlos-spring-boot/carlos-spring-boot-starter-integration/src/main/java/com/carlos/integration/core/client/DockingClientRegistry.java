@@ -56,15 +56,15 @@ public class DockingClientRegistry implements BeanFactoryAware {
     public DockingClientRegistry(DockingRestClientProperties properties, BeanFactory beanFactory) {
         this.properties = properties;
         this.beanFactory = beanFactory;
-        if (beanFactory instanceof BeanDefinitionRegistry) {
-            this.beanRegistry = (BeanDefinitionRegistry) beanFactory;
+        if (beanFactory instanceof BeanDefinitionRegistry registry) {
+            this.beanRegistry = registry;
         }
     }
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) {
-        if (beanFactory instanceof BeanDefinitionRegistry) {
-            this.beanRegistry = (BeanDefinitionRegistry) beanFactory;
+        if (beanFactory instanceof BeanDefinitionRegistry registry) {
+            this.beanRegistry = registry;
         }
     }
 

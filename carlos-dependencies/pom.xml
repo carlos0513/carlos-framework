@@ -508,12 +508,6 @@
         <artifactId>carlos-spring-boot-starter-sms</artifactId>
         <version>${revision}</version>
       </dependency>
-      <!-- Security 权限校验组件 -->
-      <dependency>
-        <groupId>com.carlos</groupId>
-        <artifactId>carlos-spring-boot-starter-security</artifactId>
-        <version>${revision}</version>
-      </dependency>
       <!-- 监控组件 -->
       <dependency>
         <groupId>com.carlos</groupId>

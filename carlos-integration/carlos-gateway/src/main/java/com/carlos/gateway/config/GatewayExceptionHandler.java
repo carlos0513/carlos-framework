@@ -98,22 +98,15 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             .method(method).traceId(requestId);
 
         // 根据异常类型处理
-        if (ex instanceof GatewayException) {
-            handleGatewayException((GatewayException) ex, builder);
-        } else if (ex instanceof GlobalException) {
-            handleGlobalException((GlobalException) ex, builder);
-        } else if (ex instanceof NotFoundException) {
-            handleNotFoundException((NotFoundException) ex, builder);
-        } else if (ex instanceof ResponseStatusException) {
-            handleResponseStatusException((ResponseStatusException) ex, builder);
-        } else if (ex instanceof WebClientResponseException) {
-            handleWebClientResponseException((WebClientResponseException) ex, builder);
-        } else if (ex instanceof TimeoutException) {
-            handleTimeoutException(ex, builder);
-        } else if (ex instanceof ConnectException) {
-            handleConnectException(ex, builder);
-        } else {
-            handleGenericException(ex, builder);
+        switch (ex) {
+            case GatewayException ge -> handleGatewayException(ge, builder);
+            case GlobalException ge -> handleGlobalException(ge, builder);
+            case NotFoundException nfe -> handleNotFoundException(nfe, builder);
+            case ResponseStatusException rse -> handleResponseStatusException(rse, builder);
+            case WebClientResponseException wcre -> handleWebClientResponseException(wcre, builder);
+            case TimeoutException te -> handleTimeoutException(te, builder);
+            case ConnectException ce -> handleConnectException(ce, builder);
+            default -> handleGenericException(ex, builder);
         }
 
         // 开发模式添加额外信息
@@ -137,37 +130,34 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         // 添加特定异常的扩展信息
         Map<String, Object> extra = new HashMap<>();
 
-        if (ex instanceof RateLimitException) {
-            RateLimitException rateLimitEx = (RateLimitException) ex;
-            extra.put("limitDimension", rateLimitEx.getLimitDimension());
-            extra.put("limitRate", rateLimitEx.getLimitRate());
-            extra.put("retryAfter", rateLimitEx.getRetryAfter());
-        } else if (ex instanceof CircuitBreakerException) {
-            CircuitBreakerException cbEx = (CircuitBreakerException) ex;
-            extra.put("circuitBreakerName", cbEx.getCircuitBreakerName());
-            extra.put("circuitBreakerState", cbEx.getCircuitBreakerState());
-            extra.put("failureRate", cbEx.getFailureRate());
-        } else if (ex instanceof AuthenticationException) {
-            AuthenticationException authEx = (AuthenticationException) ex;
-            extra.put("failureType", authEx.getFailureType().name());
-        } else if (ex instanceof WafBlockException) {
-            WafBlockException wafEx = (WafBlockException) ex;
-            extra.put("ruleType", wafEx.getRuleType());
-            extra.put("ruleName", wafEx.getRuleName());
-        } else if (ex instanceof ServiceNotFoundException) {
-            ServiceNotFoundException snfEx = (ServiceNotFoundException) ex;
-            extra.put("serviceName", snfEx.getServiceName());
-        } else if (ex instanceof RequestTimeoutException) {
-            RequestTimeoutException timeoutEx = (RequestTimeoutException) ex;
-            extra.put("timeoutMs", timeoutEx.getTimeoutMs());
-            extra.put("targetService", timeoutEx.getTargetService());
-        } else if (ex instanceof RequestValidationException) {
-            RequestValidationException validationEx = (RequestValidationException) ex;
-            extra.put("fieldErrors", validationEx.getFieldErrors());
-        } else if (ex instanceof ReplayAttackException) {
-            ReplayAttackException replayEx = (ReplayAttackException) ex;
-            extra.put("attackType", replayEx.getAttackType().name());
-            extra.put("requestId", replayEx.getRequestId());
+        switch (ex) {
+            case RateLimitException rateLimitEx -> {
+                extra.put("limitDimension", rateLimitEx.getLimitDimension());
+                extra.put("limitRate", rateLimitEx.getLimitRate());
+                extra.put("retryAfter", rateLimitEx.getRetryAfter());
+            }
+            case CircuitBreakerException cbEx -> {
+                extra.put("circuitBreakerName", cbEx.getCircuitBreakerName());
+                extra.put("circuitBreakerState", cbEx.getCircuitBreakerState());
+                extra.put("failureRate", cbEx.getFailureRate());
+            }
+            case AuthenticationException authEx -> extra.put("failureType", authEx.getFailureType().name());
+            case WafBlockException wafEx -> {
+                extra.put("ruleType", wafEx.getRuleType());
+                extra.put("ruleName", wafEx.getRuleName());
+            }
+            case ServiceNotFoundException snfEx -> extra.put("serviceName", snfEx.getServiceName());
+            case RequestTimeoutException timeoutEx -> {
+                extra.put("timeoutMs", timeoutEx.getTimeoutMs());
+                extra.put("targetService", timeoutEx.getTargetService());
+            }
+            case RequestValidationException validationEx -> extra.put("fieldErrors", validationEx.getFieldErrors());
+            case ReplayAttackException replayEx -> {
+                extra.put("attackType", replayEx.getAttackType().name());
+                extra.put("requestId", replayEx.getRequestId());
+            }
+            default -> {
+            }
         }
 
         if (!extra.isEmpty()) {
@@ -197,7 +187,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         String message = "服务未找到";
         if (ex.getMessage().contains("Unable to find instance")) {
             String serviceName = extractServiceName(ex.getMessage());
-            message = String.format("服务 [%s] 暂不可用，请稍后重试", serviceName);
+            message = "服务 [%s] 暂不可用，请稍后重试".formatted(serviceName);
         }
 
         builder.status(HttpStatus.NOT_FOUND.value()).code(CommonErrorCode.NOT_FOUND.getCode()).msg(message);
@@ -230,7 +220,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             status = HttpStatus.BAD_GATEWAY;
         }
 
-        String message = String.format("下游服务返回错误 [%d]: %s", status.value(), status.getReasonPhrase());
+        String message = "下游服务返回错误 [%d]: %s".formatted(status.value(), status.getReasonPhrase());
 
         builder.status(status.value())
             .code(mapHttpStatusToCode(status)).msg(message);
@@ -309,7 +299,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
      * 记录异常日志
      */
     private void logException(Throwable ex, String path, String method, String requestId) {
-        String logMessage = String.format("[%s] %s %s - %s: %s",
+        String logMessage = "[%s] %s %s - %s: %s".formatted(
             requestId, method, path, ex.getClass().getSimpleName(), ex.getMessage());
 
         // 根据异常类型调整日志级别

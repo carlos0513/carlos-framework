@@ -112,31 +112,27 @@ public class DefaultDataScopeHandler implements DataScopeHandler {
 
         Set<Serializable> sets = Sets.newHashSet();
         switch (scope.type()) {
-            case NONE:
+            case NONE -> {
                 info.setColumn("0");
                 sets = Sets.newHashSet("1");
-                break;
-            case ALL:
+            }
+            case ALL -> {
                 info.setColumn("1");
                 sets = Sets.newHashSet("1");
-                break;
-            case CURRENT_DEPT:
+            }
+            case CURRENT_DEPT ->
                 // 获取当前部门的所有人
                 sets = provider.currentDeptUserIds();
-                break;
-            case DEPT_AND_SUB:
+            case DEPT_AND_SUB ->
                 // 当前部门以及所有子部门所有人
                 sets = provider.currentDeptAllUserIds(null);
-                break;
-            case CURRENT_ROLE:
+            case CURRENT_ROLE ->
                 // 当前角色下所有人
                 sets = provider.currentRoleUserIds();
-                break;
-            case CURRENT_USER:
+            case CURRENT_USER ->
                 // 当前用户
                 sets = Sets.newHashSet(provider.currentUserId());
-                break;
-            case CUSTOM:
+            case CUSTOM -> {
                 Class<? extends CustomScope> handler = scope.handler();
                 CustomScope customScope;
                 try {
@@ -145,9 +141,9 @@ public class DefaultDataScopeHandler implements DataScopeHandler {
                     throw new ComponentException("自定义权限处理器实例创建失败", e);
                 }
                 sets = customScope.accept(PARAM_THREAD_LOCAL.get());
-                break;
-            default:
-                break;
+            }
+            default -> {
+            }
         }
         info.setItems(sets);
         return info;

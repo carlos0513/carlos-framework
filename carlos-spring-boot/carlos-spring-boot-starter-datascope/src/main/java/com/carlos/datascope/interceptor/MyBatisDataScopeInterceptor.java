@@ -95,8 +95,7 @@ public class MyBatisDataScopeInterceptor implements Interceptor {
     private String injectCondition(String originalSql, String condition) throws Exception {
         Statement statement = CCJSqlParserUtil.parse(originalSql);
 
-        if (statement instanceof Select) {
-            Select select = (Select) statement;
+        if (statement instanceof Select select) {
             processSelect(select, condition);
             return select.toString();
         }
@@ -109,8 +108,7 @@ public class MyBatisDataScopeInterceptor implements Interceptor {
      * 处理Select
      */
     private void processSelect(Select select, String condition) {
-        if (select instanceof PlainSelect) {
-            PlainSelect plainSelect = (PlainSelect) select;
+        if (select instanceof PlainSelect plainSelect) {
 
             Expression where = plainSelect.getWhere();
             Expression dataScopeExpr = new HexValue(" " + condition + " ");
@@ -121,8 +119,7 @@ public class MyBatisDataScopeInterceptor implements Interceptor {
                 AndExpression and = new AndExpression(where, dataScopeExpr);
                 plainSelect.setWhere(and);
             }
-        } else if (select instanceof SetOperationList) {
-            SetOperationList setOpList = (SetOperationList) select;
+        } else if (select instanceof SetOperationList setOpList) {
             for (Select sel : setOpList.getSelects()) {
                 processSelect(sel, condition);
             }

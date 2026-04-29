@@ -102,12 +102,10 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
 
         // 验证客户端已认证
         Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
-        if (clientPrincipal == null || !(clientPrincipal instanceof OAuth2ClientAuthenticationToken)) {
+        if (clientPrincipal == null || !(clientPrincipal instanceof OAuth2ClientAuthenticationToken clientAuth)) {
             log.warn("Client authentication not found or invalid");
             throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_CLIENT);
         }
-
-        OAuth2ClientAuthenticationToken clientAuth = (OAuth2ClientAuthenticationToken) clientPrincipal;
 
         // 提取 scope
         Set<String> scopes = extractScopes(params);

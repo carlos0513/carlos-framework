@@ -77,7 +77,7 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
             .map(addr -> addr.getAddress().getHostAddress())
             .orElse("-");
 
-        String logMessage = String.format("%s|%s%s|%d|%d|%s|%s|%s",
+        String logMessage = "%s|%s%s|%d|%d|%s|%s|%s".formatted(
             method, path, query, status, duration,
             requestId != null ? requestId : "-",
             traceId != null ? traceId : "-",

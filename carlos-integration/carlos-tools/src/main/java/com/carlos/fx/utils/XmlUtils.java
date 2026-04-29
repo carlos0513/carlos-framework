@@ -5,7 +5,6 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.exceptions.UtilException;
 import cn.hutool.core.util.XmlUtil;
 import com.carlos.fx.codege.config.CodegeConstant;
-import com.carlos.fx.exception.ReadXmlException;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,7 +70,7 @@ public class XmlUtils {
         try {
             document = XmlUtil.readXML(templateFile);
         } catch (Exception e) {
-            log.error("模板描述文件读取失败， path=" + templateFile.getPath(), e);
+            log.error("模板描述文件读取失败， path={}", templateFile.getPath(), e);
             throw new IllegalStateException();
         }
         Element rootElement = XmlUtil.getRootElement(document);

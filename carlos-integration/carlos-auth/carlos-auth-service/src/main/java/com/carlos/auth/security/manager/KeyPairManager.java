@@ -138,11 +138,11 @@ public class KeyPairManager {
 
             // 获取密钥对
             Key key = keyStore.getKey(keyAlias, keyPassword != null ? keyPassword.toCharArray() : null);
-            if (key instanceof PrivateKey) {
+            if (key instanceof PrivateKey privateKey) {
                 // 获取证书和公钥
                 Certificate cert = keyStore.getCertificate(keyAlias);
                 PublicKey publicKey = cert.getPublicKey();
-                return new KeyPair(publicKey, (PrivateKey) key);
+                return new KeyPair(publicKey, privateKey);
             }
 
             throw new IllegalStateException("No private key found for alias: " + keyAlias);

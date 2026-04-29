@@ -387,37 +387,41 @@ public class DingtalkService {
         }
         OapiMessageCorpconversationAsyncsendV2Request.Msg reqMsg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         Msg msg = sendMessageRequest.getMsg();
-        if (msg instanceof TextMsg) {
-            reqMsg.setMsgtype("text");
-            reqMsg.setText(BeanUtil.copyProperties(msg, OapiMessageCorpconversationAsyncsendV2Request.Text.class));
-        }
-        if (msg instanceof FileMsg) {
-            reqMsg.setMsgtype("file");
-            reqMsg.setFile(BeanUtil.copyProperties(msg, OapiMessageCorpconversationAsyncsendV2Request.File.class));
-        }
-        if (msg instanceof LinkMsg) {
-            reqMsg.setMsgtype("link");
-            reqMsg.setLink(BeanUtil.copyProperties(msg, OapiMessageCorpconversationAsyncsendV2Request.Link.class));
-        }
-        if (msg instanceof ImageMsg) {
-            reqMsg.setMsgtype("image");
-            reqMsg.setImage(BeanUtil.copyProperties(msg, OapiMessageCorpconversationAsyncsendV2Request.Image.class));
-        }
-        if (msg instanceof VoiceMsg) {
-            reqMsg.setMsgtype("voice");
-            reqMsg.setVoice(BeanUtil.copyProperties(msg, OapiMessageCorpconversationAsyncsendV2Request.Voice.class));
-        }
-        if (msg instanceof MarkdownMsg) {
-            reqMsg.setMsgtype("markdown");
-            reqMsg.setMarkdown(BeanUtil.copyProperties(msg, OapiMessageCorpconversationAsyncsendV2Request.Markdown.class));
-        }
-        if (msg instanceof ActionCardMsg) {
-            reqMsg.setMsgtype("action_card");
-            reqMsg.setActionCard(BeanUtil.copyProperties(msg, OapiMessageCorpconversationAsyncsendV2Request.ActionCard.class));
-        }
-        if (msg instanceof OAMsg) {
-            reqMsg.setMsgtype("oa");
-            reqMsg.setOa(BeanUtil.copyProperties(msg, OapiMessageCorpconversationAsyncsendV2Request.OA.class));
+        switch (msg) {
+            case TextMsg textMsg -> {
+                reqMsg.setMsgtype("text");
+                reqMsg.setText(BeanUtil.copyProperties(textMsg, OapiMessageCorpconversationAsyncsendV2Request.Text.class));
+            }
+            case FileMsg fileMsg -> {
+                reqMsg.setMsgtype("file");
+                reqMsg.setFile(BeanUtil.copyProperties(fileMsg, OapiMessageCorpconversationAsyncsendV2Request.File.class));
+            }
+            case LinkMsg linkMsg -> {
+                reqMsg.setMsgtype("link");
+                reqMsg.setLink(BeanUtil.copyProperties(linkMsg, OapiMessageCorpconversationAsyncsendV2Request.Link.class));
+            }
+            case ImageMsg imageMsg -> {
+                reqMsg.setMsgtype("image");
+                reqMsg.setImage(BeanUtil.copyProperties(imageMsg, OapiMessageCorpconversationAsyncsendV2Request.Image.class));
+            }
+            case VoiceMsg voiceMsg -> {
+                reqMsg.setMsgtype("voice");
+                reqMsg.setVoice(BeanUtil.copyProperties(voiceMsg, OapiMessageCorpconversationAsyncsendV2Request.Voice.class));
+            }
+            case MarkdownMsg markdownMsg -> {
+                reqMsg.setMsgtype("markdown");
+                reqMsg.setMarkdown(BeanUtil.copyProperties(markdownMsg, OapiMessageCorpconversationAsyncsendV2Request.Markdown.class));
+            }
+            case ActionCardMsg actionCardMsg -> {
+                reqMsg.setMsgtype("action_card");
+                reqMsg.setActionCard(BeanUtil.copyProperties(actionCardMsg, OapiMessageCorpconversationAsyncsendV2Request.ActionCard.class));
+            }
+            case OAMsg oaMsg -> {
+                reqMsg.setMsgtype("oa");
+                reqMsg.setOa(BeanUtil.copyProperties(oaMsg, OapiMessageCorpconversationAsyncsendV2Request.OA.class));
+            }
+            default -> {
+            }
         }
 
         // FIXME: Carlos 2025-04-15 该代码在后续将进行移�?

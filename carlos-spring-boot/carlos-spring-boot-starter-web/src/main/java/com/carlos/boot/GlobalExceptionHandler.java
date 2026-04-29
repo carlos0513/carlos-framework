@@ -88,7 +88,7 @@ public class GlobalExceptionHandler {
             .map(this::convertToDetail)
             .collect(Collectors.toList());
 
-        String firstError = details.isEmpty() ? "参数绑定失败" : details.get(0).getMessage();
+        String firstError = details.isEmpty() ? "参数绑定失败" : details.getFirst().getMessage();
         log.warn("[参数绑定失败] {} - {}", request.getRequestURI(), firstError);
         printRequestDetail();
 
@@ -111,7 +111,7 @@ public class GlobalExceptionHandler {
             .map(this::convertToDetail)
             .collect(Collectors.toList());
 
-        String firstError = details.isEmpty() ? "参数约束违反" : details.get(0).getMessage();
+        String firstError = details.isEmpty() ? "参数约束违反" : details.getFirst().getMessage();
         log.warn("[参数约束违反] {} - {}", request.getRequestURI(), firstError);
         printRequestDetail();
 
@@ -130,7 +130,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Result<Void>> handleMissingServletRequestParameter(
         MissingServletRequestParameterException exception, HttpServletRequest request) {
 
-        String message = String.format("缺少必要参数: %s", exception.getParameterName());
+        String message = "缺少必要参数: %s".formatted(exception.getParameterName());
         log.warn("[缺少参数] {} - {}", request.getRequestURI(), message);
         printRequestDetail();
 
@@ -149,7 +149,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Result<Void>> handleMethodArgumentTypeMismatch(
         MethodArgumentTypeMismatchException exception, HttpServletRequest request) {
 
-        String message = String.format("参数类型错误: %s 期望类型 %s",
+        String message = "参数类型错误: %s 期望类型 %s".formatted(
             exception.getName(),
             exception.getRequiredType() != null ? exception.getRequiredType().getSimpleName() : "未知");
         log.warn("[参数类型错误] {} - {}", request.getRequestURI(), message);
@@ -191,16 +191,12 @@ public class GlobalExceptionHandler {
 
         printRequestDetail();
 
-        ErrorCode errorCode;
-        if (exception instanceof BusinessException) {
-            errorCode = CommonErrorCode.BUSINESS_ERROR;
-        } else if (exception instanceof DaoException) {
-            errorCode = CommonErrorCode.DATABASE_ERROR;
-        } else if (exception instanceof RestException) {
-            errorCode = CommonErrorCode.BAD_REQUEST;
-        } else {
-            errorCode = CommonErrorCode.INTERNAL_ERROR;
-        }
+        ErrorCode errorCode = switch (exception) {
+            case BusinessException b -> CommonErrorCode.BUSINESS_ERROR;
+            case DaoException d -> CommonErrorCode.DATABASE_ERROR;
+            case RestException r -> CommonErrorCode.BAD_REQUEST;
+            default -> CommonErrorCode.INTERNAL_ERROR;
+        };
 
         int httpStatus = exception.getHttpStatus();
 
@@ -227,7 +223,7 @@ public class GlobalExceptionHandler {
         log.warn("[请求方法不支持] {} {}", exception.getMethod(), request.getRequestURI());
         printRequestDetail();
 
-        String message = String.format("不支持的请求方法: %s", exception.getMethod());
+        String message = "不支持的请求方法: %s".formatted(exception.getMethod());
         Result<Void> response = Result.error(CommonErrorCode.METHOD_NOT_ALLOWED, message);
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
     }
@@ -347,25 +343,9 @@ public class GlobalExceptionHandler {
      */
     private void logByLevel(ErrorLevel level, String message) {
         switch (level) {
-            case CLIENT_ERROR:
-                // 客户端错误使用 warn 级别
-                log.warn(message);
-                break;
-            case BUSINESS_ERROR:
-                // 业务错误使用 warn 级别
-                log.warn(message);
-                break;
-            case THIRD_PARTY_ERROR:
-                // 第三方错误使用 error 级别
-                log.error(message);
-                break;
-            case SYSTEM_ERROR:
-                // 系统错误使用 error 级别
-                log.error(message);
-                break;
-            default:
-                // 其他使用 info 级别
-                log.info(message);
+            case CLIENT_ERROR, BUSINESS_ERROR -> log.warn(message);
+            case THIRD_PARTY_ERROR, SYSTEM_ERROR -> log.error(message);
+            default -> log.info(message);
         }
     }
 

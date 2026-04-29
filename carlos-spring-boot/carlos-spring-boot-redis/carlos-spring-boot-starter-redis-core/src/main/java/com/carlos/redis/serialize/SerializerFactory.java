@@ -50,19 +50,16 @@ public class SerializerFactory {
      */
     private static RedisSerializerStrategy createSerializer(SerializerType type) {
         log.info("Creating serializer: {}", type.getCode());
-        switch (type) {
-            case JACKSON:
-                return new JacksonSerializer();
-            case FASTJSON:
-                return new FastjsonSerializer();
-            case KRYO:
-                return new KryoSerializer();
-            case JDK:
-                return new JdkSerializer();
-            default:
+        return switch (type) {
+            case JACKSON -> new JacksonSerializer();
+            case FASTJSON -> new FastjsonSerializer();
+            case KRYO -> new KryoSerializer();
+            case JDK -> new JdkSerializer();
+            default -> {
                 log.warn("Unknown serializer type: {}, using Jackson as default", type.getCode());
-                return new JacksonSerializer();
-        }
+                yield new JacksonSerializer();
+            }
+        };
     }
 
     /**

@@ -139,8 +139,7 @@ public class PageInfo<T> extends Page<T> {
      * @param paramPage 分页参数
      */
     private void handleOrderBy(ParamPage paramPage) {
-        if (paramPage instanceof ParamPageOrder) {
-            ParamPageOrder pageOrder = (ParamPageOrder) paramPage;
+        if (paramPage instanceof ParamPageOrder pageOrder) {
             if (CollectionUtil.isNotEmpty(pageOrder.getSorts())) {
                 // 进行排序字段映射
                 this.orderMapping.mappingOrderItems(pageOrder.getSorts());
