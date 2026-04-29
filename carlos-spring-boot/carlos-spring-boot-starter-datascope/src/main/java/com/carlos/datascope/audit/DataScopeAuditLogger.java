@@ -24,13 +24,11 @@ public class DataScopeAuditLogger {
      * @param duration 执行时长(ms)
      */
     public void logSuccess(Method method, DataScopeResult result, long duration) {
-        if (log.isDebugEnabled()) {
-            log.debug("[DataScope Audit] SUCCESS - method={}, rules={}, duration={}ms",
-                method.getName(),
-                result.getMatchedRuleIds(),
-                duration
-            );
-        }
+        log.debug("[DataScope Audit] SUCCESS - method={}, rules={}, duration={}ms",
+            method.getName(),
+            result.getMatchedRuleIds(),
+            duration
+        );
 
         // TODO: 可以扩展为异步写入数据库或消息队列
     }

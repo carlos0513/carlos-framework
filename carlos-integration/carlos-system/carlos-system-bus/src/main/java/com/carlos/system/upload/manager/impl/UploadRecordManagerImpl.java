@@ -40,9 +40,7 @@ public class UploadRecordManagerImpl extends BaseServiceImpl<UploadRecordMapper,
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'UploadRecord' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'UploadRecord' data: id:{}", entity.getId());
         return true;
     }
 
@@ -57,9 +55,7 @@ public class UploadRecordManagerImpl extends BaseServiceImpl<UploadRecordMapper,
             log.warn("Remove 'UploadRecord' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'UploadRecord' data by id:{}", id);
-        }
+        log.debug("Remove 'UploadRecord' data by id:{}", id);
         return true;
     }
 
@@ -72,9 +68,7 @@ public class UploadRecordManagerImpl extends BaseServiceImpl<UploadRecordMapper,
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'UploadRecord' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'UploadRecord' data by id:{}", dto.getId());
         return true;
     }
 

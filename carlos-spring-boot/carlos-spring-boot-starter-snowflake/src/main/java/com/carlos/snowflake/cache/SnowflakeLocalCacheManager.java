@@ -38,9 +38,7 @@ public class SnowflakeLocalCacheManager implements SnowflakeCacheManager {
         if (properties.getWorkerId() != null && properties.getDataCenterId() != null) {
             bean.setWorkerId(properties.getWorkerId());
             bean.setDataCenterId(properties.getDataCenterId());
-            if (log.isDebugEnabled()) {
-                log.debug("使用配置的 workerId:{} dataCenterId:{}", properties.getWorkerId(), properties.getDataCenterId());
-            }
+            log.debug("使用配置的 workerId:{} dataCenterId:{}", properties.getWorkerId(), properties.getDataCenterId());
             return true;
         }
 
@@ -73,16 +71,12 @@ public class SnowflakeLocalCacheManager implements SnowflakeCacheManager {
     @Override
     public void delCache() {
         // 本地模式无需清理缓存
-        if (log.isDebugEnabled()) {
-            log.debug("本地模式无需清理缓存");
-        }
+        log.debug("本地模式无需清理缓存");
     }
 
     @Override
     public void resetExpire() {
         // 本地模式无需续期
-        if (log.isDebugEnabled()) {
-            log.debug("本地模式无需续期");
-        }
+        log.debug("本地模式无需续期");
     }
 }

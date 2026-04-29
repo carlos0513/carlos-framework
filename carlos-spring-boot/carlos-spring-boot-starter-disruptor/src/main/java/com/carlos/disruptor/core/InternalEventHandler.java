@@ -86,17 +86,13 @@ public class InternalEventHandler<T> implements EventHandler<DisruptorEvent<T>>,
 
     @Override
     public void onStart() {
-        if (log.isDebugEnabled()) {
-            log.debug("[{}] Disruptor handler started", name);
-        }
+        log.debug("[{}] Disruptor handler started", name);
     }
 
     @Override
     public void onShutdown() {
-        if (log.isDebugEnabled()) {
-            log.debug("[{}] Disruptor handler shutdown. Processed: {}, Exceptions: {}",
-                name, processedCount.sum(), exceptionCount.sum());
-        }
+        log.debug("[{}] Disruptor handler shutdown. Processed: {}, Exceptions: {}",
+            name, processedCount.sum(), exceptionCount.sum());
     }
 
     /**

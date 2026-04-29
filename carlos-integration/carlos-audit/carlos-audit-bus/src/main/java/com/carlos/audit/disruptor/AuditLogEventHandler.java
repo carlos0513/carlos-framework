@@ -47,10 +47,8 @@ public class AuditLogEventHandler implements DisruptorEventHandler<AuditLogMainD
             // 3. 加入批量写入队列
             batchWriter.add(auditLog);
 
-            if (log.isDebugEnabled()) {
-                log.debug("审计日志事件处理成功，序列号: {}, 类型: {}",
-                    sequence, auditLog.getLogType());
-            }
+            log.debug("审计日志事件处理成功，序列号: {}, 类型: {}",
+                sequence, auditLog.getLogType());
 
         } catch (Exception e) {
             log.error("处理审计日志事件失败，序列号: {}", sequence, e);

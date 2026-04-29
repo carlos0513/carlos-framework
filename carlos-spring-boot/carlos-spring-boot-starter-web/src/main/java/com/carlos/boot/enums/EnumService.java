@@ -56,9 +56,7 @@ public class EnumService {
             packages.addAll(enumPackages);
 
             // 获取BaseEnum接口的所有实现
-            if (log.isDebugEnabled()) {
-                log.debug("枚举包:{}", packages);
-            }
+            log.debug("枚举包:{}", packages);
 
             FilterBuilder filterBuilder = new FilterBuilder();
 
@@ -104,9 +102,7 @@ public class EnumService {
                 }
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("字典已初始化");
-            }
+            log.debug("字典已初始化");
         } catch (final Exception e) {
             log.error("获取BaseEnum枚举map异常", e);
         }

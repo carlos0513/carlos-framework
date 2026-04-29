@@ -38,9 +38,7 @@ public class OrgUserManagerImpl extends ServiceImpl<OrgUserMapper, OrgUser> impl
         }
         dto.setId(entity.getId());
         // 保存完成的后�?
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgUser' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgUser' data: id:{}", entity.getId());
         return true;
     }
 
@@ -55,9 +53,7 @@ public class OrgUserManagerImpl extends ServiceImpl<OrgUserMapper, OrgUser> impl
             log.warn("Remove 'OrgUser' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgUser' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgUser' data by id:{}", id);
         return true;
     }
 
@@ -70,9 +66,7 @@ public class OrgUserManagerImpl extends ServiceImpl<OrgUserMapper, OrgUser> impl
             return false;
         }
         // 修改成功的后续操�?
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'OrgUser' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'OrgUser' data by id:{}", dto.getId());
         return true;
     }
 

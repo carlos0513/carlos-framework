@@ -43,9 +43,7 @@ public class MessageTypeManagerImpl extends BaseServiceImpl<MessageTypeMapper, M
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'MessageType' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'MessageType' data: id:{}", entity.getId());
         return true;
     }
 
@@ -60,9 +58,7 @@ public class MessageTypeManagerImpl extends BaseServiceImpl<MessageTypeMapper, M
             log.warn("Remove 'MessageType' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'MessageType' data by id:{}", id);
-        }
+        log.debug("Remove 'MessageType' data by id:{}", id);
         return true;
     }
 
@@ -75,9 +71,7 @@ public class MessageTypeManagerImpl extends BaseServiceImpl<MessageTypeMapper, M
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'MessageType' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'MessageType' data by id:{}", dto.getId());
         return true;
     }
 
@@ -140,9 +134,7 @@ public class MessageTypeManagerImpl extends BaseServiceImpl<MessageTypeMapper, M
             log.warn("Update MessageType status fail, id:{}, enabled:{}", id, enabled);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Update MessageType status success, id:{}, enabled:{}", id, enabled);
-        }
+        log.debug("Update MessageType status success, id:{}, enabled:{}", id, enabled);
         return true;
     }
 

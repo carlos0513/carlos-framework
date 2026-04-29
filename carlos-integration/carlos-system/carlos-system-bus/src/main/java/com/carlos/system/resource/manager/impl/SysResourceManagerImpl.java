@@ -50,9 +50,7 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
             log.warn("Add resource data fail, entity:{}", entity);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Add resource data success, id:{}", entity.getId());
-        }
+        log.debug("Add resource data success, id:{}", entity.getId());
         dto.setId(entity.getId());
         // 保存完成的后续
         return true;
@@ -69,9 +67,7 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
             log.error("Remove resource data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove resource data by id:{}", id);
-        }
+        log.debug("Remove resource data by id:{}", id);
 
         return true;
     }
@@ -85,9 +81,7 @@ public class SysResourceManagerImpl extends BaseServiceImpl<SysResourceMapper, S
             log.warn("Update resource data fail,  entity:{}", entity);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Update resource data success, entity:{}", entity);
-        }
+        log.debug("Update resource data success, entity:{}", entity);
         return true;
     }
 

@@ -39,9 +39,7 @@ public class OrgDockingMappingManagerImpl extends BaseServiceImpl<OrgDockingMapp
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgDockingMapping' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgDockingMapping' data: id:{}", entity.getId());
         return true;
     }
 
@@ -56,9 +54,7 @@ public class OrgDockingMappingManagerImpl extends BaseServiceImpl<OrgDockingMapp
             log.warn("Remove 'OrgDockingMapping' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgDockingMapping' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgDockingMapping' data by id:{}", id);
         return true;
     }
 

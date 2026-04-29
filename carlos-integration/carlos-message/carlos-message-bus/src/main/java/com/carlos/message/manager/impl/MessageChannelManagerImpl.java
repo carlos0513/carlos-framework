@@ -45,9 +45,7 @@ public class MessageChannelManagerImpl extends BaseServiceImpl<MessageChannelMap
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'MessageChannel' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'MessageChannel' data: id:{}", entity.getId());
         return true;
     }
 
@@ -62,9 +60,7 @@ public class MessageChannelManagerImpl extends BaseServiceImpl<MessageChannelMap
             log.warn("Remove 'MessageChannel' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'MessageChannel' data by id:{}", id);
-        }
+        log.debug("Remove 'MessageChannel' data by id:{}", id);
         return true;
     }
 
@@ -77,9 +73,7 @@ public class MessageChannelManagerImpl extends BaseServiceImpl<MessageChannelMap
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'MessageChannel' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'MessageChannel' data by id:{}", dto.getId());
         return true;
     }
 
@@ -176,9 +170,7 @@ public class MessageChannelManagerImpl extends BaseServiceImpl<MessageChannelMap
             log.warn("Update MessageChannel status fail, id:{}, enabled:{}", id, enabled);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Update MessageChannel status success, id:{}, enabled:{}", id, enabled);
-        }
+        log.debug("Update MessageChannel status success, id:{}, enabled:{}", id, enabled);
         return true;
     }
 }

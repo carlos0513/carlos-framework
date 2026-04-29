@@ -61,8 +61,6 @@ public class OrgProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("org config:{}", JSONUtil.toJsonPrettyStr(this));
-        }
+        log.debug("org config:{}", JSONUtil.toJsonPrettyStr(this));
     }
 }

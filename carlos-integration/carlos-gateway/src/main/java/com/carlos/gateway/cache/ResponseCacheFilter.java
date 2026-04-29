@@ -100,9 +100,7 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
         // 尝试从缓存获取
         CachedResponse cached = localCache.getIfPresent(cacheKey);
         if (cached != null && !cached.isExpired()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Cache hit for key: {}", cacheKey.substring(0, Math.min(cacheKey.length(), 16)));
-            }
+            log.debug("Cache hit for key: {}", cacheKey.substring(0, Math.min(cacheKey.length(), 16)));
             return serveFromCache(exchange, cached);
         }
 

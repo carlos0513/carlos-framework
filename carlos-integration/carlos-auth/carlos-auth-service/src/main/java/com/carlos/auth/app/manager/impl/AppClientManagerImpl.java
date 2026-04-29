@@ -54,9 +54,7 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
         dto.setId(entity.getId());
         // 保存完成的后续
         putCache(dto);
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'AppClient' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'AppClient' data: id:{}", entity.getId());
         return true;
     }
 
@@ -72,9 +70,7 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
             return false;
         }
         RedisUtil.delete(this.generateKey(id, RedisUtil.ALL));
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'AppClient' data by id:{}", id);
-        }
+        log.debug("Remove 'AppClient' data by id:{}", id);
         return true;
     }
 
@@ -88,9 +84,7 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
         }
         updateCache(dto);
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'AppClient' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'AppClient' data by id:{}", dto.getId());
         return true;
     }
 

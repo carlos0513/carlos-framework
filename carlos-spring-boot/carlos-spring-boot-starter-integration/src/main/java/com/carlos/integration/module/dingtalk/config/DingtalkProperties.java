@@ -58,8 +58,6 @@ public class DingtalkProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Dingtalk config:{}", JSONUtil.toJsonPrettyStr(this));
-        }
+        log.debug("Dingtalk config:{}", JSONUtil.toJsonPrettyStr(this));
     }
 }

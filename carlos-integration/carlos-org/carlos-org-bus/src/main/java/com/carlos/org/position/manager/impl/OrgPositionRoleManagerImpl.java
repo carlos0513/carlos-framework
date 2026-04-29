@@ -41,9 +41,7 @@ public class OrgPositionRoleManagerImpl extends BaseServiceImpl<OrgPositionRoleM
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgPositionRole' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgPositionRole' data: id:{}", entity.getId());
         return true;
     }
 
@@ -58,9 +56,7 @@ public class OrgPositionRoleManagerImpl extends BaseServiceImpl<OrgPositionRoleM
             log.warn("Remove 'OrgPositionRole' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgPositionRole' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgPositionRole' data by id:{}", id);
         return true;
     }
 
@@ -73,9 +69,7 @@ public class OrgPositionRoleManagerImpl extends BaseServiceImpl<OrgPositionRoleM
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'OrgPositionRole' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'OrgPositionRole' data by id:{}", dto.getId());
         return true;
     }
 

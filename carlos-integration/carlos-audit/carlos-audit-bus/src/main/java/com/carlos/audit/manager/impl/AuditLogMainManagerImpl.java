@@ -45,9 +45,7 @@ public class AuditLogMainManagerImpl extends BaseServiceImpl<AuditLogMainMapper,
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'AuditLogMain' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'AuditLogMain' data: id:{}", entity.getId());
         return true;
     }
 
@@ -62,9 +60,7 @@ public class AuditLogMainManagerImpl extends BaseServiceImpl<AuditLogMainMapper,
             log.warn("Remove 'AuditLogMain' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'AuditLogMain' data by id:{}", id);
-        }
+        log.debug("Remove 'AuditLogMain' data by id:{}", id);
         return true;
     }
 
@@ -77,9 +73,7 @@ public class AuditLogMainManagerImpl extends BaseServiceImpl<AuditLogMainMapper,
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'AuditLogMain' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'AuditLogMain' data by id:{}", dto.getId());
         return true;
     }
 

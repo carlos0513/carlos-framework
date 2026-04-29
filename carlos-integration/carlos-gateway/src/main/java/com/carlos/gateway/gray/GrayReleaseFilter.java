@@ -89,10 +89,8 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
         exchange.getAttributes().put(GatewayHeaderConstants.GRAY_RELEASE_ATTR, isGrayUser);
 
         if (isGrayUser) {
-            if (log.isDebugEnabled()) {
-                log.debug("Gray release enabled for service: {}, request: {}",
-                    serviceName, exchange.getRequest().getURI());
-            }
+            log.debug("Gray release enabled for service: {}, request: {}",
+                serviceName, exchange.getRequest().getURI());
 
             // 添加灰度标记头
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()

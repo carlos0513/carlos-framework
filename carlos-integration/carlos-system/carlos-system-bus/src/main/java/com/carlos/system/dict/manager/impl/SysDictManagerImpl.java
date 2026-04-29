@@ -52,9 +52,7 @@ public class SysDictManagerImpl extends ServiceImpl<SysDictMapper, SysDict> impl
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'SysDict' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'SysDict' data: id:{}", entity.getId());
 
         return true;
     }

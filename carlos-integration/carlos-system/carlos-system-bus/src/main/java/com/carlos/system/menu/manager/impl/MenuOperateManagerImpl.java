@@ -45,9 +45,7 @@ public class MenuOperateManagerImpl extends BaseServiceImpl<MenuOperateMapper, M
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'MenuOperate' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'MenuOperate' data: id:{}", entity.getId());
         return true;
     }
 
@@ -62,9 +60,7 @@ public class MenuOperateManagerImpl extends BaseServiceImpl<MenuOperateMapper, M
             log.warn("Remove 'MenuOperate' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'MenuOperate' data by id:{}", id);
-        }
+        log.debug("Remove 'MenuOperate' data by id:{}", id);
         return true;
     }
 
@@ -77,9 +73,7 @@ public class MenuOperateManagerImpl extends BaseServiceImpl<MenuOperateMapper, M
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'MenuOperate' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'MenuOperate' data by id:{}", dto.getId());
         return true;
     }
 

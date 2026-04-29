@@ -138,9 +138,7 @@ public class SelectStripPrefixGatewayFilterFactory
             String newPath = stripPrefixOptimized(path, config.getParts());
 
             // 4. 延迟计算日志参数（仅在debug启用时拼接字符串）
-            if (log.isDebugEnabled()) {
-                log.debug("Strip path: [{}] -> [{}] (parts={})", path, newPath, config.getParts());
-            }
+            log.debug("Strip path: [{}] -> [{}] (parts={})", path, newPath, config.getParts());
 
             // 5. 构建新请求
             ServerHttpRequest newRequest = request.mutate()

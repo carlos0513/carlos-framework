@@ -48,17 +48,13 @@ public class SeataContextFilter implements Filter {
             if (StringUtils.hasText(xid)) {
                 RootContext.bind(xid);
                 isBind = true;
-                if (log.isDebugEnabled()) {
-                    log.debug("绑定 Seata XID: {} 到当前上下文", xid);
-                }
+                log.debug("绑定 Seata XID: {} 到当前上下文", xid);
             }
             chain.doFilter(request, response);
         } finally {
             if (isBind) {
                 RootContext.unbind();
-                if (log.isDebugEnabled()) {
-                    log.debug("解绑 Seata XID: {}", xid);
-                }
+                log.debug("解绑 Seata XID: {}", xid);
             }
         }
     }

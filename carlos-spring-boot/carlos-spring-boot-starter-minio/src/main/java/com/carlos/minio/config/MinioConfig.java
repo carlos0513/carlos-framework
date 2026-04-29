@@ -51,9 +51,7 @@ public class MinioConfig {
     @Bean
     @ConditionalOnMissingBean
     MinioClient minioClientFactory(MinioProperties properties) {
-        if (log.isDebugEnabled()) {
-            log.debug("Minio config info:{}", JSONUtil.toJsonPrettyStr(properties));
-        }
+        log.debug("Minio config info:{}", JSONUtil.toJsonPrettyStr(properties));
         final MinioClient.Builder builder = MinioClient.builder();
         builder.endpoint(properties.getEndpoint());
         builder.credentials(properties.getAccessKey(), properties.getSecretKey());

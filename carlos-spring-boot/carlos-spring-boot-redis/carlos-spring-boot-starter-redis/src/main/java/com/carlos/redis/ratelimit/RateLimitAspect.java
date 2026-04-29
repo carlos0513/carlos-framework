@@ -65,9 +65,7 @@ public class RateLimitAspect {
             throw new RateLimitException(rateLimitKey);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("[RateLimit] Acquired permit (FAIL_FAST): {}", rateLimitKey);
-        }
+        log.debug("[RateLimit] Acquired permit (FAIL_FAST): {}", rateLimitKey);
 
         return joinPoint.proceed();
     }
@@ -86,9 +84,7 @@ public class RateLimitAspect {
             throw new RateLimitException(rateLimitKey, maxWaitTime);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("[RateLimit] Acquired permit (BLOCK): {}, waitTime: {}ms", rateLimitKey, maxWaitTime);
-        }
+        log.debug("[RateLimit] Acquired permit (BLOCK): {}, waitTime: {}ms", rateLimitKey, maxWaitTime);
 
         return joinPoint.proceed();
     }
@@ -101,9 +97,7 @@ public class RateLimitAspect {
         boolean acquired = rateLimiter.tryAcquire();
 
         if (acquired) {
-            if (log.isDebugEnabled()) {
-                log.debug("[RateLimit] Acquired permit (FALLBACK): {}", rateLimitKey);
-            }
+            log.debug("[RateLimit] Acquired permit (FALLBACK): {}", rateLimitKey);
             return joinPoint.proceed();
         }
 

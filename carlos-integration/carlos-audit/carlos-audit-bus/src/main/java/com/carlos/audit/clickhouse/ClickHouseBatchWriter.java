@@ -152,9 +152,7 @@ public class ClickHouseBatchWriter {
             long duration = System.currentTimeMillis() - startTime;
             totalWritten.addAndGet(size);
 
-            if (log.isDebugEnabled()) {
-                log.debug("批量写入 ClickHouse 成功，条数: {}，耗时: {}ms", size, duration);
-            }
+            log.debug("批量写入 ClickHouse 成功，条数: {}，耗时: {}ms", size, duration);
 
         } catch (Exception e) {
             log.error("批量写入 ClickHouse 失败，重试次数: {}，数据条数: {}", retryCount, size, e);

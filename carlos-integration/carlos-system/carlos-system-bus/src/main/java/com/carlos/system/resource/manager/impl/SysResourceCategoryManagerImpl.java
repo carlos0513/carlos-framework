@@ -43,9 +43,7 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'ResourceCategory' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'ResourceCategory' data: id:{}", entity.getId());
         return true;
     }
 
@@ -60,9 +58,7 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
             log.warn("Remove 'ResourceCategory' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'ResourceCategory' data by id:{}", id);
-        }
+        log.debug("Remove 'ResourceCategory' data by id:{}", id);
         return true;
     }
 
@@ -75,9 +71,7 @@ public class SysResourceCategoryManagerImpl extends BaseServiceImpl<SysResourceC
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'ResourceCategory' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'ResourceCategory' data by id:{}", dto.getId());
         return true;
     }
 

@@ -41,9 +41,7 @@ public class OrgPositionCategoryManagerImpl extends BaseServiceImpl<OrgPositionC
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgPositionCategory' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgPositionCategory' data: id:{}", entity.getId());
         return true;
     }
 
@@ -58,9 +56,7 @@ public class OrgPositionCategoryManagerImpl extends BaseServiceImpl<OrgPositionC
             log.warn("Remove 'OrgPositionCategory' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgPositionCategory' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgPositionCategory' data by id:{}", id);
         return true;
     }
 
@@ -73,9 +69,7 @@ public class OrgPositionCategoryManagerImpl extends BaseServiceImpl<OrgPositionC
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'OrgPositionCategory' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'OrgPositionCategory' data by id:{}", dto.getId());
         return true;
     }
 

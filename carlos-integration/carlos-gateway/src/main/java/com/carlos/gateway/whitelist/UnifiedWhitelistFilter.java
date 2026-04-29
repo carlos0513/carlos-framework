@@ -57,12 +57,10 @@ public class UnifiedWhitelistFilter implements GlobalFilter, Ordered {
         // 将结果存入 Exchange Attributes
         WhitelistContext.setCheckResult(exchange, result);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Unified whitelist check for [{}]: global={}, auth={}, waf={}, replay={}, rateLimit={}, prefixStrip={}",
-                path, result.isGlobalWhitelisted(), result.isAuthWhitelisted(),
-                result.isWafWhitelisted(), result.isReplayWhitelisted(),
-                result.isRateLimitWhitelisted(), result.isPrefixStripWhitelisted());
-        }
+        log.debug("Unified whitelist check for [{}]: global={}, auth={}, waf={}, replay={}, rateLimit={}, prefixStrip={}",
+            path, result.isGlobalWhitelisted(), result.isAuthWhitelisted(),
+            result.isWafWhitelisted(), result.isReplayWhitelisted(),
+            result.isRateLimitWhitelisted(), result.isPrefixStripWhitelisted());
 
         return chain.filter(exchange);
     }

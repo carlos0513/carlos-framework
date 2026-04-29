@@ -44,9 +44,7 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
             return false;
         }
         dto.setId(entity.getId());
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgDepartment' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgDepartment' data: id:{}", entity.getId());
         return true;
     }
 
@@ -61,9 +59,7 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
             log.warn("Remove 'OrgDepartment' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgDepartment' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgDepartment' data by id:{}", id);
         return true;
     }
 
@@ -75,9 +71,7 @@ public class OrgDepartmentManagerImpl extends BaseServiceImpl<OrgDepartmentMappe
             log.warn("Update 'OrgDepartment' data fail, entity:{}", entity);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'OrgDepartment' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'OrgDepartment' data by id:{}", dto.getId());
         return true;
     }
 

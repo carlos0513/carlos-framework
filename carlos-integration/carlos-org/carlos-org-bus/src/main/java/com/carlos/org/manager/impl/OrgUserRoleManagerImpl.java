@@ -41,9 +41,7 @@ public class OrgUserRoleManagerImpl extends BaseServiceImpl<OrgUserRoleMapper, O
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgUserRole' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgUserRole' data: id:{}", entity.getId());
         return true;
     }
 
@@ -58,9 +56,7 @@ public class OrgUserRoleManagerImpl extends BaseServiceImpl<OrgUserRoleMapper, O
             log.warn("Remove 'OrgUserRole' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgUserRole' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgUserRole' data by id:{}", id);
         return true;
     }
 
@@ -73,9 +69,7 @@ public class OrgUserRoleManagerImpl extends BaseServiceImpl<OrgUserRoleMapper, O
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'OrgUserRole' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'OrgUserRole' data by id:{}", dto.getId());
         return true;
     }
 

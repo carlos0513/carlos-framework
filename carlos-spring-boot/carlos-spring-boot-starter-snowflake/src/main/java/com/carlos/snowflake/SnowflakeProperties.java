@@ -73,8 +73,6 @@ public class SnowflakeProperties implements InitializingBean {
         if (dataCenterId != null && (dataCenterId < 0 || dataCenterId > SnowflakeConstant.MAX_DATA_CENTER_ID)) {
             throw new BusinessException("carlos.snowflake.dataCenterId must be between 0 and " + SnowflakeConstant.MAX_DATA_CENTER_ID);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Snowflake properties:{}", this);
-        }
+        log.debug("Snowflake properties:{}", this);
     }
 }

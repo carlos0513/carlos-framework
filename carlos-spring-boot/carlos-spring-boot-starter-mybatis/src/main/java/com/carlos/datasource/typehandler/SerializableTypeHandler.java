@@ -67,9 +67,7 @@ public class SerializableTypeHandler extends BaseTypeHandler<Serializable> {
                 ps.setString(i, parameter.toString());
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("设置参数: index={}, value={}, type={}", i, parameter, parameter.getClass().getSimpleName());
-            }
+            log.debug("设置参数: index={}, value={}, type={}", i, parameter, parameter.getClass().getSimpleName());
         } catch (SQLException e) {
             log.error("设置参数失败: index={}, value={}", i, parameter, e);
             throw e;

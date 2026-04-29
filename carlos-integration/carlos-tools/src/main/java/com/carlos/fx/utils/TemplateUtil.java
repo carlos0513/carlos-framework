@@ -64,9 +64,7 @@ public class TemplateUtil {
             list.add(templateBaseInfo);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("模板信息加载成功");
-        }
+        log.debug("模板信息加载成功");
         return list;
     }
 
@@ -81,9 +79,7 @@ public class TemplateUtil {
     public static TemplateInfo dealTemplateFile(File file) {
         // 处理非模板文件 非模板文件不用处理
         if (!FileUtil.pathEndsWith(file, CodegeConstant.TEMPLATE_FILE_EXT)) {
-            if (log.isDebugEnabled()) {
-                log.debug("非模板文件, 忽略处理:" + file.getPath());
-            }
+            log.debug("非模板文件, 忽略处理:" + file.getPath());
             return null;
         }
 

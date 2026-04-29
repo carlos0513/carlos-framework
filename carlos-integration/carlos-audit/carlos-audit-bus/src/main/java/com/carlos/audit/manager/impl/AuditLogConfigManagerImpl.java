@@ -41,9 +41,7 @@ public class AuditLogConfigManagerImpl extends BaseServiceImpl<AuditLogConfigMap
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'AuditLogConfig' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'AuditLogConfig' data: id:{}", entity.getId());
         return true;
     }
 
@@ -58,9 +56,7 @@ public class AuditLogConfigManagerImpl extends BaseServiceImpl<AuditLogConfigMap
             log.warn("Remove 'AuditLogConfig' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'AuditLogConfig' data by id:{}", id);
-        }
+        log.debug("Remove 'AuditLogConfig' data by id:{}", id);
         return true;
     }
 
@@ -73,9 +69,7 @@ public class AuditLogConfigManagerImpl extends BaseServiceImpl<AuditLogConfigMap
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'AuditLogConfig' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'AuditLogConfig' data by id:{}", dto.getId());
         return true;
     }
 

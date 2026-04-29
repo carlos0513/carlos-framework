@@ -50,9 +50,7 @@ public class FeignClientErrorDecoder extends ErrorDecoder.Default {
         final ExceptionInfo exceptionInfo;
         try {
             exceptionInfo = JSONUtil.toBean(s, ExceptionInfo.class);
-            if (log.isDebugEnabled()) {
-                log.debug("Get exception:{}", exceptionInfo);
-            }
+            log.debug("Get exception:{}", exceptionInfo);
         } catch (final Exception e) {
             log.error("Can't convert  string [{}] to 'ExceptionInfo'", StrUtil.subWithLength(s, 0, 100));
             return exception;

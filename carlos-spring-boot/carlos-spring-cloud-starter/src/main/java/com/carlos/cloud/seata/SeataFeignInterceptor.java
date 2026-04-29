@@ -46,9 +46,7 @@ public class SeataFeignInterceptor implements RequestInterceptor {
         String xid = RootContext.getXID();
         if (StringUtils.hasText(xid)) {
             requestTemplate.header(SEATA_XID_HEADER, xid);
-            if (log.isDebugEnabled()) {
-                log.debug("传递 Seata XID: {} 到目标服务", xid);
-            }
+            log.debug("传递 Seata XID: {} 到目标服务", xid);
         }
     }
 }

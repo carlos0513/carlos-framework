@@ -146,9 +146,7 @@ public class RequestTransformFilter implements GlobalFilter, Ordered {
             if (matcher.find()) {
                 String newPath = matcher.replaceAll(rule.replacement);
                 if (!newPath.equals(originalPath)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Path rewritten: {} -> {}", originalPath, newPath);
-                    }
+                    log.debug("Path rewritten: {} -> {}", originalPath, newPath);
                     builder.path(newPath);
                     return true;
                 }

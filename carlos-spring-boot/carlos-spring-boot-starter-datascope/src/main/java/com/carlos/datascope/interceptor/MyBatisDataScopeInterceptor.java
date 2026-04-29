@@ -84,9 +84,7 @@ public class MyBatisDataScopeInterceptor implements Interceptor {
         // 7. 替换参数并执行
         invocation.getArgs()[0] = newMs;
 
-        if (log.isDebugEnabled()) {
-            log.debug("Data scope SQL injected:\nOriginal: {}\nNew: {}", originalSql, newSql);
-        }
+        log.debug("Data scope SQL injected:\nOriginal: {}\nNew: {}", originalSql, newSql);
 
         return invocation.proceed();
     }

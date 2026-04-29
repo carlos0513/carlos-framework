@@ -85,9 +85,7 @@ public class PathPrefixFilter implements GlobalFilter, Ordered {
 
         // 1. 检查路径是否在白名单中（优先使用统一白名单检查结果）
         if (isWhitelisted(exchange, path)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Path [{}] is whitelisted, skipping prefix check", path);
-            }
+            log.debug("Path [{}] is whitelisted, skipping prefix check", path);
             return chain.filter(exchange);
         }
 
@@ -108,9 +106,7 @@ public class PathPrefixFilter implements GlobalFilter, Ordered {
             newPath = "/" + newPath;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Path rewritten: {} -> {}", path, newPath);
-        }
+        log.debug("Path rewritten: {} -> {}", path, newPath);
 
         ServerHttpRequest newRequest = request.mutate()
             .path(newPath)

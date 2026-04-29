@@ -41,9 +41,7 @@ public class MessageSendLogManagerImpl extends BaseServiceImpl<MessageSendLogMap
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'MessageSendLog' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'MessageSendLog' data: id:{}", entity.getId());
         return true;
     }
 
@@ -58,9 +56,7 @@ public class MessageSendLogManagerImpl extends BaseServiceImpl<MessageSendLogMap
             log.warn("Remove 'MessageSendLog' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'MessageSendLog' data by id:{}", id);
-        }
+        log.debug("Remove 'MessageSendLog' data by id:{}", id);
         return true;
     }
 
@@ -73,9 +69,7 @@ public class MessageSendLogManagerImpl extends BaseServiceImpl<MessageSendLogMap
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'MessageSendLog' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'MessageSendLog' data by id:{}", dto.getId());
         return true;
     }
 

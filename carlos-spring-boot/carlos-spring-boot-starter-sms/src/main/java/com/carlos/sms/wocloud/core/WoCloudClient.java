@@ -45,9 +45,7 @@ public class WoCloudClient {
         String url = this.endpoint + uri;
 
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("【wocloud】request info, url:{}, param:{}", url, data);
-            }
+            log.debug("【wocloud】request info, url:{}, param:{}", url, data);
             JSONObject response = http.postJson(url, headers, data);
             WoCloudResponse smsResponse = response.toBean(WoCloudResponse.class);
             if (WoCloudErrorCode.CODE_0.getCode().equals(smsResponse.getCode()) || retry == maxRetries) {

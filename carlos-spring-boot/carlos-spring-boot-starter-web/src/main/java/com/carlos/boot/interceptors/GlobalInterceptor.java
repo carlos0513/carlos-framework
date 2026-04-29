@@ -32,9 +32,7 @@ public class GlobalInterceptor implements AsyncHandlerInterceptor {
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         RequestInfo requestInfo = RequestUtil.getRequestInfo();
-        if (log.isDebugEnabled()) {
-            log.debug("-----------Request Start[{}]----------", requestInfo.getRequestId());
-        }
+        log.debug("-----------Request Start[{}]----------", requestInfo.getRequestId());
         // if (requestInfo.getParam() == null) {
         //     requestInfo.setParam(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
         //     RequestUtil.refreshRequestInfo(requestInfo);
@@ -54,9 +52,7 @@ public class GlobalInterceptor implements AsyncHandlerInterceptor {
     @Override
     public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler,
                                 Exception ex) {
-        if (log.isDebugEnabled()) {
-            log.debug("-----------Request finish[{}]----------", RequestUtil.getRequestId());
-        }
+        log.debug("-----------Request finish[{}]----------", RequestUtil.getRequestId());
         // 释放本地线程资源
         RequestUtil.remove();
     }

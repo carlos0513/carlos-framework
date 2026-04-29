@@ -96,17 +96,13 @@ public class CodeGeneratorService {
         File source = new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_JAVA);
         File target = new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_TEMP + packageName.replace(StrUtil.DOT, File.separator));
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("3.1.将模板文件移动到临时目录：{}", target.getAbsolutePath());
-            }
+            log.debug("3.1.将模板文件移动到临时目录：{}", target.getAbsolutePath());
             FileUtils.moveDirectory(source, target);
         } catch (IOException e) {
             log.error("文件移动失败！ {}->{}", source.getPath(), target.getPath());
         }
         // 修改临时目录为正式的项目目录
-        if (log.isDebugEnabled()) {
-            log.debug("3.2.修改临时目录为正式的Java文件目录");
-        }
+        log.debug("3.2.修改临时目录为正式的Java文件目录");
         FileUtil.rename(new File(projectRootPath.getPath() + CodegeConstant.SRC_MAIN_TEMP), "java", true);
     }
 
@@ -118,25 +114,19 @@ public class CodeGeneratorService {
     private void createFile(File projectRoot, Map<String, Object> params, List<ObjectInfo> objs) {
         File[] files = projectRoot.listFiles();
         if (files == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("目录为空:{}", projectRoot.getPath());
-            }
+            log.debug("目录为空:{}", projectRoot.getPath());
             return;
         }
 
         TemplateInfo templateInfo;
         for (File file : files) {
             if (file.isDirectory()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("进入目录:{}", file.getPath());
-                }
+                log.debug("进入目录:{}", file.getPath());
                 // 递归目录
                 createFile(file, params, objs);
             }
             // 将模板文件处理成对应的文件
-            if (log.isDebugEnabled()) {
-                log.debug("开始处理模板文件：{}", file.getPath());
-            }
+            log.debug("开始处理模板文件：{}", file.getPath());
             templateInfo = TemplateUtil.dealTemplateFile(file);
             if (templateInfo == null) {
                 continue;

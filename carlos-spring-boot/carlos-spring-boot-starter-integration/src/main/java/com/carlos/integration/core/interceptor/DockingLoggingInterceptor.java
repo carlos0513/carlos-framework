@@ -26,18 +26,14 @@ public class DockingLoggingInterceptor implements ClientHttpRequestInterceptor {
         long startTime = System.currentTimeMillis();
 
         // 记录请求
-        if (log.isDebugEnabled()) {
-            logRequest(request, body);
-        }
+        logRequest(request, body);
 
         // 执行请求
         ClientHttpResponse response = execution.execute(request, body);
 
         // 记录响应
         long duration = System.currentTimeMillis() - startTime;
-        if (log.isDebugEnabled()) {
-            logResponse(response, duration);
-        }
+        logResponse(response, duration);
 
         return response;
     }

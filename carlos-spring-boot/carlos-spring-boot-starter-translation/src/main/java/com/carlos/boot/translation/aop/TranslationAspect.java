@@ -52,9 +52,7 @@ public class TranslationAspect {
             try {
                 processResult(result);
             } finally {
-                if (log.isDebugEnabled()) {
-                    log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})", System.currentTimeMillis() - start, translated.cacheEnabled(), translated.cacheMinutes());
-                }
+                log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})", System.currentTimeMillis() - start, translated.cacheEnabled(), translated.cacheMinutes());
             }
             return result;
         } finally {
@@ -105,9 +103,7 @@ public class TranslationAspect {
                 try {
                     processResult(data);
                 } finally {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})", System.currentTimeMillis() - start, translated.cacheEnabled(), translated.cacheMinutes());
-                    }
+                    log.debug("Translation completed in {}ms (cacheEnabled={}, cacheMinutes={})", System.currentTimeMillis() - start, translated.cacheEnabled(), translated.cacheMinutes());
                 }
             }
 
@@ -129,10 +125,8 @@ public class TranslationAspect {
         context.setCacheMinutes(translated.cacheMinutes());
         TranslationContext.set(context);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Translation context set: cacheEnabled={}, cacheMinutes={}",
-                translated.cacheEnabled(), translated.cacheMinutes());
-        }
+        log.debug("Translation context set: cacheEnabled={}, cacheMinutes={}",
+            translated.cacheEnabled(), translated.cacheMinutes());
     }
 
     /**

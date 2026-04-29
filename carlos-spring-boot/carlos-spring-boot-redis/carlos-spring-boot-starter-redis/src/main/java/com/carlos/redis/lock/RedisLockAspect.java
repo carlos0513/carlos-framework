@@ -46,9 +46,7 @@ public class RedisLockAspect {
             return handleFailure(joinPoint, redisLock, lockKey);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("[RedisLock] Acquired {} lock: {}", redisLock.lockType(), lockKey);
-        }
+        log.debug("[RedisLock] Acquired {} lock: {}", redisLock.lockType(), lockKey);
 
         try {
             return joinPoint.proceed();
@@ -115,9 +113,7 @@ public class RedisLockAspect {
         try {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
-                if (log.isDebugEnabled()) {
-                    log.debug("[RedisLock] Released {} lock: {}", lockType, lockKey);
-                }
+                log.debug("[RedisLock] Released {} lock: {}", lockType, lockKey);
             } else {
                 log.warn("[RedisLock] Lock {} is not held by current thread, skip unlock", lockKey);
             }

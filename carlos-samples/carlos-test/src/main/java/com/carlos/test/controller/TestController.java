@@ -120,9 +120,7 @@ public class TestController {
 
         long start = System.currentTimeMillis();
         RedisUtil.setValueList(map);
-        if (log.isDebugEnabled()) {
-            log.debug("method setValueList:{}", DateUtil.formatBetween(DateUtil.spendMs(start)));
-        }
+        log.debug("method setValueList:{}", DateUtil.formatBetween(DateUtil.spendMs(start)));
 
         RedisUtil.setValue("string", "string");
         String value = RedisUtil.getValue("string");

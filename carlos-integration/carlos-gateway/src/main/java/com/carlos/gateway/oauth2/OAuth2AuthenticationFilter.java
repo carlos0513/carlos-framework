@@ -1,10 +1,13 @@
 package com.carlos.gateway.oauth2;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.carlos.core.auth.AuthConstant;
 import com.carlos.core.auth.UserContext;
 import com.carlos.core.constant.HttpHeadersConstant;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.core.util.PathMatchUtil;
+import com.carlos.gateway.exception.ErrorResponse;
 import com.carlos.gateway.oauth2.validator.TokenValidator;
 import com.carlos.gateway.whitelist.WhitelistContext;
 import lombok.extern.slf4j.Slf4j;
@@ -13,16 +16,12 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
-
-import com.carlos.core.response.CommonErrorCode;
-import com.carlos.gateway.exception.ErrorResponse;
-import cn.hutool.json.JSONUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -71,9 +70,7 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
 
         // 白名单路径直接放行（优先使用统一白名单检查结果）
         if (isWhitelisted(exchange, path)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Path {} is in whitelist, skipping authentication", path);
-            }
+            log.debug("Path {} is in whitelist, skipping authentication", path);
             return chain.filter(exchange);
         }
 
@@ -92,9 +89,7 @@ public class OAuth2AuthenticationFilter implements GlobalFilter, Ordered {
         // 验证 Token 并构建用户上下文
         return tokenValidator.validate(token)
             .flatMap(userContext -> {
-                if (log.isDebugEnabled()) {
-                    log.debug("Token validated successfully for user: {}", userContext.getAccount());
-                }
+                log.debug("Token validated successfully for user: {}", userContext.getAccount());
                 // 将用户信息注入请求头
                 ServerHttpRequest mutatedRequest = injectUserContext(request, userContext);
                 ServerWebExchange mutatedExchange = exchange.mutate()

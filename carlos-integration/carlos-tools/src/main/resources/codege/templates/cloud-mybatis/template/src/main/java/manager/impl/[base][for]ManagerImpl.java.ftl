@@ -41,9 +41,7 @@ public class ${table.classPrefix}ManagerImpl  extends BaseServiceImpl<${table.cl
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert '${table.classPrefix}' data: id:{}", entity.getId());
-        }
+        log.debug("Insert '${table.classPrefix}' data: id:{}", entity.getId());
         return true;
     }
 
@@ -58,9 +56,7 @@ public class ${table.classPrefix}ManagerImpl  extends BaseServiceImpl<${table.cl
             log.warn("Remove '${table.classPrefix}' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove '${table.classPrefix}' data by id:{}", id);
-        }
+        log.debug("Remove '${table.classPrefix}' data by id:{}", id);
         return true;
     }
 
@@ -73,9 +69,7 @@ public class ${table.classPrefix}ManagerImpl  extends BaseServiceImpl<${table.cl
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update '${table.classPrefix}' data by id:{}", dto.getId());
-        }
+        log.debug("Update '${table.classPrefix}' data by id:{}", dto.getId());
         return true;
     }
 

@@ -51,9 +51,7 @@ public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateM
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'MessageTemplate' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'MessageTemplate' data: id:{}", entity.getId());
         return true;
     }
 
@@ -68,9 +66,7 @@ public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateM
             log.warn("Remove 'MessageTemplate' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'MessageTemplate' data by id:{}", id);
-        }
+        log.debug("Remove 'MessageTemplate' data by id:{}", id);
         return true;
     }
 
@@ -83,9 +79,7 @@ public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateM
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'MessageTemplate' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'MessageTemplate' data by id:{}", dto.getId());
         return true;
     }
 
@@ -170,9 +164,7 @@ public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateM
             log.warn("Publish MessageTemplate fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Publish MessageTemplate success, id:{}", id);
-        }
+        log.debug("Publish MessageTemplate success, id:{}", id);
         return true;
     }
 
@@ -190,9 +182,7 @@ public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateM
             log.warn("Update MessageTemplate status fail, id:{}, enabled:{}", id, enabled);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Update MessageTemplate status success, id:{}, enabled:{}", id, enabled);
-        }
+        log.debug("Update MessageTemplate status success, id:{}, enabled:{}", id, enabled);
         return true;
     }
 }

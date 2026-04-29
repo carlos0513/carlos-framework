@@ -37,9 +37,7 @@ public class OrgPermissionManagerImpl extends BaseServiceImpl<OrgPermissionMappe
             return false;
         }
         dto.setId(entity.getId());
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgPermission' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgPermission' data: id:{}", entity.getId());
         return true;
     }
 
@@ -54,9 +52,7 @@ public class OrgPermissionManagerImpl extends BaseServiceImpl<OrgPermissionMappe
             log.warn("Remove 'OrgPermission' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgPermission' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgPermission' data by id:{}", id);
         return true;
     }
 
@@ -68,9 +64,7 @@ public class OrgPermissionManagerImpl extends BaseServiceImpl<OrgPermissionMappe
             log.warn("Update 'OrgPermission' data fail, entity:{}", entity);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'OrgPermission' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'OrgPermission' data by id:{}", dto.getId());
         return true;
     }
 

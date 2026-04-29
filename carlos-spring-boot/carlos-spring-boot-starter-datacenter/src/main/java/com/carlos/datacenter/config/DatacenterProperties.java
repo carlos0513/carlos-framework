@@ -24,8 +24,6 @@ public class DatacenterProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("datacenter config:{}", JSONUtil.toJsonPrettyStr(this));
-        }
+        log.debug("datacenter config:{}", JSONUtil.toJsonPrettyStr(this));
     }
 }

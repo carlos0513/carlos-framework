@@ -44,9 +44,7 @@ public class ResourceService {
                 throw new ComponentException("The property 'scanPackage' is null");
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("资源包:{}", packages);
-            }
+            log.debug("资源包:{}", packages);
 
             // 使用反射 扫描工程的基本包路径
             final Reflections reflections = new Reflections(packages);
@@ -93,9 +91,7 @@ public class ResourceService {
                 categories.add(category);
 
             }
-            if (log.isDebugEnabled()) {
-                log.debug("资源已初始化");
-            }
+            log.debug("资源已初始化");
             final ApplicationResource applicationResource = new ApplicationResource();
             applicationResource.setAppName(resourceProperties.getAppName());
             applicationResource.setCategories(categories);

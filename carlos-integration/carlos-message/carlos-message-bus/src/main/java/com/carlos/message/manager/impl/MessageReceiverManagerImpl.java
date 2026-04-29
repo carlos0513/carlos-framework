@@ -44,9 +44,7 @@ public class MessageReceiverManagerImpl extends BaseServiceImpl<MessageReceiverM
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'MessageReceiver' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'MessageReceiver' data: id:{}", entity.getId());
         return true;
     }
 
@@ -61,9 +59,7 @@ public class MessageReceiverManagerImpl extends BaseServiceImpl<MessageReceiverM
             log.warn("Remove 'MessageReceiver' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'MessageReceiver' data by id:{}", id);
-        }
+        log.debug("Remove 'MessageReceiver' data by id:{}", id);
         return true;
     }
 
@@ -76,9 +72,7 @@ public class MessageReceiverManagerImpl extends BaseServiceImpl<MessageReceiverM
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'MessageReceiver' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'MessageReceiver' data by id:{}", dto.getId());
         return true;
     }
 

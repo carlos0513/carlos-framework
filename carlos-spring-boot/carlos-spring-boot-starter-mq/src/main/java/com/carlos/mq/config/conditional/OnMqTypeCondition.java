@@ -36,10 +36,8 @@ public class OnMqTypeCondition implements Condition {
 
         boolean matches = requiredType == actualType;
 
-        if (log.isDebugEnabled()) {
-            log.debug("MQ type condition check: required={}, actual={}, matches={}",
-                requiredType, actualType, matches);
-        }
+        log.debug("MQ type condition check: required={}, actual={}, matches={}",
+            requiredType, actualType, matches);
 
         return matches;
     }

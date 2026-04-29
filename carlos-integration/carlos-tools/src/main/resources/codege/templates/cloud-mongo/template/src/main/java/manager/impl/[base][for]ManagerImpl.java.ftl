@@ -42,9 +42,7 @@ return false;
 }
         dto.setId(entity.getId());
 // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert '${table.classPrefix}' data: id:{}", entity.getId());
-        }
+        log.debug("Insert '${table.classPrefix}' data: id:{}", entity.getId());
         return true;
     }
 
@@ -59,9 +57,7 @@ if (!success) {
 log.warn("Remove '${table.classPrefix}' data fail, id:{}", id);
 return false;
 }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove '${table.classPrefix}' data by id:{}", id);
-        }
+        log.debug("Remove '${table.classPrefix}' data by id:{}", id);
         return true;
     }
 
@@ -74,9 +70,7 @@ log.warn("Update '${table.classPrefix}' data fail, entity:{}", entity);
 return false;
 }
 // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
 log.debug("Update '${table.classPrefix}' data by id:{}", dto.getId());
-        }
         return true;
     }
 

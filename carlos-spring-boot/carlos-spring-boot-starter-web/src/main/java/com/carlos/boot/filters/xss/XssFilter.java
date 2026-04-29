@@ -19,9 +19,7 @@ public class XssFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        if (log.isDebugEnabled()) {
-            log.debug("XssFilter注册化成功");
-        }
+        log.debug("XssFilter注册化成功");
     }
 
     @Override
@@ -34,8 +32,6 @@ public class XssFilter implements Filter {
 
     @Override
     public void destroy() {
-        if (log.isDebugEnabled()) {
-            log.debug("XssFilter取消注册");
-        }
+        log.debug("XssFilter取消注册");
     }
 }

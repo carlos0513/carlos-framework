@@ -41,9 +41,7 @@ public class OrgUserDepartmentManagerImpl extends BaseServiceImpl<OrgUserDepartm
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgUserDepartment' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgUserDepartment' data: id:{}", entity.getId());
         return true;
     }
 
@@ -58,9 +56,7 @@ public class OrgUserDepartmentManagerImpl extends BaseServiceImpl<OrgUserDepartm
             log.warn("Remove 'OrgUserDepartment' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgUserDepartment' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgUserDepartment' data by id:{}", id);
         return true;
     }
 
@@ -73,9 +69,7 @@ public class OrgUserDepartmentManagerImpl extends BaseServiceImpl<OrgUserDepartm
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'OrgUserDepartment' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'OrgUserDepartment' data by id:{}", dto.getId());
         return true;
     }
 

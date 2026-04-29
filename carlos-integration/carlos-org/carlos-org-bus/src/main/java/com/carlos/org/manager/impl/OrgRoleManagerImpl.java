@@ -43,9 +43,7 @@ public class OrgRoleManagerImpl extends BaseServiceImpl<OrgRoleMapper, OrgRole> 
             return false;
         }
         dto.setId(entity.getId());
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'OrgRole' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'OrgRole' data: id:{}", entity.getId());
         return true;
     }
 
@@ -60,9 +58,7 @@ public class OrgRoleManagerImpl extends BaseServiceImpl<OrgRoleMapper, OrgRole> 
             log.warn("Remove 'OrgRole' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'OrgRole' data by id:{}", id);
-        }
+        log.debug("Remove 'OrgRole' data by id:{}", id);
         return true;
     }
 
@@ -74,9 +70,7 @@ public class OrgRoleManagerImpl extends BaseServiceImpl<OrgRoleMapper, OrgRole> 
             log.warn("Update 'OrgRole' data fail, entity:{}", entity);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'OrgRole' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'OrgRole' data by id:{}", dto.getId());
         return true;
     }
 

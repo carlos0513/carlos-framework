@@ -51,9 +51,7 @@ public class SystemFileProperties implements InitializingBean {
         if (!StrUtil.startWith(downloadPath, StrUtil.SLASH)) {
             downloadPath = StrUtil.SLASH + downloadPath;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Load SystemFileProperties :{}", JSONUtil.toJsonPrettyStr(this));
-        }
+        log.debug("Load SystemFileProperties :{}", JSONUtil.toJsonPrettyStr(this));
     }
 
 }

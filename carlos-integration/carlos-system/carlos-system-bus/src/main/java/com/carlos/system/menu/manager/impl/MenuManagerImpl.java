@@ -46,9 +46,7 @@ public class MenuManagerImpl extends BaseServiceImpl<MenuMapper, Menu> implement
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert menu data: id:{}", entity.getId());
-        }
+        log.debug("Insert menu data: id:{}", entity.getId());
         return true;
     }
 
@@ -64,9 +62,7 @@ public class MenuManagerImpl extends BaseServiceImpl<MenuMapper, Menu> implement
             log.warn("Remove menu data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove menu data by id:{}", id);
-        }
+        log.debug("Remove menu data by id:{}", id);
         return true;
 
     }
@@ -80,9 +76,7 @@ public class MenuManagerImpl extends BaseServiceImpl<MenuMapper, Menu> implement
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update menu data by id:{}", dto.getId());
-        }
+        log.debug("Update menu data by id:{}", dto.getId());
         return true;
     }
 

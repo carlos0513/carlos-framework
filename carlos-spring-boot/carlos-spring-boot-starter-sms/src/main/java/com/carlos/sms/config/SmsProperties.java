@@ -30,8 +30,6 @@ public class SmsProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        if (log.isDebugEnabled()) {
-            log.debug("sms properties:{}", JSONUtil.toJsonPrettyStr(this));
-        }
+        log.debug("sms properties:{}", JSONUtil.toJsonPrettyStr(this));
     }
 }

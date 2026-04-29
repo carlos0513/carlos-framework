@@ -84,9 +84,7 @@ public class RateLimitUtil {
         try {
             RRateLimiter rateLimiter = getOrCreateRateLimiter(key, rate, capacity, rateInterval, timeUnit);
             boolean acquired = rateLimiter.tryAcquire();
-            if (log.isDebugEnabled()) {
-                log.debug("[RateLimit] Key: {}, Acquired: {}", key, acquired);
-            }
+            log.debug("[RateLimit] Key: {}, Acquired: {}", key, acquired);
             return acquired;
         } catch (Exception e) {
             log.error("[RateLimit] Error acquiring permit for key: {}", key, e);
@@ -126,9 +124,7 @@ public class RateLimitUtil {
         try {
             RRateLimiter rateLimiter = getOrCreateRateLimiter(key, rate, capacity, rateInterval, timeUnit);
             boolean acquired = rateLimiter.tryAcquire(1, waitTime, TimeUnit.MILLISECONDS);
-            if (log.isDebugEnabled()) {
-                log.debug("[RateLimit] Key: {}, WaitTime: {}ms, Acquired: {}", key, waitTime, acquired);
-            }
+            log.debug("[RateLimit] Key: {}, WaitTime: {}ms, Acquired: {}", key, waitTime, acquired);
             return acquired;
         } catch (Exception e) {
             log.error("[RateLimit] Error acquiring permit for key: {}", key, e);
@@ -151,9 +147,7 @@ public class RateLimitUtil {
         try {
             RRateLimiter rateLimiter = getOrCreateRateLimiter(key, rate, rate, rateInterval, timeUnit);
             boolean acquired = rateLimiter.tryAcquire(permits);
-            if (log.isDebugEnabled()) {
-                log.debug("[RateLimit] Key: {}, Permits: {}, Acquired: {}", key, permits, acquired);
-            }
+            log.debug("[RateLimit] Key: {}, Permits: {}, Acquired: {}", key, permits, acquired);
             return acquired;
         } catch (Exception e) {
             log.error("[RateLimit] Error acquiring {} permits for key: {}", permits, key, e);

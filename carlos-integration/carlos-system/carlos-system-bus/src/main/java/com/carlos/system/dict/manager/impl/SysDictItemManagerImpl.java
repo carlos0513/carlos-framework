@@ -55,9 +55,7 @@ public class SysDictItemManagerImpl extends ServiceImpl<SysDictItemMapper, SysDi
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'SysDictItem' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'SysDictItem' data: id:{}", entity.getId());
         return true;
     }
 

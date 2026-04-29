@@ -141,9 +141,7 @@ public class OAuth2AuthorizationFilter implements GlobalFilter, Ordered {
         // 先从本地缓存获取匹配结果
         Boolean cachedResult = matchResultCache.getIfPresent(cacheKey);
         if (cachedResult != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Permission cache hit for user {}: {}", userContext.getUserId(), cachedResult);
-            }
+            log.debug("Permission cache hit for user {}: {}", userContext.getUserId(), cachedResult);
             return Mono.just(cachedResult);
         }
 
@@ -203,9 +201,7 @@ public class OAuth2AuthorizationFilter implements GlobalFilter, Ordered {
         try {
             // 同步获取权限（Caffeine 需要同步加载器）
             Set<String> permissions = permissionProvider.getUserPermissions(userId).block();
-            if (log.isDebugEnabled()) {
-                log.debug("Loaded permissions for user {}: {} items", userId, permissions != null ? permissions.size() : 0);
-            }
+            log.debug("Loaded permissions for user {}: {} items", userId, permissions != null ? permissions.size() : 0);
             return permissions != null ? permissions : Set.of();
         } catch (Exception e) {
             log.error("Failed to load permissions for user {}", userId, e);

@@ -60,9 +60,7 @@ public class SnowflakeRedisCacheManager implements SnowflakeCacheManager {
     @Override
     public void delCache() {
         RedisUtil.delete(snowflakeRedisKey);
-        if (log.isDebugEnabled()) {
-            log.debug("Delete snowflake key:{} ", snowflakeRedisKey);
-        }
+        log.debug("Delete snowflake key:{} ", snowflakeRedisKey);
     }
 
     /**

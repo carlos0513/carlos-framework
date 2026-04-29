@@ -23,9 +23,7 @@ public class DefaultMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        if (log.isDebugEnabled()) {
-            log.debug("开始执行插入字段自动填充");
-        }
+        log.debug("开始执行插入字段自动填充");
 
         // 填充创建时间
         fillCreateTime(metaObject);
@@ -39,16 +37,12 @@ public class DefaultMetaObjectHandler implements MetaObjectHandler {
         // 填充更新人
         fillUpdateBy(metaObject);
 
-        if (log.isDebugEnabled()) {
-            log.debug("插入字段自动填充完成");
-        }
+        log.debug("插入字段自动填充完成");
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        if (log.isDebugEnabled()) {
-            log.debug("开始执行更新字段自动填充");
-        }
+        log.debug("开始执行更新字段自动填充");
 
         // 填充更新时间
         fillUpdateTime(metaObject);
@@ -56,9 +50,7 @@ public class DefaultMetaObjectHandler implements MetaObjectHandler {
         // 填充更新人
         fillUpdateBy(metaObject);
 
-        if (log.isDebugEnabled()) {
-            log.debug("更新字段自动填充完成");
-        }
+        log.debug("更新字段自动填充完成");
     }
 
     /**

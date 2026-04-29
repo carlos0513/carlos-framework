@@ -83,9 +83,7 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
         }
         dto.setId(entity.getId());
         // 保存完成的后续
-        if (log.isDebugEnabled()) {
-            log.debug("Insert 'SysRegion' data: id:{}", entity.getId());
-        }
+        log.debug("Insert 'SysRegion' data: id:{}", entity.getId());
         SysRegionDTO region = getDtoById(dto.getId());
         this.putCache(region);
         return true;
@@ -106,9 +104,7 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
             log.warn("Remove 'SysRegion' data fail, id:{}", id);
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Remove 'SysRegion' data by id:{}", id);
-        }
+        log.debug("Remove 'SysRegion' data by id:{}", id);
         this.deleteCache(region);
         return true;
     }
@@ -122,9 +118,7 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
             return false;
         }
         // 修改成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("Update 'SysRegion' data by id:{}", dto.getId());
-        }
+        log.debug("Update 'SysRegion' data by id:{}", dto.getId());
         SysRegionDTO region = getDtoById(dto.getId());
         SysRegionConvert.INSTANCE.merge(dto, region);
         this.updateCache(region);
@@ -328,9 +322,7 @@ public class SysRegionManagerImpl extends BaseServiceImpl<SysRegionMapper, SysRe
             return false;
         }
         // 新增成功的后续操作
-        if (log.isDebugEnabled()) {
-            log.debug("add batch 'SysRegion' data");
-        }
+        log.debug("add batch 'SysRegion' data");
         return true;
     }
 

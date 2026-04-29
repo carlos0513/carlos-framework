@@ -320,9 +320,7 @@ public class WafFilter implements GlobalFilter, Ordered {
                     int length = dataBuffer.readableByteCount();
                     // 限制检查体大小，避免大文件上传导致内存问题
                     if (length > properties.getMaxBodySize()) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("WAF: Request body too large ({} bytes), skipping detailed check", length);
-                        }
+                        log.debug("WAF: Request body too large ({} bytes), skipping detailed check", length);
                         // 直接放行，或根据配置决定是否拦截
                         return chain.filter(exchange);
                     }
