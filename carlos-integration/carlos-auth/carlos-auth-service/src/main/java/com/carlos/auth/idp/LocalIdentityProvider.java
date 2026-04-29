@@ -30,6 +30,8 @@ public class LocalIdentityProvider implements IdentityProvider {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final RoleProvider roleProvider;
+
     @Override
     public String getProviderId() {
         return "local";
@@ -88,13 +90,18 @@ public class LocalIdentityProvider implements IdentityProvider {
     }
 
     private UserIdentity convertToUserIdentity(OrgUserAO user) {
+        // 从角色提供者查询用户角色
+        Set<String> roleCodes = roleProvider != null
+            ? roleProvider.getRoleCodesByUserId(user.getId())
+            : Collections.emptySet();
+
         return UserIdentity.builder()
             .providerId(getProviderId())
             .providerUserId(String.valueOf(user.getId()))
             .username(user.getAccount())
             .email(user.getEmail())
             .phone(user.getPhone())
-            .roleCodes(Collections.emptySet()) // TODO: 从 org 查询角色
+            .roleCodes(roleCodes)
             .isNewUser(false)
             .build();
     }

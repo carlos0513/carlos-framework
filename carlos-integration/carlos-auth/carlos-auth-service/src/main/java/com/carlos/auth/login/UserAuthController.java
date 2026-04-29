@@ -6,8 +6,10 @@ import com.carlos.auth.login.dto.LoginResponse;
 import com.carlos.auth.provider.UserInfo;
 import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.manager.IpBlockManager;
+import com.carlos.auth.security.manager.LoginAttemptManager;
 import com.carlos.auth.util.IpLocationUtil;
 import com.carlos.core.response.Result;
+import com.carlos.encrypt.EncryptUtil;
 import com.carlos.redis.ratelimit.RateLimitUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -72,19 +74,26 @@ public class UserAuthController {
     private final UserProvider userProvider;
 
     /**
+     * 登录尝试管理器
+     */
+    private final LoginAttemptManager loginAttemptManager;
+
+    /**
      * 用户登录
      *
      * @param loginRequest 登录请求
      * @return 登录响应
      */
-    @Operation(summary = "用户登录", description = "支持用户名、邮箱或手机号登录，返回访问令牌")
+    @Operation(summary = "用户登录", description = "支持用户名、邮箱或手机号登录，返回访问令牌。password 字段支持 SM2 加密传输")
     @PostMapping("/login")
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest httpRequest) {
         log.info("Received login request for user: {}", loginRequest.getUsername());
         String clientIp = ipLocationUtil.getClientIp(httpRequest);
 
+        // SM2 解密密码（如果前端已加密）
+        decryptPasswordIfNeeded(loginRequest);
+
         try {
-            // TODO: 恢复速率限制检查
             // 检查IP速率限制（50次/分钟）
             if (!RateLimitUtil.tryAcquire("auth:rate:ip:" + clientIp, 50, 1, TimeUnit.MINUTES)) {
                 log.warn("IP rate limit exceeded: {}", clientIp);
@@ -220,15 +229,51 @@ public class UserAuthController {
     /**
      * 检查是否需要触发暴力破解告警
      *
+     * <p>触发条件（满足任一）：</p>
+     * <ul>
+     *   <li>同一 IP 在 5 分钟内失败超过 10 次</li>
+     *   <li>同一账号在 5 分钟内失败超过 5 次</li>
+     * </ul>
+     *
      * @param username 用户名
      * @param request HTTP请求
      * @return true-需要触发告警
      */
     private boolean shouldTriggerBruteForceAlert(String username, HttpServletRequest request) {
-        // 检查IP在5分钟内的失败次数
         String ip = ipLocationUtil.getClientIp(request);
-        // TODO: 实现具体的检查逻辑
-        // 这可能需要检查Redis中该IP的登录失败次数
-        return false; // 暂时返回false，需要根据实际实现
+
+        // 获取 IP 和账号的当前失败次数
+        int ipAttempts = ipBlockManager.getCurrentAttempts(ip);
+        int userAttempts = loginAttemptManager.getCurrentAttempts(username);
+
+        // 触发阈值：IP > 10 次 或 账号 > 5 次
+        boolean shouldAlert = ipAttempts >= 10 || userAttempts >= 5;
+
+        if (shouldAlert) {
+            log.warn("Brute force alert triggered: user={}, ip={}, userAttempts={}, ipAttempts={}",
+                username, ip, userAttempts, ipAttempts);
+        }
+
+        return shouldAlert;
+    }
+
+    /**
+     * 如果密码使用 SM2 加密，执行解密
+     *
+     * @param loginRequest 登录请求
+     */
+    private void decryptPasswordIfNeeded(LoginRequest loginRequest) {
+        if (Boolean.TRUE.equals(loginRequest.getEncrypted()) && loginRequest.getPassword() != null) {
+            try {
+                String decrypted = EncryptUtil.sm2Decrypt(loginRequest.getPassword());
+                if (decrypted != null && !decrypted.isEmpty()) {
+                    loginRequest.setPassword(decrypted);
+                    log.debug("SM2 password decrypted successfully for user: {}", loginRequest.getUsername());
+                }
+            } catch (Exception e) {
+                log.warn("SM2 password decryption failed for user: {}", loginRequest.getUsername(), e);
+                // 解密失败时保留原密码，让后续认证逻辑处理错误
+            }
+        }
     }
 }

@@ -16,7 +16,9 @@ import com.carlos.auth.oauth2.user.CustomizeUserOAuth2AccessTokenGenerator;
 import com.carlos.auth.oauth2.user.CustomizeUserOAuth2TokenCustomizer;
 import com.carlos.auth.provider.DefaultUserProvider;
 import com.carlos.auth.provider.UserProvider;
+import com.carlos.auth.security.Md5PasswordEncoder;
 import com.carlos.auth.security.SecurityProperties;
+import com.carlos.auth.security.Sm3PasswordEncoder;
 import com.carlos.auth.security.ext.ExtendAuthenticationConverter;
 import com.carlos.auth.security.ext.ExtendAuthenticationProvider;
 import com.carlos.auth.security.ext.ExtendAuthenticationToken;
@@ -551,8 +553,16 @@ public class OAuth2AuthorizationServerConfig {
                 log.info("Using BCrypt password encoder");
                 return new BCryptPasswordEncoder();
 
+            case MD5:
+                log.info("Using MD5 password encoder (not recommended for production)");
+                return new Md5PasswordEncoder();
+
+            case SM3:
+                log.info("Using SM3 password encoder");
+                return new Sm3PasswordEncoder();
+
             default:
-                log.info("Using BCrypt password encoder");
+                log.info("Using BCrypt password encoder (default)");
                 return new BCryptPasswordEncoder();
         }
     }

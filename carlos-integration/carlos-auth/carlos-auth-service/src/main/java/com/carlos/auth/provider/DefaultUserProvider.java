@@ -2,6 +2,7 @@ package com.carlos.auth.provider;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see com.carlos.auth.provider.UserProvider
  */
 @Slf4j
+@Profile("!prod")
 public class DefaultUserProvider implements UserProvider {
 
     private final PasswordEncoder passwordEncoder;

@@ -1,12 +1,14 @@
 package com.carlos.auth.web;
 
 import cn.hutool.core.util.StrUtil;
+import com.carlos.auth.web.vo.CheckTokenVO;
 import com.carlos.boot.request.RequestInfo;
 import com.carlos.boot.request.RequestUtil;
 import com.carlos.core.response.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
@@ -15,6 +17,10 @@ import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
 
 /**
  * Token 管理控制器
@@ -31,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2022/11/13 21:14
  * @see com.carlos.auth.login.UserAuthController
  */
+@Slf4j
 @AllArgsConstructor
 @RestController
 @RequestMapping("/auth/token")
@@ -59,14 +66,82 @@ public class TokenController {
 
     @GetMapping("/checkToken")
     @Operation(summary = "检查Token")
-    public Result<String> checkToken(@RequestParam("token") String token) {
-        // RequestInfo requestInfo = RequestUtil.getRequestInfo();
-        // String token = requestInfo.getToken();
+    public Result<CheckTokenVO> checkToken(@RequestParam("token") String token) {
+        if (StrUtil.isBlank(token)) {
+            return Result.success(CheckTokenVO.builder()
+                .active(false)
+                .error("Token 不能为空")
+                .build());
+        }
+
         OAuth2Authorization authorization = this.authorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
+        if (authorization == null) {
+            log.debug("Token not found or expired: {}", maskToken(token));
+            return Result.success(CheckTokenVO.builder()
+                .active(false)
+                .error("Token 不存在或已过期")
+                .build());
+        }
+
+        OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization.getAccessToken();
+        if (accessToken == null || accessToken.getToken() == null) {
+            return Result.success(CheckTokenVO.builder()
+                .active(false)
+                .error("Token 无效")
+                .build());
+        }
+
+        // 检查是否过期
+        Instant expiresAt = accessToken.getToken().getExpiresAt();
+        if (expiresAt != null && expiresAt.isBefore(Instant.now())) {
+            return Result.success(CheckTokenVO.builder()
+                .active(false)
+                .error("Token 已过期")
+                .build());
+        }
+
         String registeredClientId = authorization.getRegisteredClientId();
         RegisteredClient client = clientService.findById(registeredClientId);
-        // 如果令牌不存在 返回401
-        return Result.success(client.getClientId());
+
+        // 从 Token Claims 中提取用户上下文
+        Map<String, Object> claims = authorization.getAccessToken().getClaims();
+        String tokenType = claims != null ? (String) claims.get("token_type") : null;
+        Long userId = extractLongClaim(claims, "user_id");
+        String username = claims != null ? (String) claims.get("username") : null;
+        Long tenantId = extractLongClaim(claims, "tenant_id");
+        Long deptId = extractLongClaim(claims, "dept_id");
+        Set<Long> roleIds = extractRoleIds(claims);
+        List<String> authorities = extractAuthorities(claims);
+        Set<String> scopes = accessToken.getToken().getScopes();
+
+        long expiresIn = 0;
+        Instant issuedAt = accessToken.getToken().getIssuedAt();
+        if (issuedAt != null && expiresAt != null) {
+            expiresIn = Duration.between(Instant.now(), expiresAt).getSeconds();
+            if (expiresIn < 0) {
+                expiresIn = 0;
+            }
+        }
+
+        CheckTokenVO vo = CheckTokenVO.builder()
+            .active(true)
+            .tokenType(tokenType != null ? tokenType : "unknown")
+            .userId(userId)
+            .username(username)
+            .tenantId(tenantId)
+            .deptId(deptId)
+            .roleIds(roleIds)
+            .authorities(authorities)
+            .clientId(client != null ? client.getClientId() : registeredClientId)
+            .scopes(scopes)
+            .expiresIn(expiresIn)
+            .issuedAt(issuedAt != null ? issuedAt.toEpochMilli() : null)
+            .expiresAt(expiresAt != null ? expiresAt.toEpochMilli() : null)
+            .build();
+
+        log.debug("Token check success: tokenType={}, userId={}, clientId={}", tokenType, userId,
+            client != null ? client.getClientId() : registeredClientId);
+        return Result.success(vo);
     }
 
     /**
@@ -79,6 +154,9 @@ public class TokenController {
     @PostMapping("delete")
     public Result<?> removeToken(String token) {
         OAuth2Authorization authorization = this.authorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
+        if (authorization == null) {
+            return Result.success();
+        }
         OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization.getAccessToken();
         if (accessToken == null || StrUtil.isBlank(accessToken.getToken().getTokenValue())) {
             return Result.success();
@@ -86,5 +164,64 @@ public class TokenController {
         // 清空access token
         this.authorizationService.remove(authorization);
         return Result.success();
+    }
+
+    // ==================== 私有辅助方法 ====================
+
+    private Long extractLongClaim(Map<String, Object> claims, String key) {
+        if (claims == null || !claims.containsKey(key)) {
+            return null;
+        }
+        Object value = claims.get(key);
+        if (value instanceof Number number) {
+            return number.longValue();
+        }
+        try {
+            return Long.valueOf(value.toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Long> extractRoleIds(Map<String, Object> claims) {
+        if (claims == null || !claims.containsKey("role_ids")) {
+            return Collections.emptySet();
+        }
+        Object value = claims.get("role_ids");
+        if (value instanceof Collection<?> collection) {
+            return collection.stream()
+                .map(item -> {
+                    if (item instanceof Number number) {
+                        return number.longValue();
+                    }
+                    try {
+                        return Long.valueOf(item.toString());
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(java.util.stream.Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
+
+    private List<String> extractAuthorities(Map<String, Object> claims) {
+        if (claims == null || !claims.containsKey("authorities")) {
+            return Collections.emptyList();
+        }
+        Object value = claims.get("authorities");
+        if (value instanceof String str) {
+            return Arrays.asList(str.split(","));
+        }
+        return Collections.emptyList();
+    }
+
+    private static String maskToken(String token) {
+        if (token == null || token.length() < 10) {
+            return "***";
+        }
+        return token.substring(0, 6) + "****" + token.substring(token.length() - 4);
     }
 }

@@ -12,6 +12,7 @@ import com.carlos.auth.provider.UserProvider;
 import com.carlos.auth.security.manager.IpBlockManager;
 import com.carlos.auth.security.manager.LoginAttemptManager;
 import com.carlos.auth.util.IpLocationUtil;
+import com.carlos.encrypt.EncryptUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -138,6 +139,9 @@ public class UserLoginService {
      */
     public LoginResponse login(LoginRequest loginRequest) {
         log.info("User login attempt: username={}", loginRequest.getUsername());
+
+        // SM2 解密密码（如果前端已加密）
+        decryptPasswordIfNeeded(loginRequest);
 
         try {
             // 构建认证令牌
@@ -515,5 +519,25 @@ public class UserLoginService {
             case "LOCKED" -> "账号锁定";
             default -> eventType;
         };
+    }
+
+    /**
+     * 如果密码使用 SM2 加密，执行解密
+     *
+     * @param loginRequest 登录请求
+     */
+    private void decryptPasswordIfNeeded(LoginRequest loginRequest) {
+        if (Boolean.TRUE.equals(loginRequest.getEncrypted()) && loginRequest.getPassword() != null) {
+            try {
+                String decrypted = EncryptUtil.sm2Decrypt(loginRequest.getPassword());
+                if (decrypted != null && !decrypted.isEmpty()) {
+                    loginRequest.setPassword(decrypted);
+                    log.debug("SM2 password decrypted successfully for user: {}", loginRequest.getUsername());
+                }
+            } catch (Exception e) {
+                log.warn("SM2 password decryption failed for user: {}", loginRequest.getUsername(), e);
+                // 解密失败时保留原密码，让后续认证逻辑处理错误
+            }
+        }
     }
 }

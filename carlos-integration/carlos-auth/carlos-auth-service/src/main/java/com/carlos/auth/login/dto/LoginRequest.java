@@ -43,4 +43,13 @@ public class LoginRequest {
      */
     @Schema(description = "客户端ID（可选）", example = "carlos-client")
     private String clientId;
+
+    /**
+     * 密码是否已加密（SM2 前端加密标识）
+     *
+     * <p>当设置为 true 时，表示 password 字段已使用 SM2 公钥加密，
+     * 后端需要使用 SM2 私钥解密后再进行密码校验。</p>
+     */
+    @Schema(description = "密码是否已使用 SM2 加密", example = "false")
+    private Boolean encrypted;
 }

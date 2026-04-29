@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
+import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
@@ -17,6 +18,7 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationCode;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
+import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.util.Assert;
 
 import java.time.Duration;
@@ -96,9 +98,14 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         // 注册 JavaTimeModule 支持 JDK8 日期时间
         objectMapper.registerModule(new JavaTimeModule());
+        // 注册 Spring Security Jackson2 Modules（关键：支持 Spring Security 内部类的序列化/反序列化）
+        ClassLoader classLoader = getClass().getClassLoader();
+        objectMapper.registerModules(SecurityJackson2Modules.getModules(classLoader));
+        // 注册 OAuth2 Authorization Server Jackson2 Module（支持 OAuth2Authorization 等内部类）
+        objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
         // 添加 AuthorizationGrantType 混合注解处理
         objectMapper.addMixIn(AuthorizationGrantType.class, AuthorizationGrantTypeMixin.class);
-        log.info("CustomizeOAuth2AuthorizationService initialized");
+        log.info("RedisOAuth2AuthorizationService initialized with SecurityJackson2Modules");
     }
 
     /**
