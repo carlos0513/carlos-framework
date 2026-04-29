@@ -124,7 +124,7 @@
 
     <freemarker.version>2.3.31</freemarker.version>
     <resilience4j.version>2.1.0</resilience4j.version>
-    <clickhouse-jdbc.version>0.9.6</clickhouse-jdbc.version>
+    <clickhouse-jdbc.version>0.9.8</clickhouse-jdbc.version>
 
     <!-- SkyWalking -->
     <skywalking.version>9.5.0</skywalking.version>
