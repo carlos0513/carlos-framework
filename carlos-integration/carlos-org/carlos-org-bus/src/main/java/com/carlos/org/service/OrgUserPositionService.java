@@ -3,6 +3,8 @@ package com.carlos.org.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.carlos.core.response.CommonErrorCode;
+import com.carlos.org.api.enums.OrgErrorCode;
 import com.carlos.org.manager.OrgUserPositionManager;
 import com.carlos.org.pojo.entity.OrgUserPosition;
 import com.carlos.org.pojo.param.OrgUserAssignPositionParam;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import com.carlos.core.exception.BusinessException;
 
 /**
  * <p>
@@ -45,7 +46,7 @@ public class OrgUserPositionService {
             .eq(OrgUserPosition::getDeleted, false));
 
         if (exist != null) {
-            throw new BusinessException("用户已分配该岗位，不能重复分配");
+            throw OrgErrorCode.ORG_USER_ROLE_ALREADY_EXISTS.exception();
         }
 
         // 如果设置为主岗位，需要将其他岗位设为非主岗位
@@ -68,7 +69,7 @@ public class OrgUserPositionService {
 
         boolean success = userPositionManager.save(userPosition);
         if (!success) {
-            throw new BusinessException("分配岗位失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("分配岗位失败");
         }
 
         log.info("用户分配岗位成功：userId={}, positionId={}", param.getUserId(), param.getPositionId());
@@ -89,7 +90,7 @@ public class OrgUserPositionService {
             .set(OrgUserPosition::getDimissionDate, LocalDate.now()));
 
         if (!success) {
-            throw new BusinessException("卸任岗位失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("卸任岗位失败");
         }
 
         log.info("用户卸任岗位成功：userId={}, positionId={}", userId, positionId);

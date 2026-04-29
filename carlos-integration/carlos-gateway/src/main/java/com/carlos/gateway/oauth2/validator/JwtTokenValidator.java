@@ -62,7 +62,7 @@ public class JwtTokenValidator implements TokenValidator {
             }
         } catch (Exception e) {
             log.error("Failed to initialize JWT signer", e);
-            throw new BusinessException("JWT signer initialization failed");
+            throw CommonErrorCode.ENCRYPTION_ERROR.exception("JWT signer initialization failed");
         }
     }
 

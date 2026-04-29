@@ -18,8 +18,6 @@ import com.carlos.message.pojo.param.MessageTemplatePageParam;
 import com.carlos.message.pojo.vo.MessageTemplateVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -37,9 +35,8 @@ import java.io.Serializable;
 @Component
 public class MessageTemplateManagerImpl extends BaseServiceImpl<MessageTemplateMapper, MessageTemplate> implements MessageTemplateManager {
 
-    @Lazy
-    @Autowired
-    private MessageTypeManager messageTypeManager;
+    private final MessageTypeManager messageTypeManager;
+
 
     @Override
     public boolean add(MessageTemplateDTO dto) {

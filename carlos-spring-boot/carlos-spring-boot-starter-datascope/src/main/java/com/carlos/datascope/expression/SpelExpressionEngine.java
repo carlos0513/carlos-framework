@@ -1,5 +1,7 @@
 package com.carlos.datascope.expression;
 
+import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.datascope.core.engine.ExecutionContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.expression.Expression;
@@ -7,7 +9,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.util.Map;
-import com.carlos.core.exception.BusinessException;
 
 /**
  * SpringEL 表达式引擎实现
@@ -49,7 +50,7 @@ public class SpelExpressionEngine implements ExpressionEngine {
             return expression.getValue(evalContext);
         } catch (Exception e) {
             log.error("Failed to execute SpEL expression: {}", expression.getExpressionString(), e);
-            throw new BusinessException("Expression execution failed", e);
+            throw new BusinessException(CommonErrorCode.INTERNAL_ERROR, "Expression execution failed", e);
         }
     }
 

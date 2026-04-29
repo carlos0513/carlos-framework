@@ -1,12 +1,12 @@
 package com.carlos.datasource.base;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.carlos.core.exception.DaoException;
 import com.carlos.datasource.config.MybatisCommonField;
 import jakarta.annotation.Resource;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import com.carlos.core.exception.DaoException;
 
 /**
  * <p>
@@ -26,6 +26,7 @@ public abstract class BaseServiceImpl<M extends BaseMapper<T>, T>
 
     @Resource
     protected MybatisCommonField commonField;
+
 
     /**
      * 获取主键值（子类可实现自定义逻辑）

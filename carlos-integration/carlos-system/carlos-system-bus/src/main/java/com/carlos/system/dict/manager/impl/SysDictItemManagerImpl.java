@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.datasource.pagination.PageInfo;
 import com.carlos.system.dict.convert.SysDictItemConvert;
 import com.carlos.system.dict.manager.SysDictItemManager;
@@ -18,6 +18,7 @@ import com.carlos.system.dict.pojo.dto.SysDictItemDTO;
 import com.carlos.system.dict.pojo.entity.SysDictItem;
 import com.carlos.system.dict.pojo.param.SysDictItemPageParam;
 import com.carlos.system.dict.pojo.vo.SysDictItemVO;
+import com.carlos.system.enums.SystemErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -63,10 +64,10 @@ public class SysDictItemManagerImpl extends ServiceImpl<SysDictItemMapper, SysDi
     @Override
     public long count(final Serializable dictId, final Serializable excludeId, final String name, String code) {
         if (ObjectUtil.isEmpty(dictId)) {
-            throw new BusinessException("字典ID不能为空！");
+            throw CommonErrorCode.PARAM_MISSING.exception("字典ID不能为空");
         }
         if (StringUtils.isBlank(name) && StringUtils.isBlank(code)) {
-            throw new BusinessException("字典选项名称或字典选项编码不能为空！");
+            throw CommonErrorCode.PARAM_MISSING.exception("字典选项名称或字典选项编码不能为空");
         }
         return lambdaQuery().eq(SysDictItem::getDictId, dictId)
             .eq(StrUtil.isNotBlank(name), SysDictItem::getItemName, name)
@@ -90,7 +91,7 @@ public class SysDictItemManagerImpl extends ServiceImpl<SysDictItemMapper, SysDi
     public Serializable getDictIdById(Serializable id) {
         SysDictItem entity = this.getOne(Wrappers.lambdaQuery(SysDictItem.class).eq(SysDictItem::getId, id).select(SysDictItem::getDictId));
         if (entity == null) {
-            throw new BusinessException("字典选项不存在！");
+            throw SystemErrorCode.SYS_DICT_ITEM_NOT_FOUND.exception();
         }
         return entity.getDictId();
     }

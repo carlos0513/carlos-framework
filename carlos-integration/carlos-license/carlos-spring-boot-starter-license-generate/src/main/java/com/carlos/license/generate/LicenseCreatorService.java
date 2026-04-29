@@ -8,7 +8,7 @@ import cn.hutool.core.util.ZipUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.system.OsInfo;
 import cn.hutool.system.SystemUtil;
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.license.CustomKeyStoreParam;
 import com.carlos.license.CustomLicenseManager;
 import com.carlos.license.LicenseCheckModel;
@@ -83,7 +83,7 @@ public class LicenseCreatorService {
             String osName = osInfo.getName();
             if (StrUtil.isBlank(osName)) {
                 log.error("不支持的操作系统类型:name:{} arch:{}", osInfo.getName(), osInfo.getArch());
-                throw new BusinessException("系统信息读取失败！");
+                throw CommonErrorCode.INTERNAL_ERROR.exception("系统信息读取失败");
             }
             osName = osName.toLowerCase();
             osType = OSType.tagOf(osName);

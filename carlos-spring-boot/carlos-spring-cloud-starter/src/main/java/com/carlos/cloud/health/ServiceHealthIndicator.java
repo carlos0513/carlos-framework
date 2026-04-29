@@ -1,8 +1,8 @@
 package com.carlos.cloud.health;
 
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,11 +26,11 @@ import java.util.List;
  * @date 2024/01/15
  */
 @Slf4j
+@RequiredArgsConstructor
 @ConditionalOnClass(NacosServiceDiscovery.class)
 public class ServiceHealthIndicator implements HealthIndicator {
 
-    @Autowired(required = false)
-    private NacosServiceDiscovery nacosServiceDiscovery;
+    private final NacosServiceDiscovery nacosServiceDiscovery;
 
     @Override
     public Health health() {

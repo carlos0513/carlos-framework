@@ -1,5 +1,6 @@
 package com.carlos.redis.lock;
 
+import com.carlos.core.response.CommonErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
@@ -7,7 +8,6 @@ import org.redisson.api.RedissonClient;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import com.carlos.core.exception.BusinessException;
 
 /**
  * Redis 分布式锁工具类（增强版）
@@ -328,7 +328,7 @@ public class RedissonLockUtil {
      */
     public static <T> T executeWithLock(String name, LockType lockType, Supplier<T> supplier) {
         if (!lock(name, lockType)) {
-            throw new BusinessException("获取分布式锁失败: " + name);
+            throw CommonErrorCode.SERVICE_UNAVAILABLE.exception("获取分布式锁失败: " + name);
         }
         try {
             return supplier.get();

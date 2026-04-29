@@ -1,6 +1,7 @@
 package com.carlos.migration.util;
 
 import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public class ChangelogGenerator {
             return filePath.toString();
         } catch (IOException e) {
             log.error("[ChangelogGenerator] 生成变更日志失败", e);
-            throw new BusinessException("生成变更日志失败", e);
+            throw new BusinessException(CommonErrorCode.INTERNAL_ERROR, "生成变更日志失败", e);
         }
     }
 
@@ -111,7 +112,7 @@ public class ChangelogGenerator {
             return filePath.toString();
         } catch (IOException e) {
             log.error("[ChangelogGenerator] 生成 SQL 变更日志失败", e);
-            throw new BusinessException("生成 SQL 变更日志失败", e);
+            throw new BusinessException(CommonErrorCode.INTERNAL_ERROR, "生成 SQL 变更日志失败", e);
         }
     }
 
@@ -135,7 +136,7 @@ public class ChangelogGenerator {
             return filePath.toString();
         } catch (IOException e) {
             log.error("[ChangelogGenerator] 生成主变更日志失败", e);
-            throw new BusinessException("生成主变更日志失败", e);
+            throw new BusinessException(CommonErrorCode.INTERNAL_ERROR, "生成主变更日志失败", e);
         }
     }
 }

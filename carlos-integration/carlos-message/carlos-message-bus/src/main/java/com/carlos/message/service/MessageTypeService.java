@@ -1,7 +1,8 @@
 package com.carlos.message.service;
 
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
+import com.carlos.message.enums.MessageErrorCode;
 import com.carlos.message.manager.MessageTypeManager;
 import com.carlos.message.pojo.dto.MessageTypeDTO;
 import lombok.RequiredArgsConstructor;
@@ -91,11 +92,11 @@ public class MessageTypeService {
      */
     public MessageTypeDTO getByTypeCode(String typeCode) {
         if (StrUtil.isBlank(typeCode)) {
-            throw new BusinessException("类型编码不能为空");
+            throw MessageErrorCode.MSG_PARAM_TEMPLATE_CODE_EMPTY.exception();
         }
         MessageTypeDTO dto = typeManager.getByTypeCode(typeCode);
         if (dto == null) {
-            throw new BusinessException("消息类型不存在: " + typeCode);
+            throw MessageErrorCode.MSG_RECORD_NOT_FOUND.exception("消息类型不存在: " + typeCode);
         }
         return dto;
     }
@@ -110,14 +111,14 @@ public class MessageTypeService {
     public void enableType(Serializable id) {
         MessageTypeDTO existing = typeManager.getDtoById(id);
         if (existing == null) {
-            throw new BusinessException("消息类型不存在");
+            throw MessageErrorCode.MSG_RECORD_NOT_FOUND.exception();
         }
         if (Boolean.TRUE.equals(existing.getEnabled())) {
-            throw new BusinessException("消息类型已处于启用状态");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("消息类型已处于启用状态");
         }
         boolean success = typeManager.updateStatus(id, Boolean.TRUE);
         if (!success) {
-            throw new BusinessException("启用消息类型失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("启用消息类型失败");
         }
         log.info("Enable MessageType: id:{}", id);
     }
@@ -132,14 +133,14 @@ public class MessageTypeService {
     public void disableType(Serializable id) {
         MessageTypeDTO existing = typeManager.getDtoById(id);
         if (existing == null) {
-            throw new BusinessException("消息类型不存在");
+            throw MessageErrorCode.MSG_RECORD_NOT_FOUND.exception();
         }
         if (Boolean.FALSE.equals(existing.getEnabled())) {
-            throw new BusinessException("消息类型已处于禁用状态");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("消息类型已处于禁用状态");
         }
         boolean success = typeManager.updateStatus(id, Boolean.FALSE);
         if (!success) {
-            throw new BusinessException("禁用消息类型失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("禁用消息类型失败");
         }
         log.info("Disable MessageType: id:{}", id);
     }
@@ -153,11 +154,11 @@ public class MessageTypeService {
      */
     public void validateTypeCodeUnique(String typeCode) {
         if (StrUtil.isBlank(typeCode)) {
-            throw new BusinessException("类型编码不能为空");
+            throw MessageErrorCode.MSG_PARAM_TEMPLATE_CODE_EMPTY.exception();
         }
         MessageTypeDTO existing = typeManager.getByTypeCode(typeCode);
         if (existing != null) {
-            throw new BusinessException("类型编码已存在: " + typeCode);
+            throw MessageErrorCode.MSG_TEMPLATE_ALREADY_EXISTS.exception("类型编码已存在: " + typeCode);
         }
     }
 

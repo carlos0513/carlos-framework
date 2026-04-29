@@ -5,15 +5,15 @@ import feign.FeignException;
 import feign.Response;
 import feign.codec.DecodeException;
 import feign.codec.Decoder;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+@RequiredArgsConstructor
 public class FeignDecoder implements Decoder {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     /**
      * 这里统一处理，根据状态码判断返回正常还是异常的， 200返回正常的，其他状态码直接抛出异常

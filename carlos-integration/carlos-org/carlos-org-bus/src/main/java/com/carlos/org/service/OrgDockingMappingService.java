@@ -2,7 +2,7 @@ package com.carlos.org.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.org.manager.OrgDockingMappingManager;
 import com.carlos.org.pojo.dto.OrgDockingMappingDTO;
 import com.carlos.org.pojo.enums.OrgDockingTypeEnum;
@@ -64,13 +64,13 @@ public class OrgDockingMappingService {
      */
     public OrgDockingMappingDTO getDockingMapping(OrgDockingTypeEnum type, String targetCode, String targetId) {
         if (type == null) {
-            throw new BusinessException("OrgDockingType can't be null！");
+            throw CommonErrorCode.PARAM_MISSING.exception("OrgDockingType 不能为空");
         }
         if (StrUtil.isBlank(targetId)) {
-            throw new BusinessException("targetId can't be null！");
+            throw CommonErrorCode.PARAM_MISSING.exception("targetId 不能为空");
         }
         if (StrUtil.isBlank(targetCode)) {
-            throw new BusinessException("targetCode can't be null！");
+            throw CommonErrorCode.PARAM_MISSING.exception("targetCode 不能为空");
         }
         OrgDockingMappingDTO dockingMapping = dockingMappingManager.getDockingMapping(type, targetCode, targetId);
         return dockingMapping;
@@ -85,7 +85,7 @@ public class OrgDockingMappingService {
      */
     public OrgDockingMappingDTO getDockingMappingByTargetId(String targetId) {
         if (StrUtil.isBlank(targetId)) {
-            throw new BusinessException("targetId can't be null！");
+            throw CommonErrorCode.PARAM_MISSING.exception("targetId 不能为空");
         }
         OrgDockingMappingDTO dockingMapping = dockingMappingManager.getDockingMappingByTargetId(targetId);
         return dockingMapping;
@@ -93,7 +93,7 @@ public class OrgDockingMappingService {
 
     public List<OrgDockingMappingDTO> listByTargetIds(Set<String> targetIds) {
         if (CollUtil.isEmpty(targetIds)) {
-            throw new BusinessException("目标系统ids为空，用户信息对接关联信息失败");
+            throw CommonErrorCode.PARAM_MISSING.exception("目标系统 ids 为空");
         }
         return dockingMappingManager.listByTargetIds(targetIds);
     }
@@ -108,7 +108,7 @@ public class OrgDockingMappingService {
      */
     public List<OrgDockingMappingDTO> listBySystemIds(Set<String> systemIds) {
         if (CollUtil.isEmpty(systemIds)) {
-            throw new BusinessException("系统ids为空，用户信息对接关联信息失败");
+            throw CommonErrorCode.PARAM_MISSING.exception("系统 ids 为空");
         }
         return dockingMappingManager.listBySystemIds(systemIds);
     }

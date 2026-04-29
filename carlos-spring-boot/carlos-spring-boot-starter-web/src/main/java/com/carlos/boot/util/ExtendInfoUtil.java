@@ -96,7 +96,7 @@ public final class ExtendInfoUtil {
         }
         final UserContext context = extend.getUserContext();
         if (extend == null) {
-            throw new BusinessException("用户登陆信息为空");
+            throw CommonErrorCode.UNAUTHORIZED.exception("用户登录信息为空");
         }
         return context;
     }

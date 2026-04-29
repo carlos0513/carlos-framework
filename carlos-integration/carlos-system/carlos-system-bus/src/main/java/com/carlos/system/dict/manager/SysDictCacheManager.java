@@ -11,6 +11,7 @@ import com.carlos.redis.util.RedisUtil;
 import com.carlos.system.dict.pojo.dto.SysDictDTO;
 import com.carlos.system.dict.pojo.dto.SysDictItemDTO;
 import com.carlos.system.dict.pojo.entity.SysDict;
+import com.carlos.system.enums.SystemErrorCode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
@@ -111,7 +112,7 @@ public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
             log.info("init dict cache success");
         } catch (Exception e) {
             log.error("Failed to init dict cache with pagination", e);
-            throw new BusinessException("初始化字典缓存失败", e);
+            throw new BusinessException(SystemErrorCode.SYS_CACHE_ERROR, "初始化字典缓存失败", e);
         }
 
 

@@ -2,12 +2,12 @@ package com.carlos.system.configration.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.BusinessException;
 import com.carlos.system.configration.manager.SysConfigManager;
 import com.carlos.system.configration.pojo.dto.SysConfigDTO;
 import com.carlos.system.configration.pojo.vo.SysConfigLoginPageVO;
 import com.carlos.system.configration.service.SysConfigService;
 import com.carlos.system.enums.ConfigValueType;
+import com.carlos.system.enums.SystemErrorCode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Sets;
@@ -42,7 +42,7 @@ public class SysConfigServiceImpl implements SysConfigService {
         // 检查code是否重复
         List<SysConfigDTO> config = configManager.listByCodes(Sets.newHashSet(dto.getConfigCode()));
         if (CollUtil.isNotEmpty(config)) {
-            throw new BusinessException("配置键已存在");
+            throw SystemErrorCode.SYS_CONFIG_KEY_ALREADY_EXISTS.exception();
         }
         boolean success = configManager.add(dto);
         if (!success) {

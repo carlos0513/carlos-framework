@@ -22,7 +22,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.stage.DirectoryChooser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -175,7 +174,6 @@ public class CodeGeneratorController extends BaseController {
      *
      * @param applicationContext Spring应用上下文
      */
-    @Autowired
     public CodeGeneratorController(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }

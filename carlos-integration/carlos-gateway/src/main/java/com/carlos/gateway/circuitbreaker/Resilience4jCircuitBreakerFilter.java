@@ -7,6 +7,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -158,25 +159,10 @@ public class Resilience4jCircuitBreakerFilter extends
         return Arrays.asList("name", "fallbackUri");
     }
 
+    @Data
     public static class Config {
 
         private String name;           // 熔断器名称
         private String fallbackUri;    // 降级接口地址
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getFallbackUri() {
-            return fallbackUri;
-        }
-
-        public void setFallbackUri(String fallbackUri) {
-            this.fallbackUri = fallbackUri;
-        }
     }
 }

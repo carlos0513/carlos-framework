@@ -4,13 +4,14 @@ import cn.hutool.core.lang.func.Func1;
 import cn.hutool.core.lang.func.LambdaUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
+import com.carlos.core.exception.DaoException;
 import com.carlos.core.pagination.PageConvert;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamPage;
 import com.carlos.core.util.PropertyNamer;
 import com.carlos.mongodb.MetaObject;
 import com.carlos.mongodb.MetaObjectHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import com.carlos.core.exception.DaoException;
 
 /**
  * 公共 Service 实现类
@@ -33,6 +33,7 @@ import com.carlos.core.exception.DaoException;
  * @author Carlos
  * @date 2021/12/22 19:09
  */
+@RequiredArgsConstructor
 @SuppressWarnings("unchecked")
 public abstract class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID extends Serializable>
     implements BaseService<T, ID> {
@@ -42,14 +43,11 @@ public abstract class BaseServiceImpl<M extends MongoRepository<T, ID>, T, ID ex
      */
     private Class<T> entityClass;
 
-    @Autowired
-    protected M baseRepository;
+    protected final M baseRepository;
 
-    @Autowired(required = false)
-    protected MetaObjectHandler metaObjectHandler;
+    protected final MetaObjectHandler metaObjectHandler;
 
-    @Autowired(required = false)
-    protected MongoTemplate mongoTemplate;
+    protected final MongoTemplate mongoTemplate;
 
     {
         final Class<?> clazz = this.getClass();

@@ -1,5 +1,7 @@
 package com.carlos.datascope.cache;
 
+import lombok.Getter;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,6 +73,7 @@ public interface DataScopeCache {
     /**
      * 缓存统计信息
      */
+    @Getter
     class CacheStats {
         private long hitCount;
         private long missCount;
@@ -88,18 +91,6 @@ public interface DataScopeCache {
             this.hitCount = hitCount;
             this.missCount = missCount;
             this.size = size;
-        }
-
-        public long getHitCount() {
-            return hitCount;
-        }
-
-        public long getMissCount() {
-            return missCount;
-        }
-
-        public long getSize() {
-            return size;
         }
 
         public double getHitRate() {

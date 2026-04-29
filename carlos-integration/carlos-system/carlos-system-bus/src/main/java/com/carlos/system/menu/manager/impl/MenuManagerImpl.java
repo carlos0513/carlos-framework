@@ -24,7 +24,7 @@ import java.util.Set;
 
 /**
  * <p>
- * 系统菜单 查询封装实现类
+ * 系统菜单 查询封装实现�?
  * </p>
  *
  * @author carlos

@@ -4,7 +4,6 @@ import com.carlos.mongodb.base.BaseServiceImpl;
 import com.carlos.mongodb.entity.LogDocument;
 import com.carlos.mongodb.repository.LogDocumentRepository;
 import com.carlos.mongodb.service.LogDocumentService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,10 +17,14 @@ import java.util.List;
  * @date 2026/3/15
  */
 @Service
-@RequiredArgsConstructor
 public class LogDocumentServiceImpl extends BaseServiceImpl<LogDocumentRepository, LogDocument, String> implements LogDocumentService {
 
     private final LogDocumentRepository logDocumentRepository;
+
+    public LogDocumentServiceImpl(LogDocumentRepository baseRepository, org.springframework.data.mongodb.core.MongoTemplate mongoTemplate, LogDocumentRepository logDocumentRepository) {
+        super(baseRepository, null, mongoTemplate);
+        this.logDocumentRepository = logDocumentRepository;
+    }
 
     @Override
     public LogDocumentRepository getBaseRepository() {

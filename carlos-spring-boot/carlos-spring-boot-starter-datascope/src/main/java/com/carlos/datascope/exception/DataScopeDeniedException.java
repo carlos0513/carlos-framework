@@ -1,5 +1,7 @@
 package com.carlos.datascope.exception;
 
+import lombok.Getter;
+
 /**
  * 数据权限拒绝异常
  * <p>
@@ -8,6 +10,7 @@ package com.carlos.datascope.exception;
  * @author Carlos
  * @version 2.0
  */
+@Getter
 public class DataScopeDeniedException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
@@ -30,9 +33,5 @@ public class DataScopeDeniedException extends RuntimeException {
     public DataScopeDeniedException(String message, Throwable cause) {
         super(message, cause);
         this.code = "DATA_SCOPE_DENIED";
-    }
-
-    public String getCode() {
-        return code;
     }
 }

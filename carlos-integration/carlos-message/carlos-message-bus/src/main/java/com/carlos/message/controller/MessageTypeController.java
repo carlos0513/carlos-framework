@@ -1,10 +1,10 @@
 package com.carlos.message.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.BusinessException;
 import com.carlos.core.pagination.Paging;
 import com.carlos.core.param.ParamIdSet;
 import com.carlos.message.convert.MessageTypeConvert;
+import com.carlos.message.enums.MessageErrorCode;
 import com.carlos.message.manager.MessageTypeManager;
 import com.carlos.message.pojo.dto.MessageTypeDTO;
 import com.carlos.message.pojo.param.MessageTypeCreateParam;
@@ -84,7 +84,7 @@ public class MessageTypeController {
     @Parameter(name = "typeCode", description = "类型编码", required = true)
     public MessageTypeVO getByCode(@RequestParam String typeCode) {
         if (StrUtil.isBlank(typeCode)) {
-            throw new BusinessException("类型编码不能为空");
+            throw MessageErrorCode.MSG_PARAM_TEMPLATE_CODE_EMPTY.exception();
         }
         MessageTypeDTO dto = typeService.getByTypeCode(typeCode);
         return MessageTypeConvert.INSTANCE.toVO(dto);

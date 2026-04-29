@@ -1,5 +1,6 @@
 package com.carlos.oss.web;
 
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.core.response.Result;
 import com.carlos.oss.config.OssProperties;
 import com.carlos.oss.core.OssTemplate;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import com.carlos.core.exception.BusinessException;
 
 /**
  * <p>
@@ -128,7 +128,7 @@ public class OssController {
             return Result.success(ossFile);
         } catch (Exception e) {
             log.error("Failed to upload file", e);
-            throw new BusinessException("Failed to upload file: " + e.getMessage());
+            throw CommonErrorCode.FILE_UPLOAD_ERROR.exception("Failed to upload file: " + e.getMessage());
         }
     }
 

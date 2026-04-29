@@ -1,8 +1,8 @@
 package com.carlos.cloud.nacos;
 
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
@@ -28,13 +28,12 @@ import java.util.Map;
  * @date 2024/01/15
  */
 @Slf4j
+@RequiredArgsConstructor
 public class NacosServiceRegistryListener implements ApplicationListener<WebServerInitializedEvent> {
 
-    @Autowired
-    private NacosRegistration nacosRegistration;
+    private final NacosRegistration nacosRegistration;
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
     @Override
     public void onApplicationEvent(@NonNull WebServerInitializedEvent event) {

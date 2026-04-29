@@ -1,5 +1,7 @@
 package com.carlos.cloud.nacos;
 
+import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.carlos.cloud.health.ServiceHealthIndicator;
@@ -49,9 +51,10 @@ public class NacosConfig {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "carlos.cloud.nacos", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public NacosServiceRegistryListener nacosServiceRegistryListener() {
+    public NacosServiceRegistryListener nacosServiceRegistryListener(NacosRegistration nacosRegistration,
+                                                                     Environment environment) {
         log.info("初始化 Nacos 服务注册监听器");
-        return new NacosServiceRegistryListener();
+        return new NacosServiceRegistryListener(nacosRegistration, environment);
     }
 
     /**
@@ -60,9 +63,11 @@ public class NacosConfig {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "carlos.cloud.nacos.subscription", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public NacosServiceInstanceListener nacosServiceInstanceListener() {
+    public NacosServiceInstanceListener nacosServiceInstanceListener(NacosServiceManager nacosServiceManager,
+                                                                     NacosDiscoveryProperties nacosDiscoveryProperties,
+                                                                     NacosCloudProperties nacosCloudProperties) {
         log.info("初始化 Nacos 服务实例变更监听器");
-        return new NacosServiceInstanceListener();
+        return new NacosServiceInstanceListener(nacosServiceManager, nacosDiscoveryProperties, nacosCloudProperties);
     }
 
     /**
@@ -105,8 +110,8 @@ public class NacosConfig {
     @ConditionalOnMissingBean
     @ConditionalOnClass(NacosServiceDiscovery.class)
     @ConditionalOnProperty(prefix = "carlos.cloud.health", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public ServiceHealthIndicator serviceHealthIndicator() {
+    public ServiceHealthIndicator serviceHealthIndicator(NacosServiceDiscovery nacosServiceDiscovery) {
         log.info("初始化服务健康检查指示器");
-        return new ServiceHealthIndicator();
+        return new ServiceHealthIndicator(nacosServiceDiscovery);
     }
 }

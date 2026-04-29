@@ -3,7 +3,8 @@ package com.carlos.system.resource.service;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.carlos.core.constant.CoreConstant;
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
+import com.carlos.system.enums.SystemErrorCode;
 import com.carlos.system.resource.manager.SysResourceCategoryManager;
 import com.carlos.system.resource.pojo.dto.ResourceCategoryDTO;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class SysResourceCategoryService {
         final boolean success = resourceCategoryManager.add(dto);
         if (!success) {
             // 保存失败的应对措施
-            throw new BusinessException("资源保存失败！");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("资源保存失败");
         }
     }
 
@@ -100,7 +101,7 @@ public class SysResourceCategoryService {
         final ResourceCategoryDTO dto = resourceCategoryManager.getDtoById(categoryId);
         if (dto == null) {
             log.error("资源类型不存在: id：{}", categoryId);
-            throw new BusinessException("资源类型不存在！");
+            throw SystemErrorCode.SYS_RESOURCE_NOT_FOUND.exception("资源类型不存在");
         }
         if (dto.getParentId().equals(CoreConstant.PARENT_LONG_0)) {
             return dto.getName();

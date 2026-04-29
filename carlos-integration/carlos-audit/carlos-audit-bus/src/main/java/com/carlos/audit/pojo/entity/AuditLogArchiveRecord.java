@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.carlos.audit.pojo.enums.AuditLogArchiveStateEnum;
 import com.carlos.audit.pojo.enums.AuditLogStorageTypeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
  * @author Carlos
  * @date 2026年3月6日 下午9:31:12
  */
+@Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("audit_log_archive_record")
@@ -90,100 +92,5 @@ public class AuditLogArchiveRecord extends Model<AuditLogArchiveRecord> implemen
     @TableField(value = "created_time")
     private LocalDateTime createdTime;
 
-    // Getter methods
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getArchiveId() {
-        return archiveId;
-    }
-
-    public void setArchiveId(String archiveId) {
-        this.archiveId = archiveId;
-    }
-
-    public LocalDate getArchiveDate() {
-        return archiveDate;
-    }
-
-    public void setArchiveDate(LocalDate archiveDate) {
-        this.archiveDate = archiveDate;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public Long getRecordCount() {
-        return recordCount;
-    }
-
-    public void setRecordCount(Long recordCount) {
-        this.recordCount = recordCount;
-    }
-
-    public Long getFileSizeBytes() {
-        return fileSizeBytes;
-    }
-
-    public void setFileSizeBytes(Long fileSizeBytes) {
-        this.fileSizeBytes = fileSizeBytes;
-    }
-
-    public String getStoragePath() {
-        return storagePath;
-    }
-
-    public void setStoragePath(String storagePath) {
-        this.storagePath = storagePath;
-    }
-
-    public AuditLogStorageTypeEnum getStorageType() {
-        return storageType;
-    }
-
-    public void setStorageType(AuditLogStorageTypeEnum storageType) {
-        this.storageType = storageType;
-    }
-
-    public String getVerifyChecksum() {
-        return verifyChecksum;
-    }
-
-    public void setVerifyChecksum(String verifyChecksum) {
-        this.verifyChecksum = verifyChecksum;
-    }
-
-    public AuditLogArchiveStateEnum getState() {
-        return state;
-    }
-
-    public void setState(AuditLogArchiveStateEnum state) {
-        this.state = state;
-    }
-
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
 }

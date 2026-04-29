@@ -6,8 +6,8 @@ import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -29,16 +29,14 @@ import java.util.stream.Collectors;
  * @date 2024/01/15
  */
 @Slf4j
+@RequiredArgsConstructor
 public class NacosServiceInstanceListener implements ApplicationListener<HeartbeatEvent> {
 
-    @Autowired
-    private NacosServiceManager nacosServiceManager;
+    private final NacosServiceManager nacosServiceManager;
 
-    @Autowired
-    private NacosDiscoveryProperties nacosDiscoveryProperties;
+    private final NacosDiscoveryProperties nacosDiscoveryProperties;
 
-    @Autowired
-    private NacosCloudProperties nacosCloudProperties;
+    private final NacosCloudProperties nacosCloudProperties;
 
     /**
      * 服务实例缓存

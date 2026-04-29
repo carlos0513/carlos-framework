@@ -3,7 +3,8 @@ package com.carlos.message.service;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
+import com.carlos.message.enums.MessageErrorCode;
 import com.carlos.message.manager.MessageTemplateManager;
 import com.carlos.message.pojo.dto.MessageTemplateDTO;
 import lombok.RequiredArgsConstructor;
@@ -94,11 +95,11 @@ public class MessageTemplateService {
      */
     public MessageTemplateDTO getByTemplateCode(String templateCode) {
         if (StrUtil.isBlank(templateCode)) {
-            throw new BusinessException("模板编码不能为空");
+            throw MessageErrorCode.MSG_PARAM_TEMPLATE_CODE_EMPTY.exception();
         }
         MessageTemplateDTO dto = templateManager.getByTemplateCode(templateCode);
         if (dto == null) {
-            throw new BusinessException("消息模板不存在: " + templateCode);
+            throw MessageErrorCode.MSG_TEMPLATE_NOT_FOUND.exception("消息模板不存在: " + templateCode);
         }
         return dto;
     }
@@ -113,14 +114,14 @@ public class MessageTemplateService {
     public void publishTemplate(Serializable id) {
         MessageTemplateDTO existing = templateManager.getDtoById(id);
         if (existing == null) {
-            throw new BusinessException("消息模板不存在");
+            throw MessageErrorCode.MSG_TEMPLATE_NOT_FOUND.exception();
         }
         if (existing.getEnabled() != null && existing.getEnabled()) {
-            throw new BusinessException("消息模板已处于发布状态");
+            throw MessageErrorCode.MSG_TEMPLATE_ALREADY_EXISTS.exception("消息模板已处于发布状态");
         }
         boolean success = templateManager.publish(id);
         if (!success) {
-            throw new BusinessException("发布消息模板失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("发布消息模板失败");
         }
         log.info("Publish MessageTemplate: id:{}", id);
     }
@@ -135,14 +136,14 @@ public class MessageTemplateService {
     public void enableTemplate(Serializable id) {
         MessageTemplateDTO existing = templateManager.getDtoById(id);
         if (existing == null) {
-            throw new BusinessException("消息模板不存在");
+            throw MessageErrorCode.MSG_TEMPLATE_NOT_FOUND.exception();
         }
         if (existing.getEnabled() != null && existing.getEnabled()) {
-            throw new BusinessException("消息模板已处于启用状态");
+            throw MessageErrorCode.MSG_TEMPLATE_ALREADY_EXISTS.exception("消息模板已处于启用状态");
         }
         boolean success = templateManager.updateStatus(id, Boolean.TRUE);
         if (!success) {
-            throw new BusinessException("启用消息模板失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("启用消息模板失败");
         }
         log.info("Enable MessageTemplate: id:{}", id);
     }
@@ -157,14 +158,14 @@ public class MessageTemplateService {
     public void disableTemplate(Serializable id) {
         MessageTemplateDTO existing = templateManager.getDtoById(id);
         if (existing == null) {
-            throw new BusinessException("消息模板不存在");
+            throw MessageErrorCode.MSG_TEMPLATE_NOT_FOUND.exception();
         }
         if (existing.getEnabled() != null && !existing.getEnabled()) {
-            throw new BusinessException("消息模板已处于禁用状态");
+            throw MessageErrorCode.MSG_TEMPLATE_DISABLED.exception("消息模板已处于禁用状态");
         }
         boolean success = templateManager.updateStatus(id, Boolean.FALSE);
         if (!success) {
-            throw new BusinessException("禁用消息模板失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("禁用消息模板失败");
         }
         log.info("Disable MessageTemplate: id:{}", id);
     }
@@ -179,7 +180,7 @@ public class MessageTemplateService {
      */
     public void validateTemplateParams(String templateCode, Map<String, Object> params) {
         if (StrUtil.isBlank(templateCode)) {
-            throw new BusinessException("模板编码不能为空");
+            throw MessageErrorCode.MSG_PARAM_TEMPLATE_CODE_EMPTY.exception();
         }
         MessageTemplateDTO template = getByTemplateCode(templateCode);
         String paramSchema = template.getParamSchema();
@@ -191,14 +192,14 @@ public class MessageTemplateService {
             schemaJson = JSONUtil.parseObj(paramSchema);
         } catch (Exception e) {
             log.error("Parse param_schema fail, templateCode: {}, schema: {}", templateCode, paramSchema, e);
-            throw new BusinessException("模板参数定义格式错误");
+            throw MessageErrorCode.MSG_TEMPLATE_PARAM_INVALID.exception();
         }
         if (params == null) {
-            throw new BusinessException("模板参数不能为空");
+            throw MessageErrorCode.MSG_TEMPLATE_PARAM_INVALID.exception("模板参数不能为空");
         }
         for (String key : schemaJson.keySet()) {
             if (!params.containsKey(key)) {
-                throw new BusinessException("缺少模板参数: " + key);
+                throw MessageErrorCode.MSG_TEMPLATE_PARAM_INVALID.exception("缺少模板参数: " + key);
             }
         }
     }
@@ -212,11 +213,11 @@ public class MessageTemplateService {
      */
     public void validateTemplateCodeUnique(String templateCode) {
         if (StrUtil.isBlank(templateCode)) {
-            throw new BusinessException("模板编码不能为空");
+            throw MessageErrorCode.MSG_PARAM_TEMPLATE_CODE_EMPTY.exception();
         }
         MessageTemplateDTO existing = templateManager.getByTemplateCode(templateCode);
         if (existing != null) {
-            throw new BusinessException("模板编码已存在: " + templateCode);
+            throw MessageErrorCode.MSG_TEMPLATE_ALREADY_EXISTS.exception("模板编码已存在: " + templateCode);
         }
     }
 }

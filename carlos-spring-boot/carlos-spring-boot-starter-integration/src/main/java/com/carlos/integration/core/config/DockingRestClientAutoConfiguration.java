@@ -5,7 +5,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -58,7 +57,7 @@ class DockingClientScanner {
     private final DockingRestClientProperties properties;
     private final DockingClientRegistry registry;
 
-    @Autowired
+    @PostConstruct
     public void init() {
         // 扫描配置中定义的客户端并注册
         for (Map.Entry<String, DockingRestClientProperties.ClientConfig> entry :

@@ -1,6 +1,6 @@
 package com.carlos.system.resource.service;
 
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
 import com.carlos.system.dict.SysResourceMethod;
 import com.carlos.system.dict.SysResourceType;
 import com.carlos.system.pojo.ao.SysResourceAO;
@@ -57,7 +57,7 @@ public class SysResourceService {
         final boolean success = resourceManager.add(dto);
         if (!success) {
             // 保存失败的应对措施
-            throw new BusinessException("资源保存失败！");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("资源保存失败");
         }
     }
 

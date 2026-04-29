@@ -2,6 +2,7 @@ package com.carlos.security.permission;
 
 import com.carlos.security.permission.cache.PermissionCacheSyncManager;
 import com.carlos.security.permission.provider.CachedPermissionProvider;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -53,18 +54,11 @@ import java.util.Set;
  * @see PermissionCacheSyncManager
  */
 @Slf4j
+@RequiredArgsConstructor
 public class PermissionService {
 
-    private PermissionProvider permissionProvider;
-    private PermissionCacheSyncManager syncManager;
-
-    /**
-     * 创建 PermissionService
-     */
-    public PermissionService(PermissionProvider permissionProvider, PermissionCacheSyncManager syncManager) {
-        this.permissionProvider = permissionProvider;
-        this.syncManager = syncManager;
-    }
+    private final PermissionProvider permissionProvider;
+    private final PermissionCacheSyncManager syncManager;
 
     /**
      * 获取用户的所有权限

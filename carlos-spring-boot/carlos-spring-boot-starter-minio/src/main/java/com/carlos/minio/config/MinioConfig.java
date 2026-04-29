@@ -8,9 +8,9 @@ import io.minio.MinioAsyncClient;
 import io.minio.MinioClient;
 import io.minio.http.HttpUtils;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,19 +26,17 @@ import org.springframework.context.annotation.Configuration;
  * @date 2021/6/10 14:14
  */
 @Slf4j
+@RequiredArgsConstructor
 @Configuration
 @EnableConfigurationProperties(MinioProperties.class)
 @ConditionalOnProperty(prefix = "carlos.minio", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MinioConfig {
 
-    @Autowired
-    private MinioClient minioClient;
+    private final MinioClient minioClient;
 
-    @Autowired
-    private IMinioAsyncClient minioAsyncClient;
+    private final IMinioAsyncClient minioAsyncClient;
 
-    @Autowired
-    private MinioProperties minioProperties;
+    private final MinioProperties minioProperties;
 
     /**
      * 初始化 MinioUtil 静态字段

@@ -5,7 +5,6 @@ import com.carlos.gateway.ratelimit.event.RateLimitExceededEvent;
 import com.carlos.gateway.ratelimit.keyresolver.CarlosKeyResolver;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.support.ConfigurationService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -45,7 +44,6 @@ public class CarlosRedisRateLimiter extends RedisRateLimiter {
     /**
      * 创建限流器（用于依赖注入）
      */
-    @Autowired
     public CarlosRedisRateLimiter(ReactiveStringRedisTemplate redisTemplate,
                                   RedisScript<List<Long>> script,
                                   ConfigurationService configurationService,

@@ -9,7 +9,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.carlos.core.base.RegionInfo;
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
+import com.carlos.system.enums.SystemErrorCode;
 import com.carlos.system.region.config.RegionConstant;
 import com.carlos.system.region.convert.SysRegionConvert;
 import com.carlos.system.region.manager.SysRegionManager;
@@ -72,7 +73,7 @@ public class SysRegionService {
         if (!success) {
             // 保存失败的应对措施
             log.error("region save failed");
-            throw new BusinessException("区域新增失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("区域新增失败");
         }
         Serializable id = dto.getId();
         // 保存完成的后续业务
@@ -83,7 +84,7 @@ public class SysRegionService {
             .eq(SysRegion::getRegionCode, dto.getRegionCode())
             .eq(SysRegion::getParentCode, dto.getParentCode()));
         if (getByCode > 0) {
-            throw new BusinessException("区域码已存在，添加失败！");
+            throw SystemErrorCode.SYS_REGION_CODE_ALREADY_EXISTS.exception("区域码已存在，添加失败");
         }
     }
 
@@ -100,7 +101,7 @@ public class SysRegionService {
             SysRegionDTO region = this.regionManager.getDtoById(id);
             long subCount = this.regionManager.countByParentCode(region.getRegionCode());
             if (subCount > 0) {
-                throw new BusinessException(region.getRegionName() + "删除失败,请确保该区域下不存在子区域！");
+                throw SystemErrorCode.SYS_REGION_HAS_CHILDREN.exception(region.getRegionName() + "删除失败,请确保该区域下不存在子区域");
             }
             boolean success = this.regionManager.delete(id);
             if (!success) {
@@ -120,12 +121,12 @@ public class SysRegionService {
      */
     public void updateSysRegion(SysRegionDTO dto) {
         if (StrUtil.isBlank(dto.getRegionCode())) {
-            throw new BusinessException("区域编码为空，更新失败！");
+            throw CommonErrorCode.PARAM_MISSING.exception("区域编码为空，更新失败");
         }
         SysRegionDTO dtoByRegionCode = this.regionManager.getByRegionCode(dto.getRegionCode());
         if (dtoByRegionCode != null) {
             if (!ObjectUtil.equals(dto.getId(), dtoByRegionCode.getId())) {
-                throw new BusinessException("更新失败，行政区域编码" + dto.getRegionCode() + "已存在！");
+                throw SystemErrorCode.SYS_REGION_CODE_ALREADY_EXISTS.exception("更新失败，行政区域编码" + dto.getRegionCode() + "已存在");
             }
         }
         // 设置区域类型
@@ -411,7 +412,7 @@ public class SysRegionService {
         // 保存数据
         boolean success = regionManager.addBatch(regions);
         if (!success) {
-            throw new BusinessException("区域数据初始化导入失败!");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("区域数据初始化导入失败");
         }
     }
 
@@ -435,7 +436,7 @@ public class SysRegionService {
         try {
             ExcelUtil.download(response, name, RegionExcel.class, data);
         } catch (Exception e) {
-            throw new BusinessException("区域信息导出失败");
+            throw CommonErrorCode.BUSINESS_ERROR.exception("区域信息导出失败");
         }
     }
 

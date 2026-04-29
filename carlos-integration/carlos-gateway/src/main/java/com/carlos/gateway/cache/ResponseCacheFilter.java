@@ -4,6 +4,7 @@ import com.carlos.core.constant.HttpHeadersConstant;
 import com.carlos.gateway.constant.GatewayHeaderConstants;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -239,6 +240,7 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
     /**
      * 缓存的响应
      */
+    @Getter
     public static class CachedResponse {
         private HttpStatusCode statusCode;
         private HttpHeaders headers;
@@ -256,18 +258,6 @@ public class ResponseCacheFilter implements GlobalFilter, Ordered {
 
         public boolean isExpired() {
             return System.currentTimeMillis() - timestamp > ttl;
-        }
-
-        public HttpStatusCode getStatusCode() {
-            return statusCode;
-        }
-
-        public HttpHeaders getHeaders() {
-            return headers;
-        }
-
-        public byte[] getBody() {
-            return body;
         }
     }
 }

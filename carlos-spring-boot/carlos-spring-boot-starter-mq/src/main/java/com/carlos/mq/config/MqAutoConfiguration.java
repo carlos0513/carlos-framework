@@ -4,8 +4,8 @@ import com.carlos.mq.core.MqTemplate;
 import com.carlos.mq.support.MqType;
 import com.carlos.mq.util.MqUtil;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,6 +24,7 @@ import org.springframework.core.env.Environment;
  * @date 2026/3/14
  */
 @Slf4j
+@RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(MqProperties.class)
 @ConditionalOnProperty(prefix = "carlos.mq", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -34,14 +35,11 @@ import org.springframework.core.env.Environment;
 })
 public class MqAutoConfiguration {
 
-    @Autowired
-    private MqProperties mqProperties;
+    private final MqProperties mqProperties;
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
-    @Autowired(required = false)
-    private MqTemplate mqTemplate;
+    private final MqTemplate mqTemplate;
 
     @PostConstruct
     public void init() {

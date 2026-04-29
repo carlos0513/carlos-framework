@@ -3,7 +3,6 @@ package com.carlos.system.dict.service;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import com.carlos.core.exception.BusinessException;
 import com.carlos.system.dict.convert.SysDictConvert;
 import com.carlos.system.dict.convert.SysDictItemConvert;
 import com.carlos.system.dict.manager.SysDictItemManager;
@@ -13,6 +12,7 @@ import com.carlos.system.dict.pojo.dto.SysDictItemDTO;
 import com.carlos.system.dict.pojo.param.SysDictCreateParam;
 import com.carlos.system.dict.pojo.param.SysDictCreateParam.Item;
 import com.carlos.system.dict.pojo.param.SysDictUpdateParam;
+import com.carlos.system.enums.SystemErrorCode;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,10 +57,10 @@ public class SysDictService {
     @Transactional(rollbackFor = Exception.class)
     public boolean addDict(SysDictDTO dto, List<SysDictCreateParam.Item> items) {
         if (dictManager.count(dto.getDictCode(), null, null) > 0) {
-            throw new BusinessException("字典编码不可重复!");
+            throw SystemErrorCode.SYS_DICT_ALREADY_EXISTS.exception("字典编码不可重复");
         }
         if (dictManager.count(null, dto.getDictName(), null) > 0) {
-            throw new BusinessException("字典名称不可重复!");
+            throw SystemErrorCode.SYS_DICT_ALREADY_EXISTS.exception("字典名称不可重复");
         }
         boolean save = dictManager.add(dto);
         if (save) {
@@ -85,11 +85,11 @@ public class SysDictService {
         Serializable dictId = dto.getId();
         SysDictDTO dict = dictManager.getDictById(dictId);
         if (dict == null) {
-            throw new BusinessException("字典不存在!");
+            throw SystemErrorCode.SYS_DICT_NOT_FOUND.exception();
         }
 
         if (dictManager.count(null, dto.getDictName(), dto.getId()) > 0) {
-            throw new BusinessException("字典名称不可重复!");
+            throw SystemErrorCode.SYS_DICT_ALREADY_EXISTS.exception("字典名称不可重复");
         }
         boolean success = dictManager.updateById(SysDictConvert.INSTANCE.toDO(dto));
         if (success) {
@@ -153,7 +153,7 @@ public class SysDictService {
     public SysDictDTO getDetail(String id) {
         SysDictDTO dict = this.dictManager.getDictById(id);
         if (dict == null) {
-            throw new BusinessException("字典不存在");
+            throw SystemErrorCode.SYS_DICT_NOT_FOUND.exception();
         }
         List<SysDictItemDTO> items = dictItemManager.listItems(Sets.newHashSet(dict.getId()), null, false);
         dict.setItems(items);

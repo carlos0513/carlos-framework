@@ -3,7 +3,7 @@ package com.carlos.snowflake;
 import cn.hutool.core.date.SystemClock;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.carlos.core.exception.BusinessException;
+import com.carlos.core.response.CommonErrorCode;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -62,16 +62,16 @@ public class SnowflakeProperties implements InitializingBean {
             tag = SpringUtil.getProperty("spring.application.name");
             if (StrUtil.isBlank(tag)) {
                 log.error("snowflake tag is null, please check your application.yml, set 'spring.application.name' or 'carlos.snowflake.tag'");
-                throw new BusinessException("snowflake tag is null, please check your application.yml, set 'spring.application.name' or 'carlos.snowflake.tag'");
+                throw CommonErrorCode.CONFIG_LOAD_ERROR.exception("snowflake tag is null, please check your application.yml, set 'spring.application.name' or 'carlos.snowflake.tag'");
             }
         }
         // 校验 workerId 范围
         if (workerId != null && (workerId < 0 || workerId > SnowflakeConstant.MAX_WORKER_ID)) {
-            throw new BusinessException("carlos.snowflake.workerId must be between 0 and " + SnowflakeConstant.MAX_WORKER_ID);
+            throw CommonErrorCode.PARAM_OUT_OF_RANGE.exception("carlos.snowflake.workerId must be between 0 and " + SnowflakeConstant.MAX_WORKER_ID);
         }
         // 校验 dataCenterId 范围
         if (dataCenterId != null && (dataCenterId < 0 || dataCenterId > SnowflakeConstant.MAX_DATA_CENTER_ID)) {
-            throw new BusinessException("carlos.snowflake.dataCenterId must be between 0 and " + SnowflakeConstant.MAX_DATA_CENTER_ID);
+            throw CommonErrorCode.PARAM_OUT_OF_RANGE.exception("carlos.snowflake.dataCenterId must be between 0 and " + SnowflakeConstant.MAX_DATA_CENTER_ID);
         }
         log.debug("Snowflake properties:{}", this);
     }

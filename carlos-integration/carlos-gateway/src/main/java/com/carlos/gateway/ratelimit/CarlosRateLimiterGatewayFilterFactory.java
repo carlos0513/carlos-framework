@@ -5,6 +5,8 @@ import com.carlos.core.response.CommonErrorCode;
 import com.carlos.gateway.exception.ErrorResponse;
 import com.carlos.gateway.ratelimit.config.CarlosRateLimiterProperties;
 import com.carlos.gateway.ratelimit.keyresolver.CarlosKeyResolver;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -250,6 +252,8 @@ public class CarlosRateLimiterGatewayFilterFactory
     /**
      * 配置类
      */
+    @Getter
+    @Setter
     @Validated
     public static class Config {
 
@@ -287,70 +291,5 @@ public class CarlosRateLimiterGatewayFilterFactory
          * 路由 ID（用于 per-route 配置）
          */
         private String routeId;
-
-        // Getters and Setters
-
-        public Integer getReplenishRate() {
-            return replenishRate;
-        }
-
-        public Config setReplenishRate(Integer replenishRate) {
-            this.replenishRate = replenishRate;
-            return this;
-        }
-
-        public Integer getBurstCapacity() {
-            return burstCapacity;
-        }
-
-        public Config setBurstCapacity(Integer burstCapacity) {
-            this.burstCapacity = burstCapacity;
-            return this;
-        }
-
-        public Integer getRequestedTokens() {
-            return requestedTokens;
-        }
-
-        public Config setRequestedTokens(Integer requestedTokens) {
-            this.requestedTokens = requestedTokens;
-            return this;
-        }
-
-        public KeyResolver getKeyResolver() {
-            return keyResolver;
-        }
-
-        public Config setKeyResolver(KeyResolver keyResolver) {
-            this.keyResolver = keyResolver;
-            return this;
-        }
-
-        public CarlosRedisRateLimiter getRateLimiter() {
-            return rateLimiter;
-        }
-
-        public Config setRateLimiter(CarlosRedisRateLimiter rateLimiter) {
-            this.rateLimiter = rateLimiter;
-            return this;
-        }
-
-        public HttpStatus getStatusCode() {
-            return statusCode;
-        }
-
-        public Config setStatusCode(HttpStatus statusCode) {
-            this.statusCode = statusCode;
-            return this;
-        }
-
-        public String getRouteId() {
-            return routeId;
-        }
-
-        public Config setRouteId(String routeId) {
-            this.routeId = routeId;
-            return this;
-        }
     }
 }
