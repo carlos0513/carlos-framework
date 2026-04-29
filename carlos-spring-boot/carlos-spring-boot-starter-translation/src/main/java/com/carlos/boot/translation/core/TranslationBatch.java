@@ -3,7 +3,10 @@ package com.carlos.boot.translation.core;
 import com.carlos.core.enums.BaseEnum;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -79,27 +82,27 @@ public class TranslationBatch {
     }
 
     public Set<Serializable> getUserIds() {
-        return Collections.unmodifiableSet(userIds);
+        return Set.copyOf(userIds);
     }
 
     public Map<String, Set<String>> getDictCodes() {
         Map<String, Set<String>> result = new HashMap<>();
-        dictCodes.forEach((k, v) -> result.put(k, Collections.unmodifiableSet(v)));
-        return Collections.unmodifiableMap(result);
+        dictCodes.forEach((k, v) -> result.put(k, Set.copyOf(v)));
+        return Map.copyOf(result);
     }
 
     public Set<Serializable> getDeptIds() {
-        return Collections.unmodifiableSet(deptIds);
+        return Set.copyOf(deptIds);
     }
 
     public Set<String> getRegionCodes() {
-        return Collections.unmodifiableSet(regionCodes);
+        return Set.copyOf(regionCodes);
     }
 
     public Map<Class<? extends BaseEnum<?>>, Set<Object>> getEnumValues() {
         Map<Class<? extends BaseEnum<?>>, Set<Object>> result = new HashMap<>();
-        enumValues.forEach((k, v) -> result.put(k, Collections.unmodifiableSet(v)));
-        return Collections.unmodifiableMap(result);
+        enumValues.forEach((k, v) -> result.put(k, Set.copyOf(v)));
+        return Map.copyOf(result);
     }
 
     @Override

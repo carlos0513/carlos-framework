@@ -437,7 +437,10 @@ public class BranchManagementController extends BaseController {
         // 显示确认对话框
         boolean confirmed = DialogUtil.showConfirm(
                 "确认删除",
-                "确定要删除 " + selected.size() + " 个分支吗？\n\n注意：受保护的分支将被跳过。"
+            """
+                确定要删除 %d 个分支吗？
+
+                注意：受保护的分支将被跳过。""".formatted(selected.size())
         );
 
         // 如果用户取消，直接返回
@@ -602,7 +605,10 @@ public class BranchManagementController extends BaseController {
         // 显示确认对话框
         boolean confirmed = DialogUtil.showConfirm(
                 "确认删除",
-                "确定要删除所有已合并的分支吗？\n\n注意：受保护的分支和主分支将被跳过。"
+            """
+                确定要删除所有已合并的分支吗？
+
+                注意：受保护的分支和主分支将被跳过。"""
         );
 
         if (!confirmed) {

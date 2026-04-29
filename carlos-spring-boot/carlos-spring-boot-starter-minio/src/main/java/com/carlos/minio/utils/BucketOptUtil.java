@@ -110,25 +110,26 @@ public class BucketOptUtil {
      * @date 2023/11/12 23:30
      */
     public static void setBucketPublic(String bucket) {
-        String config =
-            "{\n" +
-                "\t\"Version\": \"2012-10-17\",\n" +
-                "\t\"Statement\": [{\n" +
-                "\t\t\"Effect\": \"Allow\",\n" +
-                "\t\t\"Principal\": {\n" +
-                "\t\t\t\"AWS\": [\"*\"]\n" +
-                "\t\t},\n" +
-                "\t\t\"Action\": [\"s3:GetBucketLocation\", \"s3:ListBucket\", \"s3:ListBucketMultipartUploads\"],\n" +
-                "\t\t\"Resource\": [\"arn:aws:s3:::" + bucket + "\"]\n" +
-                "\t}, {\n" +
-                "\t\t\"Effect\": \"Allow\",\n" +
-                "\t\t\"Principal\": {\n" +
-                "\t\t\t\"AWS\": [\"*\"]\n" +
-                "\t\t},\n" +
-                "\t\t\"Action\": [\"s3:AbortMultipartUpload\", \"s3:DeleteObject\", \"s3:GetObject\", \"s3:ListMultipartUploadParts\", \"s3:PutObject\"],\n" +
-                "\t\t\"Resource\": [\"arn:aws:s3:::" + bucket + "/*\"]\n" +
-                "\t}]\n" +
-                "}\n";
+        String config = """
+            {
+            	"Version": "2012-10-17",
+            	"Statement": [{
+            		"Effect": "Allow",
+            		"Principal": {
+            			"AWS": ["*"]
+            		},
+            		"Action": ["s3:GetBucketLocation", "s3:ListBucket", "s3:ListBucketMultipartUploads"],
+            		"Resource": ["arn:aws:s3:::%s"]
+            	}, {
+            		"Effect": "Allow",
+            		"Principal": {
+            			"AWS": ["*"]
+            		},
+            		"Action": ["s3:AbortMultipartUpload", "s3:DeleteObject", "s3:GetObject", "s3:ListMultipartUploadParts", "s3:PutObject"],
+            		"Resource": ["arn:aws:s3:::%s/*"]
+            	}]
+            }
+            """.formatted(bucket, bucket);
         setBucketPolicy(bucket, config);
     }
 

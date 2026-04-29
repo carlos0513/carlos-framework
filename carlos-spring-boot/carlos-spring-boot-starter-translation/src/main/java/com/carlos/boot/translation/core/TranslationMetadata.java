@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -102,7 +101,7 @@ public class TranslationMetadata {
             }
         }
 
-        return Collections.unmodifiableList(list);
+        return List.copyOf(list);
     }
 
     /**

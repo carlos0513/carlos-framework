@@ -90,22 +90,22 @@ public class TranslationData {
     }
 
     public Map<Serializable, UserInfo> getUsers() {
-        return Collections.unmodifiableMap(users);
+        return Map.copyOf(users);
     }
 
     public Map<String, Dict> getDicts() {
-        return Collections.unmodifiableMap(dicts);
+        return Map.copyOf(dicts);
     }
 
     public Map<Serializable, DepartmentInfo> getDepts() {
-        return Collections.unmodifiableMap(depts);
+        return Map.copyOf(depts);
     }
 
     public Map<String, RegionInfo> getRegions() {
-        return Collections.unmodifiableMap(regions);
+        return Map.copyOf(regions);
     }
 
     public Map<String, EnumInfo> getEnums() {
-        return Collections.unmodifiableMap(enums);
+        return Map.copyOf(enums);
     }
 }

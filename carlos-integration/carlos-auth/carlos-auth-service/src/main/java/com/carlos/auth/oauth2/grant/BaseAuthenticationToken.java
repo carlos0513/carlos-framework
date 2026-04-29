@@ -8,7 +8,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -52,8 +54,8 @@ public abstract class BaseAuthenticationToken extends AbstractAuthenticationToke
         Assert.notNull(client, "clientPrincipal cannot be null");
         this.grantType = grantType;
         this.client = client;
-        this.scopes = Collections.unmodifiableSet(scopes != null ? new HashSet<>(scopes) : Collections.emptySet());
-        this.parameters = Collections.unmodifiableMap(parameters != null ? new HashMap<>(parameters) : Collections.emptyMap());
+        this.scopes = Set.copyOf(scopes != null ? scopes : Collections.emptySet());
+        this.parameters = Map.copyOf(parameters != null ? parameters : Collections.emptyMap());
     }
 
     /**

@@ -350,7 +350,9 @@ public class DialogUtil {
             try {
                 HostServices hostServices = ToolsApplication.getApplicationHostServices();
                 if (hostServices == null) {
-                    showWarning("警告", "无法获取HostServices，无法打开目录\n目录位置: " + outputPath);
+                    showWarning("警告", """
+                        无法获取HostServices，无法打开目录
+                        目录位置: %s""".formatted(outputPath));
                     return;
                 }
                 // 使用JavaFX的HostServices打开目录
@@ -427,7 +429,9 @@ public class DialogUtil {
                 if (Files.exists(logFile)) {
                     HostServices hostServices = ToolsApplication.getApplicationHostServices();
                     if (hostServices == null) {
-                        showWarning("警告", "无法获取HostServices，无法打开日志文件\n日志位置: " + logFile);
+                        showWarning("警告", """
+                            无法获取HostServices，无法打开日志文件
+                            日志位置: %s""".formatted(logFile));
                         return;
                     }
                     // 使用JavaFX的HostServices打开日志文件

@@ -533,9 +533,12 @@ public class MergeRequestController extends BaseController {
         // 显示确认对话框，显示详细的合并信息
         boolean confirmed = DialogUtil.showConfirm(
                 "确认合并",
-                "确定要合并请求 #" + selected.getIid() + " 吗？\n\n" +
-                        "源分支: " + selected.getSourceBranch() + "\n" +
-                        "目标分支: " + selected.getTargetBranch()
+            """
+                确定要合并请求 #%d 吗？
+
+                源分支: %s
+                目标分支: %s""".formatted(
+                selected.getIid(), selected.getSourceBranch(), selected.getTargetBranch())
         );
 
         // 如果用户取消，直接返回

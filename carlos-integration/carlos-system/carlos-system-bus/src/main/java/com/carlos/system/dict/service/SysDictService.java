@@ -188,15 +188,15 @@ public class SysDictService {
                 dict = new SysDictDTO();
                 items = new ArrayList<>();
                 sort = 1;
-                dict.setDictName(words.get(0));
-                dict.setDescription(words.get(0));
+                dict.setDictName(words.getFirst());
+                dict.setDescription(words.getFirst());
                 dict.setDictCode(StrUtil.padPre(dictCode + "", 3, "0"));
                 dictCode++;
                 continue;
             }
             Item item = new Item();
             item.setItemName(words.get(1));
-            item.setItemCode(words.get(0));
+            item.setItemCode(words.getFirst());
             item.setDescription(words.get(1));
             item.setSort(sort);
             sort++;

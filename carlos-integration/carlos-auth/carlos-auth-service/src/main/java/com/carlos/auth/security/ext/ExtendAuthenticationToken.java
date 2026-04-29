@@ -8,7 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 扩展认证令牌
@@ -115,7 +118,7 @@ public class ExtendAuthenticationToken extends AbstractAuthenticationToken {
         this.client = client;
         this.scopes = scopes != null ? Set.copyOf(scopes) : Collections.emptySet();
         this.additionalParameters = additionalParameters != null
-            ? Collections.unmodifiableMap(new HashMap<>(additionalParameters))
+            ? Map.copyOf(additionalParameters)
             : Collections.emptyMap();
         this.authMethod = grantType != null ? grantType.getValue() : "unknown";
         setAuthenticated(false);
@@ -148,7 +151,7 @@ public class ExtendAuthenticationToken extends AbstractAuthenticationToken {
         this.client = client;
         this.scopes = scopes != null ? Set.copyOf(scopes) : Collections.emptySet();
         this.additionalParameters = additionalParameters != null
-            ? Collections.unmodifiableMap(new HashMap<>(additionalParameters))
+            ? Map.copyOf(additionalParameters)
             : Collections.emptyMap();
         this.securityUser = securityUser;
         this.authMethod = grantType != null ? grantType.getValue() : "unknown";

@@ -69,8 +69,8 @@ public class LogConfig {
         }
 
         if (storages.size() == 1) {
-            log.info("检测到单个 LogStorage: {}", storages.get(0).getName());
-            return storages.get(0);
+            log.info("检测到单个 LogStorage: {}", storages.getFirst().getName());
+            return storages.getFirst();
         }
 
         // 多个存储器，使用组合存储

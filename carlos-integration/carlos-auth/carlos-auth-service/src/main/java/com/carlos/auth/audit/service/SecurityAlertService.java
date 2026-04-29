@@ -352,7 +352,11 @@ public class SecurityAlertService {
         // TODO: 集成钉钉Webhook
         Map<String, Object> message = new HashMap<>();
         message.put("title", "安全告警: " + alert.getTitle());
-        message.put("text", String.format("用户: %s\nIP: %s\n位置: %s\n时间: %s",
+        message.put("text", """
+            用户: %s
+            IP: %s
+            位置: %s
+            时间: %s""".formatted(
             alert.getUsername(), alert.getIpAddress(), alert.getLocation(),
             alert.getCreateTime()));
 

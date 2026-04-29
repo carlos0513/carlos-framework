@@ -1,5 +1,6 @@
 package com.carlos.migration.util;
 
+import com.carlos.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +11,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import com.carlos.core.exception.BusinessException;
 
 /**
  * 变更日志生成工具
@@ -45,32 +45,31 @@ public class ChangelogGenerator {
 
         Path filePath = Paths.get(basePath, filename);
 
-        String content = String.format(
-            "databaseChangeLog:\n" +
-                "  - changeSet:\n" +
-                "      id: %s\n" +
-                "      author: %s\n" +
-                "      created: \"%s\"\n" +
-                "      comment: \"%s\"\n" +
-                "      changes:\n" +
-                "        # 在此添加变更操作\n" +
-                "        # 示例：创建表\n" +
-                "        # - createTable:\n" +
-                "        #     tableName: example_table\n" +
-                "        #     columns:\n" +
-                "        #       - column:\n" +
-                "        #           name: id\n" +
-                "        #           type: BIGINT\n" +
-                "        #           autoIncrement: true\n" +
-                "        #           constraints:\n" +
-                "        #             primaryKey: true\n" +
-                "      rollback:\n" +
-                "        # 在此添加回滚操作\n" +
-                "        # 示例：删除表\n" +
-                "        # - dropTable:\n" +
-                "        #     tableName: example_table\n",
-            version, author, LocalDateTime.now().format(FORMATTER), description
-        );
+        String content = """
+            databaseChangeLog:
+              - changeSet:
+                  id: %s
+                  author: %s
+                  created: "%s"
+                  comment: "%s"
+                  changes:
+                    # 在此添加变更操作
+                    # 示例：创建表
+                    # - createTable:
+                    #     tableName: example_table
+                    #     columns:
+                    #       - column:
+                    #           name: id
+                    #           type: BIGINT
+                    #           autoIncrement: true
+                    #           constraints:
+                    #             primaryKey: true
+              rollback:
+                # 在此添加回滚操作
+                # 示例：删除表
+                # - dropTable:
+                #     tableName: example_table
+            """.formatted(version, author, LocalDateTime.now().format(FORMATTER), description);
 
         try {
             Files.createDirectories(filePath.getParent());
@@ -94,15 +93,16 @@ public class ChangelogGenerator {
 
         Path filePath = Paths.get(basePath, filename);
 
-        String content = String.format(
-            "-- liquibase formatted sql\n" +
-                "-- changeset %s:%s\n" +
-                "-- comment: %s\n" +
-                "-- created: %s\n\n" +
-                "-- 在此添加 SQL 变更\n\n" +
-                "-- rollback: 在此添加回滚 SQL\n",
-            author, version, description, LocalDateTime.now().format(FORMATTER)
-        );
+        String content = """
+            -- liquibase formatted sql
+            -- changeset %s:%s
+            -- comment: %s
+            -- created: %s
+
+            -- 在此添加 SQL 变更
+
+            -- rollback: 在此添加回滚 SQL
+            """.formatted(author, version, description, LocalDateTime.now().format(FORMATTER));
 
         try {
             Files.createDirectories(filePath.getParent());

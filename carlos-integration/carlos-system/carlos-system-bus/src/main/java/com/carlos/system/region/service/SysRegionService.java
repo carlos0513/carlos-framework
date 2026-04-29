@@ -631,7 +631,7 @@ public class SysRegionService {
 
         // 只返回根节点（第一个节点）
         if (!sysRegionDTOS.isEmpty()) {
-            return Lists.newArrayList(sysRegionDTOS.get(0));
+            return Lists.newArrayList(sysRegionDTOS.getFirst());
         }
 
         return sysRegionDTOS;

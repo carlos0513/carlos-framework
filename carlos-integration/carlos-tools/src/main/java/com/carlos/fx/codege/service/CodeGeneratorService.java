@@ -180,7 +180,7 @@ public class CodeGeneratorService {
             if (items.size() == 1) {
                 objectInfo.setModule("");
             } else {
-                objectInfo.setModule(items.get(0));
+                objectInfo.setModule(items.getFirst());
             }
 
 

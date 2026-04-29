@@ -138,9 +138,9 @@ public final class IpUtil {
                     return ip;
                 }
                 // 存在多个ip的时候，获取最后一个
-                return ipv4Result.get(ipv4Result.size() - 1);
+                return ipv4Result.getLast();
             } else if (!ipv6Result.isEmpty()) {
-                return ipv6Result.get(0);
+                return ipv6Result.getFirst();
             }
             // If failed to find,fall back to localhost
             InetAddress localHost = InetAddress.getLocalHost();

@@ -176,7 +176,7 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
         }
         List<AppClient> entity = lambdaQuery().eq(AppClient::getAppName, appName).list();
         if (CollUtil.isNotEmpty(entity)) {
-            return AppClientConvert.INSTANCE.toDTO(entity.get(0));
+            return AppClientConvert.INSTANCE.toDTO(entity.getFirst());
         }
         return null;
     }
@@ -201,7 +201,7 @@ public class AppClientManagerImpl extends BaseServiceImpl<AppClientMapper, AppCl
         if (clients == null || clients.isEmpty()) {
             return null;
         }
-        return clients.get(0);
+        return clients.getFirst();
     }
 
     @Override

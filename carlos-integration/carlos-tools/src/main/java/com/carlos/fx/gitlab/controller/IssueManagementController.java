@@ -255,7 +255,10 @@ public class IssueManagementController extends BaseController {
         }
 
         // TODO: Show issue details dialog
-        DialogUtil.showInfo("查看详情", "查看问题详情功能开发中...\n\nIssue #" + selected.getIid() + ": " + selected.getTitle());
+        DialogUtil.showInfo("查看详情", """
+            查看问题详情功能开发中...
+
+            Issue #%d: %s""".formatted(selected.getIid(), selected.getTitle()));
     }
 
     /**

@@ -220,7 +220,10 @@ public class UserManagementController extends BaseController {
         }
 
         // TODO: Show edit user dialog
-        DialogUtil.showInfo("编辑用户", "编辑用户功能开发中...\n\n用户: " + selected.getUsername());
+        DialogUtil.showInfo("编辑用户", """
+            编辑用户功能开发中...
+
+            用户: %s""".formatted(selected.getUsername()));
     }
 
     /**
@@ -234,7 +237,10 @@ public class UserManagementController extends BaseController {
 
         boolean confirmed = DialogUtil.showConfirm(
                 "确认删除",
-                "确定要删除用户 " + selected.getUsername() + " 吗？\n\n此操作不可恢复！"
+            """
+                确定要删除用户 %s 吗？
+
+                此操作不可恢复！""".formatted(selected.getUsername())
         );
 
         if (!confirmed) {
@@ -344,7 +350,10 @@ public class UserManagementController extends BaseController {
         }
 
         // TODO: Parse Excel and import users
-        DialogUtil.showInfo("导入用户", "从Excel导入用户功能开发中...\n\n文件: " + file.getName());
+        DialogUtil.showInfo("导入用户", """
+            从Excel导入用户功能开发中...
+
+            文件: %s""".formatted(file.getName()));
     }
 
     /**
@@ -364,7 +373,10 @@ public class UserManagementController extends BaseController {
         }
 
         // TODO: Export users to Excel
-        DialogUtil.showInfo("导出用户", "导出用户到Excel功能开发中...\n\n文件: " + file.getName());
+        DialogUtil.showInfo("导出用户", """
+            导出用户到Excel功能开发中...
+
+            文件: %s""".formatted(file.getName()));
     }
 
     /**
@@ -382,7 +394,10 @@ public class UserManagementController extends BaseController {
 
         boolean confirmed = DialogUtil.showConfirm(
                 "确认批量删除",
-                "确定要删除 " + selected.size() + " 个用户吗？\n\n此操作不可恢复！"
+            """
+                确定要删除 %d 个用户吗？
+
+                此操作不可恢复！""".formatted(selected.size())
         );
 
         if (!confirmed) {

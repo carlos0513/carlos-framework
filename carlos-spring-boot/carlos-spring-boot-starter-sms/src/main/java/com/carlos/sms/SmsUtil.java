@@ -125,13 +125,13 @@ public class SmsUtil {
             if (phones.size() > 1) {
                 smsBlend.massTexting(phones, templateId, messages);
             } else {
-                smsBlend.sendMessageAsync(phones.get(0), templateId, messages);
+                smsBlend.sendMessageAsync(phones.getFirst(), templateId, messages);
             }
         } else {
             if (phones.size() > 1) {
                 smsBlend.massTexting(phones, templateId, messages);
             } else {
-                smsBlend.sendMessage(phones.get(0), templateId, messages);
+                smsBlend.sendMessage(phones.getFirst(), templateId, messages);
             }
         }
         // 移除线程缓存

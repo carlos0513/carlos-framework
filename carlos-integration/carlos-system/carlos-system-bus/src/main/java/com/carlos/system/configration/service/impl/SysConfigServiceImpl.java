@@ -84,7 +84,7 @@ public class SysConfigServiceImpl implements SysConfigService {
         if (CollUtil.isEmpty(dto)) {
             return null;
         }
-        SysConfigDTO sysConfigDTO = dto.get(0);
+        SysConfigDTO sysConfigDTO = dto.getFirst();
         String valueType = sysConfigDTO.getValueType();
         ConfigValueType type = ConfigValueType.ofCode(Integer.valueOf(valueType));
         if (type != null) {
