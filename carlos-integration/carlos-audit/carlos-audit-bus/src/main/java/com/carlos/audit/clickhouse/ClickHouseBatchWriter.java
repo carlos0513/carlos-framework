@@ -1,5 +1,6 @@
 package com.carlos.audit.clickhouse;
 
+import com.carlos.audit.config.AuditProperties;
 import com.carlos.audit.pojo.dto.AuditLogMainDTO;
 import com.clickhouse.client.ClickHouseClient;
 import com.clickhouse.client.ClickHouseNode;
@@ -7,7 +8,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -34,18 +34,7 @@ public class ClickHouseBatchWriter {
 
     private final ClickHouseClient clickHouseClient;
     private final ClickHouseNode clickHouseNode;
-
-    @Value("${carlos.audit.batch-writer.batch-size:500}")
-    private int batchSize;
-
-    @Value("${carlos.audit.batch-writer.flush-interval:1000}")
-    private int flushIntervalMs;
-
-    @Value("${carlos.audit.batch-writer.max-buffer-size:10000}")
-    private int maxBufferSize;
-
-    @Value("${carlos.audit.batch-writer.retry-times:3}")
-    private int retryTimes;
+    private final AuditProperties auditProperties;
 
     // 双缓冲队列
     private final List<AuditLogMainDTO> buffer1 = new ArrayList<>();
@@ -62,7 +51,9 @@ public class ClickHouseBatchWriter {
 
     @PostConstruct
     public void init() {
-        log.info("初始化 ClickHouse 批量写入器，batchSize={}, flushIntervalMs={}", batchSize, flushIntervalMs);
+        log.info("初始化 ClickHouse 批量写入器，batchSize={}, flushIntervalMs={}",
+            auditProperties.getBatchWriter().getBatchSize(),
+            auditProperties.getBatchWriter().getFlushInterval());
         flushExecutor = Executors.newFixedThreadPool(2, r -> {
             Thread t = new Thread(r, "clickhouse-flush");
             t.setDaemon(true);
@@ -90,12 +81,12 @@ public class ClickHouseBatchWriter {
         activeBuffer.add(logMainDTO);
 
         // 达到批次大小，立即刷新
-        if (activeBuffer.size() >= batchSize) {
+        if (activeBuffer.size() >= auditProperties.getBatchWriter().getBatchSize()) {
             flush();
         }
 
         // 缓冲区满，切换并告警
-        if (activeBuffer.size() >= maxBufferSize) {
+        if (activeBuffer.size() >= auditProperties.getBatchWriter().getMaxBufferSize()) {
             bufferOverflow.incrementAndGet();
             log.warn("审计日志缓冲区已满，可能存在写入瓶颈，当前大小: {}", activeBuffer.size());
             flush();
@@ -135,8 +126,8 @@ public class ClickHouseBatchWriter {
      * 执行写入
      */
     private void doFlush(List<AuditLogMainDTO> logs, int size, int retryCount) {
-        if (retryCount >= retryTimes) {
-            log.error("批量写入 ClickHouse 失败，已达到最大重试次数: {}，数据条数: {}", retryTimes, size);
+        if (retryCount >= auditProperties.getBatchWriter().getRetryTimes()) {
+            log.error("批量写入 ClickHouse 失败，已达到最大重试次数: {}，数据条数: {}", auditProperties.getBatchWriter().getRetryTimes(), size);
             totalFailed.addAndGet(size);
             // TODO: 转入本地磁盘备份或死信队列
             return;

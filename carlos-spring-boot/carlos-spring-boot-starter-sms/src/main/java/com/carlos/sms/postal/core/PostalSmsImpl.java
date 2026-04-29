@@ -123,7 +123,7 @@ public class PostalSmsImpl extends AbstractSmsBlend<PostalConfig> {
             smsResponse.setData(response);
             smsResponse.setConfigId(getConfigId());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("发送短信失败: {}", e.getMessage(), e);
             smsResponse.setSuccess(false);
         }
         return smsResponse;

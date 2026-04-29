@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.carlos.core.spring.BootUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,8 +25,7 @@ public class GatewayRunnerWorker implements ApplicationRunner, Ordered {
 
     public static final String DOC = "/doc.html";
 
-    @Value("${spring.cloud.gateway.api-prefix:/api}")
-    private String apiPrefix;
+    private final GatewayProperties gatewayProperties;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -50,10 +48,11 @@ public class GatewayRunnerWorker implements ApplicationRunner, Ordered {
     }
 
     private String stripApiPrefix() {
-        if (StrUtil.startWith(apiPrefix, StrPool.SLASH)) {
-            return apiPrefix.substring(1);
+        String prefix = gatewayProperties.getPrefix();
+        if (StrUtil.startWith(prefix, StrPool.SLASH)) {
+            return prefix.substring(1);
         }
 
-        return apiPrefix;
+        return prefix;
     }
 }

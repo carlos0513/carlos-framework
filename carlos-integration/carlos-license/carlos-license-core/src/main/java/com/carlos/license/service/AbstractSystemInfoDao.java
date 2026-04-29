@@ -152,7 +152,7 @@ public abstract class AbstractSystemInfoDao {
             }
             return stringBuilder.toString().toUpperCase();
         } catch (SocketException e) {
-            e.printStackTrace();
+            log.error("获取Mac地址失败", e);
         }
         return null;
     }

@@ -99,7 +99,7 @@ public class ClientInfoUtil {
             clientInfo.setMobileName(name);
             clientInfo.setMobileModel(model);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("解析移动端设备信息失败", e);
         }
     }
 }

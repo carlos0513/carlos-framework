@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
+import lombok.extern.slf4j.Slf4j;
 import org.gitlab4j.api.GitLabApi;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import java.io.IOException;
  * @author Carlos
  * @since 3.0.0
  */
+@Slf4j
 @Component
 public class GitlabMainController extends BaseController {
 
@@ -296,7 +298,7 @@ public class GitlabMainController extends BaseController {
             // 刷新所有标签页的数据
             refreshAllTabs();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("连接GitLab服务器失败", e);
             // TODO: 显示错误对话框
             // DialogUtil.showError("连接错误", "连接到 GitLab 服务器失败", e);
         }
@@ -337,7 +339,7 @@ public class GitlabMainController extends BaseController {
             exportTab.setContent(exportPane);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("加载标签页内容失败", e);
             // 如果加载失败，应该显示错误信息
             // DialogUtil.showError("加载错误", "加载标签页内容失败", e);
         }

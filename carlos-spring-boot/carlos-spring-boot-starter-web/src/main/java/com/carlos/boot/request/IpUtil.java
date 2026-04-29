@@ -51,10 +51,6 @@ public final class IpUtil {
         }
 
         String ip = null;
-        // if (log.isDebugEnabled()) {
-        //     log.debug("http headers:{}", JakartaServletUtil.getHeaderMap(request));
-        // }
-
         // X-Forwarded-For：Squid 服务代理
         String ipAddresses = request.getHeader("X-Forwarded-For");
         if (StringUtils.isEmpty(ipAddresses) || ipAddresses.length() == 0 || UNKNOWN.equalsIgnoreCase(ipAddresses)) {

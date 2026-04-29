@@ -69,4 +69,28 @@ public class OAuth2Properties {
     @NestedConfigurationProperty
     private ClientAuthProperties client = new ClientAuthProperties();
 
+    /**
+     * 登录配置
+     */
+    @NestedConfigurationProperty
+    private Login login = new Login();
+
+    @Data
+    public static class Login {
+        /**
+         * 默认客户端ID
+         */
+        private String defaultClientId = "carlos-client";
+
+        /**
+         * 访问令牌有效期（秒）
+         */
+        private long accessTokenTtl = 7200;
+
+        /**
+         * 刷新令牌有效期（秒）
+         */
+        private long refreshTokenTtl = 604800;
+    }
+
 }

@@ -188,7 +188,7 @@ public class DatabaseUtil {
                 rs.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("关闭ResultSet失败", e);
         }
     }
 
@@ -198,7 +198,7 @@ public class DatabaseUtil {
                 st.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("关闭Statement失败", e);
         }
     }
 
@@ -208,7 +208,7 @@ public class DatabaseUtil {
                 conn.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("关闭Connection失败", e);
         }
     }
 }

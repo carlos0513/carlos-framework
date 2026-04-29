@@ -4,6 +4,7 @@ import com.carlos.audit.api.ApiAuditLogMain;
 import com.carlos.audit.api.pojo.enums.*;
 import com.carlos.audit.api.pojo.param.ApiAuditLogMainParam;
 import com.carlos.auth.api.enums.AuthErrorCode;
+import com.carlos.auth.config.OAuth2Properties;
 import com.carlos.auth.login.dto.LoginRequest;
 import com.carlos.auth.login.dto.LoginResponse;
 import com.carlos.auth.provider.UserInfo;
@@ -14,7 +15,6 @@ import com.carlos.auth.util.IpLocationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -126,22 +126,9 @@ public class UserLoginService {
     private final ApiAuditLogMain apiAuditLogMain;
 
     /**
-     * 默认客户端ID
+     * OAuth2 配置属性
      */
-    @Value("${carlos.oauth2.login.default-client-id:carlos-client}")
-    private String defaultClientId;
-
-    /**
-     * 访问令牌有效期（秒）
-     */
-    @Value("${carlos.oauth2.login.access-token-ttl:7200}")
-    private long accessTokenTtl;
-
-    /**
-     * 刷新令牌有效期（秒）
-     */
-    @Value("${carlos.oauth2.login.refresh-token-ttl:604800}")
-    private long refreshTokenTtl;
+    private final OAuth2Properties oAuth2Properties;
 
     /**
      * 用户登录
@@ -179,7 +166,7 @@ public class UserLoginService {
             // 优先使用请求中的 clientId，否则使用默认客户端
             String clientId = StringUtils.hasText(loginRequest.getClientId())
                 ? loginRequest.getClientId()
-                : defaultClientId;
+                : oAuth2Properties.getLogin().getDefaultClientId();
 
             // 构建登录响应（使用标准 OAuth2 Token 生成）
             LoginResponse response = buildLoginResponse(user, authentication, clientId);
@@ -225,7 +212,7 @@ public class UserLoginService {
         return LoginResponse.builder()
             .accessToken("") // 空令牌，需通过/oauth2/token获取
             .tokenType("Bearer")
-            .expiresIn(accessTokenTtl)
+            .expiresIn(oAuth2Properties.getLogin().getAccessTokenTtl())
             .build();
     }
 
@@ -240,7 +227,7 @@ public class UserLoginService {
      */
     private LoginResponse buildLoginResponse(UserInfo user, Authentication authentication, String clientId) {
         // 如果未指定客户端，使用默认客户端
-        String resolvedClientId = StringUtils.hasText(clientId) ? clientId : defaultClientId;
+        String resolvedClientId = StringUtils.hasText(clientId) ? clientId : oAuth2Properties.getLogin().getDefaultClientId();
 
         // 获取客户端
         RegisteredClient registeredClient = registeredClientRepository.findByClientId(resolvedClientId);

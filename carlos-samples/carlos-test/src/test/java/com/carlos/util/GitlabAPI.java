@@ -7,6 +7,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.google.common.collect.Sets;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.Project;
 import org.gitlab4j.api.models.User;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+@Slf4j
 public class GitlabAPI {
 
     @Data
@@ -55,7 +57,7 @@ public class GitlabAPI {
             try {
                 user = gitlab.getUserApi().createUser(user, gitlabUser.getPassword(), false);
             } catch (GitLabApiException e) {
-                e.printStackTrace();
+                log.error("创建GitLab用户失败: {}", e.getMessage(), e);
             }
             Integer level = gitlabUser.getLevel();
             Date expire = gitlabUser.getExpire();
@@ -86,7 +88,7 @@ public class GitlabAPI {
         try {
             activeUsers = gitlab.getUserApi().getActiveUsers();
         } catch (GitLabApiException e) {
-            e.printStackTrace();
+            log.error("获取活跃用户失败: {}", e.getMessage(), e);
         }
         List<GitlabUser> gitlabUsers = new ArrayList<>();
         for (User user : activeUsers) {
@@ -112,7 +114,7 @@ public class GitlabAPI {
         try {
             projects = gitlab.getGroupApi().getProjects("111");
         } catch (GitLabApiException e) {
-            e.printStackTrace();
+            log.error("获取项目失败: {}", e.getMessage(), e);
         }
         ProjectApi projectApi = gitlab.getProjectApi();
         for (Project project : projects) {
@@ -240,7 +242,7 @@ public class GitlabAPI {
         try {
             projects = groupApi.getProjects("311");
         } catch (GitLabApiException e) {
-            e.printStackTrace();
+            log.error("获取组项目失败: {}", e.getMessage(), e);
             return;
         }
 
@@ -310,7 +312,7 @@ public class GitlabAPI {
                 System.out.println("分支创建成功   " + id + "    " + project.getPath());
             } catch (GitLabApiException e) {
                 System.out.println("分支创建失败   " + id + "    " + project.getPath());
-                e.printStackTrace();
+                log.error("分支操作失败: {}", e.getMessage(), e);
             }
         }
 
@@ -385,7 +387,7 @@ public class GitlabAPI {
                 protectedBranchesApi.unprotectBranch(set, sourceBranch);
 
             } catch (GitLabApiException e) {
-                e.printStackTrace();
+                log.error("解除分支保护失败: {}", e.getMessage(), e);
             }
         }
 

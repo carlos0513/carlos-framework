@@ -61,8 +61,8 @@ public class InfrastructureAutoConfiguration {
      * 网关启动器
      */
     @Bean
-    public GatewayRunnerWorker gatewayRunnerWorker() {
-        return new GatewayRunnerWorker();
+    public GatewayRunnerWorker gatewayRunnerWorker(GatewayProperties gatewayProperties) {
+        return new GatewayRunnerWorker(gatewayProperties);
     }
 
     /**

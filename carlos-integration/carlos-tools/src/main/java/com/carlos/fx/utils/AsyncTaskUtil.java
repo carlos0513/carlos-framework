@@ -2,59 +2,13 @@ package com.carlos.fx.utils;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-/**
- * 异步任务工具类
- * 提供在后台线程执行耗时任务的便捷方法，避免阻塞 JavaFX 主线程
- *
- * <p>JavaFX 的 UI 更新必须在主线程（JavaFX Application Thread）执行。
- * 如果在主线程执行耗时操作（如网络请求、文件读写、数据库查询），会导致界面卡顿。
- * 该工具类封装了异步任务的执行，自动处理线程切换和回调。</p>
- *
- * <p>主要功能：</p>
- * <ul>
- *   <li>在后台线程执行 Task</li>
- *   <li>成功回调在主线程执行</li>
- *   <li>失败回调在主线程执行</li>
- *   <li>自动管理线程池</li>
- * </ul>
- *
- * <p>使用示例：</p>
- * <pre>{@code
- * // 显示进度指示器
- * progressIndicator.setVisible(true);
- *
- * // 创建异步任务
- * Task<List<Data>> task = new Task<>() {
- *     @Override
- *     protected List<Data> call() throws Exception {
- *         // 这里的代码在后台线程执行
- *         return dataService.loadData();
- *     }
- * };
- *
- * // 执行任务
- * AsyncTaskUtil.execute(task,
- *     result -> {
- *         // 成功回调：在主线程执行
- *         dataList.addAll(result);
- *         progressIndicator.setVisible(false);
- *     },
- *     error -> {
- *         // 失败回调：在主线程执行
- *         progressIndicator.setVisible(false);
- *         DialogUtil.showError("加载错误", "加载数据失败", error);
- *     }
- * );
- * }</pre>
- *
- * @author Carlos
- * @since 3.0.0
- */
+@Slf4j
 public class AsyncTaskUtil {
 
     /**
@@ -173,7 +127,7 @@ public class AsyncTaskUtil {
         // 调用完整版本的 execute 方法，提供默认的错误处理
         execute(task, onSuccess, throwable -> {
             // 默认错误处理：打印堆栈跟踪
-            throwable.printStackTrace();
+            log.error("异步任务执行失败", throwable);
             // 显示错误对话框
             DialogUtil.showError("错误", "操作失败", throwable);
         });

@@ -12,6 +12,7 @@ import cn.idev.excel.EasyExcel;
 import com.carlos.fx.gitlab.config.GitLabServerInfo;
 import com.carlos.fx.gitlab.entity.GitlabProjectBranch;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Commit;
@@ -27,8 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
-
+@Slf4j
 public class GitlabService {
 
     private GitLabServerInfo serverInfo;
@@ -67,7 +67,7 @@ public class GitlabService {
             List<Commit> commits = gitlabApi.getCommitsApi().getCommits(projectIdOrPath, ref, since, until, path, all, withStats, firstParent);
             return commits;
         } catch (GitLabApiException e) {
-            e.printStackTrace();
+            log.error("获取提交记录失败: {}", e.getMessage(), e);
         }
         return null;
     }
