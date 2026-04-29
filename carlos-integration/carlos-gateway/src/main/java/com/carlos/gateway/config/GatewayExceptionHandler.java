@@ -303,22 +303,16 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             requestId, method, path, ex.getClass().getSimpleName(), ex.getMessage());
 
         // 根据异常类型调整日志级别
-        if (ex instanceof GatewayException
-            || ex instanceof NotFoundException
-            || ex instanceof WebClientResponseException) {
-            // 业务异常或已知异常，记录为 WARN
-            log.warn(logMessage);
-        } else if (ex instanceof ResponseStatusException) {
-            ResponseStatusException statusEx = (ResponseStatusException) ex;
-            if (statusEx.getStatusCode().is4xxClientError()) {
-                // 客户端错误，记录为 WARN
-                log.warn(logMessage);
-            } else {
-                log.error(logMessage, ex);
+        switch (ex) {
+            case GatewayException g, NotFoundException n, WebClientResponseException w -> log.warn(logMessage);
+            case ResponseStatusException r -> {
+                if (r.getStatusCode().is4xxClientError()) {
+                    log.warn(logMessage);
+                } else {
+                    log.error(logMessage, ex);
+                }
             }
-        } else {
-            // 其他异常，记录为 ERROR 并打印堆栈
-            log.error(logMessage, ex);
+            default -> log.error(logMessage, ex);
         }
     }
 

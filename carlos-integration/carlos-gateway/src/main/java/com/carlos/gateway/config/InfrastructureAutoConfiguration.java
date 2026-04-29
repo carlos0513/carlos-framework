@@ -1,5 +1,6 @@
 package com.carlos.gateway.config;
 
+import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
@@ -11,7 +12,11 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 
 /**
  * 网关基础设施自动配置类
@@ -30,21 +35,54 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class InfrastructureAutoConfiguration {
 
     /**
-     * WebClient 实例
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public WebClient webClient() {
-        return WebClient.builder().build();
-    }
-
-    /**
-     * WebClient 构建器
+     * WebClient 构建器（非阻塞优化版）
+     * <p>
+     * 配置 Reactor Netty HttpClient：
+     * - 连接超时 5 秒
+     * - 响应超时 10 秒
+     * - 启用 Gzip 压缩
+     * - 复用底层 TCP 连接（EventLoop 非阻塞 I/O）
      */
     @Bean
     @ConditionalOnMissingBean(name = "webClientBuilder")
     public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
+        HttpClient httpClient = HttpClient.create()
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+            .responseTimeout(java.time.Duration.ofSeconds(10))
+            .compress(true);
+
+        return WebClient.builder()
+            .clientConnector(new ReactorClientHttpConnector(httpClient))
+            .filter(logRequestFilter())
+            .filter(logResponseFilter());
+    }
+
+    /**
+     * WebClient 实例
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public WebClient webClient(WebClient.Builder webClientBuilder) {
+        return webClientBuilder.build();
+    }
+
+    private ExchangeFilterFunction logRequestFilter() {
+        return (request, next) -> {
+            if (log.isDebugEnabled()) {
+                log.debug("WebClient Request: {} {}", request.method(), request.url());
+            }
+            return next.exchange(request);
+        };
+    }
+
+    private ExchangeFilterFunction logResponseFilter() {
+        return (request, next) -> next.exchange(request)
+            .flatMap(response -> {
+                if (log.isDebugEnabled()) {
+                    log.debug("WebClient Response: {} {}", response.statusCode(), request.url());
+                }
+                return Mono.just(response);
+            });
     }
 
     /**

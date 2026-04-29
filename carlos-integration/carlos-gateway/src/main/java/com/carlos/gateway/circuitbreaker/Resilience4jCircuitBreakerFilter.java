@@ -53,17 +53,11 @@ public class Resilience4jCircuitBreakerFilter extends
             .minimumNumberOfCalls(10)                    // 最小调用数
             .waitDurationInOpenState(Duration.ofSeconds(30))  // 熔断持续时间
             .automaticTransitionFromOpenToHalfOpenEnabled(true)  // 自动转换
-            .recordException(throwable -> {
-                // 记录哪些异常算失败
-                if (throwable instanceof TimeoutException) {
-                    return true;
-                }
-                if (throwable instanceof WebClientResponseException) {
-                    int statusCode = ((WebClientResponseException) throwable)
-                        .getStatusCode().value();
-                    return statusCode >= 500;
-                }
-                return throwable instanceof Exception;
+            .recordException(throwable -> switch (throwable) {
+                case TimeoutException e -> true;
+                case WebClientResponseException e -> e.getStatusCode().value() >= 500;
+                case Exception e -> true;
+                default -> false;
             })
             .build();
 

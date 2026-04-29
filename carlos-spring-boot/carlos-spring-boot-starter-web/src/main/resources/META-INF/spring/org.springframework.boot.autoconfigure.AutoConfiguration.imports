@@ -9,3 +9,5 @@ com.carlos.boot.enums.ApplicationEnumConfig
 com.carlos.boot.resource.ApplicationResourceConfig
 com.carlos.boot.runner.ApplicationRunnerConfig
 com.carlos.boot.response.ResponseConfig
+com.carlos.boot.thread.VirtualThreadConfig
+com.carlos.boot.thread.TomcatVirtualThreadConfig

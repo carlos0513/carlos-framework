@@ -117,13 +117,18 @@ public class JwtTokenValidator implements TokenValidator {
 
                 // 验证受众
                 Object audience = jwt.getPayload("aud");
-                if (audience instanceof String) {
-                    if (!properties.getJwtAudience().equals(audience)) {
-                        throw new BusinessException(CommonErrorCode.UNAUTHORIZED, "Invalid token audience");
+                switch (audience) {
+                    case String s -> {
+                        if (!properties.getJwtAudience().equals(s)) {
+                            throw new BusinessException(CommonErrorCode.UNAUTHORIZED, "Invalid token audience");
+                        }
                     }
-                } else if (audience instanceof List) {
-                    if (!((List<?>) audience).contains(properties.getJwtAudience())) {
-                        throw new BusinessException(CommonErrorCode.UNAUTHORIZED, "Invalid token audience");
+                    case List<?> list -> {
+                        if (!list.contains(properties.getJwtAudience())) {
+                            throw new BusinessException(CommonErrorCode.UNAUTHORIZED, "Invalid token audience");
+                        }
+                    }
+                    default -> {
                     }
                 }
 
@@ -150,8 +155,8 @@ public class JwtTokenValidator implements TokenValidator {
 
         // 解析角色列表
         Object roles = payload.get("roles");
-        if (roles instanceof List) {
-            Set<Serializable> roleIds = ((List<?>) roles).stream()
+        if (roles instanceof List<?> roleList) {
+            Set<Serializable> roleIds = roleList.stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
@@ -160,8 +165,8 @@ public class JwtTokenValidator implements TokenValidator {
 
         // 解析部门列表
         Object depts = payload.get("depts");
-        if (depts instanceof List) {
-            Set<Serializable> deptIds = ((List<?>) depts).stream()
+        if (depts instanceof List<?> deptList) {
+            Set<Serializable> deptIds = deptList.stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());

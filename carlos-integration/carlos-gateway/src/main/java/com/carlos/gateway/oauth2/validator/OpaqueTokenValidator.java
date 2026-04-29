@@ -131,8 +131,8 @@ public class OpaqueTokenValidator implements TokenValidator {
 
         // 解析角色列表
         Object roles = json.get("roles");
-        if (roles instanceof List) {
-            Set<Serializable> roleIds = ((List<?>) roles).stream()
+        if (roles instanceof List<?> roleList) {
+            Set<Serializable> roleIds = roleList.stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
@@ -141,8 +141,8 @@ public class OpaqueTokenValidator implements TokenValidator {
 
         // 解析部门列表
         Object depts = json.get("depts");
-        if (depts instanceof List) {
-            Set<Serializable> deptIds = ((List<?>) depts).stream()
+        if (depts instanceof List<?> deptList) {
+            Set<Serializable> deptIds = deptList.stream()
                 .map(Object::toString)
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
