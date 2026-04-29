@@ -79,9 +79,6 @@
     <druid-spring-boot.version>1.2.28</druid-spring-boot.version>
     <mongodb-plus.version>2.1.9</mongodb-plus.version>
 
-    <!-- Message Queue -->
-    <rocketmq.version>2.0.2</rocketmq.version>
-
     <!-- Storage -->
     <minio.version>8.5.7</minio.version>
     <aliyun-oss.version>2.20.26</aliyun-oss.version>
@@ -116,7 +113,7 @@
     <sms4j.version>3.3.4</sms4j.version>
     <dingtalk-sdk.version>2.0.0</dingtalk-sdk.version>
     <aws-s3.version>2.20.26</aws-s3.version>
-    <rocketmq-spring-boot.version>5.3.1</rocketmq-spring-boot.version>        <!-- SCA 2025.0.0.0 推荐版本 -->
+    <rocketmq-spring-boot.version>2.3.4</rocketmq-spring-boot.version>        <!-- SCA 2025.0.0.0 推荐版本 -->
     <nacos-client.version>3.0.3</nacos-client.version>              <!-- SCA 2025.0.0.0 推荐版本 -->
     <swagger-annotations.version>2.2.36</swagger-annotations.version>
     <swagger-core-jakarta.version>2.2.36</swagger-core-jakarta.version>
@@ -608,13 +605,6 @@
         <version>${dm-jdbc.version}</version>
       </dependency>
 
-      <!-- Message Queue -->
-      <dependency>
-        <groupId>org.apache.rocketmq</groupId>
-        <artifactId>rocketmq-client-java</artifactId>
-        <version>${rocketmq.version}</version>
-      </dependency>
-
       <!-- Object Storage -->
       <dependency>
         <groupId>io.minio</groupId>
@@ -792,7 +782,6 @@
         <directory>${basedir}/src/main/resources</directory>
         <filtering>true</filtering>
         <includes>
-          <include>**/bootstrap*.yml</include>
           <include>**/application*.yml</include>
           <include>**/application*.yaml</include>
           <include>**/application*.properties</include>
@@ -801,7 +790,6 @@
       <resource>
         <directory>${basedir}/src/main/resources</directory>
         <excludes>
-          <exclude>**/bootstrap*.yml</exclude>
           <exclude>**/application*.yml</exclude>
           <exclude>**/application*.yaml</exclude>
           <exclude>**/application*.properties</exclude>

@@ -43,13 +43,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Knife4j Swagger -->
-    <dependency>
-      <groupId>com.github.xiaoymin</groupId>
-      <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
