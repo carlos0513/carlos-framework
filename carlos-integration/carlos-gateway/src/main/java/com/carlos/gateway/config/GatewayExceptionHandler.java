@@ -304,7 +304,9 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
         // 根据异常类型调整日志级别
         switch (ex) {
-            case GatewayException g, NotFoundException n, WebClientResponseException w -> log.warn(logMessage);
+            case GatewayException g -> log.warn(logMessage);
+            case WebClientResponseException w -> log.warn(logMessage);
+            case NotFoundException n -> log.warn(logMessage);
             case ResponseStatusException r -> {
                 if (r.getStatusCode().is4xxClientError()) {
                     log.warn(logMessage);
