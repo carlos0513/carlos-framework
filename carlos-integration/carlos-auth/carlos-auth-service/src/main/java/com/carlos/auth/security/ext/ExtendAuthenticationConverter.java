@@ -117,7 +117,7 @@ public class ExtendAuthenticationConverter implements AuthenticationConverter {
         Object principal = extractPrincipal(params, grantType);
         Object credentials = extractCredentials(params, grantType);
 
-        if (principal == null || (principal instanceof String && StrUtil.isBlank((String) principal))) {
+        if (principal == null || (principal instanceof String s && StrUtil.isBlank(s))) {
             log.warn("Principal is empty for grant_type: {}", grantType);
             throw new OAuth2AuthenticationException(
                 new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, "认证主体不能为空", ""));

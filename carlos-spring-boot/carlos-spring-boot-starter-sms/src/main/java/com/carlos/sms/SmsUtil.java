@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.sms4j.api.SmsBlend;
 import org.dromara.sms4j.core.factory.SmsFactory;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class SmsUtil {
      * @date 2023/11/23 1:39
      */
     public static void sendByTemplateKey(String phone, String templateCode, String configId, LinkedHashMap<String, String> messages, boolean sync) {
-        sendByTemplateKey(Collections.singletonList(phone), templateCode, configId, messages, sync);
+        sendByTemplateKey(List.of(phone), templateCode, configId, messages, sync);
     }
 
 

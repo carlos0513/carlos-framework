@@ -14,7 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -61,7 +61,7 @@ public class OpenApiConfig {
     public OpenAPI openAPI() {
         OpenAPI openAPI = new OpenAPI()
             // 修复：添加默认 Server 配置，使用相对路径，避免中文被用作 host
-            .servers(Collections.singletonList(new Server().url("/").description("当前服务")))
+            .servers(List.of(new Server().url("/").description("当前服务")))
             .info(new Info()
                 .title(properties.getTitle())
                 .version(properties.getVersion())

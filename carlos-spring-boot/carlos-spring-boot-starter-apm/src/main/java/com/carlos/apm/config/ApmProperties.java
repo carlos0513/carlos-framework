@@ -57,7 +57,7 @@ public class ApmProperties {
         /**
          * 传播类型，支持 B3、W3C
          */
-        private List<String> propagationType = Collections.singletonList("B3");
+        private List<String> propagationType = List.of("B3");
 
         /**
          * 是否启用 Web 追踪

@@ -13,7 +13,6 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -113,7 +112,7 @@ public class SelectStripPrefixGatewayFilterFactory
 
     @Override
     public List<String> shortcutFieldOrder() {
-        return Collections.singletonList(PARTS_KEY);
+        return List.of(PARTS_KEY);
     }
 
     @Override

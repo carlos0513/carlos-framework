@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 统一 API 响应对象
@@ -219,7 +222,7 @@ public class Result<T> implements Serializable {
             .message(message)
             .rejectedValue(rejectedValue)
             .build();
-        return error(CommonErrorCode.PARAM_VALIDATION_ERROR, "参数校验失败", Collections.singletonList(detail));
+        return error(CommonErrorCode.PARAM_VALIDATION_ERROR, "参数校验失败", List.of(detail));
     }
 
     // ==================== 便捷方法 ====================

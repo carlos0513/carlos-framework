@@ -1567,7 +1567,7 @@ public class RedisUtil {
      */
     public static List<Boolean> scriptExists(String... sha) {
         if (sha == null || sha.length == 0) {
-            return Collections.singletonList(false);
+            return List.of(false);
         }
         try (RedisConnection conn = Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection()) {
             if (conn instanceof RedisClusterConnection) {
@@ -1583,7 +1583,7 @@ public class RedisUtil {
         } catch (Exception e) {
             log.error("Redis scriptExists error", e);
         }
-        return Collections.singletonList(false);
+        return List.of(false);
     }
 
     /**
@@ -1652,7 +1652,7 @@ public class RedisUtil {
      * @param <T>      返回泛型
      */
     public static <T> T lua(String script, String key, Class<T> retType) {
-        return lua(script, Collections.singletonList(key), Collections.emptyList(), retType);
+        return lua(script, List.of(key), Collections.emptyList(), retType);
     }
 
     /**
@@ -1665,7 +1665,7 @@ public class RedisUtil {
      * @param <T>      返回泛型
      */
     public static <T> T lua(String script, String key, String arg, Class<T> retType) {
-        return lua(script, Collections.singletonList(key), Collections.singletonList(arg), retType);
+        return lua(script, List.of(key), List.of(arg), retType);
     }
 
     // endregion----------------------   Lua 脚本工具 end   ------------------------
@@ -1731,7 +1731,7 @@ public class RedisUtil {
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
         try {
             RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
-            Long result = redisMasterTemplate.execute(redisScript, Collections.singletonList(lockKey), requestId);
+            Long result = redisMasterTemplate.execute(redisScript, List.of(lockKey), requestId);
             return result != null && result > 0;
         } catch (Exception e) {
             log.error("Redis unlock error, lockKey: {}", lockKey, e);
@@ -1753,7 +1753,7 @@ public class RedisUtil {
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('expire', KEYS[1], ARGV[2]) else return 0 end";
         try {
             RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
-            Long result = redisMasterTemplate.execute(redisScript, Collections.singletonList(lockKey), requestId, String.valueOf(expireSeconds));
+            Long result = redisMasterTemplate.execute(redisScript, List.of(lockKey), requestId, String.valueOf(expireSeconds));
             return result != null && result > 0;
         } catch (Exception e) {
             log.error("Redis renewLock error, lockKey: {}", lockKey, e);
@@ -2868,7 +2868,7 @@ public class RedisUtil {
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then redis.call('set', KEYS[1], ARGV[2]) return 1 else return 0 end";
         try {
             RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
-            Long result = redisMasterTemplate.execute(redisScript, Collections.singletonList(key), expected, newValue);
+            Long result = redisMasterTemplate.execute(redisScript, List.of(key), expected, newValue);
             return result != null && result > 0;
         } catch (Exception e) {
             log.error("Redis compareAndSet error, key: {}", key, e);

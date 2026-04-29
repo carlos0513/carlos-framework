@@ -105,7 +105,7 @@ public class SysDictItemService {
                     item.setSort(getNewSort(dict.getId()));
                 }
                 // 添加字典选项
-                addDictItem(dict.getId(), Collections.singletonList(item));
+                addDictItem(dict.getId(), List.of(item));
             } else {
                 // 修改字典选项
                 updateDictItem(item);

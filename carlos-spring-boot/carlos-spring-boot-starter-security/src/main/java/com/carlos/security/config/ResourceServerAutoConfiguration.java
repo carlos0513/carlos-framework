@@ -33,7 +33,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.time.Duration;
-import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>
@@ -159,7 +159,7 @@ public class ResourceServerAutoConfiguration {
 
         // 如果权限提供者是 CachedPermissionProvider，添加到管理器
         if (permissionProvider instanceof CachedPermissionProvider cached) {
-            syncManager.setCachedProviders(Collections.singletonList(cached));
+            syncManager.setCachedProviders(List.of(cached));
         }
 
         log.info("PermissionCacheSyncManager initialized");

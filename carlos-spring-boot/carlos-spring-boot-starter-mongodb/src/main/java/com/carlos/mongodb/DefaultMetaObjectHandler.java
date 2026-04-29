@@ -117,14 +117,14 @@ public class DefaultMetaObjectHandler implements MetaObjectHandler {
      * 根据用户ID类型填充
      */
     private void fillUserId(MetaObject metaObject, String fieldName, Serializable userId) {
-        if (userId instanceof Long) {
-            strictFill(metaObject, fieldName, () -> (Long) userId);
-        } else if (userId instanceof String) {
-            strictFill(metaObject, fieldName, () -> (String) userId);
-        } else if (userId instanceof Integer) {
-            strictFill(metaObject, fieldName, () -> (Integer) userId);
-        } else if (userId instanceof BigInteger) {
-            strictFill(metaObject, fieldName, () -> (BigInteger) userId);
+        if (userId instanceof Long l) {
+            strictFill(metaObject, fieldName, () -> l);
+        } else if (userId instanceof String s) {
+            strictFill(metaObject, fieldName, () -> s);
+        } else if (userId instanceof Integer i) {
+            strictFill(metaObject, fieldName, () -> i);
+        } else if (userId instanceof BigInteger bi) {
+            strictFill(metaObject, fieldName, () -> bi);
         } else {
             // 其他类型直接填充
             strictFill(metaObject, fieldName, () -> userId);

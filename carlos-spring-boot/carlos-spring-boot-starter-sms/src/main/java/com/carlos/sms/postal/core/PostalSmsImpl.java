@@ -9,7 +9,6 @@ import org.dromara.sms4j.comm.delayedTime.DelayedTime;
 import org.dromara.sms4j.comm.exception.SmsBlendException;
 import org.dromara.sms4j.provider.service.AbstractSmsBlend;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,7 @@ public class PostalSmsImpl extends AbstractSmsBlend<PostalConfig> {
     @Override
     public SmsResponse sendMessage(String phone, String templateId, LinkedHashMap<String, String> messages) {
         Map<String, Object> data = new LinkedHashMap<>(4);
-        data.put("phone", Collections.singletonList(phone));
+        data.put("phone", List.of(phone));
         data.put("signId", getConfig().getSignature());
         data.put("templateId", templateId);
         data.put("varValues", JSONUtil.toJsonStr(messages));

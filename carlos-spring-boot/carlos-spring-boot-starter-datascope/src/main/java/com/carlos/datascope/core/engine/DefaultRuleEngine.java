@@ -5,7 +5,6 @@ import com.carlos.datascope.cache.DataScopeCache;
 import com.carlos.datascope.core.model.DataScopeResult;
 import com.carlos.datascope.core.model.DataScopeRule;
 import com.carlos.datascope.core.model.RuleExpression;
-import com.carlos.datascope.core.model.ScopeDimension;
 import com.carlos.datascope.expression.ExpressionEngine;
 import com.carlos.datascope.provider.DataScopeProvider;
 import com.carlos.datascope.repository.RuleRepository;
@@ -255,8 +254,8 @@ public class DefaultRuleEngine implements DataScopeRuleEngine {
         return DataScopeResult.builder()
             .allowed(true)
             .sqlCondition(field + " = ?")
-            .paramValues(Collections.singletonList(userId))
-            .matchedRuleIds(Collections.singletonList(rule.getRuleId()))
+            .paramValues(List.of(userId))
+            .matchedRuleIds(List.of(rule.getRuleId()))
             .build();
     }
 
@@ -289,7 +288,7 @@ public class DefaultRuleEngine implements DataScopeRuleEngine {
             .allowed(true)
             .sqlCondition(field + " IN (" + placeholders + ")")
             .paramValues(new ArrayList<>(userIds))
-            .matchedRuleIds(Collections.singletonList(rule.getRuleId()))
+            .matchedRuleIds(List.of(rule.getRuleId()))
             .build();
     }
 
@@ -303,8 +302,8 @@ public class DefaultRuleEngine implements DataScopeRuleEngine {
         return DataScopeResult.builder()
             .allowed(true)
             .sqlCondition(field + " = ?")
-            .paramValues(Collections.singletonList(deptId))
-            .matchedRuleIds(Collections.singletonList(rule.getRuleId()))
+            .paramValues(List.of(deptId))
+            .matchedRuleIds(List.of(rule.getRuleId()))
             .build();
     }
 
@@ -334,7 +333,7 @@ public class DefaultRuleEngine implements DataScopeRuleEngine {
             .allowed(true)
             .sqlCondition(field + " IN (" + placeholders + ")")
             .paramValues(new ArrayList<>(deptIds))
-            .matchedRuleIds(Collections.singletonList(rule.getRuleId()))
+            .matchedRuleIds(List.of(rule.getRuleId()))
             .build();
     }
 
@@ -358,7 +357,7 @@ public class DefaultRuleEngine implements DataScopeRuleEngine {
             .allowed(true)
             .sqlCondition(field + " IN (" + placeholders + ")")
             .paramValues(new ArrayList<>(roleIds))
-            .matchedRuleIds(Collections.singletonList(rule.getRuleId()))
+            .matchedRuleIds(List.of(rule.getRuleId()))
             .build();
     }
 
@@ -386,7 +385,7 @@ public class DefaultRuleEngine implements DataScopeRuleEngine {
             .allowed(true)
             .sqlCondition(field + " IN (" + placeholders + ")")
             .paramValues(new ArrayList<>(allRoleIds))
-            .matchedRuleIds(Collections.singletonList(rule.getRuleId()))
+            .matchedRuleIds(List.of(rule.getRuleId()))
             .build();
     }
 
@@ -400,8 +399,8 @@ public class DefaultRuleEngine implements DataScopeRuleEngine {
         return DataScopeResult.builder()
             .allowed(true)
             .sqlCondition(field + " = ?")
-            .paramValues(Collections.singletonList(regionCode))
-            .matchedRuleIds(Collections.singletonList(rule.getRuleId()))
+            .paramValues(List.of(regionCode))
+            .matchedRuleIds(List.of(rule.getRuleId()))
             .build();
     }
 
@@ -430,7 +429,7 @@ public class DefaultRuleEngine implements DataScopeRuleEngine {
             .allowed(true)
             .sqlCondition(field + " IN (" + placeholders + ")")
             .paramValues(new ArrayList<>(regionCodes))
-            .matchedRuleIds(Collections.singletonList(rule.getRuleId()))
+            .matchedRuleIds(List.of(rule.getRuleId()))
             .build();
     }
 

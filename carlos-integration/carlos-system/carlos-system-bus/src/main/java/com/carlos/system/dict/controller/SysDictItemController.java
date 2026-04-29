@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,7 +49,7 @@ public class SysDictItemController {
 
     public void add(@RequestBody @Validated SysDictItemCreateParam param) {
         SysDictItemDTO dto = SysDictItemConvert.INSTANCE.toDTO(param);
-        this.dictItemService.addDictItem(param.getDictId(), Collections.singletonList(dto));
+        this.dictItemService.addDictItem(param.getDictId(), List.of(dto));
     }
 
     @PostMapping("delete")

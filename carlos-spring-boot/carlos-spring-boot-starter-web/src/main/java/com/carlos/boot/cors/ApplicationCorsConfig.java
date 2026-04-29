@@ -14,7 +14,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,7 +39,7 @@ public class ApplicationCorsConfig {
         // Spring Boot 3.x 中 allowedOriginPatterns 不能为空，需设置默认值
         List<String> originPatterns = corsProperties.getAllowedOriginsPattens();
         if (CollUtil.isEmpty(originPatterns)) {
-            originPatterns = Collections.singletonList("*");
+            originPatterns = List.of("*");
         }
         config.setAllowedOriginPatterns(originPatterns);
         config.setAllowedHeaders(corsProperties.getAllowedHeaders());

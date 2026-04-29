@@ -14,7 +14,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -67,7 +67,7 @@ public class CustomizeUserOAuth2AccessTokenGenerator implements OAuth2TokenGener
         }
         claimsBuilder
                 .claim("sub", context.getPrincipal().getName())
-                .claim("aud", Collections.singletonList(registeredClient.getClientId()))
+                .claim("aud", List.of(registeredClient.getClientId()))
                 .claim("iat", issuedAt)
                 .claim("exp", expiresAt)
                 .claim("nbf", issuedAt)

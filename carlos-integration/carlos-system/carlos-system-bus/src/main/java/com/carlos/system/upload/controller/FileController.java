@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,7 +50,7 @@ public class FileController {
     @PostMapping("singleUpload")
     @Operation(summary = "单文件上传")
     public Result<FileInfoVO> singleUpload(SingleUploadParam param) {
-        UploadResultDTO result = fileService.uploadMultipartFile(param.getNamespace(), Collections.singletonList(param.getFile()));
+        UploadResultDTO result = fileService.uploadMultipartFile(param.getNamespace(), List.of(param.getFile()));
         List<UploadFileDTO> files = result.getFiles();
         if (CollUtil.isEmpty(files)) {
             throw new RestException("文件上传失败！");
@@ -63,7 +62,7 @@ public class FileController {
     @PostMapping("singleUploadForAnonymous")
     @Operation(summary = "匿名单文件上传")
     public Result<FileInfoVO> singleUploadforAnonymous(SingleUploadParam param) {
-        UploadResultDTO result = fileService.uploadMultipartFile(param.getNamespace(), Collections.singletonList(param.getFile()));
+        UploadResultDTO result = fileService.uploadMultipartFile(param.getNamespace(), List.of(param.getFile()));
         List<UploadFileDTO> files = result.getFiles();
         if (CollUtil.isEmpty(files)) {
             throw new RestException("文件上传失败！");

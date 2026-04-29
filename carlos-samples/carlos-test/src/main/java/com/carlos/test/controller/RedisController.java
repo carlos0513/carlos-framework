@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -35,7 +34,7 @@ public class RedisController {
         DefaultRedisScript<List> script = new DefaultRedisScript<>();
         script.setLocation(new ClassPathResource("lua/form_indicator.lua"));
         script.setResultType(List.class);
-        Object map = RedisUtil.lua(script, Collections.singletonList("form:stat:123"), "1", String.valueOf(System.currentTimeMillis()), "2");
+        Object map = RedisUtil.lua(script, List.of("form:stat:123"), "1", String.valueOf(System.currentTimeMillis()), "2");
         return map;
     }
 
@@ -71,7 +70,7 @@ public class RedisController {
     }
 
     public void test1() {
-        log.info("test1开始执�?{}", Thread.currentThread().getName());
+        log.info("test1开始执�?{}", Thread.currentThread().getName());
         boolean locked = false;
         String lock1 = "lock1";
         // String lock2 = "lock2";
@@ -88,7 +87,7 @@ public class RedisController {
             locked = lock.tryLock(0, 300, TimeUnit.SECONDS);
             log.info("test1111,获取锁是否成功：{}", locked);
             if (locked) {
-                log.info("test1111,获取锁成�?成功执行业务test1");
+                log.info("test1111,获取锁成�?成功执行业务test1");
                 ThreadUtil.sleep(3000);
             } else {
                 log.info("test1111,未获取到分布式锁，未执行test1");
@@ -105,7 +104,7 @@ public class RedisController {
     }
 
     public void test2() {
-        log.info("test2开始执�?{}", Thread.currentThread().getName());
+        log.info("test2开始执�?{}", Thread.currentThread().getName());
         boolean locked = false;
         String lock1 = "lock1";
         // String lock2 = "lock2";
@@ -122,7 +121,7 @@ public class RedisController {
             locked = lock.tryLock(0, 300, TimeUnit.SECONDS);
             log.info("test2222,获取锁是否成功：{}", locked);
             if (locked) {
-                log.info("test2222,获取锁成�?成功执行业务test2");
+                log.info("test2222,获取锁成�?成功执行业务test2");
                 ThreadUtil.sleep(3000);
             } else {
                 log.info("test2222,未获取到分布式锁，未执行test2");
