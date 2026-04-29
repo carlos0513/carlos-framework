@@ -1,29 +1,27 @@
-package com.carlos.org.position.config;
+package ${project.packageName}.config;
 
-import com.carlos.boot.request.RequestUtil;
-import com.carlos.core.auth.UserContext;
 import com.carlos.core.interfaces.ApplicationExtend;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
-
+import com.carlos.boot.request.RequestUtil;
+import com.carlos.core.auth.UserContext;
 import java.io.Serializable;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 /**
  * <p>
  * 自定义系统扩展实现
  * </p>
  *
- * @author Carlos
- * @date 2026年3月3日 下午11:19:10
+ * @author  ${project.author}
+ * @date    ${.now}
  */
 @Slf4j
 @Component
 @AllArgsConstructor
 @ConditionalOnMissingBean(ApplicationExtend.class)
 public class ApplicationExtendImpl implements ApplicationExtend {
-
 
     @Override
     public Serializable getUserId() {
