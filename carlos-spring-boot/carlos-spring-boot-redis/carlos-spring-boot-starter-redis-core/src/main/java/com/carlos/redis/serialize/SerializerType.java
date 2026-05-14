@@ -24,12 +24,7 @@ public enum SerializerType {
     /**
      * Kryo 二进制序列化 - 高性能
      */
-    KRYO("kryo", "Kryo 二进制序列化"),
-
-    /**
-     * JDK 原生序列化 - 兼容性最好，性能一般
-     */
-    JDK("jdk", "JDK 原生序列化");
+    KRYO("kryo", "Kryo 二进制序列化");
 
     private final String code;
     private final String description;

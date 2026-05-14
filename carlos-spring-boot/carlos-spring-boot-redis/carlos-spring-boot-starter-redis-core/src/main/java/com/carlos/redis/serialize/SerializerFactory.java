@@ -54,7 +54,6 @@ public class SerializerFactory {
             case JACKSON -> new JacksonSerializer();
             case FASTJSON -> new FastjsonSerializer();
             case KRYO -> new KryoSerializer();
-            case JDK -> new JdkSerializer();
             default -> {
                 log.warn("Unknown serializer type: {}, using Jackson as default", type.getCode());
                 yield new JacksonSerializer();
