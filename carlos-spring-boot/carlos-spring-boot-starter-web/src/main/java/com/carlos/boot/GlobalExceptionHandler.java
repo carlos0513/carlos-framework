@@ -1,5 +1,6 @@
 package com.carlos.boot;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONConfig;
 import cn.hutool.json.JSONUtil;
 import com.carlos.boot.request.RequestInfo;
@@ -191,20 +192,37 @@ public class GlobalExceptionHandler {
 
         printRequestDetail();
 
-        ErrorCode errorCode = switch (exception) {
+        // 优先使用异常自身携带的 errorCode，未设置时按异常类型兜底
+        ErrorCode errorCode = resolveErrorCode(exception);
+
+        int httpStatus = exception.getHttpStatus();
+
+        log.error("[全局异常] {} - type={}, code={}, httpStatus={}, message={}",
+            request.getRequestURI(), exception.getClass().getSimpleName(),
+            errorCode.getCode(), httpStatus, exception.getMessage());
+
+        Result<Void> response = Result.error(errorCode, exception.getMessage());
+        return ResponseEntity.status(httpStatus).body(response);
+    }
+
+    /**
+     * 解析异常对应的错误码，优先使用异常自身携带的 errorCode
+     *
+     * @param exception 全局异常
+     * @return 错误码
+     */
+    private ErrorCode resolveErrorCode(GlobalException exception) {
+        String exceptionCode = exception.getErrorCode();
+        if (StrUtil.isNotBlank(exceptionCode)) {
+            return new SimpleErrorCode(exceptionCode, exception.getMessage(), exception.getHttpStatus());
+        }
+
+        return switch (exception) {
             case BusinessException b -> CommonErrorCode.BUSINESS_ERROR;
             case DaoException d -> CommonErrorCode.DATABASE_ERROR;
             case RestException r -> CommonErrorCode.BAD_REQUEST;
             default -> CommonErrorCode.INTERNAL_ERROR;
         };
-
-        int httpStatus = exception.getHttpStatus();
-
-        log.error("[全局异常] {} - type={}, httpStatus={}, message={}",
-            request.getRequestURI(), exception.getClass().getSimpleName(), httpStatus, exception.getMessage());
-
-        Result<Void> response = Result.error(errorCode, exception.getMessage());
-        return ResponseEntity.status(httpStatus).body(response);
     }
 
     // ==================== HTTP 相关异常 ====================
