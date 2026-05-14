@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Carlos
@@ -62,6 +63,8 @@ public class CustomLicenseManager extends LicenseManager {
      */
     private static final Set<String> ALLOWED_METHODS = Set.of("add", "get", "set", "put", "toArray");
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     public CustomLicenseManager(LicenseParam param) {
         super(param);
     }
@@ -79,11 +82,16 @@ public class CustomLicenseManager extends LicenseManager {
      * @version 1.0
      */
     @Override
-    protected synchronized byte[] create(LicenseContent content, LicenseNotary notary) throws Exception {
-        initialize(content);
-        this.validateCreate(content);
-        final GenericCertificate certificate = notary.sign(content);
-        return getPrivacyGuard().cert2key(certificate);
+    protected byte[] create(LicenseContent content, LicenseNotary notary) throws Exception {
+        lock.lock();
+        try {
+            initialize(content);
+            this.validateCreate(content);
+            final GenericCertificate certificate = notary.sign(content);
+            return getPrivacyGuard().cert2key(certificate);
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -99,16 +107,21 @@ public class CustomLicenseManager extends LicenseManager {
      * @version 1.0
      */
     @Override
-    protected synchronized LicenseContent install(final byte[] key, final LicenseNotary notary) throws Exception {
-        final GenericCertificate certificate = getPrivacyGuard().key2cert(key);
+    protected LicenseContent install(final byte[] key, final LicenseNotary notary) throws Exception {
+        lock.lock();
+        try {
+            final GenericCertificate certificate = getPrivacyGuard().key2cert(key);
 
-        notary.verify(certificate);
-        final LicenseContent content = (LicenseContent) this.load(certificate.getEncoded());
-        this.validate(content);
-        setLicenseKey(key);
-        setCertificate(certificate);
+            notary.verify(certificate);
+            final LicenseContent content = (LicenseContent) this.load(certificate.getEncoded());
+            this.validate(content);
+            setLicenseKey(key);
+            setCertificate(certificate);
 
-        return content;
+            return content;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -123,22 +136,27 @@ public class CustomLicenseManager extends LicenseManager {
      * @version 1.0
      */
     @Override
-    protected synchronized LicenseContent verify(final LicenseNotary notary) throws Exception {
-        GenericCertificate certificate;
+    protected LicenseContent verify(final LicenseNotary notary) throws Exception {
+        lock.lock();
+        try {
+            GenericCertificate certificate;
 
-        // Load license key from preferences,
-        final byte[] key = getLicenseKey();
-        if (null == key) {
-            throw new NoLicenseInstalledException(getLicenseParam().getSubject());
+            // Load license key from preferences,
+            final byte[] key = getLicenseKey();
+            if (null == key) {
+                throw new NoLicenseInstalledException(getLicenseParam().getSubject());
+            }
+
+            certificate = getPrivacyGuard().key2cert(key);
+            notary.verify(certificate);
+            final LicenseContent content = (LicenseContent) this.load(certificate.getEncoded());
+            this.validate(content);
+            setCertificate(certificate);
+
+            return content;
+        } finally {
+            lock.unlock();
         }
-
-        certificate = getPrivacyGuard().key2cert(key);
-        notary.verify(certificate);
-        final LicenseContent content = (LicenseContent) this.load(certificate.getEncoded());
-        this.validate(content);
-        setCertificate(certificate);
-
-        return content;
     }
 
     /**
@@ -152,19 +170,24 @@ public class CustomLicenseManager extends LicenseManager {
      * @author Carlos
      * @version 1.0
      */
-    protected synchronized void validateCreate(final LicenseContent content) throws LicenseContentException {
-        final Date now = new Date();
-        final Date notBefore = content.getNotBefore();
-        final Date notAfter = content.getNotAfter();
-        if (null != notAfter && now.after(notAfter)) {
-            throw new LicenseContentException("证书失效时间不能早于当前时间");
-        }
-        if (null != notBefore && null != notAfter && notAfter.before(notBefore)) {
-            throw new LicenseContentException("证书生效时间不能晚于证书失效时间");
-        }
-        final String consumerType = content.getConsumerType();
-        if (null == consumerType) {
-            throw new LicenseContentException("用户类型不能为空");
+    protected void validateCreate(final LicenseContent content) throws LicenseContentException {
+        lock.lock();
+        try {
+            final Date now = new Date();
+            final Date notBefore = content.getNotBefore();
+            final Date notAfter = content.getNotAfter();
+            if (null != notAfter && now.after(notAfter)) {
+                throw new LicenseContentException("证书失效时间不能早于当前时间");
+            }
+            if (null != notBefore && null != notAfter && notAfter.before(notBefore)) {
+                throw new LicenseContentException("证书生效时间不能晚于证书失效时间");
+            }
+            final String consumerType = content.getConsumerType();
+            if (null == consumerType) {
+                throw new LicenseContentException("用户类型不能为空");
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -180,37 +203,42 @@ public class CustomLicenseManager extends LicenseManager {
      * @version 1.0
      */
     @Override
-    protected synchronized void validate(final LicenseContent content) throws LicenseContentException {
-        //1. 首先调用父类的validate方法
-        super.validate(content);
-        //2. 然后校验自定义的License参数
-        //License中可被允许的参数信息
-        LicenseCheckModel expectedCheckModel = (LicenseCheckModel) content.getExtra();
-        //当前服务器真实的参数信息
-        LicenseCheckModel serverCheckModel = getServerInfos();
+    protected void validate(final LicenseContent content) throws LicenseContentException {
+        lock.lock();
+        try {
+            // 1. 首先调用父类的validate方法
+            super.validate(content);
+            // 2. 然后校验自定义的License参数
+            // License中可被允许的参数信息
+            LicenseCheckModel expectedCheckModel = (LicenseCheckModel) content.getExtra();
+            // 当前服务器真实的参数信息
+            LicenseCheckModel serverCheckModel = getServerInfos();
 
-        if (expectedCheckModel != null && serverCheckModel != null) {
-            //校验IP地址
-            if (!checkIpAddress(expectedCheckModel.getIpAddress(), serverCheckModel.getIpAddress())) {
-                throw new LicenseContentException("当前服务器的IP没在授权范围内");
-            }
+            if (expectedCheckModel != null && serverCheckModel != null) {
+                // 校验IP地址
+                if (!checkIpAddress(expectedCheckModel.getIpAddress(), serverCheckModel.getIpAddress())) {
+                    throw new LicenseContentException("当前服务器的IP没在授权范围内");
+                }
 
-            //校验Mac地址
-            if (!checkIpAddress(expectedCheckModel.getMacAddress(), serverCheckModel.getMacAddress())) {
-                throw new LicenseContentException("当前服务器的Mac地址没在授权范围内");
-            }
+                // 校验Mac地址
+                if (!checkIpAddress(expectedCheckModel.getMacAddress(), serverCheckModel.getMacAddress())) {
+                    throw new LicenseContentException("当前服务器的Mac地址没在授权范围内");
+                }
 
-            //校验主板序列号
-            if (!checkSerial(expectedCheckModel.getMainBoardSerial(), serverCheckModel.getMainBoardSerial())) {
-                throw new LicenseContentException("当前服务器的主板序列号没在授权范围内");
-            }
+                // 校验主板序列号
+                if (!checkSerial(expectedCheckModel.getMainBoardSerial(), serverCheckModel.getMainBoardSerial())) {
+                    throw new LicenseContentException("当前服务器的主板序列号没在授权范围内");
+                }
 
-            //校验CPU序列号
-            if (!checkSerial(expectedCheckModel.getCpuSerial(), serverCheckModel.getCpuSerial())) {
-                throw new LicenseContentException("当前服务器的CPU序列号没在授权范围内");
+                // 校验CPU序列号
+                if (!checkSerial(expectedCheckModel.getCpuSerial(), serverCheckModel.getCpuSerial())) {
+                    throw new LicenseContentException("当前服务器的CPU序列号没在授权范围内");
+                }
+            } else {
+                throw new LicenseContentException("不能获取服务器硬件信息");
             }
-        } else {
-            throw new LicenseContentException("不能获取服务器硬件信息");
+        } finally {
+            lock.unlock();
         }
     }
 

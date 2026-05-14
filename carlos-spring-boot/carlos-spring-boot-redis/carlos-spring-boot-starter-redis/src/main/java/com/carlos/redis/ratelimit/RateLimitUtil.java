@@ -7,6 +7,7 @@ import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 /**
@@ -44,6 +45,7 @@ public class RateLimitUtil {
 
     private static RedissonClient staticRedissonClient;
     private static RateLimitProperties staticProperties;
+    private static final ReentrantLock RATE_LIMITER_LOCK = new ReentrantLock();
 
     /**
      * 初始化 RateLimitUtil 静态字段
@@ -347,7 +349,8 @@ public class RateLimitUtil {
 
         // 如果限流器不存在，则初始化
         if (!rateLimiter.isExists()) {
-            synchronized (RateLimitUtil.class) {
+            RATE_LIMITER_LOCK.lock();
+            try {
                 if (!rateLimiter.isExists()) {
                     long actualCapacity = capacity > 0 ? capacity : rate;
                     RateIntervalUnit intervalUnit = convertToRateIntervalUnit(timeUnit);
@@ -355,6 +358,8 @@ public class RateLimitUtil {
                     log.info("[RateLimit] Created rate limiter: {}, rate: {}/{}, capacity: {}",
                         key, rate, timeUnit, actualCapacity);
                 }
+            } finally {
+                RATE_LIMITER_LOCK.unlock();
             }
         }
 

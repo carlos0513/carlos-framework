@@ -5,6 +5,7 @@ import com.carlos.redis.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 /**
@@ -23,6 +24,19 @@ import java.util.function.Supplier;
  */
 @Slf4j
 public class MultiLevelCacheUtil {
+
+    private static final int LOCK_COUNT = 128;
+    private static final ReentrantLock[] LOCKS = new ReentrantLock[LOCK_COUNT];
+
+    static {
+        for (int i = 0; i < LOCK_COUNT; i++) {
+            LOCKS[i] = new ReentrantLock();
+        }
+    }
+
+    private static ReentrantLock getLock(String key) {
+        return LOCKS[Math.floorMod(key.hashCode(), LOCK_COUNT)];
+    }
 
     /**
      * L1 缓存默认过期时间（应该短于 L2）
@@ -101,7 +115,9 @@ public class MultiLevelCacheUtil {
         log.debug("Cache miss for key: {}, loading from source", key);
 
         // 使用同步加载防止缓存击穿
-        synchronized (key.intern()) {
+        java.util.concurrent.locks.ReentrantLock lock = getLock(key);
+        lock.lock();
+        try {
             // 双重检查
             value = CaffeineUtil.get(key);
             if (value != null) {
@@ -121,6 +137,8 @@ public class MultiLevelCacheUtil {
                 put(key, value, timeout, timeUnit);
             }
             return value;
+        } finally {
+            lock.unlock();
         }
     }
 

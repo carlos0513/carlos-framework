@@ -17,6 +17,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.*;
@@ -39,6 +40,8 @@ public class SelectRoutePredicateFactory extends AbstractRoutePredicateFactory<C
     private static final String MATCH_TRAILING_SLASH = "matchTrailingSlash";
 
     private PathPatternParser pathPatternParser = new PathPatternParser();
+
+    private final ReentrantLock parserLock = new ReentrantLock();
 
     public SelectRoutePredicateFactory() {
         super(SelectRoutePredicateFactory.Config.class);
@@ -65,12 +68,15 @@ public class SelectRoutePredicateFactory extends AbstractRoutePredicateFactory<C
     @Override
     public Predicate<ServerWebExchange> apply(SelectRoutePredicateFactory.Config config) {
         final ArrayList<PathPattern> pathPatterns = new ArrayList<>();
-        synchronized (this.pathPatternParser) {
+        parserLock.lock();
+        try {
             pathPatternParser.setMatchOptionalTrailingSeparator(true);
             config.getPatterns().forEach(pattern -> {
                 PathPattern pathPattern = this.pathPatternParser.parse(pattern);
                 pathPatterns.add(pathPattern);
             });
+        } finally {
+            parserLock.unlock();
         }
         return new GatewayPredicate() {
             @Override

@@ -1,5 +1,6 @@
 package com.carlos.sms.postal.core;
 
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
@@ -34,6 +35,7 @@ public class Postal {
 
 
     private static volatile PostalClient client;
+    private static final ReentrantLock LOCK = new ReentrantLock();
 
     private Postal() {
     }
@@ -74,18 +76,24 @@ public class Postal {
      */
     public static PostalClient getClient(int retryInterval, int maxRetries) {
         if (Postal.client == null) {
-            synchronized (Postal.class) {
+            LOCK.lock();
+            try {
                 if (Postal.client == null) {
                     Postal.client = buildClient(retryInterval, maxRetries);
                 }
+            } finally {
+                LOCK.unlock();
             }
         }
         return Postal.client;
     }
 
     public static void setClient(final PostalClient client) {
-        synchronized (Postal.class) {
+        LOCK.lock();
+        try {
             Postal.client = client;
+        } finally {
+            LOCK.unlock();
         }
     }
 

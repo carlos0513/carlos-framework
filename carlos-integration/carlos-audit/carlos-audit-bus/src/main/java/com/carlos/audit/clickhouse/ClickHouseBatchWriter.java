@@ -38,6 +38,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
@@ -82,6 +83,8 @@ public class ClickHouseBatchWriter {
     private final AtomicLong totalDiscarded = new AtomicLong(0);
     private final AtomicLong idSequence = new AtomicLong(ThreadLocalRandom.current().nextInt(1 << 20));
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     private static final DateTimeFormatter CK_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
     private static final DateTimeFormatter BACKUP_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -114,30 +117,35 @@ public class ClickHouseBatchWriter {
     /**
      * 添加日志到缓冲区
      */
-    public synchronized void add(AuditLogMainDTO dto) {
-        if (dto == null) {
-            return;
-        }
+    public void add(AuditLogMainDTO dto) {
+        lock.lock();
+        try {
+            if (dto == null) {
+                return;
+            }
 
-        ensureRequiredFields(dto);
-        activeBuffer.add(dto);
+            ensureRequiredFields(dto);
+            activeBuffer.add(dto);
 
-        int size = activeBuffer.size();
-        int batchSize = auditProperties.getBatchWriter().getBatchSize();
+            int size = activeBuffer.size();
+            int batchSize = auditProperties.getBatchWriter().getBatchSize();
 
-        // 达到批次大小，立即刷新
-        if (size >= batchSize) {
-            flush();
-        }
+            // 达到批次大小，立即刷新
+            if (size >= batchSize) {
+                flush();
+            }
 
-        // 防御性背压：若缓冲区异常增长（写入严重滞后），丢弃最旧数据保护内存
-        int maxBufferSize = auditProperties.getBatchWriter().getMaxBufferSize();
-        if (activeBuffer.size() >= maxBufferSize) {
-            bufferOverflow.incrementAndGet();
-            int discardCount = activeBuffer.size() - maxBufferSize / 2;
-            log.warn("审计日志缓冲区异常溢出，丢弃 {} 条最旧数据", discardCount);
-            activeBuffer = new ArrayList<>(activeBuffer.subList(discardCount, activeBuffer.size()));
-            totalDiscarded.addAndGet(discardCount);
+            // 防御性背压：若缓冲区异常增长（写入严重滞后），丢弃最旧数据保护内存
+            int maxBufferSize = auditProperties.getBatchWriter().getMaxBufferSize();
+            if (activeBuffer.size() >= maxBufferSize) {
+                bufferOverflow.incrementAndGet();
+                int discardCount = activeBuffer.size() - maxBufferSize / 2;
+                log.warn("审计日志缓冲区异常溢出，丢弃 {} 条最旧数据", discardCount);
+                activeBuffer = new ArrayList<>(activeBuffer.subList(discardCount, activeBuffer.size()));
+                totalDiscarded.addAndGet(discardCount);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -152,23 +160,28 @@ public class ClickHouseBatchWriter {
     /**
      * 执行刷新（双缓冲切换）
      */
-    private synchronized void flush() {
-        List<AuditLogMainDTO> toFlush = activeBuffer;
-        if (toFlush.isEmpty()) {
-            return;
-        }
+    private void flush() {
+        lock.lock();
+        try {
+            List<AuditLogMainDTO> toFlush = activeBuffer;
+            if (toFlush.isEmpty()) {
+                return;
+            }
 
-        // 切换缓冲区并创建新实例（避免 clear() 污染正在异步处理的数据）
-        if (activeBuffer == buffer1) {
-            activeBuffer = buffer2;
-            buffer1 = new ArrayList<>();
-        } else {
-            activeBuffer = buffer1;
-            buffer2 = new ArrayList<>();
-        }
+            // 切换缓冲区并创建新实例（避免 clear() 污染正在异步处理的数据）
+            if (activeBuffer == buffer1) {
+                activeBuffer = buffer2;
+                buffer1 = new ArrayList<>();
+            } else {
+                activeBuffer = buffer1;
+                buffer2 = new ArrayList<>();
+            }
 
-        final int size = toFlush.size();
-        flushExecutor.submit(() -> doFlush(toFlush, size));
+            final int size = toFlush.size();
+            flushExecutor.submit(() -> doFlush(toFlush, size));
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -363,8 +376,13 @@ public class ClickHouseBatchWriter {
 
     // ============ 监控指标 ============
 
-    public synchronized int getActiveBufferSize() {
-        return activeBuffer.size();
+    public int getActiveBufferSize() {
+        lock.lock();
+        try {
+            return activeBuffer.size();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public long getTotalWritten() {

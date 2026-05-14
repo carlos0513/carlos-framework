@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -59,6 +60,15 @@ public class RedisUtil {
      * 并行操作线程池 - 使用虚拟线程
      */
     private static final ExecutorService EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
+
+    private static final int LOCK_COUNT = 128;
+    private static final ReentrantLock[] LOCKS = new ReentrantLock[LOCK_COUNT];
+
+    static {
+        for (int i = 0; i < LOCK_COUNT; i++) {
+            LOCKS[i] = new ReentrantLock();
+        }
+    }
 
     private static RedisTemplate<String, Object> redisTemplate;
     private static RedisTemplate<String, Object> redisMasterTemplate;
@@ -683,7 +693,9 @@ public class RedisUtil {
         }
 
         // 加锁防止缓存击穿
-        synchronized (key.intern()) {
+        ReentrantLock lock = LOCKS[Math.floorMod(key.hashCode(), LOCK_COUNT)];
+        lock.lock();
+        try {
             // 双重检查
             value = getValue(key);
             if (value != null) {
@@ -700,6 +712,8 @@ public class RedisUtil {
                 }
             }
             return value;
+        } finally {
+            lock.unlock();
         }
     }
 

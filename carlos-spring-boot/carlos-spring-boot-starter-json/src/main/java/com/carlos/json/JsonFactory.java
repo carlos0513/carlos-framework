@@ -56,17 +56,7 @@ public class JsonFactory {
      * @return JsonService
      */
     public static JsonService getService(JsonEngineType engineType, JsonProperties properties) {
-        JsonService service = SERVICE_CACHE.get(engineType);
-        if (service == null) {
-            synchronized (SERVICE_CACHE) {
-                service = SERVICE_CACHE.get(engineType);
-                if (service == null) {
-                    service = createService(engineType, properties);
-                    SERVICE_CACHE.put(engineType, service);
-                }
-            }
-        }
-        return service;
+        return SERVICE_CACHE.computeIfAbsent(engineType, type -> createService(type, properties));
     }
 
     /**

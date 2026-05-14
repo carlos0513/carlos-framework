@@ -8,6 +8,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +43,7 @@ public final class PathMatchUtil {
     private static volatile PathMatchUtil instance;
 
     /** 实例锁 */
-    private static final Object LOCK = new Object();
+    private static final ReentrantLock LOCK = new ReentrantLock();
 
     // ==================== 实例成员（非静态） ====================
 
@@ -73,10 +74,13 @@ public final class PathMatchUtil {
      */
     private static PathMatchUtil getInstance() {
         if (instance == null) {
-            synchronized (LOCK) {
+            LOCK.lock();
+            try {
                 if (instance == null) {
                     instance = new PathMatchUtil(DEFAULT_PARSER, true);
                 }
+            } finally {
+                LOCK.unlock();
             }
         }
         return instance;
@@ -89,18 +93,28 @@ public final class PathMatchUtil {
      * @param parser 自定义解析器，null 则使用默认
      * @param cacheEnabled 是否启用缓存
      */
-    public static synchronized void init(PathPatternParser parser, boolean cacheEnabled) {
-        if (instance != null) {
-            throw new IllegalStateException("PathMatchUtil 已初始化，请勿重复调用");
+    public static void init(PathPatternParser parser, boolean cacheEnabled) {
+        LOCK.lock();
+        try {
+            if (instance != null) {
+                throw new IllegalStateException("PathMatchUtil 已初始化，请勿重复调用");
+            }
+            instance = new PathMatchUtil(parser, cacheEnabled);
+        } finally {
+            LOCK.unlock();
         }
-        instance = new PathMatchUtil(parser, cacheEnabled);
     }
 
     /**
      * 重置实例（用于测试或重新配置）
      */
-    public static synchronized void reset() {
-        instance = null;
+    public static void reset() {
+        LOCK.lock();
+        try {
+            instance = null;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     /**

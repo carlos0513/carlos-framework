@@ -1,5 +1,6 @@
 package com.carlos.sms.wocloud.core;
 
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
@@ -24,6 +25,7 @@ public class WoCloud {
     private static String accessKeySecret = System.getenv("WOCLOUD_ACCESS_KEY_SECRET");
 
     private static volatile WoCloudClient client;
+    private static final ReentrantLock LOCK = new ReentrantLock();
 
     private WoCloud() {
     }
@@ -64,18 +66,24 @@ public class WoCloud {
      */
     public static WoCloudClient getClient(int retryInterval, int maxRetries) {
         if (WoCloud.client == null) {
-            synchronized (WoCloud.class) {
+            LOCK.lock();
+            try {
                 if (WoCloud.client == null) {
                     WoCloud.client = buildClient(retryInterval, maxRetries);
                 }
+            } finally {
+                LOCK.unlock();
             }
         }
         return WoCloud.client;
     }
 
     public static void setClient(final WoCloudClient client) {
-        synchronized (WoCloud.class) {
+        LOCK.lock();
+        try {
             WoCloud.client = client;
+        } finally {
+            LOCK.unlock();
         }
     }
 

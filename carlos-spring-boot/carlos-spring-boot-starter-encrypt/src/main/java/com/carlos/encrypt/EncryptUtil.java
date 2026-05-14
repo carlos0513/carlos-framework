@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
@@ -50,17 +51,20 @@ public class EncryptUtil {
     private static volatile SM2 sm2;
     private static volatile EncryptProperties encryptProperties;
     private static volatile boolean initialized = false;
-    private static final Object INIT_LOCK = new Object();
+    private static final ReentrantLock INIT_LOCK = new ReentrantLock();
 
     public EncryptUtil(final cn.hutool.crypto.symmetric.SM4 sm4, final SM2 sm2, final EncryptProperties encryptProperties) {
         if (!initialized) {
-            synchronized (INIT_LOCK) {
+            INIT_LOCK.lock();
+            try {
                 if (!initialized) {
                     EncryptUtil.sm4 = sm4;
                     EncryptUtil.sm2 = sm2;
                     EncryptUtil.encryptProperties = encryptProperties;
                     initialized = true;
                 }
+            } finally {
+                INIT_LOCK.unlock();
             }
         }
     }
@@ -70,13 +74,16 @@ public class EncryptUtil {
      */
     public static void init(final cn.hutool.crypto.symmetric.SM4 sm4, final SM2 sm2, final EncryptProperties encryptProperties) {
         if (!initialized) {
-            synchronized (INIT_LOCK) {
+            INIT_LOCK.lock();
+            try {
                 if (!initialized) {
                     EncryptUtil.sm4 = sm4;
                     EncryptUtil.sm2 = sm2;
                     EncryptUtil.encryptProperties = encryptProperties;
                     initialized = true;
                 }
+            } finally {
+                INIT_LOCK.unlock();
             }
         }
     }
