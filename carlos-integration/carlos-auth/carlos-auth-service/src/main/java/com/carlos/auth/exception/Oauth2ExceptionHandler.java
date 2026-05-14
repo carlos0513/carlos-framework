@@ -3,6 +3,9 @@ package com.carlos.auth.exception;
 import com.carlos.auth.api.enums.AuthErrorCode;
 import com.carlos.core.response.ErrorCode;
 import com.carlos.core.response.Result;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
@@ -12,14 +15,67 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * <p>
- * 全局处理OAUTH2得异常
+ * OAuth2 全局异常处理器
+ * </p>
+ *
+ * <p>
+ * 统一处理 OAuth2 认证授权相关异常，包括：
+ * <ul>
+ *   <li>{@link OAuth2AuthenticationException} - 认证异常（登录、Token 验证等）</li>
+ *   <li>{@link OAuth2AuthorizationException} - 授权异常（权限不足、Scope 不足等）</li>
+ * </ul>
  * </p>
  *
  * @author carlos
  * @date 2021/11/4 11:49
  */
+@Slf4j
 @RestControllerAdvice
 public class Oauth2ExceptionHandler {
+
+    /**
+     * 处理 OAuth2 认证异常
+     *
+     * @param exception 认证异常
+     * @param request   HTTP 请求
+     * @return 统一错误响应
+     */
+    @ExceptionHandler(OAuth2AuthenticationException.class)
+    public ResponseEntity<Result<Void>> handleOAuth2Authentication(
+        OAuth2AuthenticationException exception, HttpServletRequest request) {
+
+        OAuth2Error error = exception.getError();
+        ErrorCode errorCode = mapOAuth2ErrorToCode(error.getErrorCode());
+        String description = resolveDescription(error, errorCode);
+
+        log.warn("[OAuth2认证失败] {} - errorCode={}, description={}",
+            request.getRequestURI(), error.getErrorCode(), description);
+
+        Result<Void> result = Result.error(errorCode, description);
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(result);
+    }
+
+    /**
+     * 处理 OAuth2 授权异常
+     *
+     * @param exception 授权异常
+     * @param request   HTTP 请求
+     * @return 统一错误响应
+     */
+    @ExceptionHandler(OAuth2AuthorizationException.class)
+    public ResponseEntity<Result<Void>> handleOAuth2Authorization(
+        OAuth2AuthorizationException exception, HttpServletRequest request) {
+
+        OAuth2Error error = exception.getError();
+        ErrorCode errorCode = mapOAuth2ErrorToCode(error.getErrorCode());
+        String description = resolveDescription(error, errorCode);
+
+        log.warn("[OAuth2授权失败] {} - errorCode={}, description={}",
+            request.getRequestURI(), error.getErrorCode(), description);
+
+        Result<Void> result = Result.error(errorCode, description);
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(result);
+    }
 
     /**
      * 将 OAuth2 标准错误码和自定义扩展错误码映射为框架错误码
@@ -63,17 +119,21 @@ public class Oauth2ExceptionHandler {
         };
     }
 
-    @ExceptionHandler(OAuth2AuthenticationException.class)
-    public Result<String> handleOauth2Auth(OAuth2AuthenticationException e) {
-        // 解析具体的错误码
-        OAuth2Error error = e.getError();
-        ErrorCode errorCode = mapOAuth2ErrorToCode(error.getErrorCode());
-        return Result.error(errorCode, error.getDescription());
+    /**
+     * 解析错误描述
+     * <p>
+     * 优先使用 OAuth2Error 的 description，为空时回退到错误码的默认消息
+     * </p>
+     *
+     * @param error     OAuth2 错误对象
+     * @param errorCode 框架错误码
+     * @return 最终展示的错误描述
+     */
+    private String resolveDescription(OAuth2Error error, ErrorCode errorCode) {
+        String description = error.getDescription();
+        return (description != null && !description.isBlank())
+            ? description
+            : errorCode.getMessage();
     }
 
-    @ExceptionHandler(OAuth2AuthorizationException.class)
-    public Result<String> handleOauth2Authorize(OAuth2AuthorizationException e) {
-        return Result.error(AuthErrorCode.AUTH_ACCESS_DENIED,
-            "授权失败: " + e.getMessage());
-    }
 }
