@@ -11,3 +11,4 @@ com.carlos.boot.runner.ApplicationRunnerConfig
 com.carlos.boot.response.ResponseConfig
 com.carlos.boot.thread.VirtualThreadConfig
 com.carlos.boot.thread.TomcatVirtualThreadConfig
+com.carlos.boot.GlobalExceptionHandler

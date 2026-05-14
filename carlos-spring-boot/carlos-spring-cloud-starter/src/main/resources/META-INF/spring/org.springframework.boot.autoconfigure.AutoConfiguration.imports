@@ -4,3 +4,4 @@ com.carlos.cloud.seata.SeataConfig
 com.carlos.cloud.sentinel.SentinelConfig
 com.carlos.cloud.sentinel.SentinelFeignConfig
 com.carlos.cloud.loadbalance.LoadBalancerConfig
+com.carlos.cloud.feign.FeignGlobalExceptionHandler

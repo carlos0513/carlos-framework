@@ -1,7 +1,6 @@
 package com.carlos.boot.response;
 
 
-import com.carlos.boot.GlobalExceptionHandler;
 import com.carlos.boot.interceptors.ApplicationInterceptorProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,15 +34,5 @@ public class ResponseConfig implements WebMvcConfigurer {
     public ResponseWrapperAdvice responseWrapperAdvice() {
         return new ResponseWrapperAdvice(responseProperties, interceptorProperties);
     }
-
-    /**
-     * 全局异常处理器
-     */
-    @Bean
-    public GlobalExceptionHandler globalExceptionHandler() {
-        return new GlobalExceptionHandler();
-    }
-
-    // ----------------------   转换器配置 end   ------------------------
 
 }
