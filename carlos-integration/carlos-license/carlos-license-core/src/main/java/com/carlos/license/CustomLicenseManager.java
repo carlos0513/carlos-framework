@@ -7,13 +7,18 @@ import de.schlichtherle.license.*;
 import de.schlichtherle.xml.GenericCertificate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Carlos
@@ -29,6 +34,33 @@ public class CustomLicenseManager extends LicenseManager {
      * 默认 BUFSIZE
      */
     private static final int DEFAULT_BUFSIZE = 8 * 1024;
+
+    /**
+     * XMLDecoder 反序列化允许的白名单类
+     */
+    private static final Set<String> ALLOWED_CLASSES = Set.of(
+        "java.beans.XMLDecoder",
+        "java",
+        "de.schlichtherle.license.LicenseContent",
+        "com.carlos.license.LicenseCheckModel",
+        "java.util.Date",
+        "java.util.ArrayList",
+        "javax.security.auth.x500.X500Principal",
+        "java.lang.String",
+        "java.lang.Integer",
+        "java.lang.Long",
+        "java.lang.Boolean",
+        "java.lang.Double",
+        "java.lang.Float",
+        "java.lang.Byte",
+        "java.lang.Short",
+        "java.lang.Character"
+    );
+
+    /**
+     * XMLDecoder 允许的方法调用白名单
+     */
+    private static final Set<String> ALLOWED_METHODS = Set.of("add", "get", "set", "put", "toArray");
 
     public CustomLicenseManager(LicenseParam param) {
         super(param);
@@ -185,7 +217,7 @@ public class CustomLicenseManager extends LicenseManager {
     /**
      * <p>项目名称: true-license-demo </p>
      * <p>文件名称: CustomLicenseManager.java </p>
-     * <p>方法描述: XMLDecoder 解析 XML </p>
+     * <p>方法描述: XMLDecoder 解析 XML（已增加安全白名单校验） </p>
      * <p>创建时间: 2025/04/10 13:16 </p>
      *
      * @param encoded encoded
@@ -194,29 +226,111 @@ public class CustomLicenseManager extends LicenseManager {
      * @version 1.0
      */
     private Object load(String encoded) {
-        BufferedInputStream inputStream = null;
-        XMLDecoder decoder = null;
+        if (!StringUtils.hasText(encoded)) {
+            return null;
+        }
+
         try {
-            inputStream = new BufferedInputStream(new ByteArrayInputStream(encoded.getBytes(XML_CHARSET)));
+            validateXmlContent(encoded);
+        } catch (SecurityException e) {
+            log.error("License XML 内容安全校验失败: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("License XML 内容校验异常", e);
+            throw new SecurityException("License XML 内容未通过安全校验", e);
+        }
 
-            decoder = new XMLDecoder(new BufferedInputStream(inputStream, DEFAULT_BUFSIZE), null, null);
-
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(encoded.getBytes(XML_CHARSET));
+             BufferedInputStream bis = new BufferedInputStream(bais, DEFAULT_BUFSIZE);
+             XMLDecoder decoder = new XMLDecoder(bis, null, new XmlDecodeExceptionListener())) {
             return decoder.readObject();
-        } catch (UnsupportedEncodingException e) {
-            log.error("XML解析失败：不支持的编码", e);
-        } finally {
-            try {
-                if (decoder != null) {
-                    decoder.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (Exception e) {
-                log.error("XMLDecoder解析XML失败", e);
-            }
+        } catch (Throwable e) {
+            log.error("XML 解析失败：不支持的编码", e);
         }
         return null;
+    }
+
+    /**
+     * 校验 XML 内容，确保不包含危险的类和标签
+     *
+     * @param xml XML 字符串
+     */
+    private void validateXmlContent(String xml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // 禁用 DTD，防止 XXE 攻击
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setXIncludeAware(false);
+        factory.setExpandEntityReferences(false);
+        factory.setNamespaceAware(false);
+
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes(XML_CHARSET))) {
+            org.w3c.dom.Document doc = builder.parse(bais);
+
+            // 校验 <object> 标签的 class 属性
+            NodeList objectNodes = doc.getElementsByTagName("object");
+            for (int i = 0; i < objectNodes.getLength(); i++) {
+                Element element = (Element) objectNodes.item(i);
+                String className = element.getAttribute("class");
+                if (StringUtils.hasText(className) && !isAllowedClass(className)) {
+                    throw new SecurityException("不允许的反序列化类: " + className);
+                }
+            }
+
+            // 校验 <array> 标签的 class 属性
+            NodeList arrayNodes = doc.getElementsByTagName("array");
+            for (int i = 0; i < arrayNodes.getLength(); i++) {
+                Element element = (Element) arrayNodes.item(i);
+                String className = element.getAttribute("class");
+                if (StringUtils.hasText(className) && !isAllowedClass(className)) {
+                    throw new SecurityException("不允许的反序列化数组类: " + className);
+                }
+            }
+
+            // 校验 <void> 标签的 method 属性
+            NodeList voidNodes = doc.getElementsByTagName("void");
+            for (int i = 0; i < voidNodes.getLength(); i++) {
+                Element element = (Element) voidNodes.item(i);
+                String methodName = element.getAttribute("method");
+                if (StringUtils.hasText(methodName) && !ALLOWED_METHODS.contains(methodName)) {
+                    throw new SecurityException("不允许的方法调用: " + methodName);
+                }
+            }
+        }
+    }
+
+    /**
+     * 判断类名是否在白名单中
+     *
+     * @param className 类名
+     * @return 是否允许
+     */
+    private boolean isAllowedClass(String className) {
+        // 允许基础类型数组
+        if (className.startsWith("[") && className.length() == 2) {
+            return true;
+        }
+        // 允许对象类型数组，递归检查元素类型
+        if (className.startsWith("[L") && className.endsWith(";")) {
+            String elementClass = className.substring(2, className.length() - 1);
+            return isAllowedClass(elementClass);
+        }
+        // 允许多维数组
+        if (className.startsWith("[")) {
+            return isAllowedClass(className.substring(1));
+        }
+        // 白名单匹配
+        return ALLOWED_CLASSES.contains(className);
+    }
+
+    /**
+     * XMLDecoder 异常监听器，防止反序列化异常信息泄露
+     */
+    private static class XmlDecodeExceptionListener implements ExceptionListener {
+        @Override
+        public void exceptionThrown(Exception e) {
+            log.error("XMLDecoder 反序列化过程中发生异常", e);
+        }
     }
 
     /**
