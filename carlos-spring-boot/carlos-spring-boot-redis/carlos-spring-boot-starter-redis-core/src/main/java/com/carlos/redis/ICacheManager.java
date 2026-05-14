@@ -1,6 +1,6 @@
 package com.carlos.redis;
 
-import com.google.common.cache.CacheStats;
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
 
 import java.io.Serializable;
 import java.util.function.Function;

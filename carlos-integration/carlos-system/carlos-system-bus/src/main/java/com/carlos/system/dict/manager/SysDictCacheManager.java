@@ -12,8 +12,8 @@ import com.carlos.system.dict.pojo.dto.SysDictDTO;
 import com.carlos.system.dict.pojo.dto.SysDictItemDTO;
 import com.carlos.system.dict.pojo.entity.SysDict;
 import com.carlos.system.enums.SystemErrorCode;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
 public class SysDictCacheManager implements ICacheManager<SysDictDTO> {
 
     /** 本地缓存 */
-    private static final Cache<String, List<SysDictItemDTO>> CACHE_DICT_ITEM = CacheBuilder.newBuilder()
+    private static final Cache<String, List<SysDictItemDTO>> CACHE_DICT_ITEM = Caffeine.newBuilder()
         .maximumSize(500)
         .expireAfterAccess(60L, TimeUnit.MINUTES)
         .build();
 
     /** 字典项本地缓存 */
-    private static final Cache<String, SysDictItemDTO> CACHE_ITEM_ID = CacheBuilder.newBuilder()
+    private static final Cache<String, SysDictItemDTO> CACHE_ITEM_ID = Caffeine.newBuilder()
         .maximumSize(1000)
         .expireAfterAccess(60L, TimeUnit.MINUTES)
         .build();

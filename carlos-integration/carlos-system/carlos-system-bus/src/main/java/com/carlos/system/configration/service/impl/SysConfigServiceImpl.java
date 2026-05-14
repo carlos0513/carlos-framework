@@ -8,8 +8,8 @@ import com.carlos.system.configration.pojo.vo.SysConfigLoginPageVO;
 import com.carlos.system.configration.service.SysConfigService;
 import com.carlos.system.enums.ConfigValueType;
 import com.carlos.system.enums.SystemErrorCode;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,8 +105,8 @@ public class SysConfigServiceImpl implements SysConfigService {
     private static final String SUPPLIER = "system_supplier";
     private static final String ALL_KEY = "config";
     private static final Set<String> HOME = Sets.newHashSet(LOGIN_TITLE, LOGO, LOGIN_BACKGROUND_IMG, TITLE, MAIN_TITLE, SUB_TITLE, VERSION, SUPPLIER);
-    private static final Cache<String, SysConfigLoginPageVO> HOME_CONFIG = CacheBuilder.newBuilder().maximumSize(1000).expireAfterAccess(30L, TimeUnit.MINUTES).build();
-    private static final Cache<String, List<SysConfigDTO>> ALL_CONFIG = CacheBuilder.newBuilder().maximumSize(10).expireAfterAccess(30L, TimeUnit.MINUTES).build();
+    private static final Cache<String, SysConfigLoginPageVO> HOME_CONFIG = Caffeine.newBuilder().maximumSize(1000).expireAfterAccess(30L, TimeUnit.MINUTES).build();
+    private static final Cache<String, List<SysConfigDTO>> ALL_CONFIG = Caffeine.newBuilder().maximumSize(10).expireAfterAccess(30L, TimeUnit.MINUTES).build();
 
 
     @Override
