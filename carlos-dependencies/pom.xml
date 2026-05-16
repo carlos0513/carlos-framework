@@ -37,10 +37,8 @@
     <spring-security-oauth2-jose.version>6.2.7</spring-security-oauth2-jose.version>
 
     <!-- 数据层 -->
-    <mybatis-plus.version>3.5.15</mybatis-plus.version>          <!-- 已支持 SB3 -->
-    <!--<mybatis-plus.version>3.5.2</mybatis-plus.version>-->
+    <mybatis-plus.version>3.5.16</mybatis-plus.version>          <!-- 已支持 SB3 -->
     <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
-    <!--<mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>-->
     <alibaba.seata.version>2.0.0</alibaba.seata.version>        <!-- SCA 2025.0.0.0 推荐版本 -->
     <!--<alibaba.seata.version>1.5.1</alibaba.seata.version>-->
 
@@ -49,17 +47,11 @@
     <hutool.version>5.8.40</hutool.version>
     <fastexcel.version>1.3.0</fastexcel.version>
     <commons-collections4.version>4.4</commons-collections4.version>
-    <!--<lombok.version>1.18.34</lombok.version>-->
     <mapstruct.version>1.6.3</mapstruct.version>
-    <!--<mapstruct.version>1.5.2.Final</mapstruct.version>-->
     <okhttp.version>4.12.0</okhttp.version>
-    <!--<okhttp.version>4.9.3</okhttp.version>-->
     <poi.version>5.2.5</poi.version>
-    <!--<poi.version>4.1.2</poi.version>-->
     <kaptcha.version>2.3.3</kaptcha.version>
-    <!--<kaptcha.version>2.3.2</kaptcha.version>-->
     <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-    <!--<transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>-->
 
 
     <fastjson.version>2.0.61</fastjson.version>
