@@ -114,6 +114,19 @@ return decoder.readObject();  // ← 高危：XMLDecoder 已知RCE向量
 // 方案B：如必须保留，使用受限的 XMLDecoder（限制类加载）
 // 方案C：对 License 文件内容做严格的前置校验（签名验证先于反序列化）
 ```
+
+**修复状态**: ✅ 已修复（2026-05-14）
+
+- 采用方案B+方案C结合：在调用 `XMLDecoder` 前增加严格的白名单校验
+- 新增 `validateXmlContent()` 方法，使用 DOM 解析器检查 XML 结构：
+    - `<object>` 标签的 `class` 属性必须在白名单中（仅允许 `LicenseContent`、`LicenseCheckModel`、JDK 基础类等）
+    - `<array>` 标签的 `class` 属性必须在白名单中
+    - `<void>` 标签的 `method` 属性必须在白名单中（仅允许 `add`/`get`/`set`/`put`/`toArray`）
+    - 禁用 DTD 和外部实体，防止 XXE 攻击
+- `load()` 方法改为 try-with-resources 确保资源正确关闭
+- 新增 `XmlDecodeExceptionListener` 防止反序列化异常信息泄露
+- 签名验证仍然先于反序列化执行，形成纵深防御
+
 **优先级**: P0 — License 模块虽不部署到生产，但代码库中存在高危模式，必须修复或迁移。
 
 ---
@@ -212,6 +225,14 @@ Result<?> sendMessage(@RequestBody @Valid DingtalkMessageDTO dto);  // ← 加 @
 - 框架规范应统一使用 Caffeine，避免同项目内混用两种缓存实现。
 
 **修复方案**: 将 `CacheBuilder.newBuilder()` 替换为 `Caffeine.newBuilder()`。
+**修复状态**: ✅ 已修复（2026-05-14）
+
+- `SysDictCacheManager.java`: Guava `Cache`/`CacheBuilder` → Caffeine `Cache`/`Caffeine`
+- `SysConfigServiceImpl.java`: Guava `Cache`/`CacheBuilder` → Caffeine `Cache`/`Caffeine`
+- `ICacheManager.java`: Guava `CacheStats` → Caffeine `com.github.benmanes.caffeine.cache.stats.CacheStats`
+- Caffeine 与 Guava Cache API 高度兼容（`getIfPresent`/`put`/`invalidateAll` 等方法签名一致），无需改动业务逻辑
+- 项目 BOM 已引入 Caffeine 3.x，无需新增依赖
+
 **优先级**: P1 — 技术债务。
 
 ---
@@ -246,6 +267,21 @@ try { ... } finally { lock.unlock(); }
 
 // 或使用 java.util.concurrent 原子类（如 ConcurrentHashMap、AtomicReference）
 ```
+
+**修复状态**: ✅ 已修复（2026-05-14）
+
+- 共修复 **11 个文件**，移除/替换了全部 `synchronized` 关键字（`VirtualThreadConfig.java` 仅注释提及，代码中无实际使用，无需修复）
+- **DCL 单例/初始化模式**（4个文件）：`WoCloud.java`、`Postal.java`、`EncryptUtil.java`、`RateLimitUtil.java` — 使用
+  `ReentrantLock` 替代 `synchronized(X.class)`
+- **缓存击穿防护**（2个文件）：`RedisUtil.java`、`MultiLevelCacheUtil.java` — 使用 **128段分段锁**（`ReentrantLock[]`）替代
+  `synchronized(key.intern())`，避免 `String.intern()` 内存泄漏风险
+- **ConcurrentHashMap 优化**（1个文件）：`JsonFactory.java` — 使用 `computeIfAbsent()` 完全消除同步需求
+- **实例方法锁**（3个文件）：`ClickHouseBatchWriter.java`（3个方法）、`CustomLicenseManager.java`（5个方法）— 使用实例
+  `ReentrantLock` 替代 `synchronized` 方法修饰符
+- **对象锁/静态锁**（2个文件）：`PathMatchUtil.java`、`SelectRoutePredicateFactory.java` — 使用 `ReentrantLock` 替代
+- 所有替换均保持原有锁范围和语义，`ReentrantLock` 的可重入特性安全支持嵌套调用（如 `create() → validateCreate()`、
+  `add() → flush()`）
+
 **优先级**: P2 — 性能风险，在虚拟线程全面启用前需逐步迁移。
 
 ---
